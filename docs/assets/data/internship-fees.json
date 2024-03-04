@@ -1,0 +1,110 @@
+[
+    {
+        "date": "18/02/2020",
+        "time": "11:00",
+        "transaction": "Frais annexe (frais admin)1/2",
+        "debit": "125",
+        "credit": "",
+        "payment": "Mrs Anne CHAMBIER",
+        "rec": "done",
+        "status": "done",
+        "solde": "-125",
+        "accounting": "20-21-0000001"
+    },
+    {
+        "date": "18/02/2020",
+        "time": "11:00",
+        "transaction": "Frais annexe (frais admin)2/2",
+        "debit": "125",
+        "credit": "",
+        "payment": "Mr Fabien CHAMBIER (Père)",
+        "rec": "done",
+        "status": "done",
+        "solde": "-125",
+        "accounting": "20-21-0000002"
+    },
+    {
+        "date": "18/02/2020",
+        "time": "11:00",
+        "transaction": "Frais de scolarité 1/2",
+        "debit": "4 250",
+        "credit": "",
+        "payment": "Mrs Anne CHAMBIER",
+        "rec": "done",
+        "status": "done",
+        "solde": "-4 250",
+        "accounting": "20-21-0000003"
+    },
+    {
+        "date": "18/02/2020",
+        "time": "11:00",
+        "transaction": "Frais de scolarité 1/2",
+        "debit": "4 250",
+        "credit": "",
+        "payment": "Mr Fabien CHAMBIER (Père)",
+        "rec": "done",
+        "status": "done",
+        "solde": "-4 250",
+        "accounting": "20-21-0000004"
+    },
+    {
+        "date": "05/04/2020",
+        "time": "11:00",
+        "transaction": "Acompte 1/2",
+        "debit": "",
+        "credit": "450",
+        "payment": "Mrs Anne CHAMBIER",
+        "rec": "done",
+        "status": "done",
+        "solde": "450",
+        "accounting": "20-21-0000005"
+    },
+    {
+        "date": "05/04/2020",
+        "time": "11:00",
+        "transaction": "Acompte 1/2",
+        "debit": "",
+        "credit": "450",
+        "payment": "Mr Fabien CHAMBIER (Père)",
+        "rec": "done",
+        "status": "done",
+        "solde": "450",
+        "accounting": "20-21-0000006"
+    },
+    {
+        "date": "05/04/2020",
+        "time": "11:00",
+        "transaction": "Échéance 1 (1/2)",
+        "debit": "",
+        "credit": "1 308.08",
+        "payment": "Mrs Anne CHAMBIER",
+        "rec": "done",
+        "status": "done",
+        "solde": "1 308.08",
+        "accounting": "20-21-0000007"
+    },
+    {
+        "date": "",
+        "time": "",
+        "transaction": "Échéance 1 (2/2)",
+        "debit": "",
+        "credit": "1 308.08",
+        "payment": "Mr Fabien CHAMBIER (Père)",
+        "rec": "",
+        "status": "",
+        "solde": "1 308.08",
+        "accounting": "20-21-0000008"
+    },
+    {
+        "date": "",
+        "time": "",
+        "transaction": "Échéanc 2 (1/2)e",
+        "debit": "",
+        "credit": "1 308.08",
+        "payment": "Mrs Anne CHAMBIER",
+        "rec": "",
+        "status": "",
+        "solde": "1 308.08",
+        "accounting": "20-21-0000009"
+    }
+]
