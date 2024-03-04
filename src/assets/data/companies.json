@@ -1,9 +1,0 @@
-[
-  {"name": "IBM","mentor":[{"name": "ahmed"},{"name": "mohamed"}],
-    "dfrom": "","dTo": ""
-  },
-  {"name": "Apple","mentor":[{"name":"imed"},{"name":"bilel"}],
-    "dfrom": "","dTo":""},
-  {"name": "Microsoft","mentor": [{"name":"iyed"},{"name":"sofien"}],
-    "dfrom":"","dTo":""}
-]
