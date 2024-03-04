@@ -1,0 +1,40 @@
+<div>
+  <mat-tab-group [selectedIndex]="selected">
+    <mat-tab value="cheque-entity-bank" label="first-step">
+      <ng-template mat-tab-label>
+        <h5>{{ 'FINANCE_IMPORT.Step 1' | translate }} {{ 'Entity & Bank' | translate }}</h5>
+      </ng-template>
+      <ng-template matTabContent>
+        <ms-cheque-entity-bank> </ms-cheque-entity-bank>
+      </ng-template>
+    </mat-tab>
+
+    <mat-tab value="cheque-to-bank" label="second-step" [disabled]="1 > selected && !secondTab">
+      <ng-template mat-tab-label>
+        <h5>{{ 'FINANCE_IMPORT.Step 2' | translate }} {{ 'Cheques to Banking' | translate }}</h5>
+      </ng-template>
+      <ng-template matTabContent>
+        <ms-cheque-to-bank> </ms-cheque-to-bank>
+      </ng-template>
+    </mat-tab>
+
+    <mat-tab value="confirmation-step" label="third-step" [disabled]="2 > selected && !thirdTab">
+      <ng-template mat-tab-label>
+        <h5>{{ 'FINANCE_IMPORT.Step 3' | translate }} {{ 'Confirmation' | translate }}</h5>
+      </ng-template>
+      <ng-template matTabContent>
+        <ms-confirmation-step> </ms-confirmation-step>
+      </ng-template>
+    </mat-tab>
+
+    <mat-tab value="cheque-deposit-slip" label="fourth-step" [disabled]="3 > selected && !fourthTab">
+      <ng-template mat-tab-label>
+        <h5>{{ 'FINANCE_IMPORT.Step 4' | translate }} {{ 'Cheque Deposit Slip' | translate }}</h5>
+      </ng-template>
+      <ng-template matTabContent>
+        <ms-cheque-deposit-slip> </ms-cheque-deposit-slip>
+      </ng-template>
+    </mat-tab>
+
+  </mat-tab-group>
+</div>

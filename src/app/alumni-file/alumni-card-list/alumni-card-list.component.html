@@ -1,0 +1,61 @@
+<ng-container>
+  <div class="p-grid" *ngIf="isWaitingForResponse" class="p-col-12" style="text-align: center !important; display: contents">
+    <div class="center-spinner spinner-wrapper">
+      <mat-spinner color="accent"></mat-spinner>
+    </div>
+  </div>
+  <div class="p-grid" *ngIf="candidatesList.length === 0">
+    <h4 class="text-empty">{{ 'Alumni is empty' | translate }}</h4>
+  </div>
+  <div *ngIf="!isWaitingForResponse" class="p-grid" style="padding-top: 10px" [style.height.px]="700" [style.max-height.px]="700">
+    <div *ngIf="candidatesList && candidatesList.length" style="width: 100%">
+      <div class="scrollbar" id="style-4" style="overflow-x: hidden; overflow-y: auto; height: 700px; max-height: 700px">
+        <mat-card
+          *ngFor="let candidate of candidatesList"
+          (click)="selectCandidate(candidate._id)"
+          [ngClass]="selectedCandidateId === candidate._id ? 'candidate-select mrgn-all-md' : 'mrgn-all-md'"
+          style="cursor: pointer; padding: 4px !important"
+        >
+          <mat-card-subtitle [ngClass]="selectedCandidateId === candidate._id ? 'candidate-text' : 'test'">
+            <div class="p-grid">
+              <div class="p-col-2" style="align-self: center">
+                <span>
+                  <img
+                    [src]="
+                      candidate?.upload_picture
+                        ? serverimgPath + candidate?.upload_picture
+                        : candidate?.upload_picture
+                        ? serverimgPath + candidate?.upload_picture
+                        : candidate?.civility === 'MR'
+                        ? maleCandidateIcon
+                        : candidate?.civility === 'neutral'
+                        ? neutralStudentIcon
+                        : femaleCandidateIcon
+                    "
+                    style="border-radius: 50%; width: 40px; height: 30px; object-fit: cover;"
+                    class=""
+                  />
+                </span>
+              </div>
+              <div class="p-col-10" style="text-align: center; place-self: center">
+                <div class="p-grid no-padding">
+                  <div class="p-col-12 no-padding">
+                    <h5 class="no-margin" style="padding-top: 0.5rem; font-size: 1em">
+                      {{ candidate?.last_name | uppercase }} {{ candidate?.first_name }}
+                    </h5>
+                  </div>
+                  <div class="p-col-12 no-padding">
+                    <p class="no-margin one-line-text" style="font-size: 0.8em" matTooltip="{{ candidate.intake_channel }}">
+                      {{ candidate?.promo_year }} {{ candidate?.school?.short_name }} {{ candidate?.campus?.name }}
+                      {{ candidate?.sector?.name }} {{ candidate?.speciality?.name }}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </mat-card-subtitle>
+        </mat-card>
+      </div>
+    </div>
+  </div>
+</ng-container>

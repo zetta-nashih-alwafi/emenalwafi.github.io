@@ -1,0 +1,33 @@
+<div class="p-col-12 add-tag" [ngClass]="{'spinner-margin':isWaitingForResponse}">
+  <button
+    mat-raised-button
+    color="accent"
+    *ngIf="permission.studentCardTagAddTag()"
+    (click)="addTag()"
+    [disabled]="isWaitingForResponse"
+    [matTooltip]="'Add a tag' | translate"
+  >
+    <mat-icon svgIcon="bookmark-plus-outline" class="icon-button"></mat-icon>
+    {{ 'Add a tag' | translate }}
+  </button>
+</div>
+<div class="p-col-12" *ngIf="!isWaitingForResponse && tags?.length">
+  <div class="p-grid">
+    <div class="p-col-3 card-tag" *ngFor="let tag of tags">
+      <div class="p-grid">
+        <div class="p-col-2 no-padding">
+          <i class="fa fa-hashtag"></i>
+        </div>
+        <div class="p-col-8 no-padding tag-name" [matTooltip]="tag?.name" matTooltipPosition="above">
+          <span>{{ tag?.name }}</span>
+        </div>
+        <div class="p-col-2 no-padding">
+          <mat-icon class="close-icon" *ngIf="permission.studentCardTagActionEditPerm()" (click)="removeTag(tag)"> close </mat-icon>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div *ngIf="isWaitingForResponse" class="inner-loading-indicator spinner-position">
+  <mat-spinner color="accent" [diameter]="100"></mat-spinner>
+</div> 

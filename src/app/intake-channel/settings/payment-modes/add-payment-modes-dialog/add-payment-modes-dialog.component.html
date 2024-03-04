@@ -1,0 +1,203 @@
+<div class="dialog-border">
+  <div class="dialogTitleWrapper" cdkDrag cdkDragRootElement=".cdk-overlay-pane" cdkDragHandle>
+    <div class="p-grid">
+      <div class="w-30 no-padding">
+        <mat-icon style="vertical-align: middle">add</mat-icon>
+      </div>
+      <div class="p-col-10 acad-title">
+        <h3 *ngIf="!hideButton" class="dialogTitle">
+          {{ 'Add Payment mode' | translate }}
+        </h3>
+        <h3 *ngIf="hideButton" class="dialogTitle">
+          {{ 'Edit Payment mode' | translate }}
+        </h3>
+      </div>
+      <div class="w-65 no-padding" [ngStyle]="{ right: showForm || showPatchForm ? '-100px' : '-35px' }">
+        <button mat-icon-button class="close-icon float-right" mat-dialog-close tabindex="-1">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<form [formGroup]="identityForm" style="margin-top: 20px">
+  <div class="fontColor">
+    <mat-dialog-content>
+      <div class="p-grid">
+        <div class="p-col-12 no-padding">
+          <div class="p-grid">
+            <div class="p-col-fixed center-label no-padding-left label-align" style="width: 180px">
+              <label>{{ 'Payment name' | translate }}*</label>
+            </div>
+            <div class="p-col no-padding">
+              <mat-form-field floatLabel="never">
+                <input matInput formControlName="name" type="text" placeholder="{{ 'Payment name' | translate }}" />
+                <mat-error *ngIf="identityForm.get('name').errors">{{ 'This field is required' | translate }}</mat-error>
+              </mat-form-field>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="p-grid">
+        <div class="p-col-12 no-padding">
+          <div class="p-grid">
+            <div class="p-col-fixed center-label no-padding-left label-align" style="width: 180px">
+              <label>{{ 'Description' | translate }}</label>
+            </div>
+            <div class="p-col no-padding">
+              <mat-form-field floatLabel="never">
+                <textarea matInput placeholder="{{ 'Description' | translate }}" formControlName="description"></textarea>
+              </mat-form-field>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="p-grid">
+        <div class="p-col-12 no-padding">
+          <div class="p-grid">
+            <div class="p-col-fixed center-label no-padding-left label-align" style="width: 180px">
+              <label>{{ 'Number of Terms' | translate }}</label>
+            </div>
+            <div class="p-col no-padding">
+              <mat-slider
+                class="example-margin"
+                (change)="changeSlider()"
+                [max]="12"
+                [min]="1"
+                [step]="1"
+                [thumbLabel]="true"
+                formControlName="term"
+              >
+              </mat-slider>
+              <span class="point">{{ identityForm.get('term').value }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="p-grid" *ngIf="identityForm.get('term').value !== 0" formArrayName="payment_date">
+        <div class="p-col-12 no-padding mrgn-btn">
+          <div class="p-grid">
+            <div class="p-col-fixed center-label no-padding-left" style="width: 180px">
+              <div class="p-col label-padding">
+                <label>{{ 'Date of terms' | translate }}*</label>
+              </div>
+              <div class="p-col label-padding">
+                <label>{{ 'Percentage of full rate' | translate }}*</label>
+              </div>
+            </div>
+            <div class="p-col no-padding">
+              <div class="p-grid">
+                <ng-container *ngFor="let data of payment.controls; let in = index" [formGroupName]="in">
+                  <div class="p-col-fixed no-padding">
+                    <div class="p-col no-padding">
+                      <div class="card">
+                        <div class="card-term">{{ 'terms' | translate }} {{ in + 1 }}</div>
+                        <div class="card-date">
+                          <mat-form-field floatLabel="never" style="height: 46px; line-height: 25px">
+                            <input matInput (click)="myDatepicker.open()" readonly formControlName="date" [matDatepicker]="myDatepicker" />
+                            <mat-datepicker-toggle matSuffix [for]="myDatepicker"></mat-datepicker-toggle>
+                            <mat-datepicker #myDatepicker></mat-datepicker>
+                          </mat-form-field>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="p-col no-padding">
+                      <div class="card">
+                        <mat-form-field floatLabel="never" style="width: 60px">
+                          <input
+                            matInput
+                            formControlName="percentage"
+                            (wheel)="onWheel($event)"
+                            (keyup)="recalculateDisc(in)"
+                            (keypress)="decimalFilter($event)"
+                            type="number"
+                            min="0"
+                            max="100"
+                          />
+                          <mat-error
+                            *ngIf="identityForm.get('payment_date')?.get(in.toString())?.get('percentage').hasError('min')"
+                            style="font-size: 9px"
+                            >{{ 'No negative number' | translate }}</mat-error
+                          >
+                          <mat-error
+                            *ngIf="identityForm.get('payment_date')?.get(in.toString())?.get('percentage').hasError('required')"
+                            style="font-size: 9px"
+                            >{{ 'This field is required' | translate }}</mat-error
+                          >
+                          <mat-error
+                            *ngIf="identityForm.get('payment_date')?.get(in.toString())?.get('percentage').hasError('max')"
+                            style="font-size: 9px"
+                            >{{ 'Cannot more than 100%' | translate }}</mat-error
+                          >
+                        </mat-form-field>
+                        <span class="point">%</span>
+                      </div>
+                    </div>
+                  </div>
+                </ng-container>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="p-grid">
+        <div class="p-col-12 no-padding">
+          <div class="p-grid">
+            <div class="p-col-fixed center-label no-padding-left label-align" style="width: 180px">
+              <label>{{ 'Additional costs' | translate }}</label>
+            </div>
+            <div class="p-col no-padding">
+              <mat-form-field floatLabel="never" style="width: 120px; margin-right: 15px">
+                <input
+                  matInput
+                  formControlName="additional_cost"
+                  (keypress)="decimalFilter($event)"
+                  placeholder="{{ 'Additional costs' | translate }}"
+                />
+                <mat-error *ngIf="identityForm.get('additional_cost').errors">{{ 'No negative number' | translate }}</mat-error>
+              </mat-form-field>
+              <mat-form-field floatLabel="never" style="width: 55px">
+                <mat-select formControlName="currency">
+                  <mat-option [value]="record.code" *ngFor="let record of currencyList">{{ record.code | translate }} </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="p-grid">
+        <div class="p-col-fixed center-label no-padding-left label-align" style="width: 180px">
+          <label>{{ 'Select payment methods available for this payment mode' | translate }}*</label>
+        </div>
+        <div class="p-col no-padding checkboxes-container">
+          <section>
+            <mat-checkbox
+              class="checkbox-item"
+              *ngFor="let method of paymentMethods; let i = index"
+              [checked]="selectedPaymentMethods?.includes(method)"
+              (change)="onSelectPaymentMethod($event, i)"
+              >{{ 'PAYMENT_METHODS.' + method | translate }}</mat-checkbox
+            >
+            <mat-error
+              style="margin-top: 10px"
+              *ngIf="
+                identityForm.get('select_payment_method_available').errors &&
+                (identityForm.get('select_payment_method_available').dirty || identityForm.get('select_payment_method_available').touched)
+              "
+              >{{ 'This field is required' | translate }}</mat-error
+            >
+          </section>
+        </div>
+      </div>
+    </mat-dialog-content>
+    <mat-dialog-actions align="right">
+      <button mat-raised-button type="button" color="warn" mat-dialog-close>{{ 'CANCEL' | translate }}</button>
+      <button mat-raised-button color="primary" (click)="submitVerification()">
+        {{ 'Validate' | translate }}
+      </button>
+    </mat-dialog-actions>
+  </div>
+</form>

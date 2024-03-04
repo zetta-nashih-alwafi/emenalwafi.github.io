@@ -1,0 +1,327 @@
+<div class="top-space">
+  <div class="horizontal header-button header-action">
+    <div class="text-right custom-button tw-flex tw-items-center tw-justify-end">
+      <div class="button-dummy">
+        <button
+          class="btn-dummy"
+          [disabled]="isWaitingForResponse"
+          mat-raised-button
+          color="accent"
+          matTooltip="{{ 'Configure Column' | translate }}"
+          matTooltipPosition="above"
+          (click)="openColumnDropdown()"
+          *ngIf="!columnCtrl?.value?.length"
+          style="z-index: 1"
+        >
+          <span class="tw-flex tw-items-center">
+            <svg width="24" height="24" viewBox="0 0 24 24" role="presentation">
+              <g fill="currentColor">
+                <path
+                  d="M4 18h16.008C20 18 20 6 20 6H3.992C4 6 4 18 4 18zM2 5.994C2 4.893 2.898 4 3.99 4h16.02C21.108 4 22 4.895 22 5.994v12.012A1.997 1.997 0 0120.01 20H3.99A1.994 1.994 0 012 18.006V5.994z"
+                ></path>
+                <path d="M8 6v12h2V6zm6 0v12h2V6z"></path>
+              </g>
+            </svg>
+
+            <mat-icon>keyboard_arrow_down</mat-icon>
+          </span>
+        </button>
+      </div>
+      <mat-form-field appearance="legacy" class="custom-form-field mat-select-button">
+        <mat-select [formControl]="columnCtrl" multiple disableOptionCentering #templateColumn (openedChange)="handleClose($event)">
+          <mat-select-trigger>
+            <button
+              [disabled]="isWaitingForResponse"
+              mat-raised-button
+              color="accent"
+              matTooltip="{{ 'Configure Column' | translate }}"
+              matTooltipPosition="above"
+            >
+              <span class="tw-flex tw-items-center">
+                <svg width="24" height="24" viewBox="0 0 24 24" role="presentation">
+                  <g fill="currentColor">
+                    <path
+                      d="M4 18h16.008C20 18 20 6 20 6H3.992C4 6 4 18 4 18zM2 5.994C2 4.893 2.898 4 3.99 4h16.02C21.108 4 22 4.895 22 5.994v12.012A1.997 1.997 0 0120.01 20H3.99A1.994 1.994 0 012 18.006V5.994z"
+                    ></path>
+                    <path d="M8 6v12h2V6zm6 0v12h2V6z"></path>
+                  </g>
+                </svg>
+  
+                <mat-icon>keyboard_arrow_down</mat-icon>
+              </span>
+            </button>
+          </mat-select-trigger>
+          <div class="container-dropdown">
+            <mat-option [disabled]="isWaitingForResponse" *ngFor="let col of defaultDisplayedColumns" [value]="col">{{
+              'DOCUMENTS.' + col.name | translate
+            }}</mat-option>
+          </div>
+          <mat-divider></mat-divider>
+          <div class="p-grid">
+            <div class="p-col-8">
+              <span
+                [ngStyle]="{ cursor: isWaitingForResponse ? 'auto' : 'pointer' }"
+                (click)="!isWaitingForResponse ? defaultTemplateColumn() : ''"
+                class="restore-to-default"
+              >
+                {{ 'Restore to default' | translate }}
+              </span>
+            </div>
+            <div class="p-col-4 text-right">
+              <small>{{ columnCtrl?.value?.length }} / {{ defaultDisplayedColumns?.length }}</small>
+            </div>
+          </div>
+        </mat-select>
+      </mat-form-field>
+      <button
+        mat-raised-button
+        color="accent"
+        [disabled]="isWaitingForResponse || !displayedColumns?.length"
+        matTooltip="{{ 'Add document' | translate }}"
+        (click)="onUploadDocument()"
+      >
+        {{ 'Add document' | translate }}
+      </button>
+      <button
+        mat-raised-button
+        color="primary"
+        [disabled]="isWaitingForResponse || !displayedColumns?.length"
+        matTooltip="{{ 'RESET' | translate }}"
+        (click)="resetSelection()"
+      >
+        <mat-icon svgIcon="loop" class="mat-icon-svgIcon"></mat-icon>
+        {{ 'RESET' | translate }}
+      </button>
+    </div>
+  </div>
+  <div class="custom-message" [ngClass]="displayedColumns?.length ? 'hide' : ''">
+    <div class="p-grid pad-top-30">
+      <div class="p-col-12 text-center">
+        <mat-icon class="custom-icon-setting" svgIcon="setting-column"> setting-column </mat-icon>
+        <div>
+          <h3>{{ 'Configure your columns' | translate }}</h3>
+          <div>{{ 'You havent configured any columns yet. Add fields as columns to see table information.' | translate }}</div>
+          <div class="margin-top-10">
+            <button
+              (click)="openColumnDropdown()"
+              mat-raised-button
+              color="primary"
+              matTooltip="{{ 'Configure Column' | translate }}"
+              matTooltipPosition="above"
+              [disabled]="isWaitingForResponse"
+            >
+              {{ 'Configure Column' | translate }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="horizontal">
+    <table 
+    [ngClass]="displayedColumns?.length ? '' : 'hide'"
+    mat-table 
+    [dataSource]="dataSource" 
+    matSort (matSortChange)="sortData($event)" 
+    class="mat-elevation-z8" 
+    cdkDropList
+    (cdkDropListDropped)="drop($event)"
+    cdkDropListOrientation="horizontal">
+    <!-- filter section -->
+    <ng-container *ngFor="let filter of filterColumns; let i = index" [matColumnDef]="filter">
+      <th mat-header-cell *matHeaderCellDef>
+        <ng-container [ngSwitch]="filter">
+          <ng-container *ngSwitchCase="'documentNameFilter'">
+            <mat-form-field>
+              <input matInput class="form-field" [formControl]="documentNameFilter" placeholder="{{ 'search' | translate }}" />
+            </mat-form-field>
+          </ng-container>
+          <ng-container *ngSwitchCase="'typeFilter'">
+            <mat-form-field>
+              <input
+                matInput
+                class="form-field"
+                [matAutocomplete]="documentTypeAuto"
+                [formControl]="documentTypeFilter"
+                placeholder="{{ 'search' | translate }}"
+              />
+              <mat-autocomplete #documentTypeAuto="matAutocomplete" [panelWidth]="'fit'">
+                <mat-option *ngIf="(filteredDocumentType | async) && (filteredDocumentType | async)?.length >= 1" (click)="selectedDocumentType('All')">{{
+                  'AllF' | translate
+                }}</mat-option>
+                <mat-option *ngFor="let type of filteredDocumentType | async" [value]="type.name" (click)="selectedDocumentType(type.value)">
+                  {{ type.name }}
+                </mat-option>
+              </mat-autocomplete>
+            </mat-form-field>
+          </ng-container>
+          <ng-container *ngSwitchCase="'uploadDateFilter'">
+            <mat-form-field>
+              <input
+                matInput
+                (click)="registrationDatePick.open()"
+                readonly
+                class="form-field"
+                placeholder="{{ 'search' | translate }}"
+                [matDatepicker]="registrationDatePick"
+                [formControl]="uploadDateFilter"
+              />
+              <mat-datepicker-toggle matSuffix [for]="registrationDatePick"></mat-datepicker-toggle>
+              <mat-datepicker #registrationDatePick></mat-datepicker>
+            </mat-form-field>
+          </ng-container>
+          <ng-container *ngSwitchDefault> </ng-container>
+        </ng-container>
+      </th>
+    </ng-container>
+
+    <!-- column header and value -->
+    <ng-container *ngFor="let column of displayedColumns; let i = index" [matColumnDef]="column">
+      <ng-container [ngSwitch]="column">
+        <ng-container *ngSwitchCase="'documentName'">
+          <th cdkDrag cdkDragBoundary=".example-boundary" mat-header-cell *matHeaderCellDef mat-sort-header="document_name" matTooltip="{{ 'DOCUMENTS.Document Name' | translate }}" class="column-dragging">
+            <mat-icon cdkDragHandle svgIcon="drag_indicator" class="mat-icon-svgIcon icon-drag">
+              <div *cdkDragPreview class="preview">
+                <span style="word-break: break-word" class="preview-drag">
+                  <svg width="15px" fill="currentColor" viewBox="0 0 24 24">
+                    <path
+                      d="M10 9h4V6h3l-5-5-5 5h3v3zm-1 1H6V7l-5 5 5 5v-3h3v-4zm14 2l-5-5v3h-3v4h3v3l5-5zm-9 3h-4v3H7l5 5 5-5h-3v-3z"
+                    ></path>
+                    <path d="M0 0h24v24H0z" fill="none"></path>
+                  </svg>
+                  {{ 'DOCUMENTS.Document Name' | translate }}
+                </span>
+              </div>
+            </mat-icon>
+            <h5 class="label-header">{{ 'DOCUMENTS.Document Name' | translate }}</h5>
+          </th>
+          <td mat-cell *matCellDef="let element" matTooltip="{{ element?.document_name === 'Visa/Stay permit' ? ('COUNTRY_NATIONALITY.DOCUMENT_NAME.' + element?.document_name | translate) : element?.document_name }}">
+            {{ element?.document_name === 'Visa/Stay permit' ? ('COUNTRY_NATIONALITY.DOCUMENT_NAME.' + element?.document_name | translate) : element?.document_name }}
+          </td>
+        </ng-container>
+        <ng-container *ngSwitchCase="'type'">
+          <th cdkDrag cdkDragBoundary=".example-boundary" mat-header-cell *matHeaderCellDef style="text-align: center" mat-sort-header="type_of_document" matTooltip="{{ 'DOCUMENTS.Type' | translate }}" class="column-dragging">
+            <mat-icon cdkDragHandle svgIcon="drag_indicator" class="mat-icon-svgIcon icon-drag">
+              <div *cdkDragPreview class="preview">
+                <span style="word-break: break-word" class="preview-drag">
+                  <svg width="15px" fill="currentColor" viewBox="0 0 24 24">
+                    <path
+                      d="M10 9h4V6h3l-5-5-5 5h3v3zm-1 1H6V7l-5 5 5 5v-3h3v-4zm14 2l-5-5v3h-3v4h3v3l5-5zm-9 3h-4v3H7l5 5 5-5h-3v-3z"
+                    ></path>
+                    <path d="M0 0h24v24H0z" fill="none"></path>
+                  </svg>
+                  {{ 'DOCUMENTS.Type' | translate }}
+                </span>
+              </div>
+            </mat-icon>
+            <h5 class="label-header">{{ 'DOCUMENTS.Type' | translate }}</h5>
+          </th>
+          <td mat-cell *matCellDef="let element">
+            {{ element?.type_of_document | translate }}
+          </td>
+        </ng-container>
+        <ng-container *ngSwitchCase="'uploadDate'">
+          <th cdkDrag cdkDragBoundary=".example-boundary" mat-header-cell mat-sort-header="date" *matHeaderCellDef style="text-align: center" matTooltip="{{ 'DOCUMENTS.Upload Date' | translate }}" class="column-dragging">
+            <mat-icon cdkDragHandle svgIcon="drag_indicator" class="mat-icon-svgIcon icon-drag">
+              <div *cdkDragPreview class="preview">
+                <span style="word-break: break-word" class="preview-drag">
+                  <svg width="15px" fill="currentColor" viewBox="0 0 24 24">
+                    <path
+                      d="M10 9h4V6h3l-5-5-5 5h3v3zm-1 1H6V7l-5 5 5 5v-3h3v-4zm14 2l-5-5v3h-3v4h3v3l5-5zm-9 3h-4v3H7l5 5 5-5h-3v-3z"
+                    ></path>
+                    <path d="M0 0h24v24H0z" fill="none"></path>
+                  </svg>
+                  {{ 'DOCUMENTS.Upload Date' | translate }}
+                </span>
+              </div>
+            </mat-icon>
+            <h5 class="label-header">{{ 'DOCUMENTS.Upload Date' | translate }}</h5>
+          </th>
+          <td mat-cell *matCellDef="let element">
+            {{ translateDate(element?.created_at) }}
+          </td>
+        </ng-container>
+        <ng-container *ngSwitchCase="'action'">
+          <th cdkDrag cdkDragBoundary=".example-boundary" mat-header-cell *matHeaderCellDef matTooltip="{{ 'DOCUMENTS.Action' | translate }}" class="column-dragging">
+            <mat-icon cdkDragHandle svgIcon="drag_indicator" class="mat-icon-svgIcon icon-drag">
+              <div *cdkDragPreview class="preview">
+                <span style="word-break: break-word" class="preview-drag">
+                  <svg width="15px" fill="currentColor" viewBox="0 0 24 24">
+                    <path
+                      d="M10 9h4V6h3l-5-5-5 5h3v3zm-1 1H6V7l-5 5 5 5v-3h3v-4zm14 2l-5-5v3h-3v4h3v3l5-5zm-9 3h-4v3H7l5 5 5-5h-3v-3z"
+                    ></path>
+                    <path d="M0 0h24v24H0z" fill="none"></path>
+                  </svg>
+                  {{ 'DOCUMENTS.Action' | translate }}
+                </span>
+              </div>
+            </mat-icon>
+            <h5 class="label-header">{{ 'DOCUMENTS.Action' | translate }}</h5>
+          </th>
+          <td class="text-center" mat-cell *matCellDef="let element">            
+            <button
+              mat-icon-button
+              class="margin-right-button"
+              matTooltip="{{ 'DOCUMENTS.Download' | translate }}"
+              matTooltipPosition="above"
+              (click)="download(element?.s3_file_name)"
+            >
+              <mat-icon>file_download</mat-icon>
+            </button>
+            <button
+              mat-icon-button
+              class="margin-right-button"
+              *ngIf="element?.type_of_document === 'manual_document'"
+              matTooltipPosition="above"
+              [matTooltip]="'Edit' | translate"
+              (click)="edit(element)"
+            >
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button
+              mat-icon-button
+              class="margin-right-button"
+              *ngIf="element?.type_of_document === 'manual_document'"
+              matTooltipPosition="above"
+              [matTooltip]="'Delete' | translate"
+              (click)="delete(element)"
+            >
+              <mat-icon>delete</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+
+        <ng-container *ngSwitchDefault>
+          <th mat-header-cell *matHeaderCellDef></th>
+          <td mat-cell *matCellDef="let element"></td>
+        </ng-container>
+      </ng-container>
+    </ng-container>
+
+    <ng-container matColumnDef="loading">
+      <th mat-header-cell *matHeaderCellDef colspan="100%" class="text-center">
+        <div class="center-spinner">
+          <mat-spinner color="accent"></mat-spinner>
+        </div>
+      </th>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns" class="example-boundary"></tr>
+    <tr mat-header-row *matHeaderRowDef="filterColumns"></tr>
+    <tr mat-header-row *matHeaderRowDef="['loading']" [hidden]="!isWaitingForResponse"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns" [hidden]="isWaitingForResponse"></tr>
+    </table>
+  </div>
+  <div *ngIf="!dataSource.data.length && !isWaitingForResponse" [ngClass]="!displayedColumns?.length ? 'hide':''" class="no-records">
+    {{ 'NOT RECORD FOUND' | translate }}
+  </div>
+  <div [ngClass]="!displayedColumns?.length ? 'hide' : !dataSource.data.length ? 'hide' : ''">
+    <mat-paginator
+      [ngClass]="{ 'hide-pagination-buttons': documentCount <= 10 }"
+      [length]="documentCount"
+      [hidePageSize]="true"
+      [pageSize]="[10]"
+      showFirstLastButtons
+    ></mat-paginator>
+  </div>
+</div>

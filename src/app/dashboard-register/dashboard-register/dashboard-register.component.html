@@ -1,0 +1,1146 @@
+<!-- <div class="p-grid" *ngIf="isWaitingForResponse" class="p-col-12" style="text-align: center !important; display: contents">
+  <div class="center-spinner spinner-wrapper">
+    <mat-spinner color="accent"></mat-spinner>
+  </div>
+</div> -->
+<div>
+  <div class="language-dropdown-wrap" style="display: flex">
+    <span style="margin-left: 17px; padding-top: 5px">{{ 'PLSSELECTSCHOLARSEASON' | translate }}</span>
+    <div class="btn-mentor">
+      <ng-select
+        class="mrgn-btn"
+        bindLabel="scholar_season"
+        bindValue="_id"
+        [multiple]="false"
+        [clearable]="false"
+        placeholder="{{ 'CARDDETAIL.Scholar Season' | translate }}"
+        [formControl]="scholarFilter"
+        (change)="scholarSelected()"
+      >
+        <ng-option *ngFor="let type of scholars" [value]="type._id">{{ type?.scholar_season | translate }}</ng-option>
+      </ng-select>
+    </div>
+    <!-- <div class="btn-mentor">
+      <div *ngIf="menSelected?.profile_picture" style="display: inline-block; margin-right: 5px">
+        <img
+          style="width: 20px; position: relative; top: -2px; left: 0px; height: 20px"
+          alt="user list image"
+          class="img-responsive img-circle"
+          height="30"
+          [src]="serverimgPath + menSelected?.profile_picture"
+        />
+      </div>
+      <div *ngIf="!menSelected?.profile_picture" style="display: inline-block; margin-right: 5px">
+        <img
+          style="width: 20px; position: relative; top: -2px; left: 0px; height: 20px"
+          alt="user list image"
+          class="img-responsive img-circle"
+          height="30"
+          [src]="menSelected?.civility === 'MR' ? maleIcon : femaleIcon"
+        />
+      </div>
+      <mat-form-field floatLabel="never" style="width: 88%">
+        <input
+          matInput
+          class="form-field"
+          [formControl]="devMember"
+          [matAutocomplete]="mentor"
+          placeholder="{{ 'Tous les Dev.' | translate }}"
+          (keyup)="filterMember()"
+        />
+        <mat-autocomplete #mentor="matAutocomplete">
+          <mat-option value="" (click)="mentorSelected(dataMentor)" *ngIf="!isMemberAdmission">{{ 'AllM' | translate }}</mat-option>
+          <mat-option
+            *ngFor="let mentor of mentorList"
+            (click)="mentorSelected(mentor)"
+            [value]="(mentor?.civility | translate) + ' ' + mentor?.first_name + ' ' + mentor?.last_name"
+          >
+            <div *ngIf="mentor?.profile_picture" style="display: inline-block; margin-right: 5px">
+              <img
+                style="width: 20px; position: relative; top: -2px; left: 0px; height: 20px"
+                alt="user list image"
+                class="img-responsive img-circle"
+                height="30"
+                [src]="serverimgPath + mentor?.profile_picture"
+                width="30"
+              />
+            </div>
+            <div *ngIf="!mentor?.profile_picture" style="display: inline-block; margin-right: 5px">
+              <img
+                style="width: 20px; position: relative; top: -2px; left: 0px; height: 20px"
+                alt="user list image"
+                class="img-responsive img-circle"
+                height="30"
+                [src]="mentor?.civility === 'MR' ? maleIcon : femaleIcon"
+                width="30"
+              />
+            </div>
+            <div style="display: contents">
+              {{ mentor?.civility ? (mentor?.civility | translate) : '' }}
+              {{ mentor?.first_name ? mentor?.first_name : '' }}
+              {{ mentor?.last_name ? mentor?.last_name : '' }}
+            </div>
+          </mat-option>
+        </mat-autocomplete>
+      </mat-form-field>
+    </div> -->
+  </div>
+
+  <div class="p-grid no-margin" style="margin-bottom: 35px !important">
+    <!-- <div class="p-col-12 no-padding" style="margin-left: 15px">
+      <mat-card class="card-dashboard">
+        <div>
+          <div class="card-container">
+            <mat-card class="card-segment" style="padding: 7px 15px; background: #ffffff">
+              <div class="p-grid no-margin">
+                <div class="p-col-fixed no-padding icon-grid first-card">
+                  <label>{{ listAllProgress?.school | translate }}</label>
+                </div>
+              </div>
+            </mat-card>
+          </div>
+          <div class="card-container">
+            <mat-card class="card-segment" style="padding: 7px 15px; background: #ffffff; color: #7d7d7d">
+              <div class="p-grid no-margin">
+                <div class="p-col-fixed no-padding icon-grid">
+                  <div
+                    [ngClass]="{
+                      'chart-pie-css-1': listAllProgress?.percentage <= 1 && listAllProgress?.percentage > 0,
+                      'chart-pie-css-3': listAllProgress?.percentage <= 3 && listAllProgress?.percentage > 1,
+                      'chart-pie-css-5': listAllProgress?.percentage <= 5 && listAllProgress?.percentage > 3,
+                      'chart-pie-css-36': listAllProgress?.percentage <= 10 && listAllProgress?.percentage > 5,
+                      'chart-pie-css-120': listAllProgress?.percentage <= 33 && listAllProgress?.percentage > 15,
+                      'chart-pie-css-240': listAllProgress?.percentage <= 66 && listAllProgress?.percentage > 50,
+                      'chart-pie-css-60': listAllProgress?.percentage <= 15 && listAllProgress?.percentage > 10,
+                      'chart-pie-css-180': listAllProgress?.percentage <= 50 && listAllProgress?.percentage > 33,
+                      'chart-pie-css-300': listAllProgress?.percentage <= 80 && listAllProgress?.percentage > 66,
+                      'chart-pie-css-350': listAllProgress?.percentage <= 99 && listAllProgress?.percentage > 80,
+                      'chart-pie-css-360': listAllProgress?.percentage === 100,
+                      'chart-pie-css-0': listAllProgress?.percentage === 0
+                    }"
+                    class="segment-icon"
+                  ></div>
+                </div>
+                <div class="p-col no-padding">
+                  <div class="p-grid no-margin segment-title">
+                    <div>{{ 'Registered' | translate }}</div>
+                  </div>
+                  <div class="p-grid no-margin">
+                    <div class="segment-score">{{ listAllProgress?.total_registered }}</div>
+                  </div>
+                  <div class="p-grid no-margin segment-percent">
+                    <mat-icon class="mat-icon-default" style="font-size: 13px; margin-right: 3px">trending_up </mat-icon>
+                    <div>{{ floatDecimal(listAllProgress?.percentage_total) }}%</div>
+                  </div>
+                </div>
+              </div>
+            </mat-card>
+          </div>
+        </div>
+        <div>
+          <div class="card-container">
+            <mat-card class="card-segment" style="padding: 7px 15px; background: #00b050">
+              <div class="p-grid no-margin">
+                <div class="p-col-fixed no-padding icon-grid">
+                  <div class="segment-icon">
+                    <mat-icon class="hight-status" style="font-size: 35px; width: 35px; height: 35px" aria-hidden="true">lens </mat-icon>
+                  </div>
+                </div>
+                <div class="p-col no-padding">
+                  <div class="p-grid no-margin segment-title">
+                    <div>{{ 'High' | translate }}</div>
+                  </div>
+                  <div class="p-grid no-margin">
+                    <div class="segment-score">{{ listAllProgress?.high?.total_registered }}</div>
+                  </div>
+                  <div class="p-grid no-margin segment-percent">
+                    <mat-icon class="mat-icon-default" style="font-size: 13px; margin-right: 3px">trending_up </mat-icon>
+                    <div>{{ listAllProgress?.high?.percentage }}%</div>
+                  </div>
+                </div>
+              </div>
+            </mat-card>
+          </div>
+          <div class="card-container">
+            <mat-card class="card-segment" style="padding: 7px 15px; background: #ff9900">
+              <div class="p-grid no-margin">
+                <div class="p-col-fixed no-padding icon-grid">
+                  <div class="segment-icon">
+                    <mat-icon class="modert-status" style="font-size: 35px; width: 35px; height: 35px" aria-hidden="true">lens </mat-icon>
+                  </div>
+                </div>
+                <div class="p-col no-padding">
+                  <div class="p-grid no-margin segment-title">
+                    <div>{{ 'Medium' | translate }}</div>
+                  </div>
+                  <div class="p-grid no-margin">
+                    <div class="segment-score">{{ listAllProgress?.medium?.total_registered }}</div>
+                  </div>
+                  <div class="p-grid no-margin segment-percent">
+                    <mat-icon class="mat-icon-default" style="font-size: 13px; margin-right: 3px">trending_up </mat-icon>
+                    <div>{{ listAllProgress?.medium?.percentage }}%</div>
+                  </div>
+                </div>
+              </div>
+            </mat-card>
+          </div>
+          <div class="card-container">
+            <mat-card class="card-segment" style="padding: 7px 15px; background: #cc0000">
+              <div class="p-grid no-margin">
+                <div class="p-col-fixed no-padding icon-grid">
+                  <div class="segment-icon">
+                    <mat-icon class="low-status" style="font-size: 35px; width: 35px; height: 35px" aria-hidden="true">lens </mat-icon>
+                  </div>
+                </div>
+                <div class="p-col no-padding">
+                  <div class="p-grid no-margin segment-title">
+                    <div>{{ 'Low' | translate }}</div>
+                  </div>
+                  <div class="p-grid no-margin">
+                    <div class="segment-score">{{ listAllProgress?.low?.total_registered }}</div>
+                  </div>
+                  <div class="p-grid no-margin segment-percent">
+                    <mat-icon class="mat-icon-default" style="font-size: 13px; margin-right: 3px">trending_up </mat-icon>
+                    <div>{{ listAllProgress?.low?.percentage }}%</div>
+                  </div>
+                </div>
+              </div>
+            </mat-card>
+          </div>
+          <div class="card-container">
+            <mat-card class="card-segment" style="padding: 7px 15px; background: #b7b7b7">
+              <div class="p-grid no-margin">
+                <div class="p-col-fixed no-padding icon-grid">
+                  <div class="segment-icon">
+                    <mat-icon class="lost-status" style="font-size: 35px; width: 35px; height: 35px" aria-hidden="true">lens </mat-icon>
+                  </div>
+                </div>
+                <div class="p-col no-padding">
+                  <div class="p-grid no-margin segment-title">
+                    <div>{{ 'Lost' | translate }}</div>
+                  </div>
+                  <div class="p-grid no-margin">
+                    <div class="segment-score">{{ listAllProgress?.lost?.total_registered }}</div>
+                  </div>
+                  <div class="p-grid no-margin segment-percent">
+                    <mat-icon class="mat-icon-default" style="font-size: 13px; margin-right: 3px">trending_up </mat-icon>
+                    <div>{{ listAllProgress?.lost?.percentage }}%</div>
+                  </div>
+                </div>
+              </div>
+            </mat-card>
+          </div>
+        </div>
+      </mat-card>
+    </div> -->
+    <!-- *ngIf="!isMemberAdmission || (isMemberAdmission && schoolData && schoolData.length > 1)" -->
+    <div class="p-col-12 no-padding" style="margin-left: 15px">
+      <mat-accordion class="example-headers-align" multi>
+        <mat-expansion-panel hideToggle="true" (click)="openAllExpansion()" [expanded]="!firstExpansionClosed">
+          <mat-expansion-panel-header style="height: auto !important">
+            <div>
+              <div class="card-container">
+                <mat-card class="card-segment" style="padding: 7px 15px; background: #ffffff">
+                  <div class="p-grid no-margin">
+                    <div class="p-col-fixed no-padding icon-grid first-card">
+                      <label>{{ 'AllS' | translate }}</label>
+                    </div>
+                  </div>
+                </mat-card>
+              </div>
+              <div class="card-container">
+                <mat-card class="card-segment" style="padding: 7px 15px; background: #ffffff; color: #7d7d7d">
+                  <div class="p-grid no-margin">
+                    <div class="p-col-fixed no-padding icon-grid">
+                      <div
+                        [ngClass]="{
+                          'chart-pie-css-1': allSchoolProgress?.percentage <= 1 && allSchoolProgress?.percentage > 0,
+                          'chart-pie-css-3': allSchoolProgress?.percentage <= 3 && allSchoolProgress?.percentage > 1,
+                          'chart-pie-css-5': allSchoolProgress?.percentage <= 5 && allSchoolProgress?.percentage > 3,
+                          'chart-pie-css-36': allSchoolProgress?.percentage <= 10 && allSchoolProgress?.percentage > 5,
+                          'chart-pie-css-60': allSchoolProgress?.percentage <= 15 && allSchoolProgress?.percentage > 10,
+                          'chart-pie-css-120': allSchoolProgress?.percentage <= 33 && allSchoolProgress?.percentage > 15,
+                          'chart-pie-css-180': allSchoolProgress?.percentage <= 50 && allSchoolProgress?.percentage > 33,
+                          'chart-pie-css-240': allSchoolProgress?.percentage <= 66 && allSchoolProgress?.percentage > 50,
+                          'chart-pie-css-300': allSchoolProgress?.percentage <= 80 && allSchoolProgress?.percentage > 66,
+                          'chart-pie-css-350': allSchoolProgress?.percentage <= 99 && allSchoolProgress?.percentage > 80,
+                          'chart-pie-css-360': allSchoolProgress?.percentage >= 100,
+                          'chart-pie-css-0': allSchoolProgress?.percentage === 0
+                        }"
+                        class="segment-icon"
+                      ></div>
+                    </div>
+                    <div class="p-col no-padding">
+                      <div class="p-grid no-margin segment-title">
+                        <div>{{ 'Registered' | translate }}</div>
+                      </div>
+                      <div class="p-grid no-margin">
+                        <div class="segment-score">{{ allSchoolProgress?.total_registered }}</div>
+                      </div>
+                      <!-- <div class="p-grid no-margin segment-percent">
+                        <mat-icon class="mat-icon-default" style="font-size: 13px; margin-right: 3px">trending_up </mat-icon>
+                        <div>{{ floatDecimal(listAllProgress?.percentage_total) }}%</div>
+                      </div> -->
+                    </div>
+                  </div>
+                </mat-card>
+              </div>
+              <div class="card-container">
+                <mat-card class="card-segment" style="padding: 7px 15px; background: #16d46d">
+                  <div class="p-grid no-margin">
+                    <!-- <div class="p-col-fixed no-padding icon-grid">
+                  <div class="segment-icon">
+                    <mat-icon class="hight-status" style="font-size: 35px; width: 35px; height: 35px" aria-hidden="true">lens </mat-icon>
+                  </div>
+                </div> -->
+                    <div class="p-col no-padding">
+                      <div class="p-grid no-margin segment-title">
+                        <div>{{ 'Engaged' | translate }}</div>
+                      </div>
+                      <div class="p-grid no-margin">
+                        <div class="segment-score">{{ allSchoolProgress?.engaged?.total }}</div>
+                      </div>
+                      <!-- <div class="p-grid no-margin segment-percent">
+                        <mat-icon class="mat-icon-default" style="font-size: 13px; margin-right: 3px">trending_up </mat-icon>
+                        <div>{{ floatDecimal(listAllProgress?.high?.percentage) }}%</div>
+                      </div> -->
+                    </div>
+                  </div>
+                </mat-card>
+              </div>
+              <div class="card-container">
+                <mat-card class="card-segment" style="padding: 7px 15px; background: #f7b149">
+                  <div class="p-grid no-margin">
+                    <!-- <div class="p-col-fixed no-padding icon-grid">
+                  <div class="segment-icon">
+                    <mat-icon class="modert-status" style="font-size: 35px; width: 35px; height: 35px" aria-hidden="true">lens </mat-icon>
+                  </div>
+                </div> -->
+                    <div class="p-col no-padding">
+                      <div class="p-grid no-margin segment-title">
+                        <div>{{ 'Admitted' | translate }}</div>
+                      </div>
+                      <div class="p-grid no-margin">
+                        <div class="segment-score">{{ allSchoolProgress?.admission_in_progress?.total }}</div>
+                      </div>
+                      <!-- <div class="p-grid no-margin segment-percent">
+                        <mat-icon class="mat-icon-default" style="font-size: 13px; margin-right: 3px">trending_up </mat-icon>
+                        <div>{{ floatDecimal(listAllProgress?.medium?.percentage) }}%</div>
+                      </div> -->
+                    </div>
+                  </div>
+                </mat-card>
+              </div>
+              <div class="card-container">
+                <mat-card class="card-segment" style="padding: 7px 15px; background: #e64f4f">
+                  <div class="p-grid no-margin">
+                    <!-- <div class="p-col-fixed no-padding icon-grid">
+                  <div class="segment-icon">
+                    <mat-icon class="low-status" style="font-size: 35px; width: 35px; height: 35px" aria-hidden="true">lens </mat-icon>
+                  </div>
+                </div> -->
+                    <div class="p-col no-padding">
+                      <div class="p-grid no-margin segment-title">
+                        <div>{{ 'Resigned' | translate }}</div>
+                      </div>
+                      <div class="p-grid no-margin">
+                        <div class="segment-score">{{ allSchoolProgress?.resigned?.total }}</div>
+                      </div>
+                      <!-- <div class="p-grid no-margin segment-percent">
+                        <mat-icon class="mat-icon-default" style="font-size: 13px; margin-right: 3px">trending_up </mat-icon>
+                        <div>{{ floatDecimal(listAllProgress?.low?.percentage) }}%</div>
+                      </div> -->
+                    </div>
+                  </div>
+                </mat-card>
+              </div>
+              <div class="card-container">
+                <mat-card class="card-segment" style="padding: 7px 15px; background: #b7b7b7">
+                  <div class="p-grid no-margin">
+                    <!-- <div class="p-col-fixed no-padding icon-grid">
+                  <div class="segment-icon">
+                    <mat-icon class="lost-status" style="font-size: 35px; width: 35px; height: 35px" aria-hidden="true">lens </mat-icon>
+                  </div>
+                </div> -->
+                    <div class="p-col no-padding">
+                      <div class="p-grid no-margin segment-title">
+                        <div>{{ 'Resign after registered' | translate }}</div>
+                      </div>
+                      <div class="p-grid no-margin">
+                        <div class="segment-score">{{ allSchoolProgress?.resigned_after_registered?.total }}</div>
+                      </div>
+                      <!-- <div class="p-grid no-margin segment-percent">
+                        <mat-icon class="mat-icon-default" style="font-size: 13px; margin-right: 3px">trending_up </mat-icon>
+                        <div>{{ floatDecimal(listAllProgress?.lost?.percentage) }}%</div>
+                      </div> -->
+                    </div>
+                  </div>
+                </mat-card>
+              </div>
+            </div>
+          </mat-expansion-panel-header>
+          <div>
+            <ms-dashboard-general
+              [dataMemberSelected]="dataMemberSelected"
+              [schoolData]="schoolData"
+              [dataMapping]="dataMapping"
+              [shortName]="short_name"
+              (reset)="getDataScholarSeasons()"
+              (waitingForResponse)="childLoading($event)"
+              (dataLevelEngagementLoading)="dataLevelLoading($event)"
+              (loadingNationalityChart)="dataNationalityLoading($event)"
+              (loadingObjectiveChart)="dataObjectiveLoading($event)"
+              (loadingWeeklyChart)="dataWeeklyLoading($event)"
+            ></ms-dashboard-general>
+          </div>
+        </mat-expansion-panel>
+      </mat-accordion>
+    </div>
+    <div class="p-col-12 no-padding" style="margin-left: 15px" *ngFor="let chart of allDataEngagement; let nex = index">
+      <mat-accordion class="example-headers-align" multi>
+        <mat-expansion-panel (click)="openExpansion(nex)" [expanded]="openSubExpansion && indexExpansion === nex" hideToggle="true">
+          <mat-expansion-panel-header style="height: auto !important">
+            <div>
+              <div class="card-container">
+                <mat-card 
+                  class="card-segment" 
+                  style="padding: 7px 15px; background: #ffffff"
+                  >
+                  <div 
+                    class="p-grid no-margin"
+                    matTooltip="{{ chart?.school }}"
+                    >
+                    <div class="p-col-fixed no-padding icon-grid first-card wrap-title-card-container">
+                      <label>{{ chart?.school }}</label>
+                    </div>
+                  </div>
+                </mat-card>
+              </div>
+              <div class="card-container">
+                <mat-card class="card-segment" style="padding: 7px 15px; background: #ffffff; color: #7d7d7d">
+                  <div class="p-grid no-margin">
+                    <div class="p-col-fixed no-padding icon-grid">
+                      <div
+                        [ngClass]="{
+                          'chart-pie-css-1': chart?.percentage <= 1 && chart?.percentage > 0,
+                          'chart-pie-css-3': chart?.percentage <= 3 && chart?.percentage > 1,
+                          'chart-pie-css-5': chart?.percentage <= 5 && chart?.percentage > 3,
+                          'chart-pie-css-36': chart?.percentage <= 10 && chart?.percentage > 5,
+                          'chart-pie-css-60': chart?.percentage <= 15 && chart?.percentage > 10,
+                          'chart-pie-css-120': chart?.percentage <= 33 && chart?.percentage > 15,
+                          'chart-pie-css-180': chart?.percentage <= 50 && chart?.percentage > 33,
+                          'chart-pie-css-240': chart?.percentage <= 66 && chart?.percentage > 50,
+                          'chart-pie-css-300': chart?.percentage <= 80 && chart?.percentage > 66,
+                          'chart-pie-css-350': chart?.percentage <= 99 && chart?.percentage > 80,
+                          'chart-pie-css-360': chart?.percentage >= 100,
+                          'chart-pie-css-0': chart?.percentage === 0
+                        }"
+                        class="segment-icon"
+                      ></div>
+                    </div>
+                    <div class="p-col no-padding">
+                      <div class="p-grid no-margin segment-title">
+                        <div>{{ 'Registered' | translate }}</div>
+                      </div>
+                      <div class="p-grid no-margin">
+                        <div class="segment-score">{{ chart?.total_registered }}</div>
+                      </div>
+                      <!-- <div class="p-grid no-margin segment-percent">
+                        <mat-icon class="mat-icon-default" style="font-size: 13px; margin-right: 3px">trending_up </mat-icon>
+                        <div>{{ floatDecimal(chart?.percentage_total) }}%</div>
+                      </div> -->
+                    </div>
+                  </div>
+                </mat-card>
+              </div>
+              <div class="card-container">
+                <mat-card class="card-segment" style="padding: 7px 15px; background: #16d46d">
+                  <div class="p-grid no-margin">
+                    <!-- <div class="p-col-fixed no-padding icon-grid">
+                      <div class="segment-icon">
+                        <mat-icon class="hight-status" style="font-size: 35px; width: 35px; height: 35px" aria-hidden="true"
+                          >lens
+                        </mat-icon>
+                      </div>
+                    </div> -->
+                    <div class="p-col no-padding">
+                      <div class="p-grid no-margin segment-title">
+                        <div>{{ 'Engaged' | translate }}</div>
+                      </div>
+                      <div class="p-grid no-margin">
+                        <div class="segment-score">{{ chart?.total_engaged }}</div>
+                      </div>
+                      <!-- <div class="p-grid no-margin segment-percent">
+                        <mat-icon class="mat-icon-default" style="font-size: 13px; margin-right: 3px">trending_up </mat-icon>
+                        <div>{{ floatDecimal(card?.percentage) }}%</div>
+                      </div> -->
+                    </div>
+                  </div>
+                </mat-card>
+              </div>
+              <div class="card-container">
+                <mat-card class="card-segment" style="padding: 7px 15px; background: #f7b149">
+                  <div class="p-grid no-margin">
+                    <!-- <div class="p-col-fixed no-padding icon-grid">
+                      <div class="segment-icon">
+                        <mat-icon class="modert-status" style="font-size: 35px; width: 35px; height: 35px" aria-hidden="true"
+                          >lens
+                        </mat-icon>
+                      </div>
+                    </div> -->
+                    <div class="p-col no-padding">
+                      <div class="p-grid no-margin segment-title">
+                        <div>{{ 'Admitted' | translate }}</div>
+                      </div>
+                      <div class="p-grid no-margin">
+                        <div class="segment-score">{{ chart?.total_admitted }}</div>
+                      </div>
+                      <!-- <div class="p-grid no-margin segment-percent">
+                        <mat-icon class="mat-icon-default" style="font-size: 13px; margin-right: 3px">trending_up </mat-icon>
+                        <div>{{ floatDecimal(card?.percentage) }}%</div>
+                      </div> -->
+                    </div>
+                  </div>
+                </mat-card>
+              </div>
+              <div class="card-container">
+                <mat-card class="card-segment" style="padding: 7px 15px; background: #e64f4f">
+                  <div class="p-grid no-margin">
+                    <!-- <div class="p-col-fixed no-padding icon-grid">
+                      <div class="segment-icon">
+                        <mat-icon class="low-status" style="font-size: 35px; width: 35px; height: 35px" aria-hidden="true">lens </mat-icon>
+                      </div>
+                    </div> -->
+                    <div class="p-col no-padding">
+                      <div class="p-grid no-margin segment-title">
+                        <div>{{ 'Resigned' | translate }}</div>
+                      </div>
+                      <div class="p-grid no-margin">
+                        <div class="segment-score">{{ chart?.total_resigned }}</div>
+                      </div>
+                      <!-- <div class="p-grid no-margin segment-percent">
+                        <mat-icon class="mat-icon-default" style="font-size: 13px; margin-right: 3px">trending_up </mat-icon>
+                        <div>{{ floatDecimal(card?.percentage) }}%</div>
+                      </div> -->
+                    </div>
+                  </div>
+                </mat-card>
+              </div>
+              <div class="card-container">
+                <mat-card class="card-segment" style="padding: 7px 15px; background: #b7b7b7">
+                  <div class="p-grid no-margin">
+                    <!-- <div class="p-col-fixed no-padding icon-grid">
+                      <div class="segment-icon">
+                        <mat-icon class="lost-status" style="font-size: 35px; width: 35px; height: 35px" aria-hidden="true">lens </mat-icon>
+                      </div>
+                    </div> -->
+                    <div class="p-col no-padding">
+                      <div class="p-grid no-margin segment-title">
+                        <div>{{ 'Resign after registered' | translate }}</div>
+                      </div>
+                      <div class="p-grid no-margin">
+                        <div class="segment-score">{{ chart?.total_resigned_after_registered }}</div>
+                      </div>
+                      <!-- <div class="p-grid no-margin segment-percent">
+                        <mat-icon class="mat-icon-default" style="font-size: 13px; margin-right: 3px">trending_up </mat-icon>
+                        <div>{{ floatDecimal(card?.percentage) }}%</div>
+                      </div> -->
+                    </div>
+                  </div>
+                </mat-card>
+              </div>
+            </div>
+          </mat-expansion-panel-header>
+          <!-- <mat-divider></mat-divider> -->
+          <!-- <div *ngIf="schoolData && schoolData.length === 1">
+            <ms-dashboard-general
+              [dataMemberSelected]="dataMemberSelected"
+              [schoolData]="schoolData"
+              [dataMapping]="dataMapping"
+              [shortName]="short_name"
+              (reset)="getDataScholarSeasons()"
+              (waitingForResponse)="childLoading($event)"
+              (dataLevelEngagementLoading)="dataLevelLoading($event)"
+              (loadingNationalityChart)="dataNationalityLoading($event)"
+              (loadingObjectiveChart)="dataObjectiveLoading($event)"
+              (loadingWeeklyChart)="dataWeeklyLoading($event)"
+            ></ms-dashboard-general>
+          </div> -->
+          <div *ngIf="nex === indexExpansion">
+            <ms-dashboard-detail
+              [index]="nex"
+              [indexExpansion]="indexExpansion"
+              [schoolData]="allSchoolData[nex]"
+              [short_name]="short_name"
+            ></ms-dashboard-detail>
+          </div>
+        </mat-expansion-panel>
+      </mat-accordion>
+    </div>
+
+    <!-- Start Dummy School -->
+
+    <!-- <div class="p-col-12 no-padding" style="margin-left: 15px" *ngIf="isOperator">
+      <div>
+        <div class="card-container">
+          <mat-card class="card-segment" style="padding: 7px 15px; background: #ffffff">
+            <div class="p-grid no-margin">
+              <div class="p-col-fixed no-padding icon-grid first-card">
+                <label>EFJ</label>
+              </div>
+            </div>
+          </mat-card>
+        </div>
+        <div class="card-container">
+          <mat-card class="card-segment" style="padding: 7px 15px; background: #ffffff; color: #7d7d7d">
+            <div class="p-grid no-margin">
+              <div class="p-col-fixed no-padding icon-grid">
+                <div class="segment-icon chart-pie-css-120"></div>
+              </div>
+              <div class="p-col no-padding">
+                <div class="p-grid no-margin segment-title">
+                  <div>{{ 'Registered' | translate }}</div>
+                </div>
+                <div class="p-grid no-margin">
+                  <div class="segment-score">1422</div>
+                </div>
+                <div class="p-grid no-margin segment-percent">
+                  <mat-icon class="mat-icon-default" style="font-size: 13px; margin-right: 3px">trending_up </mat-icon>
+                  <div>55%</div>
+                </div>
+              </div>
+            </div>
+          </mat-card>
+        </div>
+      </div>
+      <div>
+        <div class="card-container">
+          <mat-card class="card-segment" style="padding: 7px 15px; background: #16d46d">
+            <div class="p-grid no-margin">
+              <div class="p-col no-padding">
+                <div class="p-grid no-margin segment-title">
+                  <div>{{ 'High' | translate }}</div>
+                </div>
+                <div class="p-grid no-margin">
+                  <div class="segment-score">396</div>
+                </div>
+                <div class="p-grid no-margin segment-percent">
+                  <mat-icon class="mat-icon-default" style="font-size: 13px; margin-right: 3px">trending_up </mat-icon>
+                  <div>23%</div>
+                </div>
+              </div>
+            </div>
+          </mat-card>
+        </div>
+        <div class="card-container">
+          <mat-card class="card-segment" style="padding: 7px 15px; background: #f7b149">
+            <div class="p-grid no-margin">
+              <div class="p-col no-padding">
+                <div class="p-grid no-margin segment-title">
+                  <div>{{ 'Medium' | translate }}</div>
+                </div>
+                <div class="p-grid no-margin">
+                  <div class="segment-score">162</div>
+                </div>
+                <div class="p-grid no-margin segment-percent">
+                  <mat-icon class="mat-icon-default" style="font-size: 13px; margin-right: 3px">trending_up </mat-icon>
+                  <div>3%</div>
+                </div>
+              </div>
+            </div>
+          </mat-card>
+        </div>
+        <div class="card-container">
+          <mat-card class="card-segment" style="padding: 7px 15px; background: #e64f4f">
+            <div class="p-grid no-margin">
+              <div class="p-col no-padding">
+                <div class="p-grid no-margin segment-title">
+                  <div>{{ 'Low' | translate }}</div>
+                </div>
+                <div class="p-grid no-margin">
+                  <div class="segment-score">107</div>
+                </div>
+                <div class="p-grid no-margin segment-percent">
+                  <mat-icon class="mat-icon-default" style="font-size: 13px; margin-right: 3px">trending_up </mat-icon>
+                  <div>4%</div>
+                </div>
+              </div>
+            </div>
+          </mat-card>
+        </div>
+        <div class="card-container">
+          <mat-card class="card-segment" style="padding: 7px 15px; background: #b7b7b7">
+            <div class="p-grid no-margin">
+              <div class="p-col no-padding">
+                <div class="p-grid no-margin segment-title">
+                  <div>{{ 'Lost' | translate }}</div>
+                </div>
+                <div class="p-grid no-margin">
+                  <div class="segment-score">21</div>
+                </div>
+                <div class="p-grid no-margin segment-percent">
+                  <mat-icon class="mat-icon-default" style="font-size: 13px; margin-right: 3px">trending_up </mat-icon>
+                  <div>0.6%</div>
+                </div>
+              </div>
+            </div>
+          </mat-card>
+        </div>
+      </div>
+    </div> -->
+
+    <!-- <div class="p-col-12 no-padding" style="margin-left: 15px" *ngIf="isOperator">
+      <div>
+        <div class="card-container">
+          <mat-card class="card-segment" style="padding: 7px 15px; background: #ffffff">
+            <div class="p-grid no-margin">
+              <div class="p-col-fixed no-padding icon-grid first-card">
+                <label>BRASSART</label>
+              </div>
+            </div>
+          </mat-card>
+        </div>
+        <div class="card-container">
+          <mat-card class="card-segment" style="padding: 7px 15px; background: #ffffff; color: #7d7d7d">
+            <div class="p-grid no-margin">
+              <div class="p-col-fixed no-padding icon-grid">
+                <div class="segment-icon chart-pie-css-180"></div>
+              </div>
+              <div class="p-col no-padding">
+                <div class="p-grid no-margin segment-title">
+                  <div>{{ 'Registered' | translate }}</div>
+                </div>
+                <div class="p-grid no-margin">
+                  <div class="segment-score">751</div>
+                </div>
+                <div class="p-grid no-margin segment-percent">
+                  <mat-icon class="mat-icon-default" style="font-size: 13px; margin-right: 3px">trending_up </mat-icon>
+                  <div>36%</div>
+                </div>
+              </div>
+            </div>
+          </mat-card>
+        </div>
+      </div>
+      <div>
+        <div class="card-container">
+          <mat-card class="card-segment" style="padding: 7px 15px; background: #16d46d">
+            <div class="p-grid no-margin">
+              <div class="p-col no-padding">
+                <div class="p-grid no-margin segment-title">
+                  <div>{{ 'High' | translate }}</div>
+                </div>
+                <div class="p-grid no-margin">
+                  <div class="segment-score">508</div>
+                </div>
+                <div class="p-grid no-margin segment-percent">
+                  <mat-icon class="mat-icon-default" style="font-size: 13px; margin-right: 3px">trending_up </mat-icon>
+                  <div>21%</div>
+                </div>
+              </div>
+            </div>
+          </mat-card>
+        </div>
+        <div class="card-container">
+          <mat-card class="card-segment" style="padding: 7px 15px; background: #f7b149">
+            <div class="p-grid no-margin">
+              <div class="p-col no-padding">
+                <div class="p-grid no-margin segment-title">
+                  <div>{{ 'Medium' | translate }}</div>
+                </div>
+                <div class="p-grid no-margin">
+                  <div class="segment-score">412</div>
+                </div>
+                <div class="p-grid no-margin segment-percent">
+                  <mat-icon class="mat-icon-default" style="font-size: 13px; margin-right: 3px">trending_up </mat-icon>
+                  <div>7%</div>
+                </div>
+              </div>
+            </div>
+          </mat-card>
+        </div>
+        <div class="card-container">
+          <mat-card class="card-segment" style="padding: 7px 15px; background: #e64f4f">
+            <div class="p-grid no-margin">
+              <div class="p-col no-padding">
+                <div class="p-grid no-margin segment-title">
+                  <div>{{ 'Low' | translate }}</div>
+                </div>
+                <div class="p-grid no-margin">
+                  <div class="segment-score">181</div>
+                </div>
+                <div class="p-grid no-margin segment-percent">
+                  <mat-icon class="mat-icon-default" style="font-size: 13px; margin-right: 3px">trending_up </mat-icon>
+                  <div>1.9%</div>
+                </div>
+              </div>
+            </div>
+          </mat-card>
+        </div>
+        <div class="card-container">
+          <mat-card class="card-segment" style="padding: 7px 15px; background: #b7b7b7">
+            <div class="p-grid no-margin">
+              <div class="p-col no-padding">
+                <div class="p-grid no-margin segment-title">
+                  <div>{{ 'Lost' | translate }}</div>
+                </div>
+                <div class="p-grid no-margin">
+                  <div class="segment-score">51</div>
+                </div>
+                <div class="p-grid no-margin segment-percent">
+                  <mat-icon class="mat-icon-default" style="font-size: 13px; margin-right: 3px">trending_up </mat-icon>
+                  <div>0.3%</div>
+                </div>
+              </div>
+            </div>
+          </mat-card>
+        </div>
+      </div>
+    </div> -->
+
+    <!-- <div class="p-col-12 no-padding" style="margin-left: 15px" *ngIf="isOperator">
+      <div>
+        <div class="card-container">
+          <mat-card class="card-segment" style="padding: 7px 15px; background: #ffffff">
+            <div class="p-grid no-margin">
+              <div class="p-col-fixed no-padding icon-grid first-card">
+                <label>CESINE</label>
+              </div>
+            </div>
+          </mat-card>
+        </div>
+        <div class="card-container">
+          <mat-card class="card-segment" style="padding: 7px 15px; background: #ffffff; color: #7d7d7d">
+            <div class="p-grid no-margin">
+              <div class="p-col-fixed no-padding icon-grid">
+                <div class="segment-icon chart-pie-css-240"></div>
+              </div>
+              <div class="p-col no-padding">
+                <div class="p-grid no-margin segment-title">
+                  <div>{{ 'Registered' | translate }}</div>
+                </div>
+                <div class="p-grid no-margin">
+                  <div class="segment-score">2411</div>
+                </div>
+                <div class="p-grid no-margin segment-percent">
+                  <mat-icon class="mat-icon-default" style="font-size: 13px; margin-right: 3px">trending_up </mat-icon>
+                  <div>23%</div>
+                </div>
+              </div>
+            </div>
+          </mat-card>
+        </div>
+      </div>
+      <div>
+        <div class="card-container">
+          <mat-card class="card-segment" style="padding: 7px 15px; background: #16d46d">
+            <div class="p-grid no-margin">
+              <div class="p-col no-padding">
+                <div class="p-grid no-margin segment-title">
+                  <div>{{ 'High' | translate }}</div>
+                </div>
+                <div class="p-grid no-margin">
+                  <div class="segment-score">274</div>
+                </div>
+                <div class="p-grid no-margin segment-percent">
+                  <mat-icon class="mat-icon-default" style="font-size: 13px; margin-right: 3px">trending_up </mat-icon>
+                  <div>45%</div>
+                </div>
+              </div>
+            </div>
+          </mat-card>
+        </div>
+        <div class="card-container">
+          <mat-card class="card-segment" style="padding: 7px 15px; background: #f7b149">
+            <div class="p-grid no-margin">
+              <div class="p-col no-padding">
+                <div class="p-grid no-margin segment-title">
+                  <div>{{ 'Medium' | translate }}</div>
+                </div>
+                <div class="p-grid no-margin">
+                  <div class="segment-score">307</div>
+                </div>
+                <div class="p-grid no-margin segment-percent">
+                  <mat-icon class="mat-icon-default" style="font-size: 13px; margin-right: 3px">trending_up </mat-icon>
+                  <div>51%</div>
+                </div>
+              </div>
+            </div>
+          </mat-card>
+        </div>
+        <div class="card-container">
+          <mat-card class="card-segment" style="padding: 7px 15px; background: #e64f4f">
+            <div class="p-grid no-margin">
+              <div class="p-col no-padding">
+                <div class="p-grid no-margin segment-title">
+                  <div>{{ 'Low' | translate }}</div>
+                </div>
+                <div class="p-grid no-margin">
+                  <div class="segment-score">452</div>
+                </div>
+                <div class="p-grid no-margin segment-percent">
+                  <mat-icon class="mat-icon-default" style="font-size: 13px; margin-right: 3px">trending_up </mat-icon>
+                  <div>37%</div>
+                </div>
+              </div>
+            </div>
+          </mat-card>
+        </div>
+        <div class="card-container">
+          <mat-card class="card-segment" style="padding: 7px 15px; background: #b7b7b7">
+            <div class="p-grid no-margin">
+              <div class="p-col no-padding">
+                <div class="p-grid no-margin segment-title">
+                  <div>{{ 'Lost' | translate }}</div>
+                </div>
+                <div class="p-grid no-margin">
+                  <div class="segment-score">211</div>
+                </div>
+                <div class="p-grid no-margin segment-percent">
+                  <mat-icon class="mat-icon-default" style="font-size: 13px; margin-right: 3px">trending_up </mat-icon>
+                  <div>31%</div>
+                </div>
+              </div>
+            </div>
+          </mat-card>
+        </div>
+      </div>
+    </div> -->
+
+    <!-- <div class="p-col-12 no-padding" style="margin-left: 15px" *ngIf="isOperator">
+      <div>
+        <div class="card-container">
+          <mat-card class="card-segment" style="padding: 7px 15px; background: #ffffff">
+            <div class="p-grid no-margin">
+              <div class="p-col-fixed no-padding icon-grid first-card">
+                <label>MOPA</label>
+              </div>
+            </div>
+          </mat-card>
+        </div>
+        <div class="card-container">
+          <mat-card class="card-segment" style="padding: 7px 15px; background: #ffffff; color: #7d7d7d">
+            <div class="p-grid no-margin">
+              <div class="p-col-fixed no-padding icon-grid">
+                <div class="segment-icon chart-pie-css-300"></div>
+              </div>
+              <div class="p-col no-padding">
+                <div class="p-grid no-margin segment-title">
+                  <div>{{ 'Registered' | translate }}</div>
+                </div>
+                <div class="p-grid no-margin">
+                  <div class="segment-score">1189</div>
+                </div>
+                <div class="p-grid no-margin segment-percent">
+                  <mat-icon class="mat-icon-default" style="font-size: 13px; margin-right: 3px">trending_up </mat-icon>
+                  <div>75%</div>
+                </div>
+              </div>
+            </div>
+          </mat-card>
+        </div>
+      </div>
+      <div>
+        <div class="card-container">
+          <mat-card class="card-segment" style="padding: 7px 15px; background: #16d46d">
+            <div class="p-grid no-margin">
+              <div class="p-col no-padding">
+                <div class="p-grid no-margin segment-title">
+                  <div>{{ 'High' | translate }}</div>
+                </div>
+                <div class="p-grid no-margin">
+                  <div class="segment-score">530</div>
+                </div>
+                <div class="p-grid no-margin segment-percent">
+                  <mat-icon class="mat-icon-default" style="font-size: 13px; margin-right: 3px">trending_up </mat-icon>
+                  <div>29%</div>
+                </div>
+              </div>
+            </div>
+          </mat-card>
+        </div>
+        <div class="card-container">
+          <mat-card class="card-segment" style="padding: 7px 15px; background: #f7b149">
+            <div class="p-grid no-margin">
+              <div class="p-col no-padding">
+                <div class="p-grid no-margin segment-title">
+                  <div>{{ 'Medium' | translate }}</div>
+                </div>
+                <div class="p-grid no-margin">
+                  <div class="segment-score">814</div>
+                </div>
+                <div class="p-grid no-margin segment-percent">
+                  <mat-icon class="mat-icon-default" style="font-size: 13px; margin-right: 3px">trending_up </mat-icon>
+                  <div>35%</div>
+                </div>
+              </div>
+            </div>
+          </mat-card>
+        </div>
+        <div class="card-container">
+          <mat-card class="card-segment" style="padding: 7px 15px; background: #e64f4f">
+            <div class="p-grid no-margin">
+              <div class="p-col no-padding">
+                <div class="p-grid no-margin segment-title">
+                  <div>{{ 'Low' | translate }}</div>
+                </div>
+                <div class="p-grid no-margin">
+                  <div class="segment-score">631</div>
+                </div>
+                <div class="p-grid no-margin segment-percent">
+                  <mat-icon class="mat-icon-default" style="font-size: 13px; margin-right: 3px">trending_up </mat-icon>
+                  <div>24%</div>
+                </div>
+              </div>
+            </div>
+          </mat-card>
+        </div>
+        <div class="card-container">
+          <mat-card class="card-segment" style="padding: 7px 15px; background: #b7b7b7">
+            <div class="p-grid no-margin">
+              <div class="p-col no-padding">
+                <div class="p-grid no-margin segment-title">
+                  <div>{{ 'Lost' | translate }}</div>
+                </div>
+                <div class="p-grid no-margin">
+                  <div class="segment-score">161</div>
+                </div>
+                <div class="p-grid no-margin segment-percent">
+                  <mat-icon class="mat-icon-default" style="font-size: 13px; margin-right: 3px">trending_up </mat-icon>
+                  <div>14%</div>
+                </div>
+              </div>
+            </div>
+          </mat-card>
+        </div>
+      </div>
+    </div> -->
+
+    <!-- <div class="p-col-12 no-padding" style="margin-left: 15px" *ngIf="isOperator">
+      <div>
+        <div class="card-container">
+          <mat-card class="card-segment" style="padding: 7px 15px; background: #ffffff">
+            <div class="p-grid no-margin">
+              <div class="p-col-fixed no-padding icon-grid first-card">
+                <label>CREAD</label>
+              </div>
+            </div>
+          </mat-card>
+        </div>
+        <div class="card-container">
+          <mat-card class="card-segment" style="padding: 7px 15px; background: #ffffff; color: #7d7d7d">
+            <div class="p-grid no-margin">
+              <div class="p-col-fixed no-padding icon-grid">
+                <div class="segment-icon chart-pie-css-350"></div>
+              </div>
+              <div class="p-col no-padding">
+                <div class="p-grid no-margin segment-title">
+                  <div>{{ 'Registered' | translate }}</div>
+                </div>
+                <div class="p-grid no-margin">
+                  <div class="segment-score">2010</div>
+                </div>
+                <div class="p-grid no-margin segment-percent">
+                  <mat-icon class="mat-icon-default" style="font-size: 13px; margin-right: 3px">trending_up </mat-icon>
+                  <div>74%</div>
+                </div>
+              </div>
+            </div>
+          </mat-card>
+        </div>
+      </div>
+      <div>
+        <div class="card-container">
+          <mat-card class="card-segment" style="padding: 7px 15px; background: #16d46d">
+            <div class="p-grid no-margin">
+              <div class="p-col no-padding">
+                <div class="p-grid no-margin segment-title">
+                  <div>{{ 'High' | translate }}</div>
+                </div>
+                <div class="p-grid no-margin">
+                  <div class="segment-score">411</div>
+                </div>
+                <div class="p-grid no-margin segment-percent">
+                  <mat-icon class="mat-icon-default" style="font-size: 13px; margin-right: 3px">trending_up </mat-icon>
+                  <div>47%</div>
+                </div>
+              </div>
+            </div>
+          </mat-card>
+        </div>
+        <div class="card-container">
+          <mat-card class="card-segment" style="padding: 7px 15px; background: #f7b149">
+            <div class="p-grid no-margin">
+              <div class="p-col no-padding">
+                <div class="p-grid no-margin segment-title">
+                  <div>{{ 'Medium' | translate }}</div>
+                </div>
+                <div class="p-grid no-margin">
+                  <div class="segment-score">314</div>
+                </div>
+                <div class="p-grid no-margin segment-percent">
+                  <mat-icon class="mat-icon-default" style="font-size: 13px; margin-right: 3px">trending_up </mat-icon>
+                  <div>24%</div>
+                </div>
+              </div>
+            </div>
+          </mat-card>
+        </div>
+        <div class="card-container">
+          <mat-card class="card-segment" style="padding: 7px 15px; background: #e64f4f">
+            <div class="p-grid no-margin">
+              <div class="p-col no-padding">
+                <div class="p-grid no-margin segment-title">
+                  <div>{{ 'Low' | translate }}</div>
+                </div>
+                <div class="p-grid no-margin">
+                  <div class="segment-score">451</div>
+                </div>
+                <div class="p-grid no-margin segment-percent">
+                  <mat-icon class="mat-icon-default" style="font-size: 13px; margin-right: 3px">trending_up </mat-icon>
+                  <div>23%</div>
+                </div>
+              </div>
+            </div>
+          </mat-card>
+        </div>
+        <div class="card-container">
+          <mat-card class="card-segment" style="padding: 7px 15px; background: #b7b7b7">
+            <div class="p-grid no-margin">
+              <div class="p-col no-padding">
+                <div class="p-grid no-margin segment-title">
+                  <div>{{ 'Lost' | translate }}</div>
+                </div>
+                <div class="p-grid no-margin">
+                  <div class="segment-score">244</div>
+                </div>
+                <div class="p-grid no-margin segment-percent">
+                  <mat-icon class="mat-icon-default" style="font-size: 13px; margin-right: 3px">trending_up </mat-icon>
+                  <div>26%</div>
+                </div>
+              </div>
+            </div>
+          </mat-card>
+        </div>
+      </div>
+    </div> -->
+
+    <!-- End of Dummy School -->
+  </div>
+</div>
+
+<div
+  *ngIf="
+    isWaitingForResponse ||
+    isGeneralDataLoading ||
+    isGetDataLevelEngagementLoading ||
+    isLoadingNationalityChart ||
+    isLoadingObjectiveChart ||
+    isLoadingWeeklyChart
+  "
+  class="loading-indicator"
+>
+  <mat-progress-spinner mode="indeterminate" color="accent"></mat-progress-spinner>
+</div>
+
+<div class="p-grid poweredBy"><label>ZettaChart powered by </label> <img [src]="amcharts" class="amcharts" alt="amcharts" /></div>

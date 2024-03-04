@@ -1,0 +1,99 @@
+<div class="header-div" cdkDrag cdkDragRootElement=".cdk-overlay-pane" cdkDragHandle>
+  <mat-icon class="dialog-header-icon icon-size" style="margin-bottom: 5px">pending_actions</mat-icon>
+  <h2 class="header-text" *ngIf="!checkIsResendMail() && this.data.isReadmission === false">
+    {{ 'CANDIDAT_S1.TITLE' | translate }}
+  </h2>
+  <h2 class="header-text" *ngIf="checkIsResendMail() && !this.data.isReadmission">
+    {{ 'CANDIDAT_S9.TITLE' | translate }}
+  </h2>
+  <h2 class="header-text" *ngIf="checkIsResendMail() && this.data.isReadmission">
+    {{ 'Re Send the Announcement of Re-Admission' | translate }}
+  </h2>
+  <h2 class="header-text" *ngIf="this.data.isReadmission === true && !checkIsResendMail()">
+    {{ 'Send readmission email' | translate }}
+  </h2>
+  <button mat-icon-button type="button" (click)="closeDialog()" class="header-icon">
+    <mat-icon>close</mat-icon>
+  </button>
+</div>
+<mat-dialog-content [formGroup]="templateForm">
+  <div class="p-grid">
+    <div class="p-col-12" formGroupName="registration_email_due_date">
+      <mat-form-field>
+        <input
+          matInput
+          (click)="dueDatePick.open()"
+          readonly
+          class="form-field"
+          placeholder="{{ 'AdmissionFollowUp.Due date' | translate }}"
+          [matDatepicker]="dueDatePick"
+          formControlName="due_date"
+          [min]="today"
+        />
+        <mat-datepicker-toggle matSuffix [for]="dueDatePick"></mat-datepicker-toggle>
+        <mat-datepicker #dueDatePick></mat-datepicker>
+        <mat-error class="invalid-field" *ngIf="templateForm?.get('registration_email_due_date')?.get('due_date')?.invalid && (templateForm?.get('registration_email_due_date')?.get('due_date')?.dirty || templateForm?.get('registration_email_due_date')?.get('due_date')?.touched)">
+          {{ 'This field is required' | translate }}
+        </mat-error>
+      </mat-form-field>
+    </div>
+  </div>
+  <ng-container *ngIf="validatorArr?.controls?.length && checkIsNeedValidator()">
+    <div class="assign-border" formArrayName="input">
+      <h4 class="section-title">{{ 'Some of the students selected have a step that will to be validated' | translate }} :</h4>
+      <div class="p-grid" *ngFor="let form of validatorArr?.controls; let formArrIndex = index" [formGroupName]="formArrIndex">
+        <ng-container formGroupName="student_admission_process_step_input">
+          <div class="p-col-7 section-field-title" *ngIf="form?.value?.student_admission_process_step_input?.validator">
+            {{ 'USER_TYPES.' + getNameOfUserType(form, 'validator') | translate }} ({{
+              form?.value?.student_admission_process_step_input?.step_title
+            }}
+            - {{ form?.value?.last_name | uppercase }} {{ form?.value?.first_name }}
+            {{ form?.value?.civility && form?.value?.civility === 'neutral' ? '' : (form?.value?.civility | translate) }})*
+          </div>
+          <ng-container *ngIf="form?.value?.student_admission_process_step_input?.validator">
+            <div class="p-col-5 no-padding custom-input">
+              <ng-select
+                aria-required="true"
+                class="mrgn-btn custom-ngselect-content"
+                clearAllText="Clear"
+                [appendTo]="'body'"
+                formControlName="user_validator"
+                *ngIf="form?.value?.student_admission_process_step_input?.validator"
+                placeholder="{{ 'search' | translate }}"
+                [ngClass]="{'invalid-validator':!form?.value?.student_admission_process_step_input?.user_validator && checkRequired(formArrIndex)}"
+              >
+                <ng-option *ngIf="validatorUserList[formArrIndex]?.length === 0 || !validatorUserList[formArrIndex]?.length" disabled>{{
+                  'NOT RECORD FOUND' | translate
+                }}</ng-option>
+                <ng-option *ngFor="let user of validatorUserList[formArrIndex]" [value]="user">
+                  {{ user?.last_name | uppercase }} {{ user?.first_name }}
+                  {{ user?.civility && user?.civility === 'neutral' ? '' : (user?.civility | translate) }}
+                </ng-option>
+              </ng-select>
+              <mat-error class="invalid-field" *ngIf="!form?.value?.student_admission_process_step_input?.user_validator && checkRequired(formArrIndex)">
+                {{ 'This field is required' | translate }}
+              </mat-error>
+            </div>
+          </ng-container>
+        </ng-container>
+      </div>
+    </div>
+  </ng-container>
+  <ng-container *ngIf="(!data?.isResendMail && data?.isFc) || data?.isReadmission">
+    <div class="p-grid">
+      <div class="p-col-12">
+        <mat-checkbox formControlName="is_include_flyer">{{ 'Include flyer' | translate }}</mat-checkbox>
+      </div>
+    </div>
+  </ng-container>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-raised-button type="button" color="warn" mat-dialog-close>{{ 'CANCEL' | translate }}</button>
+  <button mat-raised-button color="primary" (click)="onSubmit()" [disabled]="isWaitingForResponse || isWaitingForFormat">
+    {{ 'SUBMIT' | translate }}
+  </button>
+</mat-dialog-actions>
+
+<div *ngIf="isWaitingForResponse || isWaitingForFormat" class="loading-indicator">
+  <mat-progress-spinner mode="indeterminate" color="accent"></mat-progress-spinner>
+</div>

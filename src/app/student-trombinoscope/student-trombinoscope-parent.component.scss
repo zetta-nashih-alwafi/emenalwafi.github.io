@@ -1,0 +1,65 @@
+@import '~assets/scss/theme/admtc.variables';
+@import '~assets/scss/theme/admtc';
+
+.scholar-input .mat-form-field {
+  width: 25%;
+}
+.student-input .mat-form-field {
+  width: 50%;
+}
+::ng-deep.filterPanel {
+  margin-top: 25px;
+}
+.label {
+  width: auto;
+  font-size: 14px;
+}
+
+.paginator {
+  padding: 10px 16px 6px 0px;
+}
+
+.text-empty {
+  height: auto;
+  margin: 3% auto;
+  font-size: 20px;
+  display: block;
+  width: 100%;
+  position: relative;
+  text-align: center;
+  vertical-align: middle;
+  color: #e4e7ef;
+}
+
+.card-container {
+  flex-flow: row wrap;
+  box-sizing: border-box;
+  display: flex;
+  max-height: 74vh;
+  overflow: auto;
+}
+.card {
+  -webkit-box-flex: 1;
+  flex: 1 1 24.33%;
+  box-sizing: border-box;
+  max-width: 24.33%;
+}
+
+@media screen and (max-width: 1600px) {
+  .card {
+    flex: 1 1 33%;
+    box-sizing: border-box;
+    max-width: 33%;
+  }
+}
+@media screen and (max-width: 960px) {
+  .card {
+    flex: 1 1 50%;
+    box-sizing: border-box;
+    max-width: 50%;
+  }
+}
+
+:host::ng-deep .mat-select-panel {
+  max-width: fit-content !important;
+}

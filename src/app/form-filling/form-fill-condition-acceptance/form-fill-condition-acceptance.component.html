@@ -1,0 +1,144 @@
+<div class="revision-box-container" *ngIf="stepData?.revise_request_messages?.length && !processFinish">
+  <ms-form-filling-revision-box
+    [formDetail]="formDetail"
+    [stepId]="stepData?._id"
+    [messages]="stepData?.revise_request_messages"
+    (triggerRefresh)="this.triggerRefresh.emit(formId)"
+    [stepData]="stepData"
+    [dataForm]="formData"
+  ></ms-form-filling-revision-box>
+</div>
+
+<ng-container *ngIf="!checkCurrentUserAlreadySubmit() || !processFinish">
+  <div class="header" [innerHTML]="stepData?.direction | safeHtml"></div>
+  <h3>{{ stepData?.segments[0]?.segment_title }}</h3>
+  <hr />
+  <div class="ql-editor document-parent">
+    <ng-container>
+      <div *ngIf="documentOnPreviewUrl" class="img-preview container-view-lanscape">
+        <iframe [src]="documentOnPreviewUrl" frameBorder="0" [style.min-height.px]="getAutomaticHeight()"></iframe>
+      </div>
+    </ng-container>
+  </div>
+  <div *ngIf="!formDetail.isPreview" class="btn-conditions">
+    <button
+      color="accent"
+      mat-raised-button
+      class="btn-accept"
+      *ngIf="stepData.step_status === 'not_started' && stepData?.isCompletingUser"
+      matTooltip="{{ 'Download the document' | translate }}"
+      (click)="onDownload()"
+    >
+      <mat-icon>cloud_download</mat-icon>
+      {{ 'Download the document' | translate }}
+    </button>
+    <button
+      color="accent"
+      mat-raised-button
+      class="btn-accept"
+      matTooltip="{{ 'I Read and Accept the Condition' | translate }}"
+      [disabled]="!userHasDownloaded"
+      *ngIf="stepData.step_status === 'not_started' && stepData?.isCompletingUser"
+      (click)="onAccept()"
+    >
+      <mat-icon>check_box</mat-icon>
+      {{ 'I Read and Accept the Condition' | translate }}
+    </button>
+    <button
+      color="accent"
+      mat-raised-button
+      class="btn-accept"
+      matTooltip="{{ 'I Read and Accept the Condition' | translate }}"
+      *ngIf="!stepData?.isCompletingUser && isValidator && stepData.step_status === 'need_validation'"
+      (click)="onAccept()"
+    >
+      <mat-icon>check_box</mat-icon>
+      {{ 'I Read and Accept the Condition' | translate }}
+    </button>
+    <button
+      *ngIf="stepData?.isCompletingUser && isValidator && (stepData?.step_status === 'not_started' || stepData?.step_status === 'need_validation')"
+      color="accent"
+      mat-raised-button
+      class="btn-accept"
+      matTooltip="{{ 'Ask For Revision' | translate }} "
+      (click)="onAskForRevision()"
+    >
+      {{ 'Ask For Revision' | translate }}
+    </button>
+    <button
+      *ngIf="isValidator && stepData?.step_status === 'need_validation'"
+      color="accent"
+      mat-raised-button
+      class="btn-accept"
+      matTooltip="{{ 'Ask For Revision' | translate }} "
+      (click)="onAskForRevision()"
+    >
+      {{ 'Ask For Revision' | translate }}
+    </button>
+    <button
+      *ngIf="stepData?.step_status === 'ask_for_revision' && stepData?.isCompletingUser"
+      color="accent"
+      mat-raised-button
+      class="btn-accept"
+      (click)="onCompleteRevision()"
+      matTooltip="{{ 'Complete Revision' | translate }} "
+    >
+      {{ 'Complete Revision' | translate }}
+    </button>
+    <button
+      color="accent"
+      mat-raised-button
+      class="btn-accept"
+      matTooltip="{{ 'Save' | translate }}"
+      *ngIf="formDetail?.admission_status === 'ask_for_revision' && formDetail?.isFinalRevisionUser"
+      (click)="onSave()"
+    >
+      <mat-icon>save</mat-icon>
+      {{ 'Save' | translate }}
+    </button>
+  </div>
+
+  <div *ngIf="formDetail?.isPreview" class="btn-conditions">
+    <button color="accent" mat-raised-button class="btn-accept" matTooltip="{{ 'Download the document' | translate }}">
+      <mat-icon>cloud_download</mat-icon>
+      {{ 'Download the document' | translate }}
+    </button>
+    <button
+      color="accent"
+      mat-raised-button
+      class="btn-accept"
+      matTooltip="{{
+        formDetail?.admission_status === 'ask_for_revision' ? ('Save' | translate) : ('I Read and Accept the Condition' | translate)
+      }}"
+    >
+      <mat-icon>check_box</mat-icon>
+      {{ formDetail?.admission_status === 'ask_for_revision' ? ('Save' | translate) : ('I Read and Accept the Condition' | translate) }}
+    </button>
+  </div>
+</ng-container>
+
+<ng-container *ngIf="checkCurrentUserAlreadySubmit() && formDetail?.formType === 'alumni'">
+  <div style="margin-top: 20px !important; text-align: center">
+    <div class="row no-margin msg-pay" style="font-size: 25px; margin-top: 170px !important">
+      {{ 'Thank you for submitting the survey' | translate }}
+    </div>
+  </div>
+</ng-container>
+<ng-container *ngIf="processFinish && formDetail?.formType !== 'alumni'">
+  <div style="margin-top: 20px !important; text-align: center">
+    <div *ngIf="candidateData?.school?.school_logo">
+      <div class="row no-margin msg-pay">{{ 'Thank You For Submitting Your Admission' | translate }}</div>
+      <div class="row no-margin payment-img">
+        <img class="payment-success" style="height: 385px" [src]="serverimgPath + candidateData?.school?.school_logo" />
+      </div>
+    </div>
+    <div *ngIf="!candidateData?.school?.school_logo">
+      <div class="row no-margin msg-pay" style="font-size: 25px; margin-top: 170px !important">
+        {{ 'Thank You For Submitting Your Admission' | translate }}
+      </div>
+    </div>
+  </div>
+</ng-container>
+<div *ngIf="isWaitingForResponse" class="loading-indicator">
+  <mat-progress-spinner mode="indeterminate" color="accent"></mat-progress-spinner>
+</div>

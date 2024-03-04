@@ -1,0 +1,12 @@
+<div class="p-grid">
+  <div class="p-col-5">
+    <ms-manage-news-table
+      #manageNewsTable
+      (addNewNews)="onAddNews($event)"
+      (resetForm)="onResetForm($event)"
+    ></ms-manage-news-table>
+  </div>
+  <div class="p-col-7">
+    <ms-manage-news-form *ngIf="isNewNews"></ms-manage-news-form>
+  </div>
+</div>

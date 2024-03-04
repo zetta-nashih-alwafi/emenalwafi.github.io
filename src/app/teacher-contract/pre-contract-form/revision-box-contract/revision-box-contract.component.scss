@@ -1,0 +1,126 @@
+.chat-container {
+  overflow: auto;
+  transition: all ease-out 2s;
+  padding: 1rem 10px;
+}
+
+.expanded {
+  height: 100%;
+  max-height: 100vh;
+}
+
+.normal {
+  max-height: 20vh;
+}
+
+.bubble-chat {
+  border-radius: 10px;
+  border: 1px solid #d8d6d6;
+  min-height: 5rem;
+  display: flex;
+  flex-direction: column;
+  margin-top: 10px;
+  position: relative;
+  z-index: 3;
+}
+
+.chat-header {
+  border-bottom: 1px solid #d8d6d6;
+}
+
+.right-side {
+  margin-left: auto;
+  margin-right: 20px;
+
+  &::before {
+    content: '';
+    width: 0px;
+    height: 0px;
+    position: absolute;
+    border-left: 10px solid #d8d6d6;
+    border-right: 10px solid transparent;
+    border-top: 10px solid #d8d6d6;
+    border-bottom: 10px solid transparent;
+    right: -21px;
+    top: 6px;
+  }
+}
+
+.left-side {
+  margin-right: auto;
+  margin-left: 20px;
+
+  &::before {
+    content: '';
+    width: 0px;
+    height: 0px;
+    position: absolute;
+    border-left: 10px solid transparent;
+    border-right: 10px solid #d8d6d6;
+    border-top: 10px solid #d8d6d6;
+    border-bottom: 10px solid transparent;
+    left: -21px;
+    top: 6px;
+  }
+}
+
+// ===============
+p {
+  margin-bottom: 0;
+}
+
+.flex {
+  display: flex;
+}
+.ask-revise-wraper {
+  padding: 1rem;
+}
+
+// .revise-title {
+
+// }
+
+.replays-box {
+  max-height: 250px;
+  overflow-y: scroll;
+  margin-bottom: 1rem;
+}
+
+.revise-message-row {
+  margin-bottom: 1rem;
+  display: flex;
+}
+
+.wraper {
+}
+
+.message-replays {
+  flex-direction: row-reverse;
+}
+
+.revise-message-box {
+  background-color: rgba($color: #ffd740, $alpha: 0.1);
+  padding: 1rem;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+}
+
+.message-replays-bg {
+  background-color: rgba($color: #ffd740, $alpha: 0.3) !important;
+}
+
+.revise-message-info {
+  font-size: 0.8rem;
+  border-bottom: 0.1px solid rgba($color: #000000, $alpha: 0.1);
+  margin-bottom: 0.5rem;
+}
+
+.revise-message-info span {
+  margin-right: 5px;
+}
+
+.action {
+  display: flex;
+  flex-direction: row-reverse;
+}

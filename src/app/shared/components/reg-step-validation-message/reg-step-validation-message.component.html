@@ -1,0 +1,45 @@
+<div class="validation-step">
+  <button mat-icon-button class="close-icon" style="background: white" mat-dialog-close tabindex="-1" *ngIf="closeIcon">
+    <mat-icon>close</mat-icon>
+  </button>
+  <div class="title1">
+    <h5 class="text-inverse" innerHTML="{{ firstTitle }}"></h5>
+  </div>
+  <div class="media-container">
+    <div [ngClass]="{ hidden: disableImage }">
+      <img class="photo" [src]="imageUpload ? serverimgPath + imageUpload : ''" *ngIf="imageUpload" height="400" />
+      <div class="no-content" *ngIf="!imageUpload">
+        <p>{{ 'REG_STEP_VAL.Add an Image' | translate }}</p>
+      </div>
+    </div>
+    <div [ngClass]="{ hidden: disableVideo }">
+      <div class="no-content" *ngIf="!videoLink">
+        <p>{{ 'REG_STEP_VAL.Add a video' | translate }}</p>
+      </div>
+      <iframe
+        width="300"
+        height="290"
+        [src]="sanitizeVideoUrl(videoLink)"
+        frameborder="0"
+        allow="autoplay; encrypted-media"
+        allowfullscreen
+        *ngIf="videoLink"
+      >
+      </iframe>
+    </div>
+  </div>
+  <div class="title2">
+    <h5 class="text-inverse" innerHTML="{{ secondTitle }}"></h5>
+  </div>
+  <div class="actions">
+    <mat-dialog-actions align="center">
+      <button mat-raised-button type="button" class="grey" mat-dialog-close>
+        <mat-icon class="mat-icon-svgIcon" svgIcon="history">history</mat-icon>{{ 'REG_STEP_VAL.Return' | translate }}
+      </button>
+      <button mat-raised-button color="accent">
+        {{ 'REG_STEP_VAL.Move to step' | translate }} {{ validationStep }}
+        <mat-icon class="mat-icon-svgIcon" svgIcon="gesture-tap">gesture_tap</mat-icon>
+      </button>
+    </mat-dialog-actions>
+  </div>
+</div>

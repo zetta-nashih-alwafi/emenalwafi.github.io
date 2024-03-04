@@ -1,0 +1,715 @@
+<div id="main-app" class="app header-color-dark" [dir]="layout" [ngClass]="{
+    'app-dark': true,
+    'collapsed-sidebar': coreService.collapseSidebar,
+    'compact-sidebar': compactSidebar,
+    'customizer-in': customizerIn
+  }">
+  <mat-sidenav-container class="gene-container" [ngClass]="themeClass$ | async" autosize>
+    <mat-sidenav #sidenav [mode]="coreService.sidenavMode" [(opened)]="coreService.sidenavOpen">
+      <div class="max-width-wrapper">
+        <ms-favorable-menu-list></ms-favorable-menu-list>
+        <div class="p-grid">
+          <div class="p-col-12 text-center">
+            <ms-version></ms-version>
+          </div>
+        </div>
+      </div>
+    </mat-sidenav>
+    <mat-sidenav-content>
+      <mat-toolbar class="p-grid gene-header-toolbar" style="justify-content: space-between"
+        [ngClass]="{'tutorialOpen': coreService.sidenavTutorialOpen}" *ngIf="showSidebar">
+        <!-- p-col-6 -->
+        <div class="page-title no-padding tw-flex-grow p-col" id="pageTitle" >
+          <div class="gene-ham-icon" style="display: flex; align-items: center">
+            <button mat-mini-fab color="primary" mat-card-icon (click)="toggleSidebar()">
+              <mat-icon>menu</mat-icon>
+            </button>
+          </div>
+
+          <div [ngClass]="{'tw-flex-1' : isSearchContainerOpen}" class="quick-search-container">
+            <ms-quick-search-bar [isSearchContainerOpen]="isSearchContainerOpen"
+              (onSearchContainer)="onSearchContainer()"></ms-quick-search-bar>
+          </div>
+
+          <!-- you can find all of the icon list in menu-items.ts and the svg in side-bar-component.html -->
+          <div class="page-title" *ngIf="!isSearchContainerOpen">
+            <div [ngSwitch]="pageTitle" style="display: flex">
+              <mat-icon *ngSwitchCase="'All News'" class="header-icon">assignment</mat-icon>
+              <mat-icon *ngSwitchCase="'Manage News'" svgIcon="file-document-plus-outline" class="header-icon"></mat-icon>
+              <mat-icon *ngSwitchCase="'Candidates Follow up FC'" class="header-icon"
+                svgIcon="account-arrow-right"></mat-icon>
+              <mat-icon *ngSwitchCase="'Follow up Contract/Convention'" class="header-icon"
+                svgIcon="account-arrow-right"></mat-icon>
+              <mat-icon *ngSwitchCase="'Form Builder'" class="header-icon" svgIcon="pencil-ruler"></mat-icon>
+              <mat-icon *ngSwitchCase="'List of Form Template'" class="header-icon" svgIcon="pencil-ruler"></mat-icon>
+              <mat-icon *ngSwitchCase="'List of Document Template'" class="header-icon"
+                svgIcon="file-document-plus-outline"></mat-icon>
+              <mat-icon *ngSwitchCase="'List of users'" class="header-icon">person</mat-icon>
+              <mat-icon *ngSwitchCase="'Users'" svgIcon="account-circle-outline" class="header-icon"> </mat-icon>
+              <mat-icon *ngSwitchCase="'CRM'" svgIcon="account-settings" class="header-icon"> </mat-icon>
+              <mat-icon *ngSwitchCase="'NAV.FINANCE.Timeline template'" class="header-icon">event_busy</mat-icon>
+              <mat-icon *ngSwitchCase="'My File'" class="header-icon">local_library</mat-icon>
+              <mat-icon *ngSwitchCase="'Summary'" class="header-icon" svgIcon="card-account-mail-outline"></mat-icon>
+              <mat-icon *ngSwitchCase="'My Profile'" class="header-icon">person</mat-icon>
+              <mat-icon *ngSwitchCase="'My Diploma'" class="header-icon" svgIcon="certificate"></mat-icon>
+              <mat-icon *ngSwitchCase="'My Experience'" class="header-icon">work</mat-icon>
+              <mat-icon *ngSwitchCase="'My Skill'" class="header-icon" svgIcon="feather"></mat-icon>
+              <mat-icon *ngSwitchCase="'My Language'" class="header-icon">translate</mat-icon>
+              <mat-icon *ngSwitchCase="'My Interest'" class="header-icon">directions_bike</mat-icon>
+              <mat-icon *ngSwitchCase="'Platform >> Import of Registration Objectives'" class="header-icon"
+                svgIcon="file-excel"></mat-icon>
+              <mat-icon *ngSwitchCase="'Platform >> Import of Finance Objectives'" class="header-icon"
+                svgIcon="file-excel"></mat-icon>
+              <mat-icon *ngSwitchCase="'Platform >> Import of financial N - 1'" class="header-icon"
+                svgIcon="file-excel"></mat-icon>
+              <mat-icon *ngSwitchCase="'List of schools'" class="header-icon">account_balance</mat-icon>
+              <!-- <mat-icon *ngSwitchCase="'Import of Registration Objectives'" class="header-icon">account_balance</mat-icon> -->
+              <mat-icon *ngSwitchCase="'List of Group of School'" class="header-icon">account_balance</mat-icon>
+              <mat-icon *ngSwitchCase="'Dashboard'" class="header-icon">dashboard</mat-icon>
+              <mat-icon *ngSwitchCase="'ERP_072.Home Page'" class="header-icon">dashboard</mat-icon>
+              <mat-icon *ngSwitchCase="'Dashboard Cash In'" class="header-icon">dashboard</mat-icon>
+              <mat-icon *ngSwitchCase="'Dashboard Admission'" class="header-icon">dashboard</mat-icon>
+              <mat-icon *ngSwitchCase="'Registration Dashboard'" class="header-icon">dashboard</mat-icon>
+              <mat-icon *ngSwitchCase="'Dashboard Finance'" class="header-icon">dashboard</mat-icon>
+              <mat-icon *ngSwitchCase="'Dashboard Cash In Finance'" class="header-icon">dashboard</mat-icon>
+              <mat-icon *ngSwitchCase="'Dashboard Comparative'" class="header-icon">dashboard</mat-icon>
+              <mat-icon *ngSwitchCase="'Import Finance'" class="header-icon" svgIcon="file-excel"></mat-icon>
+              <mat-icon *ngSwitchCase="'List of tasks'" class="header-icon" svgIcon="clipboard-list-outline"></mat-icon>
+              <mat-icon *ngSwitchCase="'List of notifications'" class="header-icon"
+                svgIcon="folder-information"></mat-icon>
+              <mat-icon *ngSwitchCase="'List of Tests'" class="header-icon" svgIcon="counter"></mat-icon>
+              <mat-icon *ngSwitchCase="'List of questionnaire'" class="header-icon" svgIcon="comment-question"></mat-icon>
+              <mat-icon *ngSwitchCase="'List of jury organizations'" class="header-icon" svgIcon="gavel"></mat-icon>
+              <mat-icon *ngSwitchCase="'Schedule of Jury'" class="header-icon" svgIcon="calendar-account"></mat-icon>
+              <mat-icon *ngSwitchCase="'Horaire des Jurys'" class="header-icon" svgIcon="calendar-account"></mat-icon>
+              <mat-icon *ngSwitchCase="'List of 1001 ideas'" class="header-icon" svgIcon="lightbulb-on"></mat-icon>
+              <mat-icon *ngSwitchCase="'List of tutorials'" class="header-icon" svgIcon="human-male-board"></mat-icon>
+              <mat-icon *ngSwitchCase="'InApp Tutorials'" class="header-icon" svgIcon="human-male-board"></mat-icon>
+              <mat-icon *ngSwitchCase="'Trombinoscope'" class="header-icon">google_classroom</mat-icon>
+              <mat-icon *ngSwitchCase="'Follow Up'" class="header-icon">group</mat-icon>
+              <mat-icon *ngSwitchCase="'Members'" class="header-icon">group</mat-icon>
+              <mat-icon *ngSwitchCase="'Student profil card'" class="header-icon">school</mat-icon>
+              <mat-icon *ngSwitchCase="'Student'" class="header-icon">school</mat-icon>
+              <mat-icon *ngSwitchCase="'Follow Up Student'" class="header-icon">euro</mat-icon>
+              <mat-icon *ngSwitchCase="'Follow Up Organization'" class="header-icon">euro</mat-icon>
+              <mat-icon *ngSwitchCase="'Cheques'" class="header-icon">euro</mat-icon>
+              <mat-icon *ngSwitchCase="'Apprenant'" class="header-icon">school</mat-icon>
+              <mat-icon *ngSwitchCase="'List of Active Students'" class="header-icon">school</mat-icon>
+              <mat-icon *ngSwitchCase="'List of Completed Students'" class="header-icon">school</mat-icon>
+              <mat-icon *ngSwitchCase="'List of Deactivated Students'" class="header-icon">school</mat-icon>
+              <mat-icon *ngSwitchCase="'List of Suspended Students'" class="header-icon">school</mat-icon>
+              <mat-icon *ngSwitchCase="'NAV.Payout Detail'" class="header-icon">euro</mat-icon>
+              <mat-icon *ngSwitchCase="'NAV.Transaction Detail'" class="header-icon">euro</mat-icon>
+              <mat-icon *ngSwitchCase="'Master Transaction'" class="header-icon">euro</mat-icon>
+              <mat-icon *ngSwitchCase="'Online Payment Transaction Report'" class="header-icon">euro</mat-icon>
+              <mat-icon *ngSwitchCase="'Online Payment Balance Report'" class="header-icon">euro</mat-icon>
+              <mat-icon *ngSwitchCase="'List of platform'" class="header-icon platform-icon">tune</mat-icon>
+              <mat-icon *ngSwitchCase="'List of alert'" class="header-icon" svgIcon="alarm-light"></mat-icon>
+              <mat-icon *ngSwitchCase="'List of RNCP Title'" class="header-icon">import_contacts</mat-icon>
+              <mat-icon *ngSwitchCase="'RNCP Title Management'" class="header-icon" svgIcon="certificate"></mat-icon>
+              <mat-icon *ngSwitchCase="'List of pending task and calendar step'"
+                class="header-icon">import_contacts</mat-icon>
+              <mat-icon *ngSwitchCase="'List of companies'" class="header-icon" svgIcon="office-building"></mat-icon>
+              <mat-icon *ngSwitchCase="'Companies Entities'" class="header-icon" svgIcon="office-building"></mat-icon>
+              <mat-icon *ngSwitchCase="'Companies Branches'" class="header-icon" svgIcon="office-building"></mat-icon>
+              <mat-icon *ngSwitchCase="'List of Organization'" class="header-icon"
+                svgIcon="database-marker-outline"></mat-icon>
+              <mat-icon *ngSwitchCase="'Companies Entity'" class="header-icon" svgIcon="office-building"></mat-icon>
+              <mat-icon *ngSwitchCase="'List of quality control'" class="header-icon">contrast_circle</mat-icon>
+              <mat-icon *ngSwitchCase="'List of CertiDegree'" class="header-icon" svgIcon="certificate"></mat-icon>
+              <mat-icon *ngSwitchCase="'List of Cross Correction'" class="header-icon" svgIcon="recycle"></mat-icon>
+              <mat-icon *ngSwitchCase="'List of Employability Survey'" class="header-icon"
+                svgIcon="comment-text-multiple-outline"></mat-icon>
+              <mat-icon *ngSwitchCase="'General'" class="header-icon">content_paste_search</mat-icon>
+              <mat-icon *ngSwitchCase="'Admission Document Follow Up'" class="header-icon">content_paste_search</mat-icon>
+              <mat-icon *ngSwitchCase="'Questionnaire Tools'" class="header-icon" svgIcon="comment-question"></mat-icon>
+              <mat-icon *ngSwitchCase="'Process Management'" class="header-icon" svgIcon="clipboard-flow"></mat-icon>
+              <mat-icon *ngSwitchCase="'Courses & Sequences'" class="header-icon" svgIcon="application-import"></mat-icon>
+              <mat-icon *ngSwitchCase="'course_sequence.Template'" class="header-icon" svgIcon="pencil-ruler"></mat-icon>
+              <mat-icon *ngSwitchCase="'course_sequence.Sequences'" class="header-icon" svgIcon="clipboard-list-outline">
+              </mat-icon>
+              <mat-icon *ngSwitchCase="'course_sequence.Modules'" class="header-icon" svgIcon="clipboard-list-outline">
+              </mat-icon>
+              <mat-icon *ngSwitchCase="'course_sequence.Subjects'" class="header-icon" svgIcon="clipboard-list-outline">
+              </mat-icon>
+              <mat-icon *ngSwitchCase="'NAV.Promo External'" class="header-icon" svgIcon="bullhorn"></mat-icon>
+              <mat-icon *ngSwitchCase="'Registration Steps Messages'" class="header-icon"
+                svgIcon="check-underline-circle"></mat-icon>
+              <mat-icon *ngSwitchCase="'Intervention'" class="header-icon height-30" svgIcon="plus"></mat-icon>
+  
+              <!-- intakeChannelV2 -->
+              <mat-icon *ngSwitchCase="'INTAKE_CHANNEL.PAGE_TITLE.Scholar season'" class="header-icon"
+                svgIcon="calendar-blank-multiple"></mat-icon>
+              <!-- <mat-icon *ngSwitchCase="'INTAKE_CHANNEL.PAGE_TITLE.Schools'" class="header-icon">account_balance</mat-icon> -->
+              <mat-icon *ngSwitchCase="'INTAKE_CHANNEL.PAGE_TITLE.Campus'" class="header-icon"
+                svgIcon="town-hall"></mat-icon>
+              <mat-icon *ngSwitchCase="'INTAKE_CHANNEL.PAGE_TITLE.Level'" class="header-icon"
+                svgIcon="order-numeric-ascending"></mat-icon>
+              <mat-icon *ngSwitchCase="'INTAKE_CHANNEL.PAGE_TITLE.Sector'" class="header-icon">work</mat-icon>
+              <mat-icon *ngSwitchCase="'INTAKE_CHANNEL.PAGE_TITLE.Speciality'" class="header-icon"
+                svgIcon="book-education-outline"></mat-icon>
+              <mat-icon *ngSwitchCase="'INTAKE_CHANNEL.PAGE_TITLE.Sites'" class="header-icon">location_on</mat-icon>
+              <!-- <mat-icon *ngSwitchCase="'INTAKE_CHANNEL.PAGE_TITLE.Settings'" class="header-icon">settings</mat-icon> -->
+              <!-- end of intake channel v2 -->
+              <!-- <mat-icon *ngSwitchCase="'List of All Notifications in the Platform'" class="header-icon">
+                <svg style="width: 32px; height: 32px" viewBox="0 0 24 24">
+                  <path
+                    d="M19,3H14.82C14.4,1.84 13.3,1 12,1C10.7,1 9.6,1.84 9.18,3H5A2,2 0 0,0 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5A2,2 0 0,0 19,3M12,3A1,1 0 0,1 13,4A1,1 0 0,1 12,5A1,1 0 0,1 11,4A1,1 0 0,1 12,3M15,19L11,15H14V8H16V15H19L15,19M10,16H8V9H5L9,5L13,9H10V16" />
+                </svg>
+              </mat-icon> -->
+              <mat-icon *ngSwitchCase="'List of Candidates'" class="header-icon" svgIcon="account-arrow-right"></mat-icon>
+              <mat-icon *ngSwitchCase="'NAV.Assignment'" class="header-icon" svgIcon="pencil-ruler"></mat-icon>
+              <mat-icon *ngSwitchCase="'NAV.Follow up'" class="header-icon" svgIcon="account-arrow-right"></mat-icon>
+              <mat-icon *ngSwitchCase="'Admission members'" class="header-icon" svgIcon="target-account"></mat-icon>
+              <mat-icon *ngSwitchCase="'Financial members'" class="header-icon" svgIcon="account-star"></mat-icon>
+              <mat-icon *ngSwitchCase="'Contract Management'" class="header-icon" svgIcon="text-box-check"></mat-icon>
+              <mat-icon *ngSwitchCase="'NAV.Follow up Teacher Management'" class="header-icon"
+                svgIcon="account-edit-outline"></mat-icon>
+              <mat-icon *ngSwitchCase="'NAV.Teachers'" class="header-icon" svgIcon="account-edit-outline"></mat-icon>
+  
+              <mat-icon *ngSwitchCase="'List of scholar season'" class="header-icon"> login </mat-icon>
+              <mat-icon *ngSwitchCase="'History of Candidates'" class="header-icon"> history </mat-icon>
+              <mat-icon *ngSwitchCase="'History of Transaction'" class="header-icon"> history </mat-icon>
+              <mat-icon *ngSwitchCase="'Promo'" class="header-icon">horizontal_split</mat-icon>
+              <!-- myadding -->
+              <mat-icon *ngSwitchCase="'Inbox'" class="header-icon"><i class="fa fa-inbox"
+                  aria-hidden="true"></i></mat-icon>
+              <mat-icon *ngSwitchCase="'CC'" class="header-icon"><i class="fa fa-inbox" aria-hidden="true"></i></mat-icon>
+              <mat-icon *ngSwitchCase="'Sent'" class="header-icon" style="margin-top: 20%">send</mat-icon>
+              <mat-icon *ngSwitchCase="'Important'" class="header-icon" style="margin-top: 20%">label_important</mat-icon>
+              <mat-icon *ngSwitchCase="'Draft'" class="header-icon" style="margin-top: 20%"
+                svgIcon="label_draft"></mat-icon>
+              <mat-icon *ngSwitchCase="'Trash'" class="header-icon" style="margin-top: 20%">delete</mat-icon>
+              <mat-icon *ngSwitchCase="'Promo'" class="header-icon">horizontal_split</mat-icon>
+              <mat-icon *ngSwitchCase="'Internship Settings'" class="header-icon">settings</mat-icon>
+              <mat-icon *ngSwitchCase="'NAV.SETTINGS.USER_PERMISSION'" class="header-icon">settings</mat-icon>
+              <mat-icon *ngIf="pageIcon === 'cross-correction'" class="header-icon" svgIcon="recycle"></mat-icon>
+              <mat-icon *ngIf="pageIcon === 'final-transcript'" class="header-icon" svgIcon="bullseye-arrow"></mat-icon>
+              <mat-icon *ngIf="pageIcon === 'previous-course'" class="header-icon">marker_check</mat-icon>
+              <!-- <mat-icon *ngSwitchCase="'Intern Profile'" class="header-icon" style="margin-top: 20%">card-account-details-star-outline</mat-icon> -->
+              <mat-icon *ngIf="pageIcon === 'import_contacts'" class="header-icon">import_contacts</mat-icon>
+              <mat-icon *ngIf="pageIcon === 'account_balance'" class="header-icon">account_balance</mat-icon>
+              <mat-icon *ngIf="pageIcon === 'dashboard'" class="header-icon">dashboard</mat-icon>
+              <mat-icon
+                *ngIf="pageIcon && pageIcon !== '' && !['import_contacts', 'final-transcript', 'previous-course', 'account_balance', 'export'].includes(pageIcon)"
+                class="header-icon" style="margin-top: 20%" [svgIcon]="pageIcon"></mat-icon>
+              <mat-icon *ngIf="router && router.url.includes('internship-file')" class="header-icon">school</mat-icon>
+              <mat-icon *ngIf="router && router.url.includes('candidate-file')" class="header-icon">school</mat-icon>
+              <mat-icon *ngIf="router && router.url.includes('alumni-follow-up')" class="header-icon">group</mat-icon>
+              <mat-icon *ngIf="router && router.url.includes('alumni-cards')" class="header-icon">group</mat-icon>
+              <mat-icon *ngIf="router && router.url.includes('template-sequences/form-detail')" class="header-icon"
+                svgIcon="pencil-ruler"></mat-icon>
+              <mat-icon *ngIf="router && router.url.includes('teacher-contract/contract-process')" class="header-icon"
+                svgIcon="handshake-outline"></mat-icon>
+              <mat-icon *ngIf="router && router.url.includes('teacher-contract/contract-management')" class="header-icon"
+                svgIcon="text-box-check"></mat-icon>
+              <mat-icon *ngIf="router && router.url.includes('scholar-card/admission-entrypoint')"
+                class="header-icon">login</mat-icon>
+              <mat-icon *ngIf="router && router.url.includes('settings')" class="header-icon">settings</mat-icon>
+              <mat-icon *ngIf="router && router.url.includes('schools')" class="header-icon">account_balance</mat-icon>
+              <mat-icon *ngIf="router && router.url.includes('form-follow-up/details')" class="header-icon"
+                svgIcon="content-paste-search"></mat-icon>
+              <mat-icon *ngIf="router && router?.url?.includes('/intervention-form?teacherSubject')"
+                class="header-icon height-30" svgIcon="pencil"></mat-icon>
+              <mat-icon *ngIf="router && router?.url?.includes('/country-nationality')" class="header-icon height-30"
+                svgIcon="flag"></mat-icon>
+              <mat-icon *ngSwitchCase="'My Internships'" class="header-icon">work</mat-icon>
+              <mat-icon *ngSwitchCase="'List of Contract Template'" class="header-icon" svgIcon="pencil-ruler"></mat-icon>
+              <mat-icon *ngSwitchCase="'NAV.STUDENT.Registered'" class="header-icon">
+                <svg style="width:24px;height:24px" viewBox="0 0 24 24">
+                  <path fill="currentColor"
+                    d="M18 16H14V18H18V20L21 17L18 14V16M11 4C8.8 4 7 5.8 7 8S8.8 12 11 12 15 10.2 15 8 13.2 4 11 4M11 14C6.6 14 3 15.8 3 18V20H12.5C12.2 19.2 12 18.4 12 17.5C12 16.3 12.3 15.2 12.9 14.1C12.3 14.1 11.7 14 11 14" />
+                </svg>
+              </mat-icon>
+              <mat-icon *ngSwitchCase="'NAV.STUDENT.All students'" class="header-icon">groups</mat-icon>
+              <mat-icon *ngSwitchCase="'NAV.STUDENT.Trombinoscope'" class="header-icon">
+                <svg style="width:24px;height:24px" viewBox="0 0 24 24">
+                  <path fill="currentColor"
+                    d="M6,17C6,15 10,13.9 12,13.9C14,13.9 18,15 18,17V18H6M15,9A3,3 0 0,1 12,12A3,3 0 0,1 9,9A3,3 0 0,1 12,6A3,3 0 0,1 15,9M3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5A2,2 0 0,0 19,3H5C3.89,3 3,3.9 3,5Z" />
+                </svg>
+              </mat-icon>
+              <mat-icon *ngSwitchCase="'My Internships'" class="header-icon">
+                <svg style="width: 32px; height: 32px" viewBox="0 0 24 24">
+                  <path fill="currentColor"
+                    d="M10,2H14A2,2 0 0,1 16,4V6H20A2,2 0 0,1 22,8V19A2,2 0 0,1 20,21H4C2.89,21 2,20.1 2,19V8C2,6.89 2.89,6 4,6H8V4C8,2.89 8.89,2 10,2M14,6V4H10V6H14Z" />
+                </svg>
+              </mat-icon>
+              <mat-icon *ngSwitchCase="'List of Contract Template'" class="header-icon">
+                <svg viewBox="0 0 24 24">
+                  <path fill="currentColor"
+                    d="M3 17.25V21H6.75L17.81 9.93L14.06 6.18L3 17.25M22.61 18.36L18.36 22.61L13.16 17.41L14.93 15.64L15.93 16.64L18.4 14.16L19.82 15.58L18.36 17L19.42 18L20.84 16.6L22.61 18.36M6.61 10.83L1.39 5.64L5.64 1.39L7.4 3.16L4.93 5.64L6 6.7L8.46 4.22L9.88 5.64L8.46 7.05L9.46 8.05L6.61 10.83M20.71 7C21.1 6.61 21.1 6 20.71 5.59L18.37 3.29C18 2.9 17.35 2.9 16.96 3.29L15.12 5.12L18.87 8.87L20.71 7Z" />
+                </svg>
+              </mat-icon>
+              <mat-icon *ngSwitchCase="'Unbalanced Balance'" class="header-icon">
+                <svg viewBox="0 0 24 24">
+                  <path fill="currentColor"
+                    d="M13 20V8.8C13.5 8.6 14 8.3 14.3 7.9L17.8 9.2L14.9 16C14.4 18 15.9 19 18.4 19S22.5 18 21.9 16L19.3 9.7L20.2 10L20.9 8.1L15 6C15 4.8 14.3 3.6 13 3.1C11.8 2.6 10.5 3.1 9.7 4L3.9 2L3.2 3.8L4.8 4.4L2.1 11C1.6 13 3.1 14 5.6 14S9.7 13 9.1 11L6.6 5.1L9 6C9 7.2 9.7 8.4 11 8.9V20H2V22H22V20H13M19.9 16H16.9L18.4 12.2L19.9 16M7.1 11H4.1L5.6 7.2L7.1 11M11.1 5.7C11.3 5.2 11.9 4.9 12.4 5.1S13.2 5.9 13 6.4 12.2 7.2 11.7 7 10.9 6.2 11.1 5.7Z" />
+                </svg>
+              </mat-icon>
+              <mat-icon *ngSwitchCase="'Operation Lines'" class="header-icon">
+                <svg viewBox="0 0 24 24">
+                  <path fill="currentColor"
+                    d="M12,3C10.73,3 9.6,3.8 9.18,5H3V7H4.95L2,14C1.53,16 3,17 5.5,17C8,17 9.56,16 9,14L6.05,7H9.17C9.5,7.85 10.15,8.5 11,8.83V20H2V22H22V20H13V8.82C13.85,8.5 14.5,7.85 14.82,7H17.95L15,14C14.53,16 16,17 18.5,17C21,17 22.56,16 22,14L19.05,7H21V5H14.83C14.4,3.8 13.27,3 12,3M12,5A1,1 0 0,1 13,6A1,1 0 0,1 12,7A1,1 0 0,1 11,6A1,1 0 0,1 12,5M5.5,10.25L7,14H4L5.5,10.25M18.5,10.25L20,14H17L18.5,10.25Z" />
+                </svg>
+              </mat-icon>
+            </div>
+  
+            <!-- <div style="display: flex; align-self: center; padding-top: 10px">
+                <a
+                  *ngIf="pageTitle && !pageTitle.includes('List of schools') && !pageTitle.includes('Transcript Process of')"
+                  class="navbar-brand"
+                  href="#"
+                  style="margin-left: 15px; margin-top: -7.5px"
+                  >{{ pageTitle | translate }}</a
+                >
+                <a
+                  *ngIf="pageTitle && pageTitle.includes('List of schools') && !pageTitle.includes('Transcript Process of')"
+                  class="navbar-brand"
+                  href="school"
+                  style="margin-left: 15px; margin-top: -7.5px"
+                  >{{ pageTitle | translate }}</a
+                >
+                <a
+                  *ngIf="pageTitle && pageTitle.includes('Transcript Process of')"
+                  class="navbar-brand"
+                  href="#"
+                  style="margin-left: 15px; margin-top: -7.5px; white-space: pre-wrap"
+                  >{{ pageTitle | translate }}</a
+                >
+                <button
+                  *ngIf="isTutorialAdded"
+                  mat-button
+                  style="
+                    margin-left: 10px !important;
+                    line-height: 16px;
+                    margin: 0px;
+                    padding: 0px !important;
+                    width: 16px !important;
+                    min-width: 16px;
+                  "
+                  matTooltip="{{ 'Tutorial for this module' | translate }}"
+                  (click)="toggleTutorial(tutorialData)"
+                >
+                  <mat-icon style="font-size: 16px; width: 16px; top: -4px; position: relative">help</mat-icon>
+                </button>
+              </div> -->
+  
+            <ng-container *ngIf="router && router.url.includes('alumni-cards') && !isSearchContainerOpen">
+              <div style="display: flex; align-self: center; padding-top: 10px">
+                <a class="navbar-brand" style="margin-left: 10px; margin-top: -7.5px">{{ pageTitle | translate }}</a>
+              </div>
+            </ng-container>
+  
+            <div
+              *ngIf="!pageMessageFinance  && (pageTitle && (!pageTitle.includes('Paiement follow up') && !pageTitle.includes('History of Transaction') && !pageTitle.includes('Follow Up'))) && !isSearchContainerOpen"
+              style="display: flex; align-self: center; padding-top: 10px; white-space: normal; line-height: 26px">
+              <span *ngIf="pageTitle && !pageTitle.includes('List of schools') && !router.url.includes('alumni-cards')"
+                class="navbar-brand" style="margin-left: 15px; margin-top: -7.5px">{{ pageTitle | translate }}</span>
+              <span
+                *ngIf="pageTitle && pageTitle.includes('List of schools') && !pageTitle.includes('Transcript Process of')"
+                class="navbar-brand" href="school" style="margin-left: 15px; margin-top: -7.5px">{{ pageTitle | translate
+                }}</span>
+              <span *ngIf="pageTitle && pageTitle.includes('Transcript Process of')" class="navbar-brand"
+                style="margin-left: 15px; margin-top: -7.5px; white-space: pre-wrap">{{ pageTitle | translate }}</span>
+  
+              <button *ngIf="isTutorialAdded" mat-button
+                style="margin-left: 10px !important; line-height: 16px; margin: 0px; padding: 0px !important"
+                [matTooltip]="'Tutorial for this module' | translate" (click)="toggleTutorial()">
+                <img style="font-size: 16px; width: 50px; top: -5px; position: relative" [src]="tutorialIcon" />
+                <!-- <mat-icon style="font-size: 16px; width: 16px; top: -4px; position: relative">help</mat-icon> -->
+              </button>
+            </div>
+  
+            <div
+              *ngIf="(pageMessageFinance || (pageTitle && (pageTitle.includes('Paiement follow up') || pageTitle.includes('History of Transaction') || pageTitle.includes('Follow Up'))) && !router.url.includes('alumni-cards')) && !isSearchContainerOpen"
+              style="display: flex; align-self: center; padding-top: 10px; white-space: normal; line-height: 26px">
+              <span class="navbar-brand" style="margin-left: 15px; margin-top: -7.5px">{{ pageTitle | translate }}
+                <button *ngIf="isTutorialAdded" mat-button
+                  style="margin-left: 10px !important; line-height: 16px; margin: 0px; padding: 0px !important"
+                  [matTooltip]="'Tutorial for this module' | translate" (click)="toggleTutorial()">
+                  <img style="font-size: 16px; width: 50px; top: -3px; position: relative" [src]="tutorialIcon" />
+                  <!-- <mat-icon style="font-size: 16px; width: 16px; top: -2px; position: relative">help</mat-icon> --></button><span
+                  *ngIf="pageMessageFinance" style="font-size: 15px"> {{ ' - ' + pageMessageFinance }} </span></span>
+            </div>
+          </div>
+        </div>
+        <div class="p-col-0 search-bar no-padding" *ngIf="authService.isLoginAsOther()" style="display: none">
+          <div class="p-grid yellow-banner">
+            <div class="p-col-1 no-padding" style="align-self: center">
+              <mat-icon>error</mat-icon>
+            </div>
+            <div class="p-col-11">
+              {{'MAIN_MENU.MAIN_TEXT_1' | translate}} {{((currentUser && currentUser.civility && currentUser.civility
+              !==
+              'neutral' ) ?
+              currentUser.civility : '') | translate}} {{currentUser.first_name ? currentUser.first_name : '' }}
+              {{currentUser.last_name ?
+              (currentUser.last_name | uppercase) : '' }}
+              <span
+                *ngIf="currentUser && currentUser.entities[0] && currentUser.entities[0].type && currentUser.entities[0].type.name">
+                {{'MAIN_MENU.MAIN_TEXT_2' | translate}} {{currentUser.entities[0].type.name | translate}}
+              </span>
+              <span
+                *ngIf="currentUser && currentUser.entities[0] && currentUser.entities[0].school && currentUser.entities[0].school.short_name">
+                {{'MAIN_MENU.MAIN_TEXT_3' | translate}} {{ currentUser.entities[0].school.short_name }}
+              </span>
+              <span style="cursor: pointer" (click)="backToPreviousLogin()">
+                <b><u>{{'MAIN_MENU.MAIN_TEXT_4' | translate}}</u></b>
+              </span>
+              {{'MAIN_MENU.MAIN_TEXT_5' | translate}}
+            </div>
+          </div>
+          <!-- <form class="search-form" fxShow="false" fxShow.gt-xs>
+              <mat-form-field>
+                <input matInput placeholder="Search" />
+              </mat-form-field>
+            </form> -->
+        </div>
+
+        <div class="p-col no-padding" style="position: absolute; top: 40px; left: 125px">
+          <div class="p-grid">
+            <div class="p-col-12">
+              <div style="display: flex; align-self: center; padding-top: 10px; line-height: 20px; white-space: normal">
+                <a *ngIf="pageMessage" class="navbar-brand"
+                  style="font-size: 15px; margin-left: 10px; margin-top: -7.5px">{{ pageMessage | translate }}</a>
+              </div>
+            </div>
+          </div>
+          <!-- <form class="search-form" fxShow="false" fxShow.gt-xs>
+              <mat-form-field>
+                <input matInput placeholder="Search" />
+              </mat-form-field>
+            </form> -->
+        </div>
+
+        <div class="tw-flex tw-items-center tw-gap-2">
+          <span *ngIf="coreService?.isStaging && !isSearchContainerOpen" style="color: red">{{'Post production' | translate}}</span>
+          
+          <button *ngIf="!isSearchContainerOpen" mat-button [matTooltip]="'Quick Search' | translate"
+            (click)="onSearchContainer()">
+            <mat-icon>search</mat-icon>
+          </button>
+                          
+          <button class="tw-transition-colors hover:tw-bg-app-tertiary/10 tw-p-2 tw-rounded-full" (click)="toggleFullscreen()">
+            <mat-icon class="!tw-block !tw-text-[28px] !tw-max-w-[28px] !tw-max-h-[28px]" *ngIf="!isFullscreen">fullscreen</mat-icon>
+            <mat-icon class="!tw-block !tw-text-[28px] !tw-max-w-[28px] !tw-max-h-[28px]" *ngIf="isFullscreen">fullscreen_exit</mat-icon>
+          </button>
+          <button
+            class="tw-transition-colors hover:tw-bg-app-tertiary/10 tw-p-2 tw-rounded-full"
+            [matBadge]="totalNotifications ? totalNotifications : ''"
+            matBadgePosition="after"
+            (click)="getLiveNotifications(false); sidenavTutorial.toggle()"
+            [matTooltip]="'Notifications' | translate"
+          >
+            <span class="newNotif" *ngIf="badgeOn"></span>
+            <mat-icon class="!tw-block !tw-text-[28px] !tw-max-w-[28px] !tw-max-h-[28px]">notifications</mat-icon>
+          </button>
+
+          <!--  <button mat-icon-button class="overflow-visible" [matMenuTriggerFor]="appsmenu">
+              <mat-icon>apps</mat-icon>
+            </button> -->
+          <div class="help-wrap">
+            <button class="tw-transition-colors hover:tw-bg-app-tertiary/10 tw-p-2 tw-rounded-full" [matMenuTriggerFor]="menu_help" [matTooltip]="'NAV.NEEDHELP' | translate">
+              <mat-icon class="!tw-block !tw-text-[28px] !tw-max-w-[28px] !tw-max-h-[28px]">help</mat-icon>
+            </button>
+            <mat-menu #menu_help="matMenu" class="menu-help">
+              <button mat-menu-item *ngIf="permissionService.showTutorialPerm()" (click)="openTutorial()">
+                <span class="tw-flex tw-items-center">
+                  <mat-icon svgIcon="key" class="tuto-icon"></mat-icon>
+                  <span>{{ 'NAV.TUTORIALS' | translate }}</span>
+                </span>
+              </button>
+              <!-- <div *ngFor="let option of helpOption" style="cursor: pointer">
+                <div
+                  class="pad-all-xs gene-block contact-us"
+                  [ngClass]="{'contact-en': translate.currentLang === 'en', 'contact-fr': translate.currentLang === 'fr', 'contact-fr': translate.currentLang === 'es'}"
+                  *ngIf="option.value === 'contact_us'"
+                  (click)="openNeedHelp()"
+                >
+                  <div class="contact-icon">
+                    <i class="bolt fa fa-bolt"></i>
+                  </div>
+                  {{ 'contact_us' | translate }}
+                </div>
+                <div
+                  class="pad-all-xs gene-block tutorial"
+                  *ngIf="option.value === 'tutorial' && permissionService.showTutorialPerm()"
+                  (click)="openTutorial()"
+                >
+                  <mat-icon svgIcon="key" class="tuto-icon" style="vertical-align: text-bottom;"></mat-icon>
+                  <span style="vertical-align: text-bottom;">{{ 'NAV.TUTORIALS' | translate }}</span>
+                </div>
+              </div> -->
+            </mat-menu>
+          </div>
+          <ms-language-drop-down></ms-language-drop-down>
+          <!-- <button mat-icon-button class="overflow-visible" (click)="chatMenu()">
+              <mat-icon>chat</mat-icon>
+            </button> -->
+          <ms-profile-button-menu></ms-profile-button-menu>
+        </div>
+      </mat-toolbar>
+
+      <div class="gene-base-container" (scroll)="onScrollContainer($event)" #scrollContainer
+        [ngClass]="{'tutorialOpen': coreService.sidenavTutorialOpen}">
+        <div class="inner-container" fxLayout="row wrap">
+          <div class="full-wid" fxFlex="100">
+            <router-outlet (activate)="onActivate($event, scrollContainer)"></router-outlet>
+          </div>
+        </div>
+      </div>
+    </mat-sidenav-content>
+
+    <mat-sidenav #sidenavTutorial position="end" [mode]="selectedBar === 'notif' ? 'over' : coreService.sidenavMode"
+      [(opened)]="coreService.sidenavTutorialOpen" (closed)="navTutorialClosed()" class="sidebar-area notif-container">
+      <div class="scroll">
+        <ng-container *ngIf="selectedBar === 'notif'">
+          <mat-toolbar class="primary-bg">
+            <div class="p-grid notif-header-container">
+              <div class="p-col-4">
+                <h3>{{ 'Notifications' | translate }}</h3>
+              </div>
+              <div class="p-col-8 toggle-container float-right"
+                [ngClass]="translate?.currentLang === 'fr' ? 'frLang' : 'enLang'">
+                <span class="toggle-text">{{ 'LIVENOTIF.Only show unread' | translate }}</span>
+                <mat-slide-toggle [disabled]="isWaitingForResponse" [formControl]="unReadToggle" [checked]="true"
+                  (change)="onFilterNotification($event)">
+                </mat-slide-toggle>
+              </div>
+            </div>
+          </mat-toolbar>
+          <div class="center-spinner" *ngIf="isWaitingForResponse">
+            <mat-spinner color="accent"></mat-spinner>
+          </div>
+          <ng-container *ngIf="!isWaitingForResponse">
+            <mat-nav-list>
+              <mat-list-item *ngFor="let notif of listNotifications; let i = index" class="notif-list-item">
+                <mat-icon mat-list-avatar class="primary-text"
+                  style="height: fit-content !important; padding-bottom: 10px;">@</mat-icon>
+                <div [ngClass]="notif?.is_read ? 'low-opacity' : ''" (click)="selectNotification(notif, i)">
+                  <h4 style="margin-bottom: 0px" mat-line>
+                    {{ 'LIVENOTIF.TITLE' | translate }} <span class="notif-date"
+                      [ngClass]="translate?.currentLang === 'fr' ? 'frLangDate' : 'enLangDate'">{{ notif?.date_created
+                      }}</span>
+                  </h4>
+                  <p mat-line style="margin-bottom: 0px">
+                    {{ 'LIVENOTIF.CONTENT' | translate : {
+                    civ: notif?.comment_id?.created_by?.civility && notif?.comment_id?.created_by?.civility ==='neutral'
+                    ? '' : notif?.comment_id?.created_by?.civility | translate,
+                    first: notif?.comment_id?.created_by?.first_name,
+                    last: notif?.comment_id?.created_by?.last_name | uppercase
+                    } }}
+                  </p>
+                </div>
+              </mat-list-item>
+            </mat-nav-list>
+            <div [ngClass]="{ hide: noData }">
+              <mat-paginator (page)="pageChange($event)"
+                [ngClass]="{ 'hide-pagination-buttons': totalNotificationsForPaginator <= 10 }"
+                [length]="totalNotificationsForPaginator" [hidePageSize]="true" [pageSize]="10" [pageIndex]="pageIndex"
+                showFirstLastButtons></mat-paginator>
+            </div>
+          </ng-container>
+        </ng-container>
+        <ng-container *ngIf="selectedBar === ''"> <ms-tutorial-bar
+            [menuList]="pageTitle"></ms-tutorial-bar></ng-container>
+      </div>
+    </mat-sidenav>
+    <!-- <div fxLayout="row" fxLayoutWrap="wrap" class="cookie-consent-container" *ngIf="!this.visited">
+      <div fxFlex="90" fxFlex.lt-md="100">
+        <div fxFlex class="cookie-consent-text">
+          <span class="white">{{ 'PRIVACY_POLICY.COOKIES_CONSENT_TEXT' | translate }}</span>
+          <span (click)="gotoPrivacyPolicy()" class="privacy-hypertext white" >{{ 'PRIVACY_POLICY.LEARN_MORE' | translate }}</span>
+        </div>
+      </div>
+      <div fxFlex="7" fxFlex.lt-md="100">
+        <button (click)="setVisited()" mat-flat-button class="btn-standart full-wid ok-button">
+          {{ 'PRIVACY_POLICY.GOT_IT' | translate }}
+        </button>
+      </div>
+    </div> -->
+  </mat-sidenav-container>
+  <div class="gene-chat-wrap" id="gene-chat">
+    <mat-card class="people-list">
+      <mat-tab-group class="height-full">
+        <mat-tab label="Chat" class="height-full">
+          <div class="gene-card-content height-full">
+            <div class="chat-people-list height-full">
+              <mat-list role="list">
+                <ng-container *ngFor="let chat of chatList">
+                  <mat-list-item role="listitem" (click)="onChatOpen()">
+                    <div class="gene-list-item full-wid" fxLayout="row wrap" fxLayoutAlign="space-around center">
+                      <div class="image-wrap" fxFlex="50px" class="mrgn-r-sm">
+                        <img src="{{ chat.image }}" alt="User" />
+                      </div>
+                      <div class="people-desc" fxFlex="calc(100% - 100px)">
+                        <h4 class="margin-none font-normal make-ellipse">{{ chat.name }}</h4>
+                        <span class="gene-text-md inline-block make-ellipse">{{ chat.chat }}</span>
+                      </div>
+                      <div fxFlex="30px">
+                        <div class="show-status mat-grey-300 {{ chat.mode }}"></div>
+                      </div>
+                    </div>
+                  </mat-list-item>
+                  <mat-divider class="mrgn-y-xs gene-relative"></mat-divider>
+                </ng-container>
+              </mat-list>
+            </div>
+          </div>
+        </mat-tab>
+        <mat-tab label="Settings">
+          <div class="gene-card-content height-full">
+            <div class="chat-settings-list mrgn-b-xl">
+              <mat-list role="list">
+                <h3 mat-subheader class="mat-pad-none mrgn-b-md"><i class="material-icons">settings</i>Settings</h3>
+                <mat-list-item role="listitem">
+                  <div class="gene-list-item full-wid" fxLayout="row wrap" fxLayoutAlign="space-between center">
+                    <div class="people-desc" fxFlex="200px">
+                      <h4 class="margin-none font-normal make-ellipse">Notifications</h4>
+                    </div>
+                    <div fxFlex="60px">
+                      <mat-slide-toggle></mat-slide-toggle>
+                    </div>
+                  </div>
+                </mat-list-item>
+                <mat-divider class="mrgn-y-sm gene-relative"></mat-divider>
+                <mat-list-item role="listitem">
+                  <div class="gene-list-item full-wid" fxLayout="row wrap" fxLayoutAlign="space-between center">
+                    <div class="people-desc" fxFlex="200px">
+                      <h4 class="margin-none font-normal make-ellipse">Quick Results</h4>
+                    </div>
+                    <div fxFlex="60px">
+                      <mat-slide-toggle></mat-slide-toggle>
+                    </div>
+                  </div>
+                </mat-list-item>
+                <mat-divider class="mrgn-y-sm gene-relative"></mat-divider>
+                <mat-list-item role="listitem">
+                  <div class="gene-list-item full-wid" fxLayout="row wrap" fxLayoutAlign="space-between center">
+                    <div class="people-desc" fxFlex="200px">
+                      <h4 class="margin-none font-normal make-ellipse">Auto Update</h4>
+                    </div>
+                    <div fxFlex="60px">
+                      <mat-slide-toggle></mat-slide-toggle>
+                    </div>
+                  </div>
+                </mat-list-item>
+                <mat-divider class="mrgn-y-sm gene-relative"></mat-divider>
+              </mat-list>
+            </div>
+            <div class="chat-account-list">
+              <mat-list role="list">
+                <h3 mat-subheader class="mat-pad-none mrgn-b-md"><i class="material-icons">perm_identity</i>Account</h3>
+                <mat-list-item role="listitem">
+                  <div class="gene-list-item full-wid" fxLayout="row wrap" fxLayoutAlign="space-between center">
+                    <div class="people-desc" fxFlex="200px">
+                      <h4 class="margin-none font-normal make-ellipse">Offline Mode</h4>
+                    </div>
+                    <div fxFlex="60px">
+                      <mat-slide-toggle></mat-slide-toggle>
+                    </div>
+                  </div>
+                </mat-list-item>
+                <mat-divider class="mrgn-y-sm gene-relative"></mat-divider>
+                <mat-list-item role="listitem">
+                  <div class="gene-list-item full-wid" fxLayout="row wrap" fxLayoutAlign="space-between center">
+                    <div class="people-desc" fxFlex="200px">
+                      <h4 class="margin-none font-normal make-ellipse">Location Share</h4>
+                    </div>
+                    <div fxFlex="60px">
+                      <mat-slide-toggle></mat-slide-toggle>
+                    </div>
+                  </div>
+                </mat-list-item>
+                <mat-divider class="mrgn-y-sm gene-relative"></mat-divider>
+                <mat-list-item role="listitem">
+                  <div class="gene-list-item full-wid" fxLayout="row wrap" fxLayoutAlign="space-between center">
+                    <div class="people-desc" fxFlex="200px">
+                      <h4 class="margin-none font-normal make-ellipse">Show Offline User</h4>
+                    </div>
+                    <div fxFlex="60px">
+                      <mat-slide-toggle></mat-slide-toggle>
+                    </div>
+                  </div>
+                </mat-list-item>
+                <mat-divider class="mrgn-y-sm gene-relative"></mat-divider>
+                <mat-list-item role="listitem">
+                  <div class="gene-list-item full-wid" fxLayout="row wrap" fxLayoutAlign="space-between center">
+                    <div class="people-desc" fxFlex="200px">
+                      <h4 class="margin-none font-normal make-ellipse">Save History</h4>
+                    </div>
+                    <div fxFlex="60px">
+                      <mat-slide-toggle></mat-slide-toggle>
+                    </div>
+                  </div>
+                </mat-list-item>
+                <mat-divider class="mrgn-y-sm gene-relative"></mat-divider>
+              </mat-list>
+            </div>
+          </div>
+        </mat-tab>
+      </mat-tab-group>
+    </mat-card>
+    <!--  <mat-card class="chat-window" id="chat-open">
+      <div class="chat-header primary-bg" fxLayout="row wrap" fxLayoutAlign="space-between center">
+        <div class="profile-wrap" fxFlex="calc(100% - 100px)">
+          <div fxLayoutAlign="start center">
+            <div class="image-wrap" fxFlex="40px" class="mrgn-r-xs">
+              <img src="assets/img/user-1.jpg" width="" height="" alt="" />
+            </div>
+            <div fxFlex="calc(100% - 40px)">
+              <h5 class="margin-none make-ellipse">Abhijit Thapa</h5>
+              <span class="status-text gene-block gene-text-sm">Online</span>
+            </div>
+          </div>
+        </div>
+        <div class="icons-wrap text-right" fxFlex="100px" fxLayoutAlign="end center">
+          <a href="javascript:void(0)"> <i class="material-icons inline-block">phone</i></a>
+          <a href="javascript:void(0)"> <i class="material-icons inline-block">videocam</i></a>
+          <a href="javascript:void(0)"> <i class="material-icons inline-block margin-none" (click)="chatWindowClose()">close</i></a>
+        </div>
+      </div>
+      <mat-card-content class="gene-card-content">
+        <div class="chat-block-wrap">
+          <div class="chat-block sender-chat mrgn-b-sm">
+            <p class="mat-grey-300">
+              Hi There! Recently I updated the latest version of your app, it crashed every time when i open.Need Assistance
+            </p>
+            <span class="sent-time gene-text-md gene-block">11:20pm</span>
+          </div>
+          <div class="chat-block receiver-chat text-right mrgn-b-sm">
+            <p class="mat-grey-300">Hi, Can you please tell us your mobile configuraion. Thank You!</p>
+            <span class="sent-time gene-text-md gene-block">12:00am</span>
+          </div>
+        </div>
+      </mat-card-content>
+      <mat-divider></mat-divider>
+      <mat-card-actions class="gene-card-footer">
+        <mat-form-field class="full-wid">
+          <input matInput placeholder="Type Your message" />
+          <mat-icon matSuffix>send</mat-icon>
+        </mat-form-field>
+      </mat-card-actions>
+    </mat-card> -->
+  </div>
+</div>
+
+
+<!-- <mat-menu class="apps-menu" x-position="after" y-position="below" #appsmenu="matMenu">
+  <button mat-menu-item>
+    <mat-icon>storage</mat-icon>
+    <span>{{ 'Total App Memory' | translate }}</span>
+  </button>
+  <button mat-menu-item>
+    <mat-icon>memory</mat-icon>
+    <span>{{ 'Total Memory Used' | translate }}</span>
+  </button>
+  <button mat-menu-item>
+    <mat-icon>mail</mat-icon>
+    <span>{{ '12 Unread Mail' | translate }}</span>
+  </button>
+  <button mat-menu-item>
+    <mat-icon>feedback</mat-icon>
+    <span>{{ '2 Feedback' | translate }}</span>
+  </button>
+</mat-menu> -->

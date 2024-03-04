@@ -1,0 +1,53 @@
+.job-card {
+  font-size: 14px !important;
+}
+.brand-logo {
+  height: 120px !important;
+}
+.small-dot {
+  font-size: 16px;
+}
+.small-pp {
+  height: 24px !important;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+.orange {
+  color: #f49f36;
+}
+.red {
+  color: #ff4040;
+}
+.green {
+  color: #adff2f;
+}
+.job-icon {
+  color: #607c8a;
+  margin-right: 5px;
+  height: 20px;
+  width: 20px;
+  vertical-align: middle;
+}
+.job-icon-font {
+  font-size: 20px;
+}
+.job-label {
+  margin-left: 0.5rem;
+}
+.job-pill {
+  margin-left: 0.5rem;
+  background-color: #607c8a;
+  color: #f49f36;
+  padding: 5px;
+  border-radius: 5px;
+}
+.vertical-view-section {
+  display: flex;
+  flex-direction: column;
+  margin-right: 1rem;
+  font-size: 12px;
+  align-items: center;
+}
+.smal-text-margin {
+  margin-top: 3px;
+}

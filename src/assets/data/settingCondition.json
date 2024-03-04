@@ -1,0 +1,1106 @@
+[
+    {
+        "_id": "5fe998070719bc42c65d30e4",
+        "short_name": "EFAP",
+        "long_name": "École des métiers de la communication",
+        "campuses": [
+            {
+                "levels": [
+                    {
+                        "name": "1",
+                        "code": "1"
+                    },
+                    {
+                        "name": "2",
+                        "code": "2"
+                    },
+                    {
+                        "name": "3",
+                        "code": "3"
+                    },
+                    {
+                        "name": "4",
+                        "code": "4"
+                    },
+                    {
+                        "name": "5",
+                        "code": "5"
+                    },
+                    {
+                        "name": "MBA DIGITAL FT",
+                        "code": "MBA DIGITAL FT"
+                    },
+                    {
+                        "name": "MBA EVENT",
+                        "code": "MBA EVENT"
+                    },
+                    {
+                        "name": "MBA PUB. FI.",
+                        "code": "MBA PUB. FI."
+                    },
+                    {
+                        "name": "MBA MKG",
+                        "code": "MBA MKG"
+                    },
+                    {
+                        "name": "MBA CREA PUB",
+                        "code": "MBA CREA PUB"
+                    },
+                    {
+                        "name": "MBA SANTE",
+                        "code": "MBA SANTE"
+                    },
+                    {
+                        "name": "MBA AUDIOVISUEL",
+                        "code": "MBA AUDIOVISUEL"
+                    },
+                    {
+                        "name": "MBA DIGITAL PT",
+                        "code": "MBA DIGITAL PT"
+                    },
+                    {
+                        "name": "MBA FASHION",
+                        "code": "MBA FASHION"
+                    },
+                    {
+                        "name": "MBA LUXURY PT",
+                        "code": "MBA LUXURY PT"
+                    },
+                    {
+                        "name": "MBA MEDIA",
+                        "code": "MBA MEDIA"
+                    },
+                    {
+                        "name": "MBA ART",
+                        "code": "MBA ART"
+                    },
+                    {
+                        "name": "MBA RH",
+                        "code": "MBA RH"
+                    },
+                    {
+                        "name": "MBA RSE",
+                        "code": "MBA RSE"
+                    }
+                ],
+                "name": "Paris"
+            },
+            {
+                "levels": [
+                    {
+                        "name": "1",
+                        "code": "1"
+                    },
+                    {
+                        "name": "2",
+                        "code": "2"
+                    },
+                    {
+                        "name": "3",
+                        "code": "3"
+                    },
+                    {
+                        "name": "4",
+                        "code": "4"
+                    },
+                    {
+                        "name": "5",
+                        "code": "5"
+                    },
+                    {
+                        "name": "MBA DIGITAL FT",
+                        "code": "MBA DIGITAL FT"
+                    },
+                    {
+                        "name": "MBA EVENT",
+                        "code": "MBA EVENT"
+                    },
+                    {
+                        "name": "MBA PUB. FI.",
+                        "code": "MBA PUB. FI."
+                    },
+                    {
+                        "name": "MBA MKG",
+                        "code": "MBA MKG"
+                    },
+                    {
+                        "name": "MBA CREA PUB",
+                        "code": "MBA CREA PUB"
+                    },
+                    {
+                        "name": "MBA AUDIOVISUEL",
+                        "code": "MBA AUDIOVISUEL"
+                    },
+                    {
+                        "name": "MBA MEDIA",
+                        "code": "MBA MEDIA"
+                    }
+                ],
+                "name": "Lyon"
+            },
+            {
+                "levels": [
+                    {
+                        "name": "1",
+                        "code": "1"
+                    },
+                    {
+                        "name": "2",
+                        "code": "2"
+                    },
+                    {
+                        "name": "3",
+                        "code": "3"
+                    },
+                    {
+                        "name": "4",
+                        "code": "4"
+                    },
+                    {
+                        "name": "5",
+                        "code": "5"
+                    }
+                ],
+                "name": "Aix"
+            },
+            {
+                "levels": [
+                    {
+                        "name": "1",
+                        "code": "1"
+                    },
+                    {
+                        "name": "2",
+                        "code": "2"
+                    },
+                    {
+                        "name": "3",
+                        "code": "3"
+                    },
+                    {
+                        "name": "4",
+                        "code": "4"
+                    },
+                    {
+                        "name": "5",
+                        "code": "5"
+                    },
+                    {
+                        "name": "MBA DIGITAL FT",
+                        "code": "MBA DIGITAL FT"
+                    },
+                    {
+                        "name": "MBA EVENT",
+                        "code": "MBA EVENT"
+                    },
+                    {
+                        "name": "MBA PUB. FI.",
+                        "code": "MBA PUB. FI."
+                    },
+                    {
+                        "name": "MBA MKG",
+                        "code": "MBA MKG"
+                    },
+                    {
+                        "name": "MBA CREA PUB",
+                        "code": "MBA CREA PUB"
+                    },
+                    {
+                        "name": "MBA VINS",
+                        "code": "MBA VINS"
+                    }
+                ],
+                "name": "Bordeaux"
+            },
+            {
+                "levels": [
+                    {
+                        "name": "1",
+                        "code": "1"
+                    },
+                    {
+                        "name": "2",
+                        "code": "2"
+                    },
+                    {
+                        "name": "3",
+                        "code": "3"
+                    },
+                    {
+                        "name": "4",
+                        "code": "4"
+                    },
+                    {
+                        "name": "5",
+                        "code": "5"
+                    },
+                    {
+                        "name": "MBA DIGITAL FT",
+                        "code": "MBA DIGITAL FT"
+                    },
+                    {
+                        "name": "MBA EVENT",
+                        "code": "MBA EVENT"
+                    },
+                    {
+                        "name": "MBA PUB. FI.",
+                        "code": "MBA PUB. FI."
+                    },
+                    {
+                        "name": "MBA MKG",
+                        "code": "MBA MKG"
+                    },
+                    {
+                        "name": "MBA CREA PUB",
+                        "code": "MBA CREA PUB"
+                    },
+                    {
+                        "name": "MBA MEDIA",
+                        "code": "MBA MEDIA"
+                    }
+                ],
+                "name": "Lille"
+            },
+            {
+                "levels": [
+                    {
+                        "name": "1",
+                        "code": "1"
+                    },
+                    {
+                        "name": "2",
+                        "code": "2"
+                    },
+                    {
+                        "name": "3",
+                        "code": "3"
+                    },
+                    {
+                        "name": "4",
+                        "code": "4"
+                    },
+                    {
+                        "name": "5",
+                        "code": "5"
+                    },
+                    {
+                        "name": "MBA DIGITAL FT",
+                        "code": "MBA DIGITAL FT"
+                    }
+                ],
+                "name": "Montpellier"
+            },
+            {
+                "levels": [
+                    {
+                        "name": "1",
+                        "code": "1"
+                    },
+                    {
+                        "name": "2",
+                        "code": "2"
+                    },
+                    {
+                        "name": "3",
+                        "code": "3"
+                    },
+                    {
+                        "name": "4",
+                        "code": "4"
+                    },
+                    {
+                        "name": "5",
+                        "code": "5"
+                    }
+                ],
+                "name": "Strasbourg"
+            },
+            {
+                "levels": [
+                    {
+                        "name": "1",
+                        "code": "1"
+                    },
+                    {
+                        "name": "2",
+                        "code": "2"
+                    },
+                    {
+                        "name": "3",
+                        "code": "3"
+                    },
+                    {
+                        "name": "4",
+                        "code": "4"
+                    },
+                    {
+                        "name": "5",
+                        "code": "5"
+                    }
+                ],
+                "name": "Toulouse"
+            },
+            {
+                "levels": [
+                    {
+                        "name": "MBA MASTER NY",
+                        "code": "MBA MASTER NY"
+                    },
+                    {
+                        "name": "MBA DD LUXURY NY",
+                        "code": "MBA DD LUXURY NY"
+                    }
+                ],
+                "name": "New York"
+            },
+            {
+                "levels": [
+                    {
+                        "name": "MBA SHANGAI DD MKG BIZ",
+                        "code": "MBA SHANGAI DD MKG BIZ"
+                    },
+                    {
+                        "name": "MBA SHANGAY DD LUXURY",
+                        "code": "MBA SHANGAI DD LUXURY"
+                    }
+                ],
+                "name": "Shanghai"
+            }
+        ],
+        "levels": [
+            {
+                "name": "1",
+                "code": "1"
+            },
+            {
+                "name": "2",
+                "code": "2"
+            },
+            {
+                "name": "3",
+                "code": "3"
+            },
+            {
+                "name": "4",
+                "code": "4"
+            },
+            {
+                "name": "5",
+                "code": "5"
+            },
+            {
+                "name": "MBA DIGITAL FT",
+                "code": "MBA DIGITAL FT"
+            },
+            {
+                "name": "MBA EVENT",
+                "code": "MBA EVENT"
+            },
+            {
+                "name": "MBA PUB. FI.",
+                "code": "MBA PUB. FI."
+            },
+            {
+                "name": "MBA MKG",
+                "code": "MBA MKG"
+            },
+            {
+                "name": "MBA CREA PUB",
+                "code": "MBA CREA PUB"
+            },
+            {
+                "name": "MBA SANTE",
+                "code": "MBA SANTE"
+            },
+            {
+                "name": "MBA AUDIOVISUEL",
+                "code": "MBA AUDIOVISUEL"
+            },
+            {
+                "name": "MBA DIGITAL PT",
+                "code": "MBA DIGITAL PT"
+            },
+            {
+                "name": "MBA FASHION",
+                "code": "MBA FASHION"
+            },
+            {
+                "name": "MBA LUXURY PT",
+                "code": "MBA LUXURY PT"
+            },
+            {
+                "name": "MBA MEDIA",
+                "code": "MBA MEDIA"
+            },
+            {
+                "name": "MBA ART",
+                "code": "MBA ART"
+            },
+            {
+                "name": "MBA RH",
+                "code": "MBA RH"
+            },
+            {
+                "name": "MBA RSE",
+                "code": "MBA RSE"
+            },
+            {
+                "name": "MBA VINS",
+                "code": "MBA VINS"
+            },
+            {
+                "name": "MBA MASTER NY",
+                "code": "MBA MASTER NY"
+            },
+            {
+                "name": "MBA DD LUXURY NY",
+                "code": "MBA DD LUXURY NY"
+            },
+            {
+                "name": "MBA SHANGAI DD MKG BIZ",
+                "code": "MBA SHANGAI DD MKG BIZ"
+            },
+            {
+                "name": "MBA SHANGAY DD LUXURY",
+                "code": "MBA SHANGAI DD LUXURY"
+            }
+        ]
+    },
+    {
+        "_id": "5ffbe03cc93fb37c75f8ea77",
+        "short_name": "ICART",
+        "long_name": "Ecole de Médiation Culturelle Paris",
+        "campuses": [
+            {
+                "levels": [
+                    {
+                        "name": "1",
+                        "code": "1"
+                    },
+                    {
+                        "name": "2",
+                        "code": "2"
+                    },
+                    {
+                        "name": "3",
+                        "code": "3"
+                    },
+                    {
+                        "name": "4",
+                        "code": "4"
+                    },
+                    {
+                        "name": "5",
+                        "code": "5"
+                    },
+                    {
+                        "name": "MBA Event",
+                        "code": "MBA Event"
+                    }
+                ],
+                "name": "Bordeaux"
+            },
+            {
+                "levels": [
+                    {
+                        "name": "1",
+                        "code": "1"
+                    },
+                    {
+                        "name": "2",
+                        "code": "2"
+                    },
+                    {
+                        "name": "3",
+                        "code": "3"
+                    },
+                    {
+                        "name": "4",
+                        "code": "4"
+                    },
+                    {
+                        "name": "5",
+                        "code": "5"
+                    },
+                    {
+                        "name": "MBA Event",
+                        "code": "MBA Event"
+                    }
+                ],
+                "name": "Lille"
+            },
+            {
+                "levels": [
+                    {
+                        "name": "1",
+                        "code": "1"
+                    },
+                    {
+                        "name": "2",
+                        "code": "2"
+                    },
+                    {
+                        "name": "3",
+                        "code": "3"
+                    },
+                    {
+                        "name": "4",
+                        "code": "4"
+                    },
+                    {
+                        "name": "5",
+                        "code": "5"
+                    },
+                    {
+                        "name": "MBA Event",
+                        "code": "MBA Event"
+                    }
+                ],
+                "name": "Lyon"
+            },
+            {
+                "levels": [
+                    {
+                        "name": "1",
+                        "code": "1"
+                    },
+                    {
+                        "name": "2",
+                        "code": "2"
+                    },
+                    {
+                        "name": "3",
+                        "code": "3"
+                    },
+                    {
+                        "name": "4",
+                        "code": "4"
+                    },
+                    {
+                        "name": "5",
+                        "code": "5"
+                    },
+                    {
+                        "name": "MBA Event",
+                        "code": "MBA Event"
+                    },
+                    {
+                        "name": "MBA Audiovisuel",
+                        "code": "MBA Audiovisuel"
+                    },
+                    {
+                        "name": "MBA Digital PT",
+                        "code": "MBA Digital PT"
+                    },
+                    {
+                        "name": "MBA Culture",
+                        "code": "MBA Culture"
+                    }
+                ],
+                "name": "Paris"
+            },
+            {
+                "levels": [
+                    {
+                        "name": "1",
+                        "code": "1"
+                    },
+                    {
+                        "name": "2",
+                        "code": "2"
+                    },
+                    {
+                        "name": "3",
+                        "code": "3"
+                    },
+                    {
+                        "name": "4",
+                        "code": "4"
+                    },
+                    {
+                        "name": "5",
+                        "code": "5"
+                    }
+                ],
+                "name": "New York"
+            }
+        ],
+        "levels": [
+            {
+                "name": "1",
+                "code": "1"
+            },
+            {
+                "name": "2",
+                "code": "2"
+            },
+            {
+                "name": "3",
+                "code": "3"
+            },
+            {
+                "name": "4",
+                "code": "4"
+            },
+            {
+                "name": "5",
+                "code": "5"
+            },
+            {
+                "name": "MBA Event",
+                "code": "MBA Event"
+            },
+            {
+                "name": "MBA Audiovisuel",
+                "code": "MBA Audiovisuel"
+            },
+            {
+                "name": "MBA Digital PT",
+                "code": "MBA Digital PT"
+            },
+            {
+                "name": "MBA Culture",
+                "code": "MBA Culture"
+            }
+        ]
+    },
+    {
+        "_id": "605c04dc6727822bb1f0cb6d",
+        "short_name": "BRASSART",
+        "long_name": "L'école des métiers de la création",
+        "campuses": [
+            {
+                "levels": [
+                    {
+                        "name": "GE 1",
+                        "code": ""
+                    },
+                    {
+                        "name": "GE 2",
+                        "code": ""
+                    },
+                    {
+                        "name": "GE 3",
+                        "code": ""
+                    },
+                    {
+                        "name": "GE 4",
+                        "code": ""
+                    },
+                    {
+                        "name": "GE 5",
+                        "code": ""
+                    }
+                ],
+                "name": "Aix-en-provence"
+            },
+            {
+                "levels": [
+                    {
+                        "name": "GE 1",
+                        "code": ""
+                    },
+                    {
+                        "name": "GE 2",
+                        "code": ""
+                    },
+                    {
+                        "name": "GE 3",
+                        "code": ""
+                    },
+                    {
+                        "name": "GE 4",
+                        "code": ""
+                    },
+                    {
+                        "name": "GE 5",
+                        "code": ""
+                    }
+                ],
+                "name": "Annecy"
+            },
+            {
+                "levels": [
+                    {
+                        "name": "GE 1",
+                        "code": ""
+                    },
+                    {
+                        "name": "GE 2",
+                        "code": ""
+                    },
+                    {
+                        "name": "GE 3",
+                        "code": ""
+                    },
+                    {
+                        "name": "GE 4",
+                        "code": ""
+                    }
+                ],
+                "name": "Bordeaux"
+            },
+            {
+                "levels": [
+                    {
+                        "name": "GE 1",
+                        "code": ""
+                    },
+                    {
+                        "name": "GE 2",
+                        "code": ""
+                    },
+                    {
+                        "name": "GE 3",
+                        "code": ""
+                    },
+                    {
+                        "name": "GE 4",
+                        "code": ""
+                    }
+                ],
+                "name": "Caen"
+            },
+            {
+                "levels": [
+                    {
+                        "name": "GE 1",
+                        "code": ""
+                    },
+                    {
+                        "name": "GE 2",
+                        "code": ""
+                    },
+                    {
+                        "name": "GE 3",
+                        "code": ""
+                    },
+                    {
+                        "name": "GE 4",
+                        "code": ""
+                    },
+                    {
+                        "name": "GE 5",
+                        "code": ""
+                    }
+                ],
+                "name": "Grenoble"
+            },
+            {
+                "levels": [
+                    {
+                        "name": "GE 1",
+                        "code": ""
+                    }
+                ],
+                "name": "Lille"
+            },
+            {
+                "levels": [
+                    {
+                        "name": "GE 1",
+                        "code": ""
+                    },
+                    {
+                        "name": "GE 2",
+                        "code": ""
+                    },
+                    {
+                        "name": "GE 3",
+                        "code": ""
+                    },
+                    {
+                        "name": "GE 4",
+                        "code": ""
+                    },
+                    {
+                        "name": "GE 5",
+                        "code": ""
+                    }
+                ],
+                "name": "Lyon"
+            },
+            {
+                "levels": [
+                    {
+                        "name": "GE 1",
+                        "code": ""
+                    },
+                    {
+                        "name": "GE 2",
+                        "code": ""
+                    },
+                    {
+                        "name": "GE 3",
+                        "code": ""
+                    },
+                    {
+                        "name": "GE 4",
+                        "code": ""
+                    }
+                ],
+                "name": "Montpellier"
+            },
+            {
+                "levels": [
+                    {
+                        "name": "GE 1",
+                        "code": ""
+                    },
+                    {
+                        "name": "GE 2",
+                        "code": ""
+                    },
+                    {
+                        "name": "GE 3",
+                        "code": ""
+                    },
+                    {
+                        "name": "GE 4",
+                        "code": ""
+                    },
+                    {
+                        "name": "GE 5",
+                        "code": ""
+                    }
+                ],
+                "name": "Nantes"
+            },
+            {
+                "levels": [
+                    {
+                        "name": "GE 1",
+                        "code": ""
+                    },
+                    {
+                        "name": "GE 2",
+                        "code": ""
+                    },
+                    {
+                        "name": "GE 3",
+                        "code": ""
+                    }
+                ],
+                "name": "Paris"
+            },
+            {
+                "levels": [
+                    {
+                        "name": "GE 1",
+                        "code": ""
+                    },
+                    {
+                        "name": "GE 2",
+                        "code": ""
+                    },
+                    {
+                        "name": "GE 3",
+                        "code": ""
+                    }
+                ],
+                "name": "Strasbourg"
+            },
+            {
+                "levels": [
+                    {
+                        "name": "GE 1",
+                        "code": ""
+                    },
+                    {
+                        "name": "GE 2",
+                        "code": ""
+                    },
+                    {
+                        "name": "GE 3",
+                        "code": ""
+                    },
+                    {
+                        "name": "GE 4",
+                        "code": ""
+                    },
+                    {
+                        "name": "GE 5",
+                        "code": ""
+                    }
+                ],
+                "name": "Toulouse"
+            },
+            {
+                "levels": [
+                    {
+                        "name": "GE 1",
+                        "code": ""
+                    },
+                    {
+                        "name": "GE 2",
+                        "code": ""
+                    },
+                    {
+                        "name": "GE 3",
+                        "code": ""
+                    },
+                    {
+                        "name": "GE 4",
+                        "code": ""
+                    },
+                    {
+                        "name": "GE 5",
+                        "code": ""
+                    }
+                ],
+                "name": "Tours"
+            }
+        ],
+        "levels": [
+            {
+                "name": "GE 1",
+                "code": ""
+            },
+            {
+                "name": "GE 2",
+                "code": ""
+            },
+            {
+                "name": "GE 3",
+                "code": ""
+            },
+            {
+                "name": "GE 4",
+                "code": ""
+            },
+            {
+                "name": "GE 5",
+                "code": ""
+            }
+        ]
+    },
+    {
+        "_id": "605c068d6727822bb1f0cde8",
+        "short_name": "EFJ",
+        "long_name": "L'école du nouveau journalisme",
+        "campuses": [
+            {
+                "levels": [
+                    {
+                        "name": "GE 1",
+                        "code": ""
+                    },
+                    {
+                        "name": "GE 2",
+                        "code": ""
+                    },
+                    {
+                        "name": "GE 3",
+                        "code": ""
+                    },
+                    {
+                        "name": "GE 1RD",
+                        "code": ""
+                    }
+                ],
+                "name": "Paris"
+            },
+            {
+                "levels": [
+                    {
+                        "name": "GE 1",
+                        "code": ""
+                    },
+                    {
+                        "name": "GE 2",
+                        "code": ""
+                    },
+                    {
+                        "name": "GE 3",
+                        "code": ""
+                    },
+                    {
+                        "name": "GE 1RD",
+                        "code": ""
+                    }
+                ],
+                "name": "Bordeaux"
+            }
+        ],
+        "levels": [
+            {
+                "name": "GE 1",
+                "code": ""
+            },
+            {
+                "name": "GE 2",
+                "code": ""
+            },
+            {
+                "name": "GE 3",
+                "code": ""
+            },
+            {
+                "name": "GE 1RD",
+                "code": ""
+            }
+        ]
+    },
+    {
+        "_id": "605c07126727822bb1f0ce07",
+        "short_name": "MOPA",
+        "long_name": "Computer Graphics Animation School",
+        "campuses": [
+            {
+                "levels": [
+                    {
+                        "name": "GE 1",
+                        "code": ""
+                    },
+                    {
+                        "name": "GE 2",
+                        "code": ""
+                    },
+                    {
+                        "name": "GE 3",
+                        "code": ""
+                    },
+                    {
+                        "name": "GE 4",
+                        "code": ""
+                    },
+                    {
+                        "name": "GE 5",
+                        "code": ""
+                    },
+                    {
+                        "name": "GE 6",
+                        "code": ""
+                    }
+                ],
+                "name": "Arles"
+            }
+        ],
+        "levels": [
+            {
+                "name": "GE 1",
+                "code": ""
+            },
+            {
+                "name": "GE 2",
+                "code": ""
+            },
+            {
+                "name": "GE 3",
+                "code": ""
+            },
+            {
+                "name": "GE 4",
+                "code": ""
+            },
+            {
+                "name": "GE 5",
+                "code": ""
+            },
+            {
+                "name": "GE 6",
+                "code": ""
+            }
+        ]
+    }
+]

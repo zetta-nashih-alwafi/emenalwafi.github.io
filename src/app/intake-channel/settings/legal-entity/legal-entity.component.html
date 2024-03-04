@@ -1,0 +1,465 @@
+<div [ngStyle]="{ display: openOnBoardingMerchant ? 'none' : '' }">
+  <div class="top-space horizontal legal-table">
+    <ms-filter-breadcrumb [filterBreadcrumbData]="filterBreadcrumbData" (removeFilterTrigger)="removeFilterBreadcrumb($event)"></ms-filter-breadcrumb>
+    <table mat-table matSort [dataSource]="dataSource" (matSortChange)="sortData($event)" class="mat-elevation-z8">
+      <!-- ROW RESET START -->
+      <ng-container matColumnDef="reset">
+        <th mat-header-cell *matHeaderCellDef colspan="100%" class="action-header-column text-right">
+          <div class="p-grid">
+            <div class="p-col-12 text-right">
+              <!-- Start Action Button Above table -->
+              <button
+                matTooltip="{{ 'Action' | translate }} "
+                style="padding: 0px 7px !important"
+                mat-raised-button
+                color="accent"
+                [disabled]="isWaitingForResponse"
+                [matMenuTriggerFor]="action"
+              >
+                {{ 'Action' | translate }}
+                <mat-icon>expand_more</mat-icon>
+              </button>
+              <mat-menu #action="matMenu">
+                <button
+                  mat-menu-item
+                  matTooltip="{{ 'ADMISSION.TABLE_LEGAL_ENTITIES.Add a Legal Entity' | translate }}"
+                  (click)="addLegalDialog()"
+                  *ngIf="permission.addSettingLegalEntity()"
+                >
+                  {{ 'ADMISSION.TABLE_LEGAL_ENTITIES.Add a Legal Entity' | translate }}
+                </button>
+              </mat-menu>
+              <!--End Action Button Above table -->
+
+              <button
+                mat-raised-button
+                color="primary"
+                matTooltip="{{ 'EXPORT' | translate }}"
+                (click)="getDataAllForCheckbox(0)"
+                [disabled]="isWaitingForResponse"
+                *ngIf="permission.exportSettingLegalEntity()"
+              >
+                <mat-icon svgIcon="file-excel" class="mat-icon-svgIcon"></mat-icon>
+                {{ 'Export' | translate }}
+              </button>
+              <button
+                mat-raised-button
+                color="primary"
+                [disabled]="isWaitingForResponse"
+                (click)="resetTable()"
+                matTooltip="{{ 'Reset Filter' | translate }}"
+                *ngIf="permission.resetSettingLegalEntity()"
+              >
+                <mat-icon svgIcon="loop" class="mat-icon-svgIcon"></mat-icon>
+                {{ 'RESET' | translate }}
+              </button>
+            </div>
+          </div>
+        </th>
+      </ng-container>
+      <!-- ROW RESET END -->
+      <!---ROW FILTER START-->
+      <ng-container matColumnDef="selectFilter" class="mat-column-select" sticky>
+        <th mat-header-cell *matHeaderCellDef class="text-center"></th>
+      </ng-container>
+      <ng-container matColumnDef="legalEntityFilter">
+        <th mat-header-cell *matHeaderCellDef>
+          <mat-form-field>
+            <input matInput class="form-field" [formControl]="legalEntityFilter" placeholder="{{ 'search' | translate }}" />
+          </mat-form-field>
+        </th>
+      </ng-container>
+      <ng-container matColumnDef="immatruclationFilter">
+        <th mat-header-cell *matHeaderCellDef></th>
+      </ng-container>
+      <ng-container matColumnDef="siretFilter">
+        <th mat-header-cell *matHeaderCellDef></th>
+      </ng-container>
+      <ng-container matColumnDef="shareholderFilter">
+        <th mat-header-cell *matHeaderCellDef></th>
+      </ng-container>
+      <ng-container matColumnDef="signatoryFilter">
+        <th mat-header-cell *matHeaderCellDef></th>
+      </ng-container>
+      <ng-container matColumnDef="ibanFilter">
+        <th mat-header-cell *matHeaderCellDef></th>
+      </ng-container>
+      <ng-container matColumnDef="bicFilter">
+        <th mat-header-cell *matHeaderCellDef></th>
+      </ng-container>
+      <ng-container matColumnDef="urssafNumberFilter">
+        <th mat-header-cell *matHeaderCellDef></th>
+      </ng-container>
+      <ng-container matColumnDef="tvaNumberFilter">
+        <th mat-header-cell *matHeaderCellDef></th>
+      </ng-container>
+      <ng-container matColumnDef="accountingAccountFilter">
+        <th mat-header-cell *matHeaderCellDef>
+          <mat-form-field>
+            <input matInput class="form-field" [formControl]="accountingAccountFilter" placeholder="{{ 'search' | translate }}" />
+          </mat-form-field>
+        </th>
+      </ng-container>
+      <ng-container matColumnDef="bankFilter">
+        <th mat-header-cell *matHeaderCellDef></th>
+      </ng-container>
+      <ng-container matColumnDef="programCampusFilter">
+        <th mat-header-cell *matHeaderCellDef>
+          <mat-form-field>
+            <input matInput class="form-field" [formControl]="programCampusFilter" placeholder="{{ 'search' | translate }}" />
+          </mat-form-field>
+        </th>
+      </ng-container>
+      <ng-container matColumnDef="ribFilter">
+        <th mat-header-cell *matHeaderCellDef></th>
+      </ng-container>
+      <ng-container matColumnDef="onlinePaymentFilter">
+        <th mat-header-cell *matHeaderCellDef></th>
+      </ng-container>
+      <ng-container matColumnDef="officialStampFilter">
+        <th mat-header-cell *matHeaderCellDef>
+          <mat-form-field>
+            <mat-label>{{ 'Select' | translate }}</mat-label>
+            <mat-select
+              (selectionChange)="onFilterSelect($event.value)"
+              [formControl]="officialStampFilter"
+              [disableOptionCentering]="true"
+              panelClass="filterPanel"
+            >
+              <mat-option value="All">{{ 'All' | translate }}</mat-option>
+              <mat-option [value]="option.value" *ngFor="let option of officialStampDropdown">
+                {{ option.key | translate }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </th>
+      </ng-container>
+      <ng-container matColumnDef="actionFilter" stickyEnd>
+        <th mat-header-cell *matHeaderCellDef></th>
+      </ng-container>
+      <!--ROW FILTER END-->
+      <!-- ROW HEADER AND CONTENT START -->
+      <ng-container matColumnDef="select" class="mat-column-select" sticky>
+        <th mat-header-cell *matHeaderCellDef class="text-center">
+          <mat-checkbox
+            (change)="$event ? masterToggle() : null"
+            (change)="showOptions('all', '')"
+            [checked]="(selection.hasValue() && isAllSelected()) || isCheckedAll"
+            [indeterminate]="selection.hasValue() && (dataUnselectUser?.length > 0 || !isAllSelected())"
+            [aria-label]="checkboxLabel()"
+          >
+          </mat-checkbox>
+        </th>
+        <td mat-cell *matCellDef="let row" class="text-center">
+          <mat-checkbox
+            (click)="$event.stopPropagation()"
+            (change)="$event ? selection.toggle(row._id) : null"
+            [checked]="selection.isSelected(row?._id) || (isCheckedAll && !dataUnselectLegalEntity.includes(row?._id))"
+            (change)="showOptions('one', row)"
+            [aria-label]="checkboxLabel(row)"
+          >
+          </mat-checkbox>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="legalEntity">
+        <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'ADMISSION.TABLE_LEGAL_ENTITIES.Legal Entity' | translate }}">
+          <h5 mat-sort-header="legal_entity_name">{{ 'ADMISSION.TABLE_LEGAL_ENTITIES.Legal Entity' | translate }}</h5>
+        </th>
+        <td mat-cell *matCellDef="let element" matTooltip="{{ element?.legal_entity_name }}">
+          {{ element?.legal_entity_name }}
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="accountingAccount">
+        <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'ADMISSION.TABLE_LEGAL_ENTITIES.Accounting Account' | translate }}">
+          <h5 mat-sort-header="accounting_account">{{ 'ADMISSION.TABLE_LEGAL_ENTITIES.Accounting Account' | translate }}</h5>
+        </th>
+        <td mat-cell *matCellDef="let element" matTooltip="{{ element?.accounting_account }}">
+          {{ element?.accounting_account }}
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="immatruclation">
+        <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'Immatriculation' | translate }}">
+          <h5>{{ 'Immatriculation' | translate }}</h5>
+        </th>
+        <td mat-cell *matCellDef="let element" matTooltip="{{ element?.immatriculation }}">
+          {{ element?.immatriculation }}
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="siret">
+        <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'SIRET' | translate }}">
+          <h5>{{ 'SIRET' | translate }}</h5>
+        </th>
+        <td mat-cell *matCellDef="let element" matTooltip="{{ element?.account_holder_details?.business_detail?.registration_number }}">
+          {{ element?.account_holder_details?.business_detail?.registration_number }}
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="shareholder">
+        <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'Shareholder' | translate }}">
+          <h5>{{ 'Shareholder' | translate }}</h5>
+        </th>
+        <td
+          mat-cell
+          *matCellDef="let element"
+          matTooltip="{{ updateCivility(element?.account_holder_details?.business_detail?.shareholders[0]?.gender) }} {{
+            element?.account_holder_details?.business_detail?.shareholders[0]?.first_name
+          }} {{ element?.account_holder_details?.business_detail?.shareholders[0]?.last_name | uppercase }}"
+        >
+          {{ updateCivility(element?.account_holder_details?.business_detail?.shareholders[0]?.gender) }}
+          {{ element?.account_holder_details?.business_detail?.shareholders[0]?.first_name }}
+          {{ element?.account_holder_details?.business_detail?.shareholders[0]?.last_name | uppercase }}
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="signatory">
+        <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'Signatory' | translate }}">
+          <h5>{{ 'Signatory' | translate }}</h5>
+        </th>
+        <td
+          mat-cell
+          *matCellDef="let element"
+          matTooltip="{{ updateCivility(element?.account_holder_details?.business_detail?.signatories[0]?.signatory_name?.gender) }} {{
+            element?.account_holder_details?.business_detail?.signatories[0]?.signatory_name?.first_name
+          }} {{ element?.account_holder_details?.business_detail?.signatories[0]?.signatory_name?.last_name | uppercase }}"
+        >
+          {{ updateCivility(element?.account_holder_details?.business_detail?.signatories[0]?.signatory_name?.gender) }}
+          {{ element?.account_holder_details?.business_detail?.signatories[0]?.signatory_name?.first_name }}
+          {{ element?.account_holder_details?.business_detail?.signatories[0]?.signatory_name?.last_name | uppercase }}
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="iban">
+        <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'IBAN' | translate }}">
+          <h5>{{ 'IBAN' | translate }}</h5>
+        </th>
+        <td mat-cell *matCellDef="let element" matTooltip="{{ element?.account_holder_details?.bank_account_details[0]?.iban }}">
+          {{ element?.account_holder_details?.bank_account_details[0]?.iban }}
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="bic">
+        <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'BIC' | translate }}">
+          <h5>{{ 'BIC' | translate }}</h5>
+        </th>
+        <td mat-cell *matCellDef="let element" matTooltip="{{ element?.bic }}">
+          {{ element?.bic }}
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="urssafNumber">
+        <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'URSSAF Number' | translate }}">
+          <h5>{{ 'URSSAF Number' | translate }}</h5>
+        </th>
+        <td mat-cell *matCellDef="let element" matTooltip="{{ element?.urrsaf_number }}">
+          {{ element?.urrsaf_number }}
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="tvaNumber">
+        <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'TVA Number' | translate }}">
+          <h5>{{ 'TVA Number' | translate }}</h5>
+        </th>
+        <td mat-cell *matCellDef="let element" matTooltip="{{ element?.tva_number }}">
+          {{ element?.tva_number }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="bank">
+        <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'Bank' | translate }}">
+          <h5 mat-sort-header="bank">{{ 'Bank' | translate }}</h5>
+        </th>
+        <td mat-cell *matCellDef="let element" matTooltip="{{ element?.account_holder_details?.bank_account_details[0]?.bank_name }}">
+          {{ element?.account_holder_details?.bank_account_details[0]?.bank_name }}
+        </td>
+      </ng-container>
+      <!-- <ng-container matColumnDef="programCampus">
+          <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'ADMISSION.TABLE_LEGAL_ENTITIES.Program & Campus' | translate }}">
+            <h5 mat-sort-header="program_campus">{{ 'ADMISSION.TABLE_LEGAL_ENTITIES.Program & Campus' | translate }}</h5>
+          </th>
+          <td mat-cell *matCellDef="let element" [matTooltip]="renderTooltipEntity(element?.program)">
+            <ng-container *ngIf="element?.school_id && element?.school_id.length">
+              <ng-container *ngFor="let els of element?.program">
+                <span class="tags">{{ els }}</span>
+              </ng-container>
+            </ng-container>
+          </td>
+        </ng-container> -->
+      <ng-container matColumnDef="rib">
+        <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'RIB' | translate }}">
+          <h5 mat-sort-header="rib">{{ 'RIB' | translate }}</h5>
+        </th>
+        <td mat-cell *matCellDef="let element">
+          <!-- {{ element?.rib }} -->
+          <mat-icon *ngIf="element?.rib" aria-hidden="true" class="mat-icon-status green">lens </mat-icon>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="onlinePayment">
+        <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'Online Payment' | translate }}">
+          <h5>{{ 'Online Payment' | translate }}</h5>
+        </th>
+        <td mat-cell *matCellDef="let element" style="text-align: center">
+          <mat-icon
+            matTooltip="{{ element?.online_payment_status | translate }}"
+            aria-hidden="true"
+            [ngClass]="{
+              black: element?.online_payment_status === 'not_submit',
+              orange: element?.online_payment_status === 'verification_in_progress',
+              red: element?.online_payment_status === 'rejected',
+              green: element?.online_payment_status === 'publish'
+            }"
+            >lens
+          </mat-icon>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="officialStamp">
+        <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'Official Stamps' | translate }}">
+          <h5 mat-sort-header="legal_entity_stamp">{{ 'Official Stamps' | translate }}</h5>
+        </th>
+        <td mat-cell *matCellDef="let element" style="text-align: center">
+          <mat-icon
+            matTooltip="{{ (element?.legal_entity_stamp ? 'Assigned' : 'Non assigned') | translate }}"
+            aria-hidden="true"
+            [ngClass]="{
+              red: !element?.legal_entity_stamp,
+              green: element?.legal_entity_stamp
+            }"
+            >lens
+          </mat-icon>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="action" stickyEnd>
+        <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'Action' | translate }}">
+          <h5>{{ 'Action' | translate }}</h5>
+        </th>
+        <td mat-cell *matCellDef="let element" style="text-align: center">
+          <button
+            mat-icon-button
+            class="margin-right-button"
+            matTooltip="{{ 'Assign a Stamp' | translate }}"
+            matTooltipPosition="above"
+            (click)="assignLegalStampDialog(element)"
+          >
+            <mat-icon svgIcon="stamp" class="mat-icon-svgIcon"></mat-icon>
+          </button>
+          <ng-container
+            *ngIf="element?.online_payment_status !== 'publish' && element?.online_payment_status !== 'verification_in_progress'"
+          >
+            <button
+              mat-icon-button
+              (click)="editLegalDialog(element)"
+              [disabled]="isAllSelected() || dataSelected.length > 0"
+              class="margin-right-button"
+              matTooltip="{{ 'Edit' | translate }}"
+              matTooltipPosition="above"
+              *ngIf="permission.editSettingLegalEntity()"
+            >
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button
+              mat-icon-button
+              (click)="deletePayment(element)"
+              [disabled]="isAllSelected() || dataSelected.length > 0"
+              class="margin-right-button"
+              matTooltip="{{ 'Delete' | translate }}"
+              matTooltipPosition="above"
+              *ngIf="permission.deleteSettingLegalEntity()"
+            >
+              <mat-icon>close</mat-icon>
+            </button>
+          </ng-container>
+
+          <ng-container
+            *ngIf="element?.online_payment_status === 'publish' && element?.online_payment_status !== 'verification_in_progress'"
+          >
+            <button
+              mat-icon-button
+              (click)="editLegalDialog(element)"
+              [disabled]="isAllSelected() || dataSelected.length > 0"
+              class="margin-right-button"
+              matTooltip="{{ 'Details' | translate }}"
+              matTooltipPosition="above"
+              *ngIf="permission.viewSettingLegalEntity()"
+            >
+              <mat-icon svgIcon="eye"></mat-icon>
+            </button>
+
+            <button
+              *ngIf="
+                (element?.online_payment_status === 'publish' || element?.online_payment_status !== 'verification_in_progress') &&
+                permission.publishSettingLegalEntity()
+              "
+              mat-icon-button
+              (click)="unpublishLegalEntity(element)"
+              [disabled]="isAllSelected() || dataSelected.length > 0"
+              class="margin-right-button"
+              matTooltipPosition="above"
+              matTooltip="{{ 'Unpublish' | translate }}"
+            >
+              <mat-icon>
+                <svg style="width: 18px; height: 18px" viewBox="0 0 24 24">
+                  <path
+                    fill="currentColor"
+                    d="M12,0A12,12 0 0,1 24,12A12,12 0 0,1 12,24A12,12 0 0,1 0,12A12,12 0 0,1 12,0M12,2A10,10 0 0,0 2,12C2,14.4 2.85,16.6 4.26,18.33L18.33,4.26C16.6,2.85 14.4,2 12,2M12,22A10,10 0 0,0 22,12C22,9.6 21.15,7.4 19.74,5.67L5.67,19.74C7.4,21.15 9.6,22 12,22Z"
+                  />
+                </svg>
+              </mat-icon>
+            </button>
+          </ng-container>
+          <ng-container *ngIf="element?.online_payment_status === 'verification_in_progress'">
+            <button
+              mat-icon-button
+              (click)="editLegalDialog(element)"
+              [disabled]="isAllSelected() || dataSelected.length > 0"
+              class="margin-right-button"
+              matTooltip="{{ 'Details' | translate }}"
+              matTooltipPosition="above"
+              *ngIf="permission.viewSettingLegalEntity()"
+            >
+              <mat-icon svgIcon="eye"></mat-icon>
+            </button>
+          </ng-container>
+        </td>
+      </ng-container>
+      <!-- ROW HEADER AND CONTENT END -->
+      <ng-container matColumnDef="loading">
+        <th mat-header-cell *matHeaderCellDef colspan="100%" class="text-center">
+          <div class="center-spinner">
+            <mat-spinner color="accent"></mat-spinner>
+          </div>
+        </th>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="['reset']"></tr>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-header-row *matHeaderRowDef="filterColumns"></tr>
+      <tr mat-header-row *matHeaderRowDef="['loading']" [hidden]="!isWaitingForResponse"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns" [hidden]="isWaitingForResponse"></tr>
+    </table>
+    <div *ngIf="noData | async" class="no-records">
+      {{ 'No record of Legal entities' | translate }}
+    </div>
+  </div>
+  <div [ngClass]="{ hide: noData | async }">
+    <mat-paginator
+      [ngClass]="{ 'hide-pagination-buttons': intakeChannelCount <= 10 }"
+      [length]="intackChannelCount"
+      [hidePageSize]="true"
+      [pageSize]="[10]"
+      showFirstLastButtons
+    ></mat-paginator>
+  </div>
+</div>
+
+<div [ngStyle]="{ display: openOnBoardingMerchant ? '' : 'none' }" class="card-legal">
+  <ms-legal-entities-boarding-merchant-parent (backToTable)="backToTable($event)"></ms-legal-entities-boarding-merchant-parent>
+</div>
+
+<swal #exportSwal title="{{ 'Export Title' | translate }}" [showConfirmButton]="false">
+  <div *swalPartial class="">
+    <div class="">{{ 'Export Text1' | translate }}</div>
+    <div class="">{{ 'Export Text2' | translate }}</div>
+    <div class="">{{ 'Export Text3' | translate }}</div>
+    <div class="">{{ 'Export Text4' | translate }}</div>
+    <div class="">
+      <mat-form-field color="accent" class="full-wid">
+        <input matInput [(ngModel)]="exportName" placeholder="{{ 'ExportName' | translate }}" />
+      </mat-form-field>
+    </div>
+    <button mat-raised-button color="primary" (click)="onDataExport()">
+      {{ 'OK' | translate }}
+    </button>
+  </div>
+</swal>

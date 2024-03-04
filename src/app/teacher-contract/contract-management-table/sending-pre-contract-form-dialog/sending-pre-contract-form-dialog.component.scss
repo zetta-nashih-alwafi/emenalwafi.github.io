@@ -1,0 +1,92 @@
+.mat-dialog-content {
+  padding-top: 2rem;
+
+  div {
+    justify-content: center;
+  }
+}
+
+.header-div {
+  .dialog-header-icon {
+    font-size: 35px;
+  }
+}
+
+.mat-dialog-content {
+  margin: 0 !important;
+  padding: 1rem !important;
+  min-height: 170px !important;
+}
+
+.mat-dialog-actions {
+  padding: 0 1rem !important;
+}
+
+:host::ng-deep.ng-select .ng-select-container {
+  background-color: #fff0;
+  border: none;
+  border-radius: 0px !important;
+  border-bottom: 1px solid #8c8c8c !important;
+  min-height: 36px;
+  -webkit-box-align: center;
+  align-items: center;
+}
+
+:host::ng-deep.ng-select .ng-select-container .ng-value-container {
+  padding-left: 4px !important;
+}
+
+:host::ng-deep.ng-select .ng-select-container.ng-has-value {
+  max-width: unset !important;
+}
+
+:host::ng-deep.ng-select.ng-select-single .ng-select-container .ng-value-container .ng-input {
+  padding-left: 4px !important;
+}
+
+.assign-border {
+  border: 2px solid #fdd835;
+  padding: 5px;
+  margin: 5px;
+}
+
+.section-field-title {
+  align-self: center;
+}
+
+.section-title {
+  padding-left: 10px;
+}
+
+.custom-input {
+  border-bottom: 1px solid rgb(241, 241, 241) !important;
+}
+
+.red{
+  color: #f44336;
+}
+
+.mat-icon {
+  max-width: none;
+  max-height: none;
+}
+
+:host::ng-deep.custom-style-ngselect.ng-dropdown-panel{
+  .ng-dropdown-panel-items .ng-option {
+    white-space:normal !important;
+  } 
+}
+
+.float-label {
+  font-size: 0.82rem;
+  color: #000;
+  font-weight: 600;
+}
+
+.label-legal {
+  margin-bottom: -10px;
+}
+
+.invalid-user-id {
+  border-bottom: 1px solid red !important;
+}

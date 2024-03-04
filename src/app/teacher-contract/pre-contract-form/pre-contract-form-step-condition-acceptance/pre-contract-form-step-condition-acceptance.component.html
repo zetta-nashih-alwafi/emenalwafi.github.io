@@ -1,0 +1,133 @@
+<section>
+  <div class="revision-box-container" *ngIf="stepData?.revise_request_messages">
+    <ms-revision-box-contract
+      [disabledReply]="stepData?.step_status === 'ask_for_revision'"
+      [formDetail]="formDetail"
+      [stepId]="stepData?._id"
+      [messages]="stepData?.revise_request_messages"
+      (triggerRefresh)="this.triggerRefresh.emit(formId)"
+    ></ms-revision-box-contract>
+  </div>
+
+  <div class="header" [innerHTML]="stepData?.direction"></div>
+  <h3>{{ stepData?.segments[0]?.segment_title }}</h3>
+  <hr />
+  <div class="ql-editor document-parent">
+    <ng-container>
+      <div *ngIf="documentOnPreviewUrl" class="img-preview container-view-lanscape">
+        <iframe [src]="documentOnPreviewUrl" frameBorder="0" [style.min-height.px]="getAutomaticHeight()"></iframe>
+      </div>
+    </ng-container>
+  </div>
+  <div *ngIf="!formDetail.isPreview" class="btn-conditions">
+    <button
+    *ngIf="stepData?.step_status !== 'accept' && formDetail?.contract_status !== 'submitted'"
+      color="accent"
+      mat-raised-button
+      class="btn-accept"
+      [disabled]="stepData?.step_status === 'reject_and_stop'"
+      (click)="rejectAndStopProcess()"
+      matTooltip="{{ 'Reject and Stop the process' | translate }} "
+    >
+      {{ 'Reject and Stop the process' | translate }}
+    </button>
+    <button
+      color="accent"
+      mat-raised-button
+      class="btn-accept"
+      *ngIf="stepData?.step_status === 'not_started' && isReceiver"
+      matTooltip="{{ 'Download the Condition' | translate }}"
+      (click)="onDownload()"
+    >
+      <mat-icon>cloud_download</mat-icon>
+      {{ 'Download the Condition' | translate }}
+    </button>
+    <button
+      color="accent"
+      mat-raised-button
+      class="btn-accept"
+      matTooltip="{{ 'I Read and Accept the Condition' | translate }}"
+      [disabled]="!userHasDownloaded"
+      *ngIf="stepData?.step_status === 'not_started' && isReceiver"
+      (click)="onAccept()"
+    >
+      <mat-icon>check_box</mat-icon>
+      {{ 'I Read and Accept the Condition' | translate }}
+    </button>
+    <button
+      color="accent"
+      mat-raised-button
+      class="btn-accept"
+      matTooltip="{{ 'I Read and Accept the Condition' | translate }}"
+      [disabled]="!userHasDownloaded"
+      *ngIf="isReceiver && isValidator && stepData?.step_status === 'need_validation'"
+      (click)="onAccept()"
+    >
+      <mat-icon>check_box</mat-icon>
+      {{ 'I Read and Accept the Condition' | translate }}
+    </button>
+    <button
+      *ngIf="isReceiver && isValidator && (stepData?.step_status === 'not_started' || stepData?.step_status === 'need_validation')"
+      color="accent"
+      mat-raised-button
+      class="btn-accept"
+      matTooltip="{{ 'Ask For Revision' | translate }} "
+      (click)="onAskForRevision()"
+    >
+      {{ 'Ask For Revision' | translate }}
+    </button>
+    <button
+      *ngIf="isValidator && stepData?.step_status === 'need_validation'"
+      color="accent"
+      mat-raised-button
+      class="btn-accept"
+      matTooltip="{{ 'Ask For Revision' | translate }} "
+      (click)="onAskForRevision()"
+    >
+      {{ 'Ask For Revision' | translate }}
+    </button>
+    <button
+      *ngIf="stepData?.step_status === 'ask_for_revision' && isRevisionUser"
+      color="accent"
+      mat-raised-button
+      class="btn-accept"
+      (click)="onCompleteRevision()"
+      matTooltip="{{ 'Complete Revision' | translate }} "
+    >
+      {{ 'Complete Revision' | translate }}
+    </button>
+    <button
+      color="accent"
+      mat-raised-button
+      class="btn-accept"
+      matTooltip="{{ 'Save' | translate }}"
+      *ngIf="formDetail?.admission_status === 'ask_for_revision' && formDetail?.isFinalRevisionUser"
+      (click)="onSave()"
+    >
+      <mat-icon>save</mat-icon>
+      {{ 'Save' | translate }}
+    </button>
+  </div>
+
+  <div *ngIf="formDetail.isPreview" class="btn-conditions">
+    <button color="accent" mat-raised-button class="btn-accept" matTooltip="{{ 'Download the Condition' | translate }}">
+      <mat-icon>cloud_download</mat-icon>
+      {{ 'Download the Condition' | translate }}
+    </button>
+    <button
+      color="accent"
+      mat-raised-button
+      class="btn-accept"
+      matTooltip="{{
+        formDetail?.admission_status === 'ask_for_revision' ? ('Save' | translate) : ('I Read and Accept the Condition' | translate)
+      }}"
+    >
+      <mat-icon>check_box</mat-icon>
+      {{ formDetail?.admission_status === 'ask_for_revision' ? ('Save' | translate) : ('I Read and Accept the Condition' | translate) }}
+    </button>
+  </div>
+</section>
+
+<div *ngIf="isWaitingForResponse" class="loading-indicator">
+  <mat-progress-spinner mode="indeterminate" color="accent"></mat-progress-spinner>
+</div>

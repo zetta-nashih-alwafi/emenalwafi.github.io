@@ -1,0 +1,209 @@
+<div class="row" *ngIf="isWaitingForResponse">
+  <div class="col-lg-12 padl-13 hd-legend">
+    <label class="skeleton skeleton-text"></label>
+  </div>
+  <div class="col-lg-12">
+    <div class="col-lg-6">
+      <div class="row">
+        <div class="skeleton skeleton-text"></div>
+      </div>
+      <div class="row">
+        <div class="skeleton skeleton-text"></div>
+      </div>
+      <div class="row">
+        <div class="skeleton skeleton-text"></div>
+      </div>
+      <div class="row">
+        <div class="skeleton skeleton-text"></div>
+      </div>
+      <div class="row">
+        <div class="skeleton skeleton-text"></div>
+      </div>
+      <div class="row">
+        <div class="skeleton skeleton-text"></div>
+      </div>
+    </div>
+    <div class="col-lg-6">
+      <div class="row">
+        <div class="skeleton skeleton-text"></div>
+      </div>
+      <div class="row">
+        <div class="skeleton skeleton-text"></div>
+      </div>
+      <div class="row">
+        <div class="skeleton skeleton-text"></div>
+      </div>
+      <div class="row">
+        <div class="skeleton skeleton-text"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="!isWaitingForResponse" class="minheight responsives">
+  <form class="row forms" [formGroup]="myIdentityForm">
+    <div class="col-lg-12 padl-13 hd-legend">
+      <label>{{ 'School Detail' | translate }}</label>
+    </div>
+    <div class="col-lg-12">
+      <div class="col-lg-6">
+        <div class="row">
+          <div class="col-lg-4">
+            <label>{{ 'TITLE_IDENTITY.short name' | translate }}*</label>
+          </div>
+          <div class="col-lg-8">
+            <div class="form-group">
+              <input class="form-control" required formControlName="short_name" />
+              <div
+                class="invalid-feedback"
+                *ngIf="
+                  myIdentityForm.get('short_name').hasError('required') &&
+                  (myIdentityForm.get('short_name').dirty || myIdentityForm.get('short_name').touched)
+                "
+              >
+                {{ 'This field is required' | translate }}
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-lg-4">
+            <label>{{ 'Address' | translate }}*</label>
+          </div>
+          <div class="col-lg-8">
+            <div class="form-group">
+              <input class="form-control" required formControlName="address1" />
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-lg-4">
+            <label>{{ 'Post code' | translate }}*</label>
+          </div>
+          <div class="col-lg-8">
+            <div class="form-group">
+              <input class="form-control" required formControlName="postal_code" maxlength="5" />
+            </div>
+            <mat-error
+              *ngIf="
+                myIdentityForm.get('postal_code').hasError('pattern') &&
+                (myIdentityForm.get('postal_code').dirty || myIdentityForm.get('postal_code').touched)
+              "
+            >
+              {{ 'Please Input Number Only' | translate }}
+            </mat-error>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-lg-4">
+            <label>{{ 'Region' | translate }}*</label>
+          </div>
+          <div class="col-lg-8">
+            <div class="form-group">
+              <input class="form-control" required formControlName="region" />
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-lg-4">
+            <label>{{ 'Telephone' | translate }}*</label>
+          </div>
+          <div class="col-lg-8">
+            <div class="form-group">
+              <input class="form-control" required formControlName="tele_phone" maxlength="10" />
+            </div>
+            <mat-error
+              *ngIf="
+                myIdentityForm.get('tele_phone').hasError('pattern') &&
+                (myIdentityForm.get('tele_phone').dirty || myIdentityForm.get('tele_phone').touched)
+              "
+            >
+              {{ 'Please Input Number Only' | translate }}
+            </mat-error>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="row">
+          <div class="col-lg-4">
+            <label>{{ 'TITLE_IDENTITY.long name' | translate }}*</label>
+          </div>
+          <div class="col-lg-8">
+            <div class="form-group">
+              <input class="form-control" required formControlName="long_name" />
+              <div
+                class="invalid-feedback"
+                *ngIf="
+                  myIdentityForm.get('long_name').hasError('required') &&
+                  (myIdentityForm.get('long_name').dirty || myIdentityForm.get('long_name').touched)
+                "
+              >
+                {{ 'This field is required' | translate }}
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-lg-4">
+            <label>{{ 'Country' | translate }}*</label>
+          </div>
+          <div class="col-lg-8">
+            <div class="form-group">
+              <input
+                type="text"
+                matInput
+                required
+                class="form-control"
+                formControlName="country"
+                [matAutocomplete]="autoCountrys"
+                (keyup)="filterCountry()"
+              />
+              <mat-autocomplete #autoCountrys="matAutocomplete">
+                <mat-option *ngFor="let option of filteredCountry" [value]="option.name">
+                  {{ option.name }}
+                </mat-option>
+              </mat-autocomplete>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-lg-4">
+            <label>{{ 'City' | translate }}*</label>
+          </div>
+          <div class="col-lg-8">
+            <div class="form-group">
+              <input class="form-control" required formControlName="city" />
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-lg-4">
+            <label>{{ 'Department' | translate }}*</label>
+          </div>
+          <div class="col-lg-8">
+            <div class="form-group">
+              <input class="form-control" required formControlName="department" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+  <div class="btn-conditions">
+    <button color="warn" mat-raised-button class="btn-save" matTooltip="{{ 'CANCEL' | translate }} " (click)="cancelEdit()">
+      {{ 'CANCEL' | translate }}
+    </button>
+    <button
+      color="accent"
+      mat-raised-button
+      class="btn-save"
+      matTooltip="{{ 'CARDDETAIL.Save' | translate }} "
+      (click)="identitySave()"
+      [disabled]="myIdentityForm.invalid || checkDataEdit()"
+    >
+      <mat-icon class="mat-icon-default">save</mat-icon>
+      {{ 'CARDDETAIL.Save' | translate }}
+    </button>
+  </div>
+</div>
+

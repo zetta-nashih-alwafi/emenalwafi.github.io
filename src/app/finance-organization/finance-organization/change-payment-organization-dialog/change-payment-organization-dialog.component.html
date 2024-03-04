@@ -1,0 +1,417 @@
+  <div class="dialog-border" cdkDrag cdkDragRootElement=".cdk-overlay-pane" cdkDragHandle>
+  <div class="dialogTitleWrapper">
+    <div class="p-grid">
+      <div class="w-30 no-padding">
+        <mat-icon
+          style="vertical-align: middle"
+          svgIcon="archive-edit-outline"
+          data-cy="icon-change-payment-organization-dialog"
+        ></mat-icon>
+      </div>
+      <div class="p-col-10 acad-title" data-cy="title-change-payment-organization-dialog">
+        <h3 class="dialogTitle">
+          {{ 'Changer echeances/montant' | translate }}
+          {{ 'for' | translate }}
+          <ng-container *ngIf="parentData?.source?.organization_name">
+            {{ parentData?.source?.organization_name }}
+          </ng-container>
+          <ng-container *ngIf="!parentData?.source?.organization_name && parentData?.source?.organization_id?.name">
+            {{ parentData?.source?.organization_id?.name }}
+          </ng-container>
+        </h3>
+      </div>
+      <div class="p-col no-padding text-right">
+        <button
+          data-cy="button-close-change-payment-organization-dialog"
+          mat-icon-button
+          class="close-icon float-right"
+          mat-dialog-close
+          tabindex="-1"
+        >
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<form [formGroup]="changePaymentOrganizationForm">
+  <div class="fontColor">
+    <mat-dialog-content>
+      <div class="p-grid" style="margin-bottom: 10px !important">
+        <div class="p-col-12 no-padding">
+          <div class="text">{{ 'Total amount' | translate }}</div>
+          <div class="text-value" data-cy="label-total-amount">
+            {{ (parentData?.source.total_amount ? parentData?.source.total_amount : 0) | currency : 'EUR' : true }}
+          </div>
+        </div>
+        <div class="p-col-12 no-padding">
+          <div class="text">{{ 'Total Amount Paid' | translate }}</div>
+          <div class="text-value" data-cy="label-total-amount-paid">
+            {{ (parentData?.source.amount_paid ? parentData?.source.amount_paid : 0) | currency : 'EUR' : true }}
+          </div>
+        </div>
+        <div class="p-col-12 no-padding">
+          <div class="text" style="border-bottom: 1px solid black !important">{{ 'Total Amount Remaining' | translate }}</div>
+          <div class="text-value" style="border-bottom: 1px solid black !important" data-cy="label-total-amount-remaining">
+            {{ (ramainingBill ? ramainingBill : 0) | currency : 'EUR' : true }}
+          </div>
+        </div>
+      </div>
+      <div class="p-grid">
+        <div class="p-col-12 no-padding">
+          <h4 class="title-text">{{ 'Terms and Amounts' | translate }} :</h4>
+        </div>
+      </div>
+
+      <div class="p-grid" style="margin-top: 10px !important">
+        <div class="p-col-12 no-padding" formArrayName="terms">
+          <div class="card-terms" *ngIf="isHaveDeposit" data-cy="down-payment-section">
+            <div class="btn-edit">
+              <mat-icon class="btn-action" style="vertical-align: middle" svgIcon="lock"></mat-icon>
+            </div>
+            <div class="header-list">
+              <div class="header-text" style="height: 79px; padding-top: 30px">
+                <div class="header-texts">{{ 'Down Payment' | translate }}</div>
+              </div>
+            </div>
+            <div class="body-list bg-green" *ngIf="isDepositDone" style="height: 62px; line-height: 40px">{{ depositValue }} €</div>
+            <div
+              class="body-list"
+              *ngIf="!isDepositDone"
+              [ngClass]="{
+                'bg-orange': isDepositPartial
+              }"
+              style="height: 62px; line-height: 40px"
+            >
+              {{ depositValue }} €
+            </div>
+          </div>
+          <div
+            class="card-terms"
+            *ngFor="let data of payment.controls; let in = index"
+            [formGroupName]="in"
+            data-cy="terms-payment-section"
+          >
+            <div class="btn-edit">
+              <mat-icon
+                class="btn-action"
+                (click)="deleteTerm(in)"
+                style="vertical-align: middle; cursor: pointer"
+                *ngIf="
+                  !changePaymentOrganizationForm.get('terms').get(in.toString()).get('is_term_paid').value &&
+                  !changePaymentOrganizationForm.get('terms').get(in.toString()).get('is_locked').value
+                "
+                svgIcon="close-circle-outline"
+                data-cy="button-delete-term"
+              ></mat-icon>
+              <mat-icon
+                data-cy="button-unlock-term"
+                class="btn-action"
+                style="vertical-align: middle; cursor: pointer"
+                (click)="unlockTerm(in)"
+                *ngIf="
+                  (!changePaymentOrganizationForm.get('terms').get(in.toString()).get('is_term_paid').value ||
+                    (changePaymentOrganizationForm.get('terms').get(in.toString()).get('is_partial').value &&
+                      changePaymentOrganizationForm.get('terms').get(in.toString()).get('is_term_paid').value)) &&
+                  changePaymentOrganizationForm.get('terms').get(in.toString()).get('is_locked').value &&
+                  (parentData?.source?.student_type?.type_of_information === 'classic' || changePaymentOrganizationForm?.get('terms')?.get(in?.toString())?.get('term_status')?.value === 'not_billed')
+                "
+                svgIcon="lock"
+              ></mat-icon>
+              <mat-icon
+                data-cy="button-lock-term"
+                class="btn-action"
+                style="vertical-align: middle; cursor: pointer"
+                (click)="lockTerm(in)"
+                *ngIf="
+                  (!changePaymentOrganizationForm.get('terms').get(in.toString()).get('is_term_paid').value ||
+                    (changePaymentOrganizationForm.get('terms').get(in.toString()).get('is_partial').value &&
+                      changePaymentOrganizationForm.get('terms').get(in.toString()).get('is_term_paid').value)) &&
+                  !changePaymentOrganizationForm.get('terms').get(in.toString()).get('is_locked').value
+                "
+                svgIcon="lock-open-outline"
+              ></mat-icon>
+            </div>
+            <div class="header-list" data-cy="term-list-section">
+              <div class="header-text" formGroupName="term_payment">
+                <div class="header-texts">{{ 'Term' | translate }} {{ in + 1 }}</div>
+                <div
+                  class="header-textd"
+                  *ngIf="
+                    !changePaymentOrganizationForm.get('terms').get(in.toString()).get('is_partial').value &&
+                    changePaymentOrganizationForm.get('terms').get(in.toString()).get('is_term_paid').value &&
+                    changePaymentOrganizationForm.get('terms').get(in.toString()).get('term_amount').value ===
+                      changePaymentOrganizationForm.get('terms').get(in.toString()).get('term_pay_amount').value &&
+                    !changePaymentOrganizationForm.get('terms').get(in.toString()).get('is_locked').value
+                  "
+                  style="height: 47px"
+                >
+                  {{ translateDates(changePaymentOrganizationForm.get('terms').get(in.toString()).get('term_payment').get('date').value) }}
+                </div>
+                <div
+                  class="header-textd"
+                  *ngIf="changePaymentOrganizationForm.get('terms').get(in.toString()).get('is_locked').value"
+                  style="height: 47px"
+                >
+                  {{
+                    !changePaymentOrganizationForm.get('terms').get(in.toString()).get('term_payment').get('date').value
+                      ? '-'
+                      : translateDates(changePaymentOrganizationForm.get('terms').get(in.toString()).get('term_payment').get('date').value)
+                  }}
+                </div>
+                <div
+                  class="header-textd"
+                  *ngIf="
+                    (changePaymentOrganizationForm.get('terms').get(in.toString()).get('term_pay_amount').value &&
+                      changePaymentOrganizationForm.get('terms').get(in.toString()).get('term_amount').value !==
+                        changePaymentOrganizationForm.get('terms').get(in.toString()).get('term_pay_amount').value &&
+                      !changePaymentOrganizationForm.get('terms').get(in.toString()).get('is_locked').value) ||
+                    (!changePaymentOrganizationForm.get('terms').get(in.toString()).get('term_pay_amount').value &&
+                      changePaymentOrganizationForm.get('terms').get(in.toString()).get('is_term_paid').value === false &&
+                      !changePaymentOrganizationForm.get('terms').get(in.toString()).get('is_locked').value)
+                  "
+                >
+                  <mat-form-field floatLabel="never" style="height: 46px; line-height: 25px">
+                    <input
+                      matInput
+                      (click)="myDatepicker.open()"
+                      readonly
+                      [min]="today"
+                      [max]="lastDate"
+                      formControlName="date"
+                      [value]="
+                        changePaymentOrganizationForm.get('terms').get(in.toString()).get('term_payment').get('date').value
+                      "
+                      [matDatepicker]="myDatepicker"
+                    />
+                    <mat-datepicker-toggle matSuffix [for]="myDatepicker"></mat-datepicker-toggle>
+                    <mat-datepicker #myDatepicker></mat-datepicker>
+                  </mat-form-field>
+                </div>
+              </div>
+            </div>
+
+            <!-- <div
+              class="body-list bg-green"
+              *ngIf="
+                !changePaymentOrganizationForm.get('terms').get(in.toString()).get('is_partial').value &&
+                changePaymentOrganizationForm.get('terms').get(in.toString()).get('is_term_paid').value &&
+                changePaymentOrganizationForm.get('terms').get(in.toString()).get('term_amount').value ===
+                  changePaymentOrganizationForm.get('terms').get(in.toString()).get('term_pay_amount').value &&
+                !changePaymentOrganizationForm.get('terms').get(in.toString()).get('is_locked').value
+              "
+              style="height: 58px; line-height: 38px"
+            >
+              {{ changePaymentOrganizationForm.get('terms').get(in.toString()).get('term_amount').value | currency: 'EURO':'':'0.2' }} €
+            </div>
+            <div
+              class="body-list"
+              [ngClass]="{
+                'bg-orange': changePaymentOrganizationForm.get('terms').get(in.toString()).get('is_partial').value === true
+              }"
+              *ngIf="changePaymentOrganizationForm.get('terms').get(in.toString()).get('is_locked').value"
+              style="height: 58px; line-height: 38px"
+            >
+              {{ changePaymentOrganizationForm.get('terms').get(in.toString()).get('term_amount').value | currency: 'EURO':'':'0.2' }} €
+            </div>
+            <div
+              class="body-list bg-orange"
+              *ngIf="
+                changePaymentOrganizationForm.get('terms').get(in.toString()).get('is_partial').value === true &&
+                !changePaymentOrganizationForm.get('terms').get(in.toString()).get('is_locked').value
+              "
+            >
+              <mat-form-field floatLabel="never" style="height: 49px; line-height: 18px; width: 85px">
+                <input matInput formControlName="term_amount" (keyup)="keyUpBill($event, in.toString())" type="number" />
+                <mat-error *ngIf="changePaymentOrganizationForm.get('terms').get(in.toString()).get('term_amount').errors">{{
+                  'Cant be empty' | translate
+                }}</mat-error>
+              </mat-form-field>
+              <span class="currency">€</span>
+            </div>
+            <div
+              class="body-list"
+              *ngIf="
+                changePaymentOrganizationForm.get('terms').get(in.toString()).get('is_partial').value === false &&
+                changePaymentOrganizationForm.get('terms').get(in.toString()).get('is_term_paid').value === false &&
+                !changePaymentOrganizationForm.get('terms').get(in.toString()).get('is_locked').value
+              "
+            >
+              <mat-form-field floatLabel="never" style="height: 49px; line-height: 18px; width: 85px">
+                <input matInput formControlName="term_amount" (keyup)="keyUpBill($event, in.toString())" type="number" />
+                <mat-error *ngIf="changePaymentOrganizationForm.get('terms').get(in.toString()).get('term_amount').errors">{{
+                  'Cant be empty' | translate
+                }}</mat-error>
+              </mat-form-field>
+              <span class="currency">€</span>
+            </div> -->
+
+            <div
+              class="body-list bg-green"
+              *ngIf="
+                (!changePaymentOrganizationForm.get('terms').get(in.toString()).get('is_locked').value ||
+                  changePaymentOrganizationForm.get('terms').get(in.toString()).get('is_locked').value) &&
+                changePaymentOrganizationForm.get('terms').get(in.toString()).get('term_status').value === 'paid'
+              "
+              style="height: 58px; line-height: 38px"
+            >
+              {{ changePaymentOrganizationForm.get('terms').get(in.toString()).get('term_amount').value | currency : 'EURO' : '' : '0.2' }}
+              €
+            </div>
+
+            <div
+              class="body-list"
+              [ngClass]="{
+                'bg-orange':
+                  changePaymentOrganizationForm.get('terms').get(in.toString()).get('is_partial').value === true &&
+                  changePaymentOrganizationForm.get('terms').get(in.toString()).get('term_status').value === 'partially_paid'
+              }"
+              *ngIf="
+                changePaymentOrganizationForm.get('terms').get(in.toString()).get('is_locked').value &&
+                changePaymentOrganizationForm.get('terms').get(in.toString()).get('term_status').value === 'partially_paid'
+              "
+              style="height: 58px; line-height: 38px"
+            >
+              {{ changePaymentOrganizationForm.get('terms').get(in.toString()).get('term_amount').value | currency : 'EURO' : '' : '0.2' }}
+              €
+            </div>
+            <div
+              class="body-list bg-orange"
+              *ngIf="
+                changePaymentOrganizationForm.get('terms').get(in.toString()).get('is_partial').value === true &&
+                !changePaymentOrganizationForm.get('terms').get(in.toString()).get('is_locked').value &&
+                changePaymentOrganizationForm.get('terms').get(in.toString()).get('term_status').value === 'partially_paid'
+              "
+            >
+              <mat-form-field floatLabel="never" style="height: 49px; line-height: 18px; width: 85px">
+                <input
+                  data-cy="input-term-amount"
+                  matInput
+                  formControlName="term_amount"
+                  (wheel)="onWheel($event)"
+                  (keyup)="keyUpBill($event, in.toString())"
+                  type="number"
+                />
+                <mat-error *ngIf="changePaymentOrganizationForm.get('terms').get(in.toString()).get('term_amount').errors">{{
+                  'Cant be empty' | translate
+                }}</mat-error>
+              </mat-form-field>
+              <span class="currency">€</span>
+            </div>
+
+            <div
+              class="body-list bg-blue"
+              *ngIf="
+                changePaymentOrganizationForm.get('terms').get(in.toString()).get('is_locked').value &&
+                changePaymentOrganizationForm.get('terms').get(in.toString()).get('term_status').value === 'billed'
+              "
+              style="height: 58px; line-height: 38px"
+            >
+              {{ changePaymentOrganizationForm.get('terms').get(in.toString()).get('term_amount').value | currency : 'EURO' : '' : '0.2' }}
+              €
+            </div>
+            <div
+              class="body-list bg-blue"
+              *ngIf="
+                !changePaymentOrganizationForm.get('terms').get(in.toString()).get('is_locked').value &&
+                changePaymentOrganizationForm.get('terms').get(in.toString()).get('term_status').value === 'billed'
+              "
+            >
+              <mat-form-field floatLabel="never" style="height: 49px; line-height: 18px; width: 85px">
+                <input
+                  data-cy="input-term-amount"
+                  matInput
+                  formControlName="term_amount"
+                  (wheel)="onWheel($event)"
+                  (keyup)="keyUpBill($event, in.toString())"
+                  type="number"
+                />
+                <mat-error *ngIf="changePaymentOrganizationForm.get('terms').get(in.toString()).get('term_amount').errors">{{
+                  'Cant be empty' | translate
+                }}</mat-error>
+              </mat-form-field>
+              <span class="currency">€</span>
+            </div>
+
+            <div
+              class="body-list"
+              *ngIf="
+                changePaymentOrganizationForm.get('terms').get(in.toString()).get('is_locked').value &&
+                changePaymentOrganizationForm.get('terms').get(in.toString()).get('term_status').value === 'not_billed'
+              "
+              style="height: 58px; line-height: 38px"
+            >
+              {{ changePaymentOrganizationForm.get('terms').get(in.toString()).get('term_amount').value | currency : 'EURO' : '' : '0.2' }}
+              €
+            </div>
+            <div
+              class="body-list"
+              *ngIf="
+                !changePaymentOrganizationForm.get('terms').get(in.toString()).get('is_locked').value &&
+                changePaymentOrganizationForm.get('terms').get(in.toString()).get('term_status').value === 'not_billed'
+              "
+            >
+              <mat-form-field floatLabel="never" style="height: 49px; line-height: 18px; width: 85px">
+                <input
+                  data-cy="input-term-amount"
+                  matInput
+                  formControlName="term_amount"
+                  (wheel)="onWheel($event)"
+                  (keyup)="keyUpBill($event, in.toString())"
+                  type="number"
+                />
+                <mat-error *ngIf="changePaymentOrganizationForm.get('terms').get(in.toString()).get('term_amount').errors">{{
+                  'Cant be empty' | translate
+                }}</mat-error>
+              </mat-form-field>
+              <span class="currency">€</span>
+            </div>
+          </div>
+
+          <div class="btn-add" *ngIf="payment && payment.length < 12 && !fullyPaid && isCanAddTerm">
+            <button data-cy="button-add-manual-term" class="custom-button" (click)="addManualTerm()" [disabled]="checkManualTerm()">
+              <mat-icon class="btn-add" style="width: 75px; cursor: pointer" svgIcon="archive-plus-outline"></mat-icon>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="p-grid" style="margin-top: 18px !important">
+        <div class="p-col-12 no-padding">
+          <div class="p-grid">
+            <div class="p-col-12 no-padding-left">
+              <label>{{ 'Note' | translate }}</label>
+            </div>
+            <div class="p-col-12 no-padding">
+              <div class="ckeditor">
+                <ckeditor
+                  data-cy="input-note-ckeditor"
+                  #editor
+                  [editor]="Editor"
+                  formControlName="note"
+                  (ready)="onReady($event)"
+                  [config]="config"
+                ></ckeditor>
+                <button data-cy="button-record-note" mat-icon-button (click)="recordNote()" class="margin-right-button btn-mic">
+                  <mat-icon class="mic-style">keyboard_voice</mat-icon>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </mat-dialog-content>
+    <mat-dialog-actions align="right">
+      <button data-cy="button-cancel-change-payment-organization-dialog" mat-raised-button type="button" color="warn" mat-dialog-close>
+        {{ 'CANCEL' | translate }}
+      </button>
+      <button data-cy="button-validate-change-payment-organization-dialog" mat-raised-button color="primary" (click)="submitVerification()">
+        {{ 'Validate' | translate }}
+      </button>
+    </mat-dialog-actions>
+  </div>
+</form>
+
+<div *ngIf="isWaitingForResponse" class="loading-indicator" data-cy="spinner-dialog">
+  <mat-progress-spinner mode="indeterminate" color="accent"></mat-progress-spinner>
+</div>

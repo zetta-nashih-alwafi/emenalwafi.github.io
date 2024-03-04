@@ -1,0 +1,660 @@
+<div class="card web-card">
+  <div class="card-body card-segment detail-intership">
+    <div class="row">
+      <div class="location-intership" *ngIf="!isLocationDone">
+        <div class="row no-margin padl-13">
+          <legend>{{ 'Location of the Internship' | translate }}</legend>
+        </div>
+        <div class="row no-margin padl-13">
+          <div class="row no-margin width-card">
+            <div class="card">
+              <div class="card-body card-urgency" [ngClass]="{ 'color-disabled': !isLocationFrance }">
+                <div class="row">
+                  <div><mat-icon style="margin-top: 5px" class="mat-icon-urgency">language</mat-icon></div>
+                </div>
+                <div class="row">
+                  <div class="title-urgency">France</div>
+                </div>
+                <div class="row" style="margin: auto; text-align: center">
+                  <button
+                    (click)="locationIntership('france')"
+                    mat-raised-button
+                    matTooltip="{{ 'I choose' | translate }} "
+                    class="btn-opsi btn-loan-touch btn-card"
+                  >
+                    {{ 'I choose' | translate }}
+                    <mat-icon class="mat-icon-default">touch_app</mat-icon>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row no-margin width-card">
+            <div class="card">
+              <div class="card-body card-urgency" [ngClass]="{ 'color-disabled': !isLocationOverseas }">
+                <div class="row">
+                  <div><mat-icon style="margin-top: 5px" class="mat-icon-urgency">language</mat-icon></div>
+                </div>
+                <div class="row">
+                  <div class="title-urgency">{{ 'Overseas' | translate }}</div>
+                </div>
+                <div class="row" style="margin: auto; text-align: center">
+                  <button
+                    (click)="locationIntership('other')"
+                    mat-raised-button
+                    matTooltip="{{ 'I choose' | translate }} "
+                    class="btn-opsi btn-loan-touch btn-card"
+                  >
+                    {{ 'I choose' | translate }}
+                    <mat-icon class="mat-icon-default">touch_app</mat-icon>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row no-margin method-two mgl-13 web-form" [formGroup]="countryForm" *ngIf="!isLocationFrance">
+            <legend>{{ 'Select Country' | translate }}</legend>
+            <div class="col-lg-12">
+              <div class="row">
+                <div class="col-lg-4">
+                  <label>{{ 'Country' | translate }}*</label>
+                </div>
+                <div class="col-lg-8">
+                  <div class="form-group">
+                    <input
+                      type="text"
+                      matInput
+                      class="form-control"
+                      formControlName="country"
+                      [matAutocomplete]="autoCountryss"
+                      (keyup)="filterCountrys('')"
+                    />
+                    <mat-autocomplete #autoCountryss="matAutocomplete">
+                      <mat-option *ngFor="let option of filteredCountryFinance" [value]="option.name">
+                        {{ 'COUNTRY.' + option.name | translate }}
+                      </mat-option>
+                    </mat-autocomplete>
+                  </div>
+                </div>
+              </div>
+              <div class="row no-margin btn-validate">
+                <button
+                  [disabled]="!countryForm.get('country').value"
+                  style="margin-right: 0px"
+                  class="regirstration-color btn-third"
+                  (click)="countrySelected()"
+                  mat-raised-button
+                  matTooltip="{{ 'Validate' | translate }} "
+                >
+                  <mat-icon class="mat-icon-default">save</mat-icon>
+                  {{ 'Validate' | translate }}
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="row no-margin method-two mobile-form" [formGroup]="countryForm" *ngIf="!isLocationFrance">
+            <legend>{{ 'Select Country' | translate }}</legend>
+            <div class="col-lg-12">
+              <div class="row">
+                <div class="col-lg-4">
+                  <label>{{ 'Country' | translate }}*</label>
+                </div>
+                <div class="col-lg-8">
+                  <div class="form-group">
+                    <input
+                      type="text"
+                      matInput
+                      class="form-control"
+                      formControlName="country"
+                      [matAutocomplete]="autoCountryss"
+                      (keyup)="filterCountrys('')"
+                    />
+                    <mat-autocomplete #autoCountryss="matAutocomplete">
+                      <mat-option *ngFor="let option of filteredCountryFinance" [value]="option.name">
+                        {{ 'COUNTRY.' + option.name | translate }}
+                      </mat-option>
+                    </mat-autocomplete>
+                  </div>
+                </div>
+              </div>
+              <div class="row no-margin btn-validate">
+                <button
+                  style="margin-right: 0px"
+                  class="regirstration-color btn-third"
+                  (click)="countrySelected()"
+                  mat-raised-button
+                  matTooltip="{{ 'Validate' | translate }} "
+                >
+                  <mat-icon class="mat-icon-default">save</mat-icon>
+                  {{ 'Validate' | translate }}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="present-intership" *ngIf="isLocationDone && !isPresentDone">
+        <div class="row no-margin padl-13">
+          <legend>{{ 'Presence / Remote' | translate }}</legend>
+        </div>
+        <div class="row no-margin padl-13">
+          <div class="row no-margin width-card">
+            <div class="card">
+              <div class="card-body card-remote" [ngClass]="{ 'color-disabled': !isPresence }">
+                <div class="row">
+                  <div><mat-icon style="margin-top: 5px" class="mat-icon-urgency">apartment</mat-icon></div>
+                </div>
+                <div class="row">
+                  <div class="title-urgency">{{ 'Presence' | translate }}</div>
+                </div>
+                <div class="row" style="margin: auto; text-align: center">
+                  <button
+                    (click)="presentIntership('presence')"
+                    mat-raised-button
+                    matTooltip="{{ 'I choose' | translate }} "
+                    class="btn-opsi btn-loan-touch btn-card"
+                  >
+                    {{ 'I choose' | translate }}
+                    <mat-icon class="mat-icon-default">touch_app</mat-icon>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row no-margin width-card">
+            <div class="card">
+              <div class="card-body card-remote" [ngClass]="{ 'color-disabled': !isRemote }">
+                <div class="row">
+                  <div><mat-icon style="margin-top: 5px" class="mat-icon-urgency">house</mat-icon></div>
+                </div>
+                <div class="row">
+                  <div class="title-urgency">{{ 'Remote' | translate }}</div>
+                </div>
+                <div class="row" style="margin: auto; text-align: center">
+                  <button
+                    (click)="presentIntership('remote')"
+                    mat-raised-button
+                    matTooltip="{{ 'I choose' | translate }} "
+                    class="btn-opsi btn-loan-touch btn-card"
+                  >
+                    {{ 'I choose' | translate }}
+                    <mat-icon class="mat-icon-default">touch_app</mat-icon>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row no-margin padl-13 btn-go-back">
+          <div class="row no-margin btn-validate">
+            <button
+              style="margin-right: 0px"
+              class="regirstration-color btn-third"
+              (click)="backToLocation()"
+              mat-raised-button
+              matTooltip="{{ 'Back to Location' | translate }} "
+            >
+              <mat-icon svgIcon="backup-restore"></mat-icon>
+              {{ 'Back to Location' | translate }}
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="period-intership" *ngIf="isPresentDone && !isPeriodDone">
+        <div class="row no-margin padl-13">
+          <legend>{{ 'Period of the Internship' | translate }}</legend>
+        </div>
+        <div class="row no-margin padl-13">
+          <div class="row no-margin width-card">
+            <div class="card">
+              <div class="card-body card-period" [ngClass]="{ 'color-disabled': !isSpecific }">
+                <div class="row">
+                  <div><mat-icon style="margin-top: 5px" class="mat-icon-urgency">date_range</mat-icon></div>
+                </div>
+                <div class="row">
+                  <div class="title-urgency">{{ 'Specific Dates' | translate }}</div>
+                </div>
+                <div class="row" style="margin: auto; text-align: center">
+                  <button
+                    (click)="periodIntership('specific')"
+                    mat-raised-button
+                    matTooltip="{{ 'I choose' | translate }} "
+                    class="btn-opsi btn-loan-touch btn-card"
+                  >
+                    {{ 'I choose' | translate }}
+                    <mat-icon class="mat-icon-default">touch_app</mat-icon>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row no-margin width-card">
+            <div class="card">
+              <div class="card-body card-period" [ngClass]="{ 'color-disabled': !isOngoing }">
+                <div class="row">
+                  <div><mat-icon style="margin-top: 5px" class="mat-icon-urgency">hourglass_empty</mat-icon></div>
+                </div>
+                <div class="row">
+                  <div class="title-urgency">{{ 'Ongoing' | translate }}</div>
+                </div>
+                <div class="row" style="margin: auto; text-align: center">
+                  <button
+                    (click)="periodIntership('ongoing')"
+                    mat-raised-button
+                    matTooltip="{{ 'I choose' | translate }} "
+                    class="btn-opsi btn-loan-touch btn-card"
+                  >
+                    {{ 'I choose' | translate }}
+                    <mat-icon class="mat-icon-default">touch_app</mat-icon>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row no-margin method-two mgl-13 web-form-date" [formGroup]="countryForm" *ngIf="!isOngoing">
+            <legend>{{ 'Select Date' | translate }}</legend>
+            <div class="col-lg-12">
+              <div class="col-lg-6" style="margin-top: 10px">
+                <div class="row">
+                  <div class="col-lg-4 no-padding">
+                    <label>{{ 'Date From' | translate }}*</label>
+                  </div>
+                  <div class="col-lg-8">
+                    <div class="form-group no-padding">
+                      <input
+                        matInput
+                        (click)="FromDatepickers.open()"
+                        readonly
+                        style="float: left"
+                        class="form-control"
+                        formControlName="date_from"
+                        [matDatepicker]="FromDatepickers"
+                      />
+                      <mat-datepicker-toggle matSuffix [for]="FromDatepickers"></mat-datepicker-toggle>
+                      <mat-datepicker #FromDatepickers></mat-datepicker>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-lg-6" style="margin-top: 10px">
+                <div class="row">
+                  <div class="col-lg-4 no-padding">
+                    <label>{{ 'Date To' | translate }}*</label>
+                  </div>
+                  <div class="col-lg-8 no-padding">
+                    <div class="form-group">
+                      <input
+                        matInput
+                        (click)="myDatepickers.open()"
+                        readonly
+                        style="float: left"
+                        class="form-control"
+                        formControlName="date_to"
+                        [matDatepicker]="myDatepickers"
+                      />
+                      <mat-datepicker-toggle matSuffix [for]="myDatepickers"></mat-datepicker-toggle>
+                      <mat-datepicker #myDatepickers></mat-datepicker>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row no-margin btn-validate">
+                <button
+                  [disabled]="!countryForm.get('date_from').value || !countryForm.get('date_to').value"
+                  style="margin-right: 0px"
+                  class="regirstration-color btn-third"
+                  (click)="dateSelected()"
+                  mat-raised-button
+                  matTooltip="{{ 'Validate' | translate }} "
+                >
+                  <mat-icon class="mat-icon-default">save</mat-icon>
+                  {{ 'Validate' | translate }}
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="row no-margin method-two mobile-form-date" [formGroup]="countryForm" *ngIf="!isOngoing">
+            <legend>{{ 'Select Date' | translate }}</legend>
+            <div class="col-lg-12">
+              <div class="col-lg-6" style="margin-top: 10px">
+                <div class="row">
+                  <div class="col-lg-4 no-padding">
+                    <label>{{ 'Date From' | translate }}*</label>
+                  </div>
+                  <div class="col-lg-8 no-padding">
+                    <div class="form-group">
+                      <input
+                        matInput
+                        (click)="FromDatepickers.open()"
+                        readonly
+                        style="float: left"
+                        class="form-control"
+                        formControlName="date_from"
+                        [matDatepicker]="FromDatepickers"
+                      />
+                      <mat-datepicker-toggle matSuffix [for]="FromDatepickers"></mat-datepicker-toggle>
+                      <mat-datepicker #FromDatepickers></mat-datepicker>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-lg-6" style="margin-top: 10px">
+                <div class="row">
+                  <div class="col-lg-4 no-padding">
+                    <label>{{ 'Date To' | translate }}*</label>
+                  </div>
+                  <div class="col-lg-8 no-padding">
+                    <div class="form-group">
+                      <input
+                        matInput
+                        (click)="myDatepickers.open()"
+                        readonly
+                        style="float: left"
+                        class="form-control"
+                        formControlName="date_to"
+                        [matDatepicker]="myDatepickers"
+                      />
+                      <mat-datepicker-toggle matSuffix [for]="myDatepickers"></mat-datepicker-toggle>
+                      <mat-datepicker #myDatepickers></mat-datepicker>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row no-margin btn-validate">
+                <button
+                  [disabled]="!countryForm.get('date_from').value || !countryForm.get('date_to').value"
+                  style="margin-right: 0px"
+                  class="regirstration-color btn-third"
+                  (click)="dateSelected()"
+                  mat-raised-button
+                  matTooltip="{{ 'Validate' | translate }} "
+                >
+                  <mat-icon class="mat-icon-default">save</mat-icon>
+                  {{ 'Validate' | translate }}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row no-margin padl-13 btn-go-back m-tmobile">
+          <div class="row no-margin btn-validate">
+            <button
+              style="margin-right: 0px"
+              class="regirstration-color btn-third"
+              (click)="backToPresence()"
+              mat-raised-button
+              matTooltip="{{ 'Back to Presence / Remote' | translate }} "
+            >
+              <mat-icon svgIcon="backup-restore"></mat-icon>
+              {{ 'Back to Presence / Remote' | translate }}
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="level-intership" *ngIf="isPeriodDone && !isLevelDone">
+        <div class="row no-margin padl-13">
+          <legend>{{ 'Level of the Internship' | translate }}</legend>
+        </div>
+        <div class="row no-margin padl-13">
+          <div class="row no-margin width-card">
+            <div class="card">
+              <div class="card-body card-level" [ngClass]="{ 'color-disabled': !isLevelOne }">
+                <div class="row">
+                  <div><mat-icon style="margin-top: 5px" class="mat-icon-urgency">cached</mat-icon></div>
+                </div>
+                <div class="row">
+                  <div class="title-urgency">{{ 'Cycle 1' | translate }}</div>
+                </div>
+                <div class="row" style="margin: auto; text-align: center">
+                  <button
+                    (click)="levelIntership('1')"
+                    mat-raised-button
+                    matTooltip="{{ 'I choose' | translate }} "
+                    class="btn-opsi btn-loan-touch btn-card"
+                  >
+                    {{ 'I choose' | translate }}
+                    <mat-icon class="mat-icon-default">touch_app</mat-icon>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row no-margin width-card">
+            <div class="card">
+              <div class="card-body card-level" [ngClass]="{ 'color-disabled': !isLevelTwo }">
+                <div class="row">
+                  <div><mat-icon style="margin-top: 5px" class="mat-icon-urgency">cached</mat-icon></div>
+                </div>
+                <div class="row">
+                  <div class="title-urgency">{{ 'Cycle 2' | translate }}</div>
+                </div>
+                <div class="row" style="margin: auto; text-align: center">
+                  <button
+                    (click)="levelIntership('2')"
+                    mat-raised-button
+                    matTooltip="{{ 'I choose' | translate }} "
+                    class="btn-opsi btn-loan-touch btn-card"
+                  >
+                    {{ 'I choose' | translate }}
+                    <mat-icon class="mat-icon-default">touch_app</mat-icon>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row no-margin width-card">
+            <div class="card">
+              <div class="card-body card-level" [ngClass]="{ 'color-disabled': !isLevelThree }">
+                <div class="row">
+                  <div><mat-icon style="margin-top: 5px" class="mat-icon-urgency">cached</mat-icon></div>
+                </div>
+                <div class="row">
+                  <div class="title-urgency">{{ 'Cycle 3' | translate }}</div>
+                </div>
+                <div class="row" style="margin: auto; text-align: center">
+                  <button
+                    (click)="levelIntership('3')"
+                    mat-raised-button
+                    matTooltip="{{ 'I choose' | translate }} "
+                    class="btn-opsi btn-loan-touch btn-card"
+                  >
+                    {{ 'I choose' | translate }}
+                    <mat-icon class="mat-icon-default">touch_app</mat-icon>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row no-margin padl-13 btn-go-back">
+          <div class="row no-margin btn-validate">
+            <button
+              style="margin-right: 0px"
+              class="regirstration-color btn-third"
+              (click)="backToPeriod()"
+              mat-raised-button
+              matTooltip="{{ 'Back to Period' | translate }} "
+            >
+              <mat-icon svgIcon="backup-restore"></mat-icon>
+              {{ 'Back to Period' | translate }}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="stipend-intership" *ngIf="isLevelDone">
+        <div class="row no-margin padl-13">
+          <legend>{{ 'Stipend / Indemnity' | translate }}</legend>
+        </div>
+        <div class="row no-margin padl-13">
+          <div class="row no-margin width-card">
+            <div class="card">
+              <div class="card-body card-urgency" [ngClass]="{ 'color-disabled': !isStipendOne }">
+                <div class="row">
+                  <div><mat-icon style="margin-top: 5px" class="mat-icon-urgency">euro_symbol</mat-icon></div>
+                </div>
+                <div class="row">
+                  <div class="title-urgency">{{ 'No Stipend' | translate }}</div>
+                </div>
+                <div class="row" style="margin: auto; text-align: center">
+                  <button
+                    (click)="stipendIntership('one')"
+                    mat-raised-button
+                    matTooltip="{{ 'I choose' | translate }} "
+                    class="btn-opsi btn-loan-touch btn-card"
+                  >
+                    {{ 'I choose' | translate }}
+                    <mat-icon class="mat-icon-default">touch_app</mat-icon>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row no-margin width-card">
+            <div class="card">
+              <div class="card-body card-urgency" [ngClass]="{ 'color-disabled': !isStipendTwo }">
+                <div class="row">
+                  <div><mat-icon style="margin-top: 5px" class="mat-icon-urgency">euro_symbol</mat-icon></div>
+                </div>
+                <div class="row">
+                  <div class="title-urgency">{{ 'Stipend' | translate }}</div>
+                </div>
+                <div class="row" style="margin: auto; text-align: center">
+                  <button
+                    (click)="stipendIntership('two')"
+                    mat-raised-button
+                    matTooltip="{{ 'I choose' | translate }} "
+                    class="btn-opsi btn-loan-touch btn-card"
+                  >
+                    {{ 'I choose' | translate }}
+                    <mat-icon class="mat-icon-default">touch_app</mat-icon>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row no-margin method-two mgl-13 web-form-dates" [formGroup]="countryForm" *ngIf="!isStipendOne">
+            <legend>{{ 'Select Currency' | translate }}</legend>
+            <div class="col-lg-12">
+              <div class="row">
+                <div class="col-lg-4 no-padding">
+                  <label>{{ 'Amount' | translate }}*</label>
+                </div>
+                <div class="col-lg-8" style="padding-left: 0px;">
+                  <div class="col-lg-8">
+                    <div class="form-group">
+                      <input matInput type="text" required class="form-control" formControlName="amount" />
+                    </div>
+                  </div>
+                  <div class="col-lg-4 no-padding">
+                    <div class="form-group">
+                      <mat-select class="form-control mrgn-btn" formControlName="currency">
+                        <mat-option *ngFor="let item of currencyList" [value]="item">
+                          {{ item | translate }}
+                        </mat-option>
+                      </mat-select>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-lg-4">
+                  <label>{{ 'Paid' | translate }}*</label>
+                </div>
+                <div class="col-lg-8">
+                  <div class="form-group">
+                    <mat-select class="form-control mrgn-btn" formControlName="paid">
+                      <mat-option *ngFor="let item of paidList" [value]="item">
+                        {{ item | translate }}
+                      </mat-option>
+                    </mat-select>
+                  </div>
+                </div>
+              </div>
+              <div class="row no-margin btn-validate">
+                <button
+                  [disabled]="!countryForm.get('amount').value || !countryForm.get('currency').value || !countryForm.get('paid').value"
+                  style="margin-right: 0px"
+                  class="regirstration-color btn-third"
+                  (click)="stipendSelected()"
+                  mat-raised-button
+                  matTooltip="{{ 'Validate' | translate }} "
+                >
+                  <mat-icon class="mat-icon-default">save</mat-icon>
+                  {{ 'Validate' | translate }}
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="row no-margin method-two mobile-form-date" [formGroup]="countryForm" *ngIf="!isStipendOne">
+            <legend>{{ 'Select Currency' | translate }}</legend>
+            <div class="col-lg-12">
+              <div class="row">
+                <div class="col-lg-4">
+                  <label>{{ 'Amount' | translate }}*</label>
+                </div>
+                <div class="col-lg-8">
+                  <div class="col-lg-8 no-padding">
+                    <div class="form-group">
+                      <input matInput type="text" required class="form-control" formControlName="amount" />
+                    </div>
+                  </div>
+                  <div class="col-lg-4 no-padding">
+                    <div class="form-group">
+                      <mat-select class="form-control mrgn-btn" formControlName="currency">
+                        <mat-option *ngFor="let item of currencyList" [value]="item">
+                          {{ item | translate }}
+                        </mat-option>
+                      </mat-select>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-lg-4">
+                  <label>{{ 'Paid' | translate }}*</label>
+                </div>
+                <div class="col-lg-8">
+                  <div class="form-group">
+                    <mat-select class="form-control mrgn-btn" formControlName="paid">
+                      <mat-option *ngFor="let item of paidList" [value]="item">
+                        {{ item | translate }}
+                      </mat-option>
+                    </mat-select>
+                  </div>
+                </div>
+              </div>
+              <div class="row no-margin btn-validate">
+                <button
+                  [disabled]="!countryForm.get('amount').value || !countryForm.get('currency').value || !countryForm.get('paid').value"
+                  style="margin-right: 0px"
+                  class="regirstration-color btn-third"
+                  (click)="stipendSelected()"
+                  mat-raised-button
+                  matTooltip="{{ 'Validate' | translate }} "
+                >
+                  <mat-icon class="mat-icon-default">save</mat-icon>
+                  {{ 'Validate' | translate }}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row no-margin padl-13 btn-go-back">
+          <div class="row no-margin btn-validate">
+            <button
+              style="margin-right: 0px"
+              class="regirstration-color btn-third"
+              (click)="backToLevel()"
+              mat-raised-button
+              matTooltip="{{ 'Back to Level' | translate }} "
+            >
+              <mat-icon svgIcon="backup-restore"></mat-icon>
+              {{ 'Back to Level' | translate }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

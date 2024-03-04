@@ -1,0 +1,26 @@
+<div *ngIf="isWaitingForResponse" class="inner-loading-indicator">
+  <mat-spinner color="accent" [diameter]="100"></mat-spinner>
+</div>
+<div class="center-card mrgn-btn50 mrgn-t1">
+  <div>
+    <mat-accordion class="example-headers-align">
+      <mat-expansion-panel [expanded]="true" style="background: #424242" class="panel-spacing">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            <h4 style="color: white; align-self: center; margin: 0px">
+              {{ 'Registration' | translate }} {{ scholarSeasonData?.intake_channel?.program }}
+            </h4>
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+        <div class="panel-divider">
+          <ms-contract-student-tab
+            [scholarSeasonData]="scholarSeasonData"
+            [candidateId]="candidateId"
+            [candidate]="candidateData"
+            [userData]="userData"
+          ></ms-contract-student-tab>
+        </div>
+      </mat-expansion-panel>
+    </mat-accordion>
+  </div>
+</div>

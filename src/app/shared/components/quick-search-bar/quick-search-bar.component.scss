@@ -1,0 +1,43 @@
+.search-container .mat-icon {
+  max-width: 20px;
+  max-height: 20px;
+}
+
+.button-close .mat-icon{
+  max-width: 24px;
+  max-height: 24px;
+}
+
+.default-app-themed {
+  --button-primary-color: #363636;
+  --button-secondary-color: #424242;
+  --button-tertiary-color: rgba(255, 255, 255);
+
+  .tw-bg-app-primary {
+    background-color: var(--button-primary-color);
+  }
+
+  .tw-bg-app-secondary {
+    background-color: var(--button-secondary-color);
+  }
+
+  .tw-bg-app-tertiary {
+    background-color: var(--button-tertiary-color);
+  }
+
+  .tw-text-app-primary{
+    color: var(--button-primary-color);
+  }
+
+  .tw-text-app-secondary{
+    color: var(--button-secondary-color);
+  }
+
+  .tw-text-app-tertiary{
+    color: var(--button-tertiary-color);
+  }
+
+  .tw-placeholder-app-tertiary::placeholder{
+    color: rgba(255, 255, 255, 0.5);
+  }
+}

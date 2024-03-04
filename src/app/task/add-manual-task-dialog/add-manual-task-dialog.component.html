@@ -1,0 +1,197 @@
+<div class="dialog-border" cdkDrag cdkDragRootElement=".cdk-overlay-pane" cdkDragHandle>
+  <div class="dialogTitleWrapper">
+    <div class="p-grid">
+      <div class="w-30 no-padding">
+        <mat-icon svgIcon="tick-checkbox" style="margin-bottom: 3px"></mat-icon>
+      </div>
+      <div class="p-col-9 no-padding" *ngIf="parentData.type !== 'Edit'">
+        <h3 class="dialogTitle">{{ 'Add_Task' | translate }}</h3>
+      </div>
+      <div class="p-col-9 no-padding" *ngIf="parentData.type === 'Edit'">
+        <h3 class="dialogTitle">{{ 'Edit_Task' | translate }}</h3>
+      </div>
+      <div class="w-100 no-padding">
+        <button mat-icon-button class="close-icon float-right" (click)="closeDialog()" tabindex="-1">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div [formGroup]="form" mat-dialog-content class="mat-dialog-content dialog-body">
+  <div class="p-grid">
+    <!-- togle wraper -->
+    <!-- *ngIf="permissionService.internalTaskInTaskTablePerm()" -->
+    <div class="p-col-12 no-padding">
+      <div class="p-grid">
+        <div class="p-col-12 no-padding" *ngIf="isOperator">
+          <mat-slide-toggle [checked]="internalChecked" (change)="intenalTaskToggleChange($event)">
+            {{ 'Internal_Task' | translate }}
+          </mat-slide-toggle>
+        </div>
+
+        <div *ngIf="!internalTaskToggle" class="p-col-12 no-padding">
+          <div class="p-col-12 pad-y-none">
+            <!-- School -->
+            <ng-select
+              class="mrgn-btn"
+              [items]="school"
+              bindLabel="short_name"
+              bindValue="_id"
+              [multiple]="false"
+              [hideSelected]="true"
+              placeholder="{{ 'School' | translate }}*"
+              clearAllText="Clear"
+              formControlName="school"
+              (change)="getDataCampus()"
+            >
+            </ng-select>
+            <mat-error
+              style="margin-bottom: 10px"
+              *ngIf="form.get('school').errors && (form.get('school').dirty || form.get('school').touched)"
+              >{{ 'This field is required' | translate }}</mat-error
+            >
+          </div>
+
+          <!-- Campus -->
+          <div class="p-col-12 pad-y-none">
+            <ng-select
+              class="mrgn-btn"
+              [items]="campusList"
+              bindLabel="name"
+              bindValue="_id"
+              [multiple]="true"
+              [hideSelected]="true"
+              placeholder="{{ 'Campus' | translate }}*"
+              clearAllText="Clear"
+              formControlName="campus"
+              (change)="getDataLevel()"
+            >
+            </ng-select>
+            <mat-error
+              style="margin-bottom: 10px"
+              *ngIf="form.get('campus').errors && (form.get('campus').dirty || form.get('campus').touched)"
+              >{{ 'This field is required' | translate }}</mat-error
+            >
+          </div>
+
+          <div class="p-col-12 no-padding">
+            <div class="p-grid">
+              <div class="p-col-12">
+                <label>{{ 'User' | translate }}:*</label>
+                <mat-slide-toggle [formControl]="toggelUsers" color="accent" (change)="categoryChange($event)" class="toggle">
+                  <span>
+                    {{ 'Category of user' | translate }}
+                  </span>
+                </mat-slide-toggle>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- togle wraper  end -->
+
+    <div class="p-col-12 pad-y-none">
+      <ng-container *ngIf="toggelUsers.value">
+        <mat-form-field class="full-wid">
+          <input
+            matInput
+            placeholder="{{ 'TUTORIAL_MENU.CATEGORY' | translate }}*"
+            [matAutocomplete]="autoUserTypes"
+            formControlName="userTypes"
+            required
+            [readonly]="form.get('campus').invalid"
+          />
+          <mat-autocomplete #autoUserTypes="matAutocomplete" [displayWith]="displayWithUserTypes.bind(this)">
+            <mat-option *ngFor="let option of filteredUserType | async" [value]="option._id" (click)="selectUser(option?._id)">
+              <ng-container *ngIf="option?.name && toggelUsers.value">
+                {{ 'USER_TYPES.' + option?.name | translate }}
+              </ng-container>
+            </mat-option>
+          </mat-autocomplete>
+          <mat-error
+            style="margin-bottom: 10px"
+            *ngIf="form.get('userTypes').errors && (form.get('userTypes').dirty || form.get('userTypes').touched)"
+            >{{ 'This field is required' | translate }}</mat-error
+          >
+        </mat-form-field>
+      </ng-container>
+
+      <ng-container *ngIf="!toggelUsers.value">
+        <mat-form-field class="full-wid">
+          <input
+            matInput
+            placeholder="{{ 'User' | translate }}"
+            [matAutocomplete]="autoUser"
+            formControlName="users"
+            required
+            [readonly]="form.get('campus').invalid && !internalTaskToggle"
+          />
+          <mat-autocomplete #autoUser="matAutocomplete" [displayWith]="displayWithUsers.bind(this)">
+            <mat-option *ngFor="let option of filteredUser | async" [value]="option._id" (click)="selectUser(option?._id)">
+              <ng-container *ngIf="option?.name && !toggelUsers.value">
+                {{ option?.name | translate }}
+              </ng-container>
+            </mat-option>
+          </mat-autocomplete>
+          <mat-error
+            style="margin-bottom: 10px"
+            *ngIf="form.get('users').errors && (form.get('users').dirty || form.get('users').touched)"
+            >{{ 'This field is required' | translate }}</mat-error
+          >
+        </mat-form-field>
+      </ng-container>
+    </div>
+
+    <div class="p-col-12 no-padding">
+      <div class="p-grid">
+        <div class="p-col-6">
+          <span>{{ 'Priority' | translate }}</span>
+          <mat-radio-group formControlName="priority">
+            <mat-radio-button value="1" class="radio-marging-left m-right-10 m-left-10">1</mat-radio-button>
+            <mat-radio-button value="2" class="radio-marging-left m-right-10">2</mat-radio-button>
+            <mat-radio-button value="3" class="radio-marging-left m-right-10">3</mat-radio-button>
+          </mat-radio-group>
+        </div>
+        <div class="p-col-6">
+          <mat-form-field [hideRequiredMarker]="true">
+            <input
+              [min]="today"
+              matInput
+              (click)="dueDatePick.open()"
+              readonly
+              class="form-field"
+              placeholder="{{ 'Due Date' | translate }}*"
+              formControlName="due_date"
+              [matDatepicker]="dueDatePick"
+            />
+            <mat-datepicker-toggle matSuffix [for]="dueDatePick"></mat-datepicker-toggle>
+            <mat-datepicker #dueDatePick></mat-datepicker>
+            <mat-error *ngIf="form.get('due_date').errors">{{ 'This field is required' | translate }}</mat-error>
+          </mat-form-field>
+        </div>
+      </div>
+    </div>
+
+    <div class="p-col-12 pad-y-none">
+      <mat-form-field class="full-wid">
+        <textarea matInput placeholder="{{ 'Description' | translate }}" formControlName="description" required></textarea>
+        <mat-error *ngIf="form.get('description').errors">{{ 'This field is required' | translate }}</mat-error>
+      </mat-form-field>
+    </div>
+  </div>
+</div>
+
+<div mat-dialog-actions class="justify-content-end mr-10">
+  <button mat-button mat-raised-button color="warn" (click)="closeDialog()">{{ 'CANCEL' | translate }}</button>
+  <button mat-button mat-raised-button color="primary" class="mr-0" (click)="submit()">
+    {{ 'Submit' | translate }}
+  </button>
+</div>
+
+<div *ngIf="isWaitingForResponse" class="loading-indicator">
+  <mat-progress-spinner mode="indeterminate" color="accent"></mat-progress-spinner>
+</div>

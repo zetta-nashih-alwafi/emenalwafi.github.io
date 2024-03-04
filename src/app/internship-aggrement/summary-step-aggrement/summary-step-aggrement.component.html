@@ -1,0 +1,753 @@
+<div class="responsives">
+  <!-- Card Intern Detail -->
+  <div class="row padl-13 hd-legend web-card">
+    <label>{{ 'Summary' | translate }}</label>
+  </div>
+  <div class="p-grid web-card" [formGroup]="detailForm">
+    <div class="p-col-12 no-padding">
+      <div class="section-detail">
+        <div class="p-grid">
+          <div class="p-col-6 ipad">
+            <div class="title-detail">{{ 'THE EDUCATIONAL OR TRAINING INSTITUTION' | translate }}</div>
+            <div class="section-info">
+              <div class="p-grid">
+                <div class="p-col-3">{{ 'Name' | translate }}</div>
+                <div class="p-col-9">
+                  : {{ internshipData?.student_id?.school?.short_name }} {{ internshipData?.student_id?.school?.long_name }}
+                </div>
+              </div>
+              <div class="p-grid">
+                <div class="p-col-3">{{ 'Address' | translate }}</div>
+                <div class="p-col-9">
+                  :
+                  {{
+                    internshipData?.student_id?.school?.school_address
+                      ? internshipData?.student_id?.school?.school_address.address1 +
+                        ', ' +
+                        internshipData?.student_id?.school?.school_address.postal_code +
+                        ' ' +
+                        internshipData?.student_id?.school?.school_address.city
+                      : '-'
+                  }}
+                </div>
+              </div>
+              <div class="p-grid">
+                <div class="p-col-3">{{ 'Tél' | translate }}</div>
+                <div class="p-col-9">
+                  : {{ internshipData?.student_id?.school?.tele_phone ? internshipData?.student_id?.school?.tele_phone : '-' }}
+                </div>
+              </div>
+              <div class="p-grid">
+                <div class="p-col-3">{{ 'Represented by' | translate }}</div>
+                <div class="p-col-9">: Delphine CANTAT - Director of Corporate Relations</div>
+              </div>
+            </div>
+          </div>
+          <div class="p-col-6 ipad">
+            <div class="title-detail">{{ 'SUPERVISION OF INTERN BY L’EFAP' | translate }}</div>
+            <div class="section-info">
+              <div class="p-grid">
+                <div class="p-col-fixed" style="width: 214px">{{ 'First and Last name of academic advisor' | translate }}</div>
+                <div class="p-col">
+                  : 
+                  
+                  {{ internshipData?.company_relation_member_id?.civility && internshipData?.company_relation_member_id?.civility ==='neutral' ? '' : (internshipData?.company_relation_member_id?.civility | translate) }}
+                  {{ internshipData?.company_relation_member_id?.first_name }} {{ internshipData?.company_relation_member_id?.last_name | uppercase }}
+                </div>
+              </div>
+              <div class="p-grid">
+                <div class="p-col-fixed" style="width: 214px">{{ 'Position' | translate }}</div>
+                <div class="p-col">
+                  : {{ internshipData?.company_relation_member_id?.position ? internshipData?.company_relation_member_id?.position : '-' }}
+                </div>
+              </div>
+              <div class="p-grid">
+                <div class="p-col-fixed" style="width: 214px">{{ 'Tél.' | translate }}</div>
+                <div class="p-col">
+                  :
+                  {{
+                    internshipData?.company_relation_member_id?.portable_phone
+                      ? internshipData?.company_relation_member_id?.portable_phone
+                      : '-'
+                  }}
+                </div>
+              </div>
+              <div class="p-grid">
+                <div class="p-col-fixed" style="width: 214px">{{ 'E-mail' | translate }}</div>
+                <div class="p-col">: {{ internshipData?.company_relation_member_id?.email }}</div>
+              </div>
+              <div class="p-grid">
+                <div class="p-col-fixed" style="width: 214px">
+                  {{ 'Primary health insurance agency to contact in case of accident' | translate }}
+                </div>
+                <div class="p-col">:</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="section-detail">
+        <div class="p-grid">
+          <div class="p-col-6 ipad">
+            <div class="title-detail">{{ 'HOST ORGANIZATION' | translate }}</div>
+            <div class="section-info">
+              <div class="p-grid">
+                <div class="p-col-fixed" style="width: 228px">{{ 'Name' | translate }}</div>
+                <div class="p-col">
+                  : {{ internshipData?.company_branch_id?.company_name ? internshipData?.company_branch_id?.company_name : '-' }}
+                </div>
+              </div>
+              <div class="p-grid">
+                <div class="p-col-fixed" style="width: 228px">{{ 'Address' | translate }}</div>
+                <div class="p-col">
+                  :
+                  {{
+                    internshipData?.company_branch_id?.company_addresses.length &&
+                    internshipData?.company_branch_id?.company_addresses[0].address
+                      ? internshipData?.company_branch_id?.company_addresses[0].address +
+                        ', ' +
+                        internshipData?.company_branch_id?.company_addresses[0].postal_code +
+                        ' ' +
+                        internshipData?.company_branch_id?.company_addresses[0].city
+                      : '-'
+                  }}
+                </div>
+              </div>
+              <div class="p-grid">
+                <div class="p-col-fixed" style="width: 228px">{{ 'Represented by' | translate }}</div>
+                <div class="p-col">
+                  :
+                  {{ internshipData?.company_manager_id?.civility && internshipData?.company_manager_id?.civility ==='neutral' ? '' : (internshipData?.company_manager_id?.civility | translate) }}
+                  {{ internshipData?.company_manager_id?.first_name }}
+                  {{ internshipData?.company_manager_id?.last_name | uppercase }}
+                </div>
+              </div>
+              <div class="p-grid">
+                <div class="p-col-fixed" style="width: 228px">{{ 'Fonction' | translate }}</div>
+                <div class="p-col">
+                  : {{ internshipData?.company_manager_id?.position ? internshipData?.company_manager_id?.position : '-' }}
+                </div>
+              </div>
+              <div class="p-grid">
+                <div class="p-col-fixed" style="width: 228px">{{ 'Tel' | translate }}</div>
+                <div class="p-col">
+                  : {{ internshipData?.company_manager_id?.portable_phone ? internshipData?.company_manager_id?.portable_phone : '-' }}
+                </div>
+              </div>
+              <div class="p-grid">
+                <div class="p-col-fixed" style="width: 228px">{{ 'E-mail' | translate }}</div>
+                <div class="p-col">: {{ internshipData?.company_manager_id?.email ? internshipData?.company_manager_id?.email : '-' }}</div>
+              </div>
+              <div class="p-grid">
+                <div class="p-col-fixed" style="width: 228px">{{ 'Department where internship will be done' | translate }}</div>
+                <div class="p-col">: {{ internshipData?.department ? internshipData?.department : '-' }}</div>
+              </div>
+              <div class="p-grid">
+                <div class="p-col-fixed" style="width: 228px">{{ 'Internship adress (If different from company)' | translate }}</div>
+                <div class="p-col">
+                  :
+                  {{
+                    internshipData?.internship_address?.address
+                      ? internshipData?.internship_address?.address +
+                        ', ' +
+                        internshipData?.internship_address?.postal_code +
+                        ' ' +
+                        internshipData?.internship_address?.city
+                      : '-'
+                  }}
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="p-col-6 ipad">
+            <div class="title-detail">{{ 'SUPERVISION OF INTERN BY THE HOST ORGANIZATION' | translate }}</div>
+            <div class="section-info">
+              <div class="p-grid">
+                <div class="p-col-fixed">{{ 'Full name of training supervisor' | translate }}</div>
+                <div class="p-col">
+                  : {{ internshipData?.mentor_id?.civility | translate }} {{ internshipData?.mentor_id?.first_name }}
+                  {{ internshipData?.mentor_id?.last_name | uppercase }}
+                </div>
+              </div>
+              <div class="p-grid">
+                <div class="p-col-fixed" style="width: 165px">{{ 'Position' | translate }}</div>
+                <div class="p-col">: {{ internshipData?.mentor_id?.position ? internshipData?.mentor_id?.position : '-' }}</div>
+              </div>
+              <div class="p-grid">
+                <div class="p-col-fixed" style="width: 165px">{{ 'Tél.' | translate }}</div>
+                <div class="p-col">: {{ internshipData?.mentor_id?.portable_phone ? internshipData?.mentor_id?.portable_phone : '-' }}</div>
+              </div>
+              <div class="p-grid">
+                <div class="p-col-fixed" style="width: 165px">{{ 'E-mail' | translate }}</div>
+                <div class="p-col">: {{ internshipData?.mentor_id?.email }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="section-detail">
+        <div class="p-grid">
+          <div class="p-col-6 ipad">
+            <div class="title-detail">{{ 'THE INTERN' | translate }}</div>
+            <div class="section-info">
+              <div class="p-grid">
+                <div class="p-col-3">{{ 'Name' | translate }}</div>
+                <div class="p-col-9">
+                  :
+                  {{ internshipData?.student_id?.last_name | uppercase }}
+                </div>
+              </div>
+              <div class="p-grid">
+                <div class="p-col-3">{{ 'First name' | translate }}</div>
+                <div class="p-col-9">: {{ internshipData?.student_id?.first_name }}</div>
+              </div>
+              <div class="p-grid">
+                <div class="p-col-3">{{ 'DoB' | translate }}</div>
+                <div class="p-col-9">
+                  : {{ internshipData?.student_id?.date_of_birth ? translateDate(internshipData?.student_id?.date_of_birth) : '-' }}
+                </div>
+              </div>
+              <div class="p-grid">
+                <div class="p-col-3">{{ 'Sex' | translate }}</div>
+                <div class="p-col-9">: {{ internshipData?.student_id?.sex }}</div>
+              </div>
+              <div class="p-grid">
+                <div class="p-col-3">{{ 'Address' | translate }}</div>
+                <div class="p-col-9">
+                  :
+                  {{
+                    internshipData?.student_id?.student_address.length
+                      ? internshipData?.student_id?.student_address[0].address +
+                        ', ' +
+                        internshipData?.student_id?.student_address[0].postal_code +
+                        ' ' +
+                        internshipData?.student_id?.student_address[0].city
+                      : '-'
+                  }}
+                </div>
+              </div>
+              <div class="p-grid">
+                <div class="p-col-3">{{ 'Tel' | translate }}</div>
+                <div class="p-col-9">: {{ internshipData?.student_id?.tele_phone }}</div>
+              </div>
+              <div class="p-grid">
+                <div class="p-col-3">{{ 'E-mail' | translate }}</div>
+                <div class="p-col-9">: {{ internshipData?.student_id?.email }}</div>
+              </div>
+              <div class="p-grid">
+                <div class="p-col-fixed" style="width: 410px">
+                  {{ 'TITLE OF INTERNSHIP OR TRAINING COURSE TAKEN AT THE INSTITUTION OF HIGHER EDUCATION' | translate }}
+                </div>
+                <div class="p-col">:</div>
+              </div>
+              <div class="p-grid">
+                <div class="p-col-3">{{ 'HOUR VOLUME' | translate }}</div>
+                <div class="p-col-9">
+                  :
+                  {{
+                    internshipData?.student_id?.companies?.length
+                      ? internshipData?.student_id?.companies[0]?.internship_id
+                        ? internshipData?.student_id?.companies[0]?.internship_id.volume_hours
+                        : '-'
+                      : '-'
+                  }}
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="p-col-6 ipad">
+            <div class="title-detail">{{ 'SUBJECT OF INTERNSHIP' | translate }}</div>
+            <div class="section-info">
+              <div class="p-grid">
+                <div class="p-col-fixed" style="width: 165px">{{ 'Internship name' | translate }}</div>
+                <div class="p-col">
+                  :
+                  {{
+                    internshipData?.student_id?.companies?.length
+                      ? internshipData?.student_id?.companies[0]?.internship_id
+                        ? internshipData?.student_id?.companies[0]?.internship_id.internship_name
+                        : '-'
+                      : '-'
+                  }}
+                </div>
+              </div>
+              <div class="p-grid">
+                <div class="p-col-fixed" style="width: 165px">{{ 'Dates' | translate }}</div>
+                <div class="p-col">
+                  : <span>{{ 'From' | translate }}: </span>
+                  {{
+                    internshipData?.student_id?.companies?.length
+                      ? internshipData?.student_id?.companies[0]?.internship_id
+                        ? internshipData?.student_id?.companies[0]?.internship_id.internship_date?.date_from
+                        : '-'
+                      : '-'
+                  }}
+                  <span>{{ 'To' }}: </span>
+                  {{
+                    internshipData?.student_id?.companies?.length
+                      ? internshipData?.student_id?.companies[0]?.internship_id
+                        ? internshipData?.student_id?.companies[0]?.internship_id.internship_date?.date_to
+                        : '-'
+                      : '-'
+                  }}
+                </div>
+              </div>
+              <div class="p-grid">
+                <div class="p-col-fixed" style="width: 165px">{{ 'Representing a total duration of' | translate }}</div>
+                <div class="p-col">
+                  :
+                  {{
+                    internshipData?.student_id?.companies?.length
+                      ? internshipData?.student_id?.companies[0]?.internship_id
+                        ? internshipData?.student_id?.companies[0]?.internship_id.internship_date?.duration_in_months
+                        : '0'
+                      : '0'
+                  }}
+                  {{ 'Month' | translate }}
+                </div>
+              </div>
+              <div class="p-grid">
+                <div class="p-col-fixed" style="width: 165px">{{ 'Job description' | translate }}</div>
+                <div class="p-col">
+                  :
+                  {{
+                    internshipData?.student_id?.companies?.length
+                      ? internshipData?.student_id?.companies[0]?.internship_id
+                        ? internshipData?.student_id?.companies[0]?.internship_id.job_description
+                        : '-'
+                      : '-'
+                  }}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <ng-container *ngIf="!isUserCRM">
+    <div class="p-grid web-card" [formGroup]="detailForm">
+      <mat-checkbox style="margin-left: 8px" *ngIf="isUserStudent" formControlName="student_sign_status">{{
+        'I confirm the information I input are true' | translate
+      }}</mat-checkbox>
+      <mat-checkbox style="margin-left: 8px" *ngIf="isUserMentor" formControlName="mentor_sign_status">{{
+        'I confirm the information I input are true' | translate
+      }}</mat-checkbox>
+      <mat-checkbox style="margin-left: 8px" *ngIf="isUserMember" formControlName="company_manager_sign_status">{{
+        'I confirm the information I input are true' | translate
+      }}</mat-checkbox>
+    </div>
+  </ng-container>
+  <div class="btn-conditions web-card">
+    <button
+      *ngIf="isUserStudent"
+      [disabled]="!detailForm.get('student_sign_status').value"
+      mat-button
+      mat-raised-button
+      (click)="identityUpdated('student')"
+      color="accent"
+      class="btn-first"
+    >
+      <mat-icon style="font-size: 24px">send</mat-icon> {{ 'Submit' | translate }}
+    </button>
+    <button
+      *ngIf="isUserMentor"
+      [disabled]="!detailForm.get('mentor_sign_status').value"
+      mat-button
+      mat-raised-button
+      (click)="identityUpdated('mentor')"
+      color="accent"
+      class="btn-first"
+    >
+      <mat-icon style="font-size: 24px">send</mat-icon> {{ 'Submit' | translate }}
+    </button>
+    <button
+      *ngIf="isUserMember"
+      [disabled]="!detailForm.get('company_manager_sign_status').value"
+      mat-button
+      mat-raised-button
+      (click)="identityUpdated('manager')"
+      color="accent"
+      class="btn-first"
+    >
+      <mat-icon style="font-size: 24px">send</mat-icon> {{ 'Submit' | translate }}
+    </button>
+    <button *ngIf="isUserCRM" mat-button mat-raised-button (click)="continueButton()" color="accent" class="btn-first">
+      {{ 'Next' | translate }}
+    </button>
+  </div>
+
+  <!-- Card Intern Detail -->
+  <div class="row padl-13 hd-legend mobile-card">
+    <label>{{ 'Summary' | translate }}</label>
+  </div>
+  <div class="p-grid mobile-card" [formGroup]="detailForm">
+    <div class="p-col-12 no-padding">
+      <div class="section-detail">
+        <div class="p-grid">
+          <div class="p-col-12" style="margin-bottom: 1rem">
+            <div class="title-detail">{{ 'THE EDUCATIONAL OR TRAINING INSTITUTION' | translate }}</div>
+            <div class="section-info">
+              <div class="p-grid">
+                <div class="p-col-3">{{ 'Name' | translate }}</div>
+                <div class="p-col-9">
+                  : {{ internshipData?.student_id?.school?.short_name }} {{ internshipData?.student_id?.school?.long_name }}
+                </div>
+              </div>
+              <div class="p-grid">
+                <div class="p-col-3">{{ 'Address' | translate }}</div>
+                <div class="p-col-9">
+                  :
+                  {{
+                    internshipData?.student_id?.school?.school_address
+                      ? internshipData?.student_id?.school?.school_address.address1 +
+                        ', ' +
+                        internshipData?.student_id?.school?.school_address.postal_code +
+                        ' ' +
+                        internshipData?.student_id?.school?.school_address.city
+                      : '-'
+                  }}
+                </div>
+              </div>
+              <div class="p-grid">
+                <div class="p-col-3">{{ 'Tél' | translate }}</div>
+                <div class="p-col-9">
+                  : {{ internshipData?.student_id?.school?.tele_phone ? internshipData?.student_id?.school?.tele_phone : '-' }}
+                </div>
+              </div>
+              <div class="p-grid">
+                <div class="p-col-3">{{ 'Represented by' | translate }}</div>
+                <div class="p-col-9">: Delphine CANTAT - Director of Corporate Relations</div>
+              </div>
+            </div>
+          </div>
+          <div class="p-col-12">
+            <div class="title-detail">{{ 'SUPERVISION OF INTERN BY L’EFAP' | translate }}</div>
+            <div class="section-info">
+              <div class="p-grid">
+                <div class="p-col-5">{{ 'First and Last name of academic advisor' | translate }}</div>
+                <div class="p-col">
+                  : 
+                  {{ internshipData?.company_relation_member_id?.civility && internshipData?.company_relation_member_id?.civility ==='neutral' ? '' : (internshipData?.company_relation_member_id?.civility | translate) }}
+                  {{ internshipData?.company_relation_member_id?.first_name }} {{ internshipData?.company_relation_member_id?.last_name | uppercase }}
+                </div>
+              </div>
+              <div class="p-grid">
+                <div class="p-col-5">{{ 'Position' | translate }}</div>
+                <div class="p-col">
+                  : {{ internshipData?.company_relation_member_id?.position ? internshipData?.company_relation_member_id?.position : '-' }}
+                </div>
+              </div>
+              <div class="p-grid">
+                <div class="p-col-5">{{ 'Tél.' | translate }}</div>
+                <div class="p-col">
+                  :
+                  {{
+                    internshipData?.company_relation_member_id?.portable_phone
+                      ? internshipData?.company_relation_member_id?.portable_phone
+                      : '-'
+                  }}
+                </div>
+              </div>
+              <div class="p-grid">
+                <div class="p-col-5">{{ 'E-mail' | translate }}</div>
+                <div class="p-col">: {{ internshipData?.company_relation_member_id?.email }}</div>
+              </div>
+              <div class="p-grid">
+                <div class="p-col-5">
+                  {{ 'Primary health insurance agency to contact in case of accident' | translate }}
+                </div>
+                <div class="p-col">:</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="section-detail">
+        <div class="p-grid">
+          <div class="p-col-12" style="margin-bottom: 1rem">
+            <div class="title-detail">{{ 'HOST ORGANIZATION' | translate }}</div>
+            <div class="section-info">
+              <div class="p-grid">
+                <div class="p-col-5">{{ 'Name' | translate }}</div>
+                <div class="p-col">
+                  : {{ internshipData?.company_branch_id?.company_name ? internshipData?.company_branch_id?.company_name : '-' }}
+                </div>
+              </div>
+              <div class="p-grid">
+                <div class="p-col-5">{{ 'Address' | translate }}</div>
+                <div class="p-col">
+                  :
+                  {{
+                    internshipData?.company_branch_id?.company_addresses.length
+                      ? internshipData?.company_branch_id?.company_addresses[0].address +
+                        ', ' +
+                        internshipData?.company_branch_id?.company_addresses[0].postal_code +
+                        ' ' +
+                        internshipData?.company_branch_id?.company_addresses[0].city
+                      : '-'
+                  }}
+                </div>
+              </div>
+              <div class="p-grid">
+                <div class="p-col-5">{{ 'Represented by' | translate }}</div>
+                <div class="p-col">
+                  : {{ internshipData?.company_manager_id?.civility | translate }} {{ internshipData?.company_manager_id?.first_name }}
+                  {{ internshipData?.company_manager_id?.last_name | uppercase }}
+                </div>
+              </div>
+              <div class="p-grid">
+                <div class="p-col-5">{{ 'Fonction' | translate }}</div>
+                <div class="p-col">
+                  : {{ internshipData?.company_manager_id?.position ? internshipData?.company_manager_id?.position : '-' }}
+                </div>
+              </div>
+              <div class="p-grid">
+                <div class="p-col-5">{{ 'Tel' | translate }}</div>
+                <div class="p-col">
+                  : {{ internshipData?.company_manager_id?.portable_phone ? internshipData?.company_manager_id?.portable_phone : '-' }}
+                </div>
+              </div>
+              <div class="p-grid">
+                <div class="p-col-5">{{ 'E-mail' | translate }}</div>
+                <div class="p-col">: {{ internshipData?.company_manager_id?.email ? internshipData?.company_manager_id?.email : '-' }}</div>
+              </div>
+              <div class="p-grid">
+                <div class="p-col-5">{{ 'Department where internship will be done' | translate }}</div>
+                <div class="p-col">: {{ internshipData?.department ? internshipData?.department : '-' }}</div>
+              </div>
+              <div class="p-grid">
+                <div class="p-col-5">{{ 'Internship adress (If different from company)' | translate }}</div>
+                <div class="p-col">
+                  :
+                  {{
+                    internshipData?.internship_address?.address +
+                      ', ' +
+                      internshipData?.internship_address?.postal_code +
+                      ' ' +
+                      internshipData?.internship_address?.city
+                  }}
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="p-col-12">
+            <div class="title-detail">{{ 'SUPERVISION OF INTERN BY THE HOST ORGANIZATION' | translate }}</div>
+            <div class="section-info">
+              <div class="p-grid">
+                <div class="p-col-fixed">{{ 'Full name of training supervisor' | translate }}</div>
+                <div class="p-col">
+                  : 
+                  {{ internshipData?.mentor_id?.civility && internshipData?.mentor_id?.civility ==='neutral' ? '' : (internshipData?.mentor_id?.civility | translate) }}
+                  {{ internshipData?.mentor_id?.first_name }}
+                  {{ internshipData?.mentor_id?.last_name | uppercase }}
+                </div>
+              </div>
+              <div class="p-grid">
+                <div class="p-col-fixed" style="width: 165px">{{ 'Position' | translate }}</div>
+                <div class="p-col">: {{ internshipData?.mentor_id?.position ? internshipData?.mentor_id?.position : '-' }}</div>
+              </div>
+              <div class="p-grid">
+                <div class="p-col-fixed" style="width: 165px">{{ 'Tél.' | translate }}</div>
+                <div class="p-col">: {{ internshipData?.mentor_id?.portable_phone ? internshipData?.mentor_id?.portable_phone : '-' }}</div>
+              </div>
+              <div class="p-grid">
+                <div class="p-col-fixed" style="width: 165px">{{ 'E-mail' | translate }}</div>
+                <div class="p-col">: {{ internshipData?.mentor_id?.email }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="section-detail">
+        <div class="p-grid">
+          <div class="p-col-12" style="margin-bottom: 1rem">
+            <div class="title-detail">{{ 'THE INTERN' | translate }}</div>
+            <div class="section-info">
+              <div class="p-grid">
+                <div class="p-col-3">{{ 'Name' | translate }}</div>
+                <div class="p-col-9">
+                  :
+                  {{ internshipData?.student_id?.last_name | uppercase }}
+                </div>
+              </div>
+              <div class="p-grid">
+                <div class="p-col-3">{{ 'First name' | translate }}</div>
+                <div class="p-col-9">: {{ internshipData?.student_id?.first_name }}</div>
+              </div>
+              <div class="p-grid">
+                <div class="p-col-3">{{ 'DoB' | translate }}</div>
+                <div class="p-col-9">
+                  : {{ internshipData?.student_id?.date_of_birth ? translateDate(internshipData?.student_id?.date_of_birth) : '-' }}
+                </div>
+              </div>
+              <div class="p-grid">
+                <div class="p-col-3">{{ 'Sex' | translate }}</div>
+                <div class="p-col-9">: {{ internshipData?.student_id?.sex }}</div>
+              </div>
+              <div class="p-grid">
+                <div class="p-col-3">{{ 'Address' | translate }}</div>
+                <div class="p-col-9">
+                  :
+                  {{
+                    internshipData?.student_id?.student_address.length
+                      ? internshipData?.student_id?.student_address[0].address +
+                        ', ' +
+                        internshipData?.student_id?.student_address[0].postal_code +
+                        ' ' +
+                        internshipData?.student_id?.student_address[0].city
+                      : '-'
+                  }}
+                </div>
+              </div>
+              <div class="p-grid">
+                <div class="p-col-3">{{ 'Tel' | translate }}</div>
+                <div class="p-col-9">: {{ internshipData?.student_id?.tele_phone }}</div>
+              </div>
+              <div class="p-grid">
+                <div class="p-col-3">{{ 'E-mail' | translate }}</div>
+                <div class="p-col-9">: {{ internshipData?.student_id?.email }}</div>
+              </div>
+              <div class="p-grid">
+                <div class="p-col-11">
+                  {{ 'TITLE OF INTERNSHIP OR TRAINING COURSE TAKEN AT THE INSTITUTION OF HIGHER EDUCATION' | translate }}
+                </div>
+                <div class="p-col">:</div>
+              </div>
+              <div class="p-grid">
+                <div class="p-col-3">{{ 'HOUR VOLUME' | translate }}</div>
+                <div class="p-col-9">
+                  :
+                  {{
+                    internshipData?.student_id?.companies?.length
+                      ? internshipData?.student_id?.companies[0]?.internship_id
+                        ? internshipData?.student_id?.companies[0]?.internship_id.volume_hours
+                        : '-'
+                      : '-'
+                  }}
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="p-col-12">
+            <div class="title-detail">{{ 'SUBJECT OF INTERNSHIP' | translate }}</div>
+            <div class="section-info">
+              <div class="p-grid">
+                <div class="p-col-5">{{ 'Internship name' | translate }}</div>
+                <div class="p-col">
+                  :
+                  {{
+                    internshipData?.student_id?.companies?.length
+                      ? internshipData?.student_id?.companies[0]?.internship_id
+                        ? internshipData?.student_id?.companies[0]?.internship_id.internship_name
+                        : '-'
+                      : '-'
+                  }}
+                </div>
+              </div>
+              <div class="p-grid">
+                <div class="p-col-5">{{ 'Dates' | translate }}</div>
+                <div class="p-col">
+                  : <span>{{ 'From' | translate }}: </span>
+                  {{
+                    internshipData?.student_id?.companies?.length
+                      ? internshipData?.student_id?.companies[0]?.internship_id
+                        ? internshipData?.student_id?.companies[0]?.internship_id.internship_date?.date_from
+                        : '-'
+                      : '-'
+                  }}
+                  <span>{{ 'To' }}: </span>
+                  {{
+                    internshipData?.student_id?.companies?.length
+                      ? internshipData?.student_id?.companies[0]?.internship_id
+                        ? internshipData?.student_id?.companies[0]?.internship_id.internship_date?.date_to
+                        : '-'
+                      : '-'
+                  }}
+                </div>
+              </div>
+              <div class="p-grid">
+                <div class="p-col-5">{{ 'Representing a total duration of' | translate }}</div>
+                <div class="p-col">
+                  :
+                  {{
+                    internshipData?.student_id?.companies?.length
+                      ? internshipData?.student_id?.companies[0]?.internship_id
+                        ? internshipData?.student_id?.companies[0]?.internship_id.internship_date?.duration_in_months
+                        : '0'
+                      : '0'
+                  }}
+                  {{ 'Month' | translate }}
+                </div>
+              </div>
+              <div class="p-grid">
+                <div class="p-col-5">{{ 'Job description' | translate }}</div>
+                <div class="p-col">
+                  :
+                  {{
+                    internshipData?.student_id?.companies?.length
+                      ? internshipData?.student_id?.companies[0]?.internship_id
+                        ? internshipData?.student_id?.companies[0]?.internship_id.job_description
+                        : '-'
+                      : '-'
+                  }}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <ng-container *ngIf="!isUserCRM">
+    <div class="p-grid mobile-card" [formGroup]="detailForm">
+      <mat-checkbox style="margin-left: 8px" *ngIf="isUserStudent" formControlName="student_sign_status">{{
+        'I confirm the information I input are true' | translate
+      }}</mat-checkbox>
+      <mat-checkbox style="margin-left: 8px" *ngIf="isUserMentor" formControlName="mentor_sign_status">{{
+        'I confirm the information I input are true' | translate
+      }}</mat-checkbox>
+      <mat-checkbox style="margin-left: 8px" *ngIf="isUserMember" formControlName="company_manager_sign_status">{{
+        'I confirm the information I input are true' | translate
+      }}</mat-checkbox>
+    </div>
+  </ng-container>
+  <div class="btn-conditions mobile-card">
+    <button
+      *ngIf="isUserStudent"
+      [disabled]="!detailForm.get('student_sign_status').value"
+      mat-button
+      mat-raised-button
+      (click)="identityUpdated('student')"
+      color="accent"
+      class="btn-first"
+    >
+      <mat-icon style="font-size: 24px">send</mat-icon> {{ 'Submit' | translate }}
+    </button>
+    <button
+      *ngIf="isUserMentor"
+      [disabled]="!detailForm.get('mentor_sign_status').value"
+      mat-button
+      mat-raised-button
+      (click)="identityUpdated('mentor')"
+      color="accent"
+      class="btn-first"
+    >
+      <mat-icon style="font-size: 24px">send</mat-icon> {{ 'Submit' | translate }}
+    </button>
+    <button
+      *ngIf="isUserMember"
+      [disabled]="!detailForm.get('company_manager_sign_status').value"
+      mat-button
+      mat-raised-button
+      (click)="identityUpdated('manager')"
+      color="accent"
+      class="btn-first"
+    >
+      <mat-icon style="font-size: 24px">send</mat-icon> {{ 'Submit' | translate }}
+    </button>
+    <button *ngIf="isUserCRM" mat-button mat-raised-button (click)="continueButton()" color="accent" class="btn-first mobile-card">
+      {{ 'Next' | translate }}
+    </button>
+  </div>
+</div>

@@ -1,0 +1,52 @@
+<div class="dialog-border">
+  <div class="dialogTitleWrapper" cdkDrag cdkDragRootElement=".cdk-overlay-pane" cdkDragHandle>
+    <div class="p-grid">
+      <div class="p-col-10 no-padding">
+        <h3 class="dialogTitle">{{ 'Assign starting date' | translate }}</h3>
+      </div>
+      <div class="w-65 no-padding">
+        <button mat-icon-button class="close-icon float-right" (click)="closeDialog()" tabindex="-1">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div mat-dialog-content class="mat-dialog-content dialog-body" style="overflow: hidden !important">
+  <div [formGroup]="startDateForm">
+    <div class="p-grid" style="margin-bottom: 0.5em">
+      <div class="p-col-7 pad-y-none" style="align-self: center">
+        <p>{{ 'Please select a starting date' | translate }}*</p>
+      </div>
+      <div class="p-col-5 pad-y-none" style="align-self: center">
+        <mat-form-field hideRequiredMarker>
+          <input
+            matInput
+            (click)="startDatePick.open()"
+            readonly
+            class="form-field"
+            placeholder="{{ 'Starting date' | translate }} *"
+            [matDatepicker]="startDatePick"
+            formControlName="date"
+          />
+          <mat-datepicker-toggle matSuffix [for]="startDatePick"></mat-datepicker-toggle>
+          <mat-datepicker #startDatePick></mat-datepicker>
+          <mat-error *ngIf="startDateForm.get('date').hasError('required') && startDateForm.get('date').touched">{{
+            'This field is required' | translate
+          }}</mat-error>
+        </mat-form-field>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div mat-dialog-actions class="justify-content-end mr-10">
+  <button mat-button mat-raised-button color="warn" (click)="closeDialog()">{{ 'CANCEL' | translate }}</button>
+  <button mat-button mat-raised-button color="primary" class="mr-0" (click)="submit()">
+    {{ 'Validate' | translate }}
+  </button>
+</div>
+<div *ngIf="isWaitingForResponse" class="loading-indicator">
+  <mat-progress-spinner mode="indeterminate" color="accent"></mat-progress-spinner>
+</div>

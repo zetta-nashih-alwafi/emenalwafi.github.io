@@ -1,0 +1,20 @@
+.header-dialog {
+  margin-top: 15px;
+  padding: 0 15px 0 30px;
+  color: black;
+  border-bottom: 1px solid black;
+}
+.mat-dialog-content {
+  margin: 15px 0;
+}
+.action-button {
+  margin-right: 25px;
+  text-align: right;
+  padding-top: 0px !important;
+}
+:host::ng-deep {
+  .mat-form-field-appearance-outline .mat-form-field-outline-start,
+  .mat-form-field-appearance-outline .mat-form-field-outline-end {
+    border-radius: 0px !important;
+  }
+}

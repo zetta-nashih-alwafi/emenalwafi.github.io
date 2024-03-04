@@ -1,0 +1,153 @@
+<div class="col-lg-12" style="padding-top: 28px" [formGroup]="detailForm">
+  <div class="row">
+    <div class="col-lg-3">
+      <label>{{ 'Profile of Internship' | translate }}*</label>
+    </div>
+    <div class="col-lg-8" style="padding-left: 5px">
+      <div class="form-group web-radio">
+        <mat-radio-group formControlName="profile" style="font-size: 12px">
+          <mat-radio-button style="width: 50%" value="Bussiness Development (Sales)">{{
+            'Bussiness Development (Sales)' | translate
+          }}</mat-radio-button>
+          <mat-radio-button style="width: 50%" value="Web Development">{{ 'Web Development' | translate }}</mat-radio-button>
+          <mat-radio-button style="width: 50%" value="Graphic Design">{{ 'Graphic Design' | translate }}</mat-radio-button>
+          <mat-radio-button style="width: 50%" value="Content Writting">{{ 'Content Writting' | translate }}</mat-radio-button>
+          <mat-radio-button style="width: 50%" value="Social Media Marketing">{{ 'Social Media Marketing' | translate }}</mat-radio-button>
+          <mat-radio-button style="width: 50%" value="Marketing">{{ 'Marketing' | translate }}</mat-radio-button>
+          <mat-radio-button style="width: 50%" value="Operation">{{ 'Operation' | translate }}</mat-radio-button>
+          <mat-radio-button style="width: 50%" value="Mobile App Development">{{ 'Mobile App Development' | translate }}</mat-radio-button>
+          <mat-radio-button style="width: 50%" value="Digital Marketing">{{ 'Digital Marketing' | translate }}</mat-radio-button>
+          <mat-radio-button style="width: 50%" value="Human Resources (HR)">{{ 'Human Resources (HR)' | translate }}</mat-radio-button>
+          <mat-radio-button style="width: 50%" value="Law / Legal">{{ 'Law / Legal' | translate }}</mat-radio-button>
+          <mat-radio-button style="width: 50%" value="Campus Ambassador">{{ 'Campus Ambassador' | translate }}</mat-radio-button>
+          <mat-radio-button style="width: 50%" value="Other">{{ 'Other' | translate }}</mat-radio-button>
+        </mat-radio-group>
+      </div>
+      <div class="form-group mobile-radio">
+        <mat-radio-group formControlName="profile" style="font-size: 12px">
+          <mat-radio-button style="width: 100%" value="Bussiness Development (Sales)">{{
+            'Bussiness Development (Sales)' | translate
+          }}</mat-radio-button>
+          <mat-radio-button style="width: 100%" value="Web Development">{{ 'Web Development' | translate }}</mat-radio-button>
+          <mat-radio-button style="width: 100%" value="Graphic Design">{{ 'Graphic Design' | translate }}</mat-radio-button>
+          <mat-radio-button style="width: 100%" value="Content Writting">{{ 'Content Writting' | translate }}</mat-radio-button>
+          <mat-radio-button style="width: 100%" value="Social Media Marketing">{{ 'Social Media Marketing' | translate }}</mat-radio-button>
+          <mat-radio-button style="width: 100%" value="Marketing">{{ 'Marketing' | translate }}</mat-radio-button>
+          <mat-radio-button style="width: 100%" value="Operation">{{ 'Operation' | translate }}</mat-radio-button>
+          <mat-radio-button style="width: 100%" value="Mobile App Development">{{ 'Mobile App Development' | translate }}</mat-radio-button>
+          <mat-radio-button style="width: 100%" value="Digital Marketing">{{ 'Digital Marketing' | translate }}</mat-radio-button>
+          <mat-radio-button style="width: 100%" value="Human Resources (HR)">{{ 'Human Resources (HR)' | translate }}</mat-radio-button>
+          <mat-radio-button style="width: 100%" value="Law / Legal">{{ 'Law / Legal' | translate }}</mat-radio-button>
+          <mat-radio-button style="width: 100%" value="Campus Ambassador">{{ 'Campus Ambassador' | translate }}</mat-radio-button>
+          <mat-radio-button style="width: 100%" value="Other">{{ 'Other' | translate }}</mat-radio-button>
+        </mat-radio-group>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-lg-3">
+      <label>{{ 'Title' | translate }}*</label>
+    </div>
+    <div class="col-lg-8">
+      <div class="form-group">
+        <input class="form-control" required formControlName="title" />
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-lg-3">
+      <label>{{ 'Description' | translate }}*</label>
+    </div>
+    <div class="col-lg-8">
+      <div class="form-group">
+        <mat-icon
+          style="position: absolute; right: 20px; top: 10px"
+          class="icon-self-right"
+          (click)="openVoiceRecog()"
+          svgIcon="microphone"
+        ></mat-icon>
+        <ckeditor [editor]="Editor" (ready)="onReady($event)" [config]="config" formControlName="description"> </ckeditor>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-lg-3">
+      <label>{{ 'pdf job offer' | translate }}</label>
+    </div>
+    <div class="col-lg-8">
+      <button mat-button mat-raised-button color="accent" (click)="openUploadWindow()" style="margin-right: 10px">
+        <mat-icon style="font-size: 24px">add</mat-icon> {{ 'UPLOAD' | translate }}
+      </button>
+      <button mat-button mat-raised-button color="primary" (click)="resetImage()" style="margin-right: 10px">
+        <mat-icon svgIcon="loop" class="mat-icon-svgIcons"></mat-icon> {{ 'Reset' | translate }}
+      </button>
+      <input #fileUploadDoc type="file" accept=".pdf" class="hidden" (change)="uploadFile($event)" />
+      <div class="list-img" *ngIf="imageUploaded && imageUploaded.length">
+        <!-- <div class="img-box" *ngFor="let img of imageUploaded; let in = index">
+          <div class="text-upload" (click)="openImage(img?.s3_file_name)">{{img?.name}}</div>
+          <mat-icon class="close-icon" (click)="closeImg(in, img)">close</mat-icon>
+        </div> -->
+        <div class="thumbnail-img" *ngFor="let img of imageUploaded; let in = index">
+          <img
+            [matTooltip]="img?.s3_file_name"
+            (click)="openImage(img?.s3_file_name)"
+            [src]="pdfIcon"
+            class="thumb rounded pull-left img-thumbnail"
+            alt="{{ img?.s3_file_name }}"
+          />
+          <!-- <mat-icon class="close-icon img-close" (click)="closeImg(in, img)">close</mat-icon> -->
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row m-top-15">
+    <div class="col-lg-3">
+      <label>{{ 'Skill' | translate }}*</label>
+    </div>
+    <div class="col-lg-8">
+      <div class="input-group">
+        <input class="form-control" (keydown.enter)="addSpecialization()" matInput [formControl]="specialization_input" type="text" />
+        <span class="input-group-btn">
+          <button
+            style="height: 34px !important; margin: 0px !important; position: relative; top: -1px"
+            [disabled]="!specialization_input.value"
+            type="button"
+            mat-raised-button
+            color="primary"
+            (click)="addSpecialization()"
+          >
+            {{ 'Add Skill' | translate }}
+          </button>
+        </span>
+      </div>
+      <div class="col-lg-12" *ngFor="let specialization of skill; let i = index" class="specialization-pill">
+        {{ specialization }}
+        <span class="pill-skill">
+          <mat-icon style="cursor: pointer; font-size: 14px" (click)="remoteSpecialization(i)" class="icon-mat-change">cancel</mat-icon>
+        </span>
+      </div>
+    </div>
+  </div>
+  <div class="row m-top-15">
+    <div class="col-lg-3">
+      <label>{{ 'Number of Opening' | translate }}</label>
+    </div>
+    <div class="col-lg-1">
+      <div class="form-group">
+        <input class="form-control" maxlength="2" required formControlName="number_opening" />
+      </div>
+    </div>
+  </div>
+  <div class="row btn-submit">
+    <button
+      mat-button
+      mat-raised-button
+      color="accent"
+      [disabled]="buttonValidate()"
+      (click)="submitStepTwo()"
+      class="button-submit submit-action"
+    >
+      <mat-icon style="font-size: 24px">save</mat-icon> {{ 'Submit' | translate }}
+    </button>
+  </div>
+</div>

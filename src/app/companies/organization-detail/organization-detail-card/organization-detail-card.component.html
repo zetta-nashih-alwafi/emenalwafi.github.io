@@ -1,0 +1,59 @@
+<ng-container>
+  <mat-accordion class="example-headers-align user-summary" #accordion>
+    <mat-expansion-panel [expanded]="orgId" class="panel-spacing">
+      <mat-expansion-panel-header class="background-primary panel-header">
+        <mat-panel-title>
+          <h4 style="color: white; align-self: center; margin: 0px">
+            {{ 'The Organization' | translate }}
+          </h4>
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      <div class="pane-divider">
+        <div class="student-detail p-grid" *ngIf="organization">
+          <div class="right-border p-col-6 no-padding">
+            <div class="p-grid" style="align-items: flex-start">
+              <div *ngIf="organization?.name" class="phone p-col-12">
+                <span>{{ organization?.name }} </span>
+              </div>
+              <div *ngIf="organization?.organization_type" class="phone p-col-12">
+                <span>{{ 'Type of Organization' | translate }} : </span><span>{{ organization?.organization_type }} </span>
+              </div>
+              <div *ngIf="organization?.date_added" class="school-email p-col-12">
+                <span>{{ 'Added the' | translate }} : </span><span>{{ translateGraduationDate(organization?.date_added) }} </span>
+              </div>
+              <div *ngIf="organization?.date_updated" class="school-email p-col-12">
+                <span>{{ 'Last modification' | translate }} : </span><span>{{ translateGraduationDate(organization?.date_updated) }} </span>
+              </div>
+            </div>
+          </div>
+          <div class="p-col-6 no-padding">
+            <div class="p-grid" style="align-items: flex-start">
+              <div class="phone p-col-12">
+                <span>{{ organization?.address }} </span>
+              </div>
+              <div class="phone p-col-4">
+                <span>{{ organization?.postal_code }} </span>
+              </div>
+              <div class="phone p-col-4">
+                <span>{{ organization?.country }} </span>
+              </div>
+              <div class="phone p-col-4"></div>
+              <div class="school-email p-col-4">
+                <span>{{ organization?.city }} </span>
+              </div>
+              <div class="school-email p-col-4">
+                <span>{{ organization?.department }} </span>
+              </div>
+              <div class="school-email p-col-4">
+                <span>{{ organization?.region }} </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </mat-expansion-panel>
+  </mat-accordion>
+  <ng-container>
+    <ms-organization-detail-tab [orgId]="orgId"></ms-organization-detail-tab>
+  </ng-container>
+</ng-container>

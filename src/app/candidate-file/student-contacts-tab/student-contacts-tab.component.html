@@ -1,0 +1,1139 @@
+<div class="p-grid" *ngIf="isWaitingForResponse" class="p-col-12" style="text-align: center !important; display: contents">
+  <div class="center-spinner spinner-wrapper">
+    <mat-spinner color="accent"></mat-spinner>
+  </div>
+</div>
+<div *ngIf="!isWaitingForResponse" class="p-grid" [formGroup]="parentsForm">
+  <div class="p-col-12" style="padding-left: 0px; padding-right: 0px">
+    <div class="p-grid" style="margin-top: 0.5rem" id="parent1">
+      <div class="p-col-12" style="text-align: right; padding-right: 0px">
+        <button mat-raised-button color="accent" *ngIf="thereIsPending" (click)="sendingPayN3()">
+          {{ 'Information for Payment' | translate }}
+        </button>
+        <button mat-raised-button color="accent" (click)="updateStudentParents()">
+          <mat-icon class="mat-icon-default">save</mat-icon>
+          {{ 'CARDDETAIL.Save' | translate }}
+        </button>
+      </div>
+    </div>
+
+    <fieldset class="fieldset-class" *ngIf="paymentSupportsForm.length > 0">
+      <mat-card class="overlow-auto">
+        <div class="p-grid" formArrayName="payment_supports">
+          <div
+            class="p-col-12 yellow-border"
+            [ngStyle]="{ 'margin-top': paymentSupportIndex > 0 ? '1rem' : '0rem' }"
+            *ngFor="let support of paymentSupportsForm.controls; let paymentSupportIndex = index"
+            [formGroupName]="paymentSupportIndex"
+          >
+            <div class="p-grid" style="margin-top: 5px">
+              <div class="p-col-6 no-padding-y">
+                <div class="p-grid">
+                  <mat-form-field>
+                    <mat-label>{{ 'CARDDETAIL.Relations' | translate }}</mat-label>
+                    <mat-select formControlName="relation" panelClass="filterPanel custom-matselect-dropdown">
+                      <mat-option *ngFor="let relation of relationList" [value]="relation">
+                        {{ 'CARDDETAIL.RELATION.' + relation | translate }}</mat-option
+                      >
+                    </mat-select>
+                    <mat-error
+                      *ngIf="
+                        paymentSupportsForm.at(paymentSupportIndex).get('relation').hasError('required') &&
+                        (paymentSupportsForm.at(paymentSupportIndex).get('relation').dirty ||
+                          paymentSupportsForm.at(paymentSupportIndex).get('relation').touched)
+                      "
+                    >
+                      {{ 'This field is required' | translate }}
+                    </mat-error>
+                  </mat-form-field>
+                </div>
+              </div>
+              <div class="p-col-6 no-padding-y" style="align-self: center">
+                <div class="p-grid">
+                  <div class="p-col-6 no-padding" style="align-self: center">
+                    <div class="p-grid">
+                      <div class="p-col-12 no-padding" style="align-self: center; display: flex">
+                        <mat-icon
+                          matTooltipPosition="above"
+                          *ngIf="
+                            paymentSupportsForm &&
+                            paymentSupportsForm.at(paymentSupportIndex).get('financial_support_status').value &&
+                            paymentSupportsForm.at(paymentSupportIndex).get('financial_support_status').value === 'validated'
+                          "
+                          class="green-icon"
+                          aria-hidden="true"
+                          >lens
+                        </mat-icon>
+                        <mat-icon
+                          matTooltipPosition="above"
+                          *ngIf="
+                            paymentSupportsForm &&
+                            paymentSupportsForm.at(paymentSupportIndex).get('financial_support_status').value &&
+                            paymentSupportsForm.at(paymentSupportIndex).get('financial_support_status').value === 'pending'
+                          "
+                          class="blue-icon"
+                          aria-hidden="true"
+                          >lens
+                        </mat-icon>
+                        <span style="margin-left: 5px">
+                          {{ 'CARDDETAIL.Financial Support' | translate }}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- <div class="p-col-6" style="text-align: right; font-size: 12px">
+                    {{ 'CARDDETAIL.Remove financial support' | translate }}
+                    <button mat-icon-button class="small-icon" color="red" (click)="removeFinancialSupport(paymentSupportIndex)">
+                      <mat-icon>remove</mat-icon>
+                    </button>
+                  </div> -->
+                </div>
+              </div>
+            </div>
+
+            <div class="p-grid" style="padding-bottom: 1rem">
+              <div class="p-col-6 no-padding-y" style="padding-left: 0px">
+                <div class="p-grid">
+                  <div class="p-col-fixed no-padding-y center-label" style="width: 50px">
+                    <label>{{ 'CARDDETAIL.Civility' | translate }}*</label>
+                  </div>
+                  <div class="p-col no-padding-y">
+                    <mat-radio-group formControlName="civility">
+                      <mat-radio-button style="margin-right: 1rem" value="MR">{{ 'CARDDETAIL.MR' | translate }}</mat-radio-button>
+                      <mat-radio-button value="MRS">{{ 'CARDDETAIL.MRS' | translate }}</mat-radio-button>
+                      <ng-container *ngIf="coreService?.neutralCivility">
+                        <mat-radio-button style="margin-left: 1rem" value="neutral">{{ 'Neutral' | translate }}</mat-radio-button>
+                      </ng-container>
+                      <mat-error
+                        *ngIf="
+                          paymentSupportsForm.at(paymentSupportIndex).get('civility').hasError('required') &&
+                          (paymentSupportsForm.at(paymentSupportIndex).get('civility').dirty ||
+                            paymentSupportsForm.at(paymentSupportIndex).get('civility').touched)
+                        "
+                      >
+                        {{ 'This field is required' | translate }}
+                      </mat-error>
+                    </mat-radio-group>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="p-grid">
+              <div class="p-col-6 no-padding-y">
+                <div class="p-grid">
+                  <mat-form-field floatLabel="auto">
+                    <input matInput formControlName="name" type="text" placeholder="{{ 'CARDDETAIL.First Name' | translate }}" />
+                    <mat-error
+                      *ngIf="
+                        paymentSupportsForm.at(paymentSupportIndex).get('name').hasError('required') &&
+                        (paymentSupportsForm.at(paymentSupportIndex).get('name').dirty ||
+                          paymentSupportsForm.at(paymentSupportIndex).get('name').touched)
+                      "
+                    >
+                      {{ 'This field is required' | translate }}
+                    </mat-error>
+                  </mat-form-field>
+                </div>
+              </div>
+              <div class="p-col-5 no-padding-y">
+                <div class="p-grid">
+                  <mat-form-field floatLabel="auto">
+                    <input matInput formControlName="family_name" type="text" placeholder="{{ 'CARDDETAIL.Last Name' | translate }}" />
+                    <mat-error
+                      *ngIf="
+                        paymentSupportsForm.at(paymentSupportIndex).get('family_name').hasError('required') &&
+                        (paymentSupportsForm.at(paymentSupportIndex).get('family_name').dirty ||
+                          paymentSupportsForm.at(paymentSupportIndex).get('family_name').touched)
+                      "
+                    >
+                      {{ 'This field is required' | translate }}
+                    </mat-error>
+                  </mat-form-field>
+                </div>
+              </div>
+            </div>
+
+            <div class="p-grid">
+              <div class="p-col-6 no-padding-y">
+                <div class="p-grid">
+                  <div class="phone-number p-col-12 no-padding-y p-grid" style="position: relative">
+                    <mat-label class="label-for-phone">{{ 'CARDDETAIL.Phone' | translate }}</mat-label>
+                    <div class="phone-number p-col-2">
+                      <ng-select
+                        [formControl]="dialCodeArrayForPaymentSupports?.at(paymentSupportIndex)"
+                        (change)="selectionDialCode($event, paymentSupportIndex, 'payment_supports')"
+                        [clearable]="false"
+                        bindLabel="name"
+                        [appendTo]="'body'"
+                        class="custom-dropdownpanel-dialcode"
+                      >
+                        <ng-template ng-label-tmp let-item="item">
+                          <img class="flag-icon-trigger" [src]="flagsIconPath + item?.flagIcon + '.svg'"/>
+                          <span *ngIf="item?.flagIcon" class="ml-4">+{{ item?.dialCode }}</span>
+                        </ng-template>
+                        <ng-option *ngFor="let country of countryCodeList" [value]="country">
+                          <ng-container *ngIf="country?.name">
+                            <img class="flag-icon" [src]="flagsIconPath + country?.flagIcon + '.svg'" /> {{ country?.name | translate }} +{{ country?.dialCode }}
+                          </ng-container>
+                        </ng-option>
+                      </ng-select>
+                    </div>
+                    <div class="phone-number p-col-10">
+                      <mat-form-field>
+                        <input matInput formControlName="tele_phone" type="text" />
+                        <mat-error>
+                          <p
+                            *ngIf="
+                              paymentSupportsForm.at(paymentSupportIndex).get('tele_phone').hasError('pattern') &&
+                              (paymentSupportsForm.at(paymentSupportIndex).get('tele_phone').touched ||
+                                paymentSupportsForm.at(paymentSupportIndex).get('tele_phone').dirty)
+                            "
+                          >
+                            {{ 'Phone number is not valid' | translate }}
+                          </p>
+                        </mat-error>
+                      </mat-form-field>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="p-col-5 no-padding-y">
+                <div class="p-grid">
+                  <mat-form-field floatLabel="auto">
+                    <input
+                      matInput
+                      formControlName="email"
+                      type="email"
+                      placeholder="{{ 'CARDDETAIL.Mail' | translate }}"
+                      (keyup)="compareEmailWithStudentFinancialSupport(paymentSupportIndex)"
+                    />
+                    <mat-error>
+                      <p
+                        *ngIf="
+                          paymentSupportsForm.at(paymentSupportIndex).get('email').hasError('required') &&
+                          (paymentSupportsForm.at(paymentSupportIndex).get('email').touched ||
+                            paymentSupportsForm.at(paymentSupportIndex).get('email').dirty)
+                        "
+                      >
+                        {{ 'This field is required' | translate }}
+                      </p>
+
+                      <p
+                        *ngIf="
+                          paymentSupportsForm.at(paymentSupportIndex).get('email').hasError('email') &&
+                          (paymentSupportsForm.at(paymentSupportIndex).get('email').touched ||
+                            paymentSupportsForm.at(paymentSupportIndex).get('email').dirty)
+                        "
+                      >
+                        {{ 'Invalid email format' | translate }}
+                      </p>
+
+                      <p
+                        *ngIf="
+                          !paymentSupportsForm.at(paymentSupportIndex).get('email').hasError('required') &&
+                          !paymentSupportsForm.at(paymentSupportIndex).get('email').hasError('email') &&
+                          paymentSupportsForm.at(paymentSupportIndex).get('email').hasError('emailSamePS') &&
+                          (paymentSupportsForm.at(paymentSupportIndex).get('email').touched ||
+                            paymentSupportsForm.at(paymentSupportIndex).get('email').dirty)
+                        "
+                      >
+                        {{ 'Email cant be same with student email' | translate }}
+                      </p>
+                    </mat-error>
+                  </mat-form-field>
+                </div>
+              </div>
+            </div>
+
+            <div class="p-grid">
+              <div class="p-col-6 no-padding">
+                <div class="p-grid">
+                  <div class="p-col no-padding-y pad-right-15">
+                    <mat-form-field>
+                      <mat-label>{{ 'Account holder name' | translate }}</mat-label>
+                      <input matInput formControlName="account_holder_name" type="text" />
+                    </mat-form-field>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="p-grid">
+              <div class="p-col-6 no-padding">
+                <div class="p-grid">
+                  <div class="p-col no-padding-y pad-right-15">
+                    <mat-form-field>
+                      <mat-label>{{ 'IBAN' | translate }}</mat-label>
+                      <input matInput formControlName="iban" type="text" />
+                      <mat-error
+                        *ngIf="
+                          paymentSupportsForm.at(paymentSupportIndex).get('iban').hasError('required') &&
+                          (paymentSupportsForm.at(paymentSupportIndex).get('iban').dirty ||
+                            paymentSupportsForm.at(paymentSupportIndex).get('iban').touched)
+                        "
+                      >
+                        {{ 'This field is required' | translate }}
+                      </mat-error>
+                    </mat-form-field>
+                  </div>
+                </div>
+              </div>
+              <div class="p-col-5 no-padding pad-left-5">
+                <div class="p-grid">
+                  <div class="p-col no-padding-y">
+                    <mat-form-field>
+                      <mat-label>{{ 'BIC' | translate }}</mat-label>
+                      <input matInput formControlName="bic" type="text" />
+                      <mat-error
+                        *ngIf="
+                          paymentSupportsForm.at(paymentSupportIndex).get('bic').hasError('required') &&
+                          (paymentSupportsForm.at(paymentSupportIndex).get('bic').dirty ||
+                            paymentSupportsForm.at(paymentSupportIndex).get('bic').touched)
+                        "
+                      >
+                        {{ 'This field is required' | translate }}
+                      </mat-error>
+                    </mat-form-field>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="p-grid">
+              <div class="p-col-6 no-padding">
+                <div class="p-grid" style="padding-left: 8px">
+                  <div class="p-col-12 no-padding">
+                    <span
+                      >{{ 'Cost coverage' | translate }}:
+                      {{ costCoverageFS(paymentSupportsForm?.at(paymentSupportIndex)?.get('_id')?.value, billingData) || 0 | currency : 'EURO' : '' : '0.2' }} EUR</span
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="p-grid" formArrayName="parent_address" style="padding-top: 10px">
+              <div
+                class="p-col-12 mb-1rem border-white"
+                *ngFor="let address of paymentAddressArrayForm(paymentSupportIndex).controls; let addressIndex2 = index"
+                [formGroupName]="addressIndex2"
+                style="padding-bottom: 0px; margin-left: 7px; margin-right: 7px !important; width: 98%"
+              >
+                <div class="p-grid">
+                  <div class="p-col-12 no-padding-y" style="padding-top: 10px">
+                    <div class="p-grid flex-hidden-mr-1">
+                      <div class="p-col no-padding-y">
+                        <mat-form-field color="accent" class="full-width" floatLabel="auto">
+                          <input matInput type="text" formControlName="address" placeholder="{{ 'CARDDETAIL.Address' | translate }}" />
+                        </mat-form-field>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="p-grid">
+                  <div class="p-col-12 no-padding-y">
+                    <div class="p-grid">
+                      <div class="p-col-4 no-padding">
+                        <div class="p-grid flex-hidden-mr-1">
+                          <div class="p-col no-padding-y">
+                            <mat-form-field color="accent" class="full-width">
+                              <input
+                                matInput
+                                type="text"
+                                formControlName="postal_code"
+                                (keyup)="getPostcodeDataSupport(paymentSupportIndex)"
+                                placeholder="{{ 'CARDDETAIL.Zip Code' | translate }}"
+                              />
+                            </mat-form-field>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="p-col-4 no-padding">
+                        <div class="p-grid flex-hidden-mr-1">
+                          <div class="p-col no-padding-y">
+                            <mat-form-field color="accent" class="full-width">
+                              <input
+                                type="text"
+                                placeholder="{{ 'CARDDETAIL.Country' | translate }}"
+                                matInput
+                                formControlName="country"
+                                [matAutocomplete]="autoCountry"
+                                (keyup)="filterCountrySupport(paymentSupportIndex)"
+                              />
+                              <mat-autocomplete
+                                #autoCountry="matAutocomplete"
+                                (optionSelected)="getPostcodeDataSupport(paymentSupportIndex)"
+                                [panelWidth]="'fit'"
+                                [displayWith]="getCountrySupportName.bind(this)"
+                              >
+                                <mat-option *ngFor="let option of filteredCountrySupport[paymentSupportIndex][0]" [value]="option">
+                                  {{ 'COUNTRY.' + option | translate }}
+                                </mat-option>
+                              </mat-autocomplete>
+                            </mat-form-field>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="p-grid">
+                  <div class="p-col-12 no-padding-y" style="padding-bottom: 0px">
+                    <div class="p-grid">
+                      <div class="p-col-4 no-padding">
+                        <div class="p-grid flex-hidden-mr-1">
+                          <div class="p-col no-padding-y">
+                            <mat-form-field color="accent" class="full-width">
+                              <input
+                                type="text"
+                                placeholder="{{ 'CARDDETAIL.City' | translate }}"
+                                matInput
+                                formControlName="city"
+                                [matAutocomplete]="autoCity"
+                                (keyup)="filterCitySupport(paymentSupportIndex)"
+                              />
+                              <mat-autocomplete #autoCity="matAutocomplete" [panelWidth]="'fit'">
+                                <mat-option *ngFor="let option of filteredCitySupport[paymentSupportIndex][0]" [value]="option">
+                                  {{ option }}
+                                </mat-option>
+                              </mat-autocomplete>
+                            </mat-form-field>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="p-col-4 no-padding">
+                        <div class="p-grid flex-hidden-mr-1">
+                          <div class="p-col no-padding-y">
+                            <mat-form-field color="accent" class="full-width">
+                              <input
+                                type="text"
+                                placeholder="{{ 'CARDDETAIL.Department' | translate }}"
+                                matInput
+                                formControlName="department"
+                                [matAutocomplete]="autoDepartment"
+                                (keyup)="filterDepartmentSupport(paymentSupportIndex)"
+                              />
+                              <mat-autocomplete #autoDepartment="matAutocomplete" [panelWidth]="'fit'">
+                                <mat-option *ngFor="let option of filteredDepartmentSupport[paymentSupportIndex][0]" [value]="option">
+                                  {{ option }}
+                                </mat-option>
+                              </mat-autocomplete>
+                            </mat-form-field>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="p-col-4 no-padding">
+                        <div class="p-grid flex-hidden-mr-1">
+                          <div class="p-col no-padding-y">
+                            <mat-form-field color="accent" class="full-width">
+                              <input
+                                type="text"
+                                placeholder="{{ 'CARDDETAIL.Region' | translate }}"
+                                matInput
+                                formControlName="region"
+                                [matAutocomplete]="autoRegion"
+                                (keyup)="filterRegionSupport(paymentSupportIndex)"
+                              />
+                              <mat-autocomplete #autoRegion="matAutocomplete" [panelWidth]="'fit'">
+                                <mat-option *ngFor="let option of filteredRegionSupport[paymentSupportIndex][0]" [value]="option">
+                                  {{ option }}
+                                </mat-option>
+                              </mat-autocomplete>
+                            </mat-form-field>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </mat-card>
+    </fieldset>
+
+    <fieldset class="fieldset-class">
+      <mat-card class="overlow-auto">
+        <div class="p-grid">
+          <div class="p-col-12" style="text-align: right; margin-bottom: 1rem; padding: 0px; width: 100.7%">
+            {{ 'CARDDETAIL.Add another Contact' | translate }}
+            <button mat-icon-button class="small-icon" color="success" (click)="addParent(true)">
+              <mat-icon>add</mat-icon>
+            </button>
+          </div>
+        </div>
+        <div class="p-grid" formArrayName="parents" *ngIf="parentsArrayForm.length > 0">
+          <div
+            class="p-col-12 yellow-border"
+            [ngStyle]="{ 'margin-top': parentIndex > 0 ? '1rem' : '0rem' }"
+            *ngFor="let parent of parentsArrayForm.controls; let parentIndex = index"
+            [formGroupName]="parentIndex"
+          >
+            <div class="p-grid" style="margin-top: 5px">
+              <div class="p-col-6 no-padding-y">
+                <div class="p-grid">
+                  <mat-form-field>
+                    <mat-label>{{ 'CARDDETAIL.Relations' | translate }}</mat-label>
+                    <mat-select formControlName="relation" panelClass="filterPanel custom-matselect-dropdown">
+                      <mat-option *ngFor="let relation of relationList" [value]="relation">
+                        {{ 'CARDDETAIL.RELATION.' + relation | translate }}</mat-option
+                      >
+                    </mat-select>
+                    <mat-error
+                      *ngIf="
+                        parentsArrayForm.at(parentIndex).get('relation').hasError('required') &&
+                        (parentsArrayForm.at(parentIndex).get('relation').dirty || parentsArrayForm.at(parentIndex).get('relation').touched)
+                      "
+                    >
+                      {{ 'This field is required' | translate }}
+                    </mat-error>
+                  </mat-form-field>
+                </div>
+              </div>
+              <div class="p-col-6 no-padding-y">
+                <div class="p-grid">
+                  <div class="p-col-6 no-padding" style="align-self: center">
+                    <div class="p-grid">
+                      <div class="p-col-12 no-padding" style="align-self: center; margin-top: 16px">
+                        <ng-container
+                          *ngIf="
+                            parentsArrayForm.at(parentIndex).get('financial_support_status').value === 'pending' ||
+                            parentsArrayForm.at(parentIndex).get('financial_support_status').value === 'validated'
+                          "
+                        >
+                          <div style="display: flex">
+                            <mat-icon
+                              matTooltipPosition="above"
+                              *ngIf="
+                                parentsArrayForm &&
+                                parentsArrayForm.at(parentIndex).get('financial_support_status').value &&
+                                parentsArrayForm.at(parentIndex).get('financial_support_status').value === 'validated'
+                              "
+                              class="green-icon"
+                              aria-hidden="true"
+                              >lens
+                            </mat-icon>
+                            <mat-icon
+                              matTooltipPosition="above"
+                              *ngIf="
+                                parentsArrayForm &&
+                                parentsArrayForm.at(parentIndex).get('financial_support_status').value &&
+                                parentsArrayForm.at(parentIndex).get('financial_support_status').value === 'pending'
+                              "
+                              class="blue-icon"
+                              aria-hidden="true"
+                              >lens
+                            </mat-icon>
+                            <span style="margin-left: 5px">
+                              {{ 'CARDDETAIL.Financial Support' | translate }}
+                            </span>
+                          </div>
+                        </ng-container>
+                        <ng-container
+                          *ngIf="
+                            parentsArrayForm.at(parentIndex).get('financial_support_status').value === 'not_financial_support' ||
+                            !parentsArrayForm.at(parentIndex).get('financial_support_status').value
+                          "
+                        >
+                          <mat-slide-toggle formControlName="is_parent_also_payment_support"> </mat-slide-toggle>
+                          <span
+                            *ngIf="!parent.get('is_parent_also_payment_support').value"
+                            [ngStyle]="{ color: parent.get('is_parent_also_payment_support').value ? '#ffe77a' : 'white' }"
+                            style="font-size: 12px"
+                          >
+                            {{ 'Not set as financial support' | translate }}
+                          </span>
+                          <span
+                            *ngIf="parent.get('is_parent_also_payment_support').value"
+                            [ngStyle]="{ color: parent.get('is_parent_also_payment_support').value ? '#ffe77a' : 'white' }"
+                            style="font-size: 12px"
+                          >
+                            {{ 'Set as financial support' | translate }}
+                          </span>
+                        </ng-container>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="p-col-6" style="text-align: right; font-size: 12px" (click)="removeParent(parentIndex)">
+                    {{ 'CARDDETAIL.Remove contact' | translate }}
+                    <button mat-icon-button class="small-icon" color="red">
+                      <mat-icon>remove</mat-icon>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div
+              class="p-grid"
+              [ngStyle]="{
+                padding:
+                  parentsArrayForm.at(parentIndex).get('financial_support_status').value === 'pending' ||
+                  parentsArrayForm.at(parentIndex).get('financial_support_status').value === 'validated'
+                    ? '0 0 16px 0'
+                    : '14px 0 0 0'
+              }"
+            >
+              <div class="p-col-6 no-padding-y" style="padding-left: 0px">
+                <div class="p-grid">
+                  <div class="p-col-fixed no-padding-y center-label" style="width: 50px">
+                    <label>{{ 'CARDDETAIL.Civility' | translate }}*</label>
+                  </div>
+                  <div class="p-col no-padding-y">
+                    <mat-radio-group formControlName="civility">
+                      <mat-radio-button style="margin-right: 1rem" value="MR">{{ 'CARDDETAIL.MR' | translate }}</mat-radio-button>
+                      <mat-radio-button value="MRS">{{ 'CARDDETAIL.MRS' | translate }}</mat-radio-button>
+                      <ng-container *ngIf="coreService?.neutralCivility">
+                        <mat-radio-button style="margin-left: 1rem" value="neutral">{{ 'Neutral' | translate }}</mat-radio-button>
+                      </ng-container>
+                      <mat-error
+                        *ngIf="
+                          parentsArrayForm.at(parentIndex).get('civility').hasError('required') &&
+                          (parentsArrayForm.at(parentIndex).get('civility').dirty ||
+                            parentsArrayForm.at(parentIndex).get('civility').touched)
+                        "
+                      >
+                        {{ 'This field is required' | translate }}
+                      </mat-error>
+                    </mat-radio-group>
+                  </div>
+                </div>
+              </div>
+              <div class="p-col-6 no-padding">
+                <div class="p-grid">
+                  <div class="p-col-12 no-padding-y" style="align-self: center">
+                    <ng-container
+                      *ngIf="
+                        parentsArrayForm.at(parentIndex).get('financial_support_status').value === 'pending' ||
+                        parentsArrayForm.at(parentIndex).get('financial_support_status').value === 'validated'
+                      "
+                    >
+                      <div style="display: flex; flex-direction: column; gap: 16px">
+                        <div class="p-col-12 no-padding" style="align-self: center">
+                          <mat-slide-toggle formControlName="is_parent_also_payment_support"> </mat-slide-toggle>
+                          <span
+                            *ngIf="!parent.get('is_parent_also_payment_support').value"
+                            [ngStyle]="{ color: parent.get('is_parent_also_payment_support').value ? '#ffe77a' : 'white' }"
+                            style="font-size: 12px"
+                          >
+                            {{ 'Not set as financial support' | translate }}
+                          </span>
+                          <span
+                            *ngIf="parent.get('is_parent_also_payment_support').value"
+                            [ngStyle]="{ color: parent.get('is_parent_also_payment_support').value ? '#ffe77a' : 'white' }"
+                            style="font-size: 12px"
+                          >
+                            {{ 'Set as financial support' | translate }}
+                          </span>
+                        </div>
+                      </div>
+                    </ng-container>
+                    <ng-container
+                      *ngIf="
+                        parentsArrayForm.length &&
+                        (parentsArrayForm.at(parentIndex).get('financial_support_status').value === 'not_financial_support' ||
+                          !parentsArrayForm.at(parentIndex).get('financial_support_status').value)
+                      "
+                    >
+                      <div class="p-col-12 no-padding">
+                        <mat-slide-toggle formControlName="is_contact_person_in_emergency"> </mat-slide-toggle>
+                        <span
+                          style="font-size: 12px"
+                          [ngStyle]="{ color: parent.get('is_contact_person_in_emergency').value ? '#ffe77a' : 'white' }"
+                        >
+                          {{ 'CARDDETAIL.Person to contact in case of emergency' | translate }}</span
+                        >
+                      </div>
+                      <!-- <div class="p-col-12 no-padding" style="padding-left: 0 !important; margin-top: 16px !important">
+                        <mat-slide-toggle formControlName="is_same_address" (change)="duplicateStudentAddress($event, parentIndex)">
+                        </mat-slide-toggle>
+                        <span [ngStyle]="{ color: parent.get('is_same_address').value ? '#ffe77a' : 'white' }" style="font-size: 12px">
+                          {{ 'CARDDETAIL.Same Address' | translate }}
+                        </span>
+                      </div> -->
+                    </ng-container>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="p-grid" style="align-items: center !important">
+              <div class="p-col-6">
+                <div class="p-grid">
+                  <mat-form-field>
+                    <input matInput formControlName="name" type="text" placeholder="{{ 'CARDDETAIL.First Name' | translate }}" />
+                    <mat-error
+                      *ngIf="
+                        parentsArrayForm.at(parentIndex).get('name').hasError('required') &&
+                        (parentsArrayForm.at(parentIndex).get('name').dirty || parentsArrayForm.at(parentIndex).get('name').touched)
+                      "
+                    >
+                      {{ 'This field is required' | translate }}
+                    </mat-error>
+                  </mat-form-field>
+                </div>
+              </div>
+              <ng-container
+                *ngIf="
+                  parentsArrayForm.at(parentIndex).get('financial_support_status').value === 'pending' ||
+                  parentsArrayForm.at(parentIndex).get('financial_support_status').value === 'validated'
+                "
+              >
+                <div class="p-col-5">
+                  <mat-slide-toggle formControlName="is_contact_person_in_emergency"> </mat-slide-toggle>
+                  <span
+                    style="font-size: 12px"
+                    [ngStyle]="{ color: parent.get('is_contact_person_in_emergency').value ? '#ffe77a' : 'white' }"
+                  >
+                    {{ 'CARDDETAIL.Person to contact in case of emergency' | translate }}</span
+                  >
+                </div>
+              </ng-container>
+              <ng-container
+                *ngIf="
+                  parentsArrayForm.length &&
+                  (parentsArrayForm.at(parentIndex).get('financial_support_status').value === 'not_financial_support' ||
+                    !parentsArrayForm.at(parentIndex).get('financial_support_status').value)
+                "
+              >
+                <div class="p-col-5 no-padding-y" style="align-self: center">
+                  <mat-slide-toggle formControlName="is_same_address" (change)="duplicateStudentAddress($event, parentIndex)">
+                  </mat-slide-toggle>
+                  <span [ngStyle]="{ color: parent.get('is_same_address').value ? '#ffe77a' : 'white' }" style="font-size: 12px">
+                    {{ 'CARDDETAIL.Same Address' | translate }}
+                  </span>
+                </div>
+              </ng-container>
+            </div>
+
+            <div class="p-grid">
+              <div class="p-col-6 no-padding-y">
+                <div class="p-grid">
+                  <mat-form-field>
+                    <input matInput formControlName="family_name" type="text" placeholder="{{ 'CARDDETAIL.Last Name' | translate }}" />
+                    <mat-error
+                      *ngIf="
+                        parentsArrayForm.at(parentIndex).get('family_name').hasError('required') &&
+                        (parentsArrayForm.at(parentIndex).get('family_name').dirty ||
+                          parentsArrayForm.at(parentIndex).get('family_name').touched)
+                      "
+                    >
+                      {{ 'This field is required' | translate }}
+                    </mat-error>
+                  </mat-form-field>
+                </div>
+              </div>
+              <ng-container
+                *ngIf="
+                  parentsArrayForm.length &&
+                  (parentsArrayForm.at(parentIndex).get('financial_support_status').value === 'not_financial_support' ||
+                    !parentsArrayForm.at(parentIndex).get('financial_support_status').value)
+                "
+              >
+                <div class="p-col-5 no-padding-y">
+                  <div class="p-grid">
+                    <div class="phone-number p-col-12 no-padding-y p-grid" style="position: relative">
+                      <mat-label class="label-for-phone">{{ 'CARDDETAIL.Phone' | translate }}</mat-label>
+                      <div class="phone-number p-col-2">
+                        <ng-select
+                          [formControl]="dialCodeArrayForParents?.at(parentIndex)"
+                          (change)="selectionDialCode($event, parentIndex, 'parents')"
+                          [clearable]="false"
+                          bindLabel="name"
+                          [appendTo]="'body'"
+                          class="custom-dropdownpanel-dialcode"
+                        >
+                          <ng-template ng-label-tmp let-item="item">
+                            <img class="flag-icon-trigger" [src]="flagsIconPath + item?.flagIcon + '.svg'"/>
+                            <span *ngIf="item?.flagIcon" class="ml-4">+{{ item?.dialCode }}</span>
+                          </ng-template>
+                          <ng-option *ngFor="let country of countryCodeList" [value]="country">
+                            <ng-container *ngIf="country?.name">
+                              <img class="flag-icon" [src]="flagsIconPath + country?.flagIcon + '.svg'" /> {{ country?.name | translate }} +{{ country?.dialCode }}
+                            </ng-container>
+                          </ng-option>
+                        </ng-select>
+                      </div>
+                      <div class="phone-number p-col-10">
+                        <mat-form-field>
+                          <input matInput formControlName="tele_phone" type="text" />
+                          <mat-error>
+                            <p
+                              *ngIf="
+                                parentsArrayForm.at(parentIndex).get('tele_phone').hasError('pattern') &&
+                                (parentsArrayForm.at(parentIndex).get('tele_phone').touched ||
+                                  parentsArrayForm.at(parentIndex).get('tele_phone').dirty)
+                              "
+                            >
+                              {{ 'Phone number is not valid' | translate }}
+                            </p>
+                          </mat-error>
+                        </mat-form-field>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </ng-container>
+              <ng-container
+                *ngIf="
+                  parentsArrayForm.at(parentIndex).get('financial_support_status').value === 'pending' ||
+                  parentsArrayForm.at(parentIndex).get('financial_support_status').value === 'validated'
+                "
+              >
+                <div class="p-col-5 no-padding-y" style="align-self: center">
+                  <mat-slide-toggle formControlName="is_same_address" (change)="duplicateStudentAddress($event, parentIndex)">
+                  </mat-slide-toggle>
+                  <span [ngStyle]="{ color: parent.get('is_same_address').value ? '#ffe77a' : 'white' }" style="font-size: 12px">
+                    {{ 'CARDDETAIL.Same Address' | translate }}
+                  </span>
+                </div>
+              </ng-container>
+            </div>
+
+            <div class="p-grid">
+              <div class="p-col-6 no-padding-y">
+                <div class="p-grid">
+                  <mat-form-field>
+                    <input
+                      matInput
+                      formControlName="email"
+                      type="email"
+                      placeholder="{{ 'CARDDETAIL.Mail' | translate }}"
+                      (keyup)="compareEmailWithStudentParent(parentIndex)"
+                    />
+                    <mat-error>
+                      <p
+                        *ngIf="
+                          parentsArrayForm.at(parentIndex).get('email').hasError('required') &&
+                          (parentsArrayForm.at(parentIndex).get('email').touched || parentsArrayForm.at(parentIndex).get('email').dirty)
+                        "
+                      >
+                        {{ 'This field is required' | translate }}
+                      </p>
+
+                      <p
+                        *ngIf="
+                          parentsArrayForm.at(parentIndex).get('email').hasError('email') &&
+                          (parentsArrayForm.at(parentIndex).get('email').touched || parentsArrayForm.at(parentIndex).get('email').dirty)
+                        "
+                      >
+                        {{ 'Invalid email format' | translate }}
+                      </p>
+
+                      <p
+                        *ngIf="
+                          !parentsArrayForm.at(parentIndex).get('email').hasError('required') &&
+                          !parentsArrayForm.at(parentIndex).get('email').hasError('email') &&
+                          parentsArrayForm.at(parentIndex).get('email').hasError('emailSame') &&
+                          (parentsArrayForm.at(parentIndex).get('email').touched || parentsArrayForm.at(parentIndex).get('email').dirty)
+                        "
+                      >
+                        {{ 'Email cant be same with student email' | translate }}
+                      </p>
+                    </mat-error>
+                  </mat-form-field>
+                </div>
+              </div>
+              <ng-container
+                *ngIf="
+                  parentsArrayForm.at(parentIndex).get('financial_support_status').value === 'pending' ||
+                  parentsArrayForm.at(parentIndex).get('financial_support_status').value === 'validated'
+                "
+              >
+                <div class="p-col-5 no-padding-y">
+                  <div class="p-grid">
+                    <div class="phone-number p-col-12 no-padding-y p-grid" style="position: relative">
+                      <mat-label class="label-for-phone">{{ 'CARDDETAIL.Phone' | translate }}</mat-label>
+                      <div class="phone-number p-col-2">
+                        <ng-select
+                          [formControl]="dialCodeArrayForParents?.at(parentIndex)"
+                          (change)="selectionDialCode($event, parentIndex, 'parents')"
+                          [clearable]="false"
+                          bindLabel="name"
+                          [appendTo]="'body'"
+                          class="custom-dropdownpanel-dialcode"
+                        >
+                          <ng-template ng-label-tmp let-item="item">
+                            <img class="flag-icon-trigger" [src]="flagsIconPath + item?.flagIcon + '.svg'"/>
+                            <span *ngIf="item?.flagIcon" class="ml-4">+{{ item?.dialCode }}</span>
+                          </ng-template>
+                          <ng-option *ngFor="let country of countryCodeList" [value]="country">
+                            <ng-container *ngIf="country?.name">
+                              <img class="flag-icon" [src]="flagsIconPath + country?.flagIcon + '.svg'" /> {{ country?.name | translate }} +{{ country?.dialCode }}
+                            </ng-container>
+                          </ng-option>
+                        </ng-select>
+                      </div>
+                      <div class="phone-number p-col-10">
+                        <mat-form-field>
+                          <input matInput formControlName="tele_phone" type="text" />
+                          <mat-error>
+                            <p
+                              *ngIf="
+                                parentsArrayForm.at(parentIndex).get('tele_phone').hasError('pattern') &&
+                                (parentsArrayForm.at(parentIndex).get('tele_phone').touched ||
+                                  parentsArrayForm.at(parentIndex).get('tele_phone').dirty)
+                              "
+                            >
+                              {{ 'Phone number is not valid' | translate }}
+                            </p>
+                          </mat-error>
+                        </mat-form-field>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </ng-container>
+              <ng-container
+                *ngIf="
+                  parentsArrayForm.length &&
+                  (parentsArrayForm.at(parentIndex).get('financial_support_status').value === 'not_financial_support' ||
+                    !parentsArrayForm.at(parentIndex).get('financial_support_status').value)
+                "
+              >
+                <div class="p-col-5 no-padding">
+                  <div class="p-grid">
+                    <div class="p-col no-padding-y pad-right-15">
+                      <mat-form-field>
+                        <mat-label>{{ 'Account holder name' | translate }}</mat-label>
+                        <input matInput formControlName="account_holder_name" type="text" />
+                      </mat-form-field>
+                    </div>
+                  </div>
+                </div>
+              </ng-container>
+            </div>
+
+            <ng-container
+              *ngIf="
+                parentsArrayForm.at(parentIndex).get('financial_support_status').value === 'pending' ||
+                parentsArrayForm.at(parentIndex).get('financial_support_status').value === 'validated'
+              "
+            >
+              <div class="p-col-6 no-padding">
+                <div class="p-grid">
+                  <div class="p-col no-padding-y pad-right-15">
+                    <mat-form-field>
+                      <mat-label>{{ 'Account holder name' | translate }}</mat-label>
+                      <input matInput formControlName="account_holder_name" type="text" />
+                    </mat-form-field>
+                  </div>
+                </div>
+              </div>
+            </ng-container>
+
+            <div class="p-grid">
+              <div class="p-col-6 no-padding">
+                <div class="p-grid">
+                  <div class="p-col no-padding-y pad-right-15">
+                    <mat-form-field>
+                      <mat-label>{{ 'IBAN' | translate }}</mat-label>
+                      <input matInput formControlName="iban" type="text" />
+                      <mat-error
+                        *ngIf="
+                          parentsArrayForm.at(parentIndex).get('iban').hasError('required') &&
+                          (parentsArrayForm.at(parentIndex).get('iban').dirty || parentsArrayForm.at(parentIndex).get('iban').touched)
+                        "
+                      >
+                        {{ 'This field is required' | translate }}
+                      </mat-error>
+                    </mat-form-field>
+                  </div>
+                </div>
+              </div>
+              <div class="p-col-5 no-padding pad-left-5">
+                <div class="p-grid">
+                  <div class="p-col no-padding-y">
+                    <mat-form-field>
+                      <mat-label>{{ 'BIC' | translate }}</mat-label>
+                      <input matInput formControlName="bic" type="text" />
+                      <mat-error
+                        *ngIf="
+                          parentsArrayForm.at(parentIndex).get('bic').hasError('required') &&
+                          (parentsArrayForm.at(parentIndex).get('bic').dirty || parentsArrayForm.at(parentIndex).get('bic').touched)
+                        "
+                      >
+                        {{ 'This field is required' | translate }}
+                      </mat-error>
+                    </mat-form-field>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="p-grid" *ngIf="!parent.get('is_same_address').value" formArrayName="parent_address" style="padding-top: 10px">
+              <div
+                class="p-col-12 mb-1rem border-white"
+                *ngFor="let address of parentAddressArrayForm(parentIndex).controls; let addressIndex = index"
+                [formGroupName]="addressIndex"
+                style="padding-bottom: 0px; margin-left: 7px; margin-right: 7px !important; width: 98%"
+              >
+                <!-- only show delete button if more than 1 address -->
+                <div class="p-grid" *ngIf="parentAddressArrayForm(parentIndex).controls.length > 1">
+                  <div class="p-col-12 text-right">
+                    <mat-slide-toggle
+                      formControlName="is_main_address"
+                      (change)="checkMainAddress($event, parentIndex)"
+                      *ngIf="!isMainAddressSelected[parentIndex] || address.get('is_main_address').value"
+                    >
+                      <span [ngStyle]="{ color: address.get('is_main_address').value ? '#ffe77a' : 'white' }">{{
+                        'CARDDETAIL.MAIN_ADDRESS' | translate
+                      }}</span>
+                    </mat-slide-toggle>
+                    <button mat-icon-button class="small-icon" color="red" (click)="removeParentAddress(parentIndex, addressIndex)">
+                      <mat-icon>remove</mat-icon>
+                    </button>
+                  </div>
+                </div>
+                <!-- End of delete -->
+
+                <div class="p-grid">
+                  <div class="p-col-12 no-padding-y" style="padding-top: 10px">
+                    <div class="p-grid flex-hidden-mr-1">
+                      <div class="p-col no-padding-y">
+                        <mat-form-field color="accent" class="full-width">
+                          <input matInput type="text" formControlName="address" placeholder="{{ 'CARDDETAIL.Address' | translate }}" />
+                        </mat-form-field>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="p-grid">
+                  <div class="p-col-12 no-padding-y">
+                    <div class="p-grid">
+                      <div class="p-col-4 no-padding">
+                        <div class="p-grid flex-hidden-mr-1">
+                          <div class="p-col no-padding-y">
+                            <mat-form-field color="accent" class="full-width">
+                              <input
+                                matInput
+                                type="text"
+                                formControlName="postal_code"
+                                (keyup)="getPostcodeData(parentIndex, addressIndex)"
+                                placeholder="{{ 'CARDDETAIL.Zip Code' | translate }}"
+                              />
+                            </mat-form-field>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="p-col-4 no-padding">
+                        <div class="p-grid flex-hidden-mr-1">
+                          <div class="p-col no-padding-y">
+                            <mat-form-field color="accent" class="full-width">
+                              <input
+                                type="text"
+                                placeholder="{{ 'CARDDETAIL.Country' | translate }}"
+                                matInput
+                                formControlName="country"
+                                [matAutocomplete]="autoCountry"
+                                (keyup)="filterCountry(parentIndex, addressIndex)"
+                              />
+                              <mat-autocomplete
+                                #autoCountry="matAutocomplete"
+                                (optionSelected)="getPostcodeData(parentIndex, addressIndex)"
+                                [panelWidth]="'fit'"
+                                [displayWith]="getCountryName.bind(this)"
+                              >
+                                <mat-option *ngFor="let option of filteredCountry[parentIndex][addressIndex]" [value]="option">
+                                  {{ 'COUNTRY.' + option | translate }}
+                                </mat-option>
+                              </mat-autocomplete>
+                            </mat-form-field>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="p-grid">
+                  <div class="p-col-12 no-padding-y" style="padding-bottom: 0px">
+                    <div class="p-grid">
+                      <div class="p-col-4 no-padding">
+                        <div class="p-grid flex-hidden-mr-1">
+                          <div class="p-col no-padding-y">
+                            <mat-form-field color="accent" class="full-width">
+                              <input
+                                type="text"
+                                placeholder="{{ 'CARDDETAIL.City' | translate }}"
+                                matInput
+                                formControlName="city"
+                                [matAutocomplete]="autoCity"
+                                (keyup)="filterCity(parentIndex, addressIndex)"
+                              />
+                              <mat-autocomplete #autoCity="matAutocomplete" [panelWidth]="'fit'">
+                                <mat-option *ngFor="let option of filteredCities[parentIndex][addressIndex]" [value]="option">
+                                  {{ option }}
+                                </mat-option>
+                              </mat-autocomplete>
+                            </mat-form-field>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="p-col-4 no-padding">
+                        <div class="p-grid flex-hidden-mr-1">
+                          <div class="p-col no-padding-y">
+                            <mat-form-field color="accent" class="full-width">
+                              <input
+                                type="text"
+                                placeholder="{{ 'CARDDETAIL.Department' | translate }}"
+                                matInput
+                                formControlName="department"
+                                [matAutocomplete]="autoDepartment"
+                                (keyup)="filterDepartment(parentIndex, addressIndex)"
+                              />
+                              <mat-autocomplete #autoDepartment="matAutocomplete" [panelWidth]="'fit'">
+                                <mat-option *ngFor="let option of filteredDepartments[parentIndex][addressIndex]" [value]="option">
+                                  {{ option }}
+                                </mat-option>
+                              </mat-autocomplete>
+                            </mat-form-field>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="p-col-4 no-padding">
+                        <div class="p-grid flex-hidden-mr-1">
+                          <div class="p-col no-padding-y">
+                            <mat-form-field color="accent" class="full-width">
+                              <input
+                                type="text"
+                                placeholder="{{ 'CARDDETAIL.Region' | translate }}"
+                                matInput
+                                formControlName="region"
+                                [matAutocomplete]="autoRegion"
+                                (keyup)="filterRegion(parentIndex, addressIndex)"
+                              />
+                              <mat-autocomplete #autoRegion="matAutocomplete" [panelWidth]="'fit'">
+                                <mat-option *ngFor="let option of filteredRegions[parentIndex][addressIndex]" [value]="option">
+                                  {{ option }}
+                                </mat-option>
+                              </mat-autocomplete>
+                            </mat-form-field>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="p-grid" *ngIf="!parent.get('is_same_address').value">
+              <div
+                class="p-col-12 no-padding-y"
+                style="font-size: 12px; text-align: right; margin-bottom: 0px; padding: 0px; width: 100.7%; padding-right: 5px"
+              >
+                {{ 'CARDDETAIL.Add more address' | translate }}
+                <button mat-icon-button class="small-icon" color="success" (click)="addParentAddress(parentIndex)">
+                  <mat-icon>add</mat-icon>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </mat-card>
+    </fieldset>
+  </div>
+</div>

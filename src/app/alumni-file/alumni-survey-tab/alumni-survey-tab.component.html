@@ -1,0 +1,62 @@
+<div *ngIf="isWaitingForResponse" class="loading-indicator">
+  <mat-spinner color="accent" [diameter]="100"></mat-spinner>
+</div>
+<div class="p-grid">
+  <div class="p-col-12" style="padding-left: 0px; padding-right: 0px">
+    <ng-container *ngIf="alumniSurveyData?.alumni_survey_process_ids?.length">
+      <mat-card class="overlow-auto" style="margin: 0px !important">
+        <div class="p-grid" style="padding: 0.5em">
+          <div class="p-col-2">
+            <span>{{ 'ALUMNI.Date sent' | translate }}</span>
+          </div>
+          <div class="p-col-9">
+            <span>{{ 'ALUMNI.Survey name' | translate }}</span>
+          </div>
+          <div class="p-col-1" style="text-align: center">
+            <span>{{ 'Action' | translate }}</span>
+          </div>
+        </div>
+        <div class="p-grid">
+          <ng-container *ngFor="let survey of alumniSurveyData?.alumni_survey_process_ids">
+            <div class="p-col-12 yellow-border" style="margin-bottom: 13px">
+              <div class="p-grid">
+                <div class="p-col-2">
+                  <span>
+                    {{ parseDateToLocal(survey?.date_sent) }}
+                  </span>
+                </div>
+                <div class="p-col-9">
+                  <span>{{ survey?.form_builder_id?.form_builder_name }}</span>
+                </div>
+                <div class="p-col-1" style="text-align: center">
+                  <button
+                    mat-icon-button
+                    class="margin-right-button"
+                    matTooltip="{{ 'View' | translate }}"
+                    style="background: #607c8a; height: 35px; width: 35px; margin-right: 0px; margin-left: 5px"
+                    (click)="openForm(survey)"
+                  >
+                    <mat-icon svgIcon="eye"> </mat-icon>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </ng-container>
+        </div>
+      </mat-card>
+    </ng-container>
+    <ng-container *ngIf="alumniSurveyData?.alumni_survey_process_ids?.length < 1">
+      <mat-card class="overlow-auto" style="margin: 0px !important">
+        <div class="p-col-12 yellow-border" style="margin-bottom: 13px">
+          <div class="p-grid">
+            <div class="p-col-12" style="text-align: center">
+              <span>
+                {{ 'NOT RECORD FOUND' | translate }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </mat-card>
+    </ng-container>
+  </div>
+</div>

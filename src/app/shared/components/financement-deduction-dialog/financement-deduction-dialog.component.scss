@@ -1,0 +1,69 @@
+.header {
+  border-bottom: 1px solid black;
+  margin-top: 15px;
+  padding: 0 5px 0 15px;
+  color: black;
+}
+.mat-dialog-content {
+  margin-right: 0px;
+  margin-left: 0px;
+  margin-top: 15px;
+}
+.pad-form {
+  padding: 0px 10px;
+}
+.mt-eur {
+  // margin-top: 44px;
+  margin-top: 23px;
+}
+:host::ng-deep .mat-form-field-appearance-outline .mat-form-field-infix {
+  border-top: 0.3em solid transparent;
+  padding: 15px 0 !important;
+}
+:host::ng-deep .mat-form-field-appearance-legacy .mat-form-field-infix {
+  // margin-top: 30px;
+  padding-top: 15px;
+}
+.mr-action {
+  margin: 3px 10px 10px;
+}
+.pad-left {
+  padding-left: 0px !important;
+}
+:host::ng-deep .mat-form-field-appearance-outline .mat-form-field-wrapper {
+  padding-bottom: 0px !important;
+}
+.card {
+  // width: 125px;
+  padding-bottom: 3px !important;
+  padding: 10px;
+  vertical-align: middle;
+  // border: 1px solid #ffffff;
+  border: 1px solid black;
+  border-radius: 4px;
+  text-align: center;
+  align-self: center;
+  display: inline-block;
+  margin-top: 10px;
+  cursor: pointer;
+}
+.card-selected {
+  background-color: #fdd835;
+}
+.name-who {
+  display: inline-block;
+  text-align: center;
+  margin-right: 0px !important;
+}
+.dialogTitle {
+  display: inline-block;
+}
+.width-card {
+  // width: auto;
+  // display: inline-block;
+  margin-right: 10px;
+}
+.card-red {
+  border: 1px solid red;
+  color: red;
+}

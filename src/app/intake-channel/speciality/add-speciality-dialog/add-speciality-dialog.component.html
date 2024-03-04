@@ -1,0 +1,71 @@
+<div class="dialog-border">
+  <div class="dialogTitleWrapper" cdkDrag cdkDragRootElement=".cdk-overlay-pane" cdkDragHandle>
+    <div class="p-grid">
+      <div class="p-col-9 acad-title">
+        <h3 class="dialogTitle">
+          {{ 'Add Speciality' | translate }}
+        </h3>
+        <!-- <h3 *ngIf="data" class="dialogTitle">
+          {{ 'Edit Speciality' | translate }}
+        </h3> -->
+      </div>
+      <div class="p-col-2 text-right">
+        <button mat-icon-button class="close-icon float-right" mat-dialog-close tabindex="-1">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<form [formGroup]="identityForm">
+  <div class="fontColor">
+    <mat-dialog-content>
+      <div class="p-grid">
+        <div class="p-col-12 no-padding">
+          <div class="p-grid">
+            <div class="p-col no-padding">
+              <mat-form-field floatLabel="auto">
+                <input matInput formControlName="name" type="text" placeholder="{{ 'Name' | translate }}" />
+                <mat-error *ngIf="identityForm.get('name').errors">{{ 'This field is required' | translate }}</mat-error>
+              </mat-form-field>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="p-grid">
+        <div class="p-col-12 no-padding">
+          <div class="p-grid">
+            <div class="p-col no-padding">
+              <mat-form-field floatLabel="auto">
+                <input matInput formControlName="sigli" type="text" placeholder="{{ 'Sigle' | translate }}" />
+                <mat-error *ngIf="identityForm.get('sigli').errors">{{ 'This field is required' | translate }}</mat-error>
+              </mat-form-field>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="p-grid">
+        <div class="p-col-12 no-padding">
+          <div class="p-grid">
+            <div class="p-col no-padding">
+              <mat-form-field floatLabel="auto">
+                <textarea matInput placeholder="{{ 'Description' | translate }}" formControlName="description"></textarea>
+              </mat-form-field>
+            </div>
+          </div>
+        </div>
+      </div>
+    </mat-dialog-content>
+    <mat-dialog-actions align="right">
+      <button mat-raised-button type="button" color="warn" mat-dialog-close>{{ 'CANCEL' | translate }}</button>
+      <button mat-raised-button color="primary" (click)="submitVerification()">
+        {{ 'Validate' | translate }}
+      </button>
+    </mat-dialog-actions>
+  </div>
+</form>
+
+<div *ngIf="isWaitingForResponse" class="loading-indicator">
+  <mat-progress-spinner mode="indeterminate" color="accent"></mat-progress-spinner>
+</div>

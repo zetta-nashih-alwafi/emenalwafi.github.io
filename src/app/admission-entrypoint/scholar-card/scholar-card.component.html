@@ -1,0 +1,44 @@
+<div class="p-grid p-justify-end search-title-row">
+  <div class="p-col content-end">
+    <div class="search-field">
+      <mat-form-field class="full-width">
+        <input matInput placeholder="{{ 'Search by scholar seasons' | translate }}" [formControl]="searchForm" />
+      </mat-form-field>
+    </div>
+    <div class="search-btn">
+      <button mat-raised-button color="primary" matTooltip="{{ 'Reset Filter' | translate }}" (click)="resetSearch()">
+        {{ 'Reset' | translate }}
+      </button>
+    </div>
+    <div class="search-btn">
+      <button mat-raised-button color="accent" (click)="addScholarSeason()">{{ 'Add a Scholar Season' | translate }}</button>
+    </div>
+  </div>
+</div>
+
+<div>
+  <mat-tab-group
+    animationDuration="500ms"
+    [(selectedIndex)]="tabIndex"
+    (selectedTabChange)="filterScholarSeaon($event.tab.textLabel, $event.index)"
+  >
+    <mat-tab label="{{ 'All' | translate }}">
+      <ng-template matTabContent>
+        <ms-scholar-card-detail [scholarSeason]="filteredSchoolSeasons"></ms-scholar-card-detail>
+      </ng-template>
+    </mat-tab>
+    <ng-container *ngIf="listSchool && listSchool.length">
+      <ng-container *ngFor="let school of listSchool">
+        <mat-tab label="{{ school.short_name }}">
+          <ng-template matTabContent>
+            <ms-scholar-card-detail [scholarSeason]="filteredSchoolSeasons"></ms-scholar-card-detail>
+          </ng-template>
+        </mat-tab>
+      </ng-container>
+    </ng-container>
+  </mat-tab-group>
+</div>
+
+<div *ngIf="isWaitingForResponse" class="loading-indicator">
+  <mat-progress-spinner mode="indeterminate" color="accent"></mat-progress-spinner>
+</div>

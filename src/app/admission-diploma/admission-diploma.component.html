@@ -1,0 +1,70 @@
+<div class="gene-registerV2" style="padding-top: 3.8rem !important; background-image: none !important">
+  <div class="flex-layout-row-center">
+    <div class="slider-responsive" style="width: 90%">
+      <div
+        class="height-full pad-t-xl pad-b-xl form-wrap-row set-resp-space flex-layout-row-wrap-center"
+      >
+        <div class="slider-responsive-form" style="width: 95%">
+          <mat-card
+            class="gene-registerV2-wrap"
+            [style.min-height.px]="getAutomaticHeight()"
+            style="border: 1px solid #eeeeee; padding: 20px 0px"
+          >
+            <img class="logo display-mobile position-unset" *ngIf="logoSchool" [src]="serverimgPath + logoSchool" />
+            <div class="row language-drop-down display-mobile padding-r-0"><ms-language-drop-down></ms-language-drop-down></div>
+            <div class="row title-registration mobile-title"></div>
+            <div class="row mobile-title sub-title-registration"></div>
+            <img class="logo display-web" *ngIf="logoSchool" [src]="serverimgPath + logoSchool" />
+            <div class="row language-drop-down display-web">
+              <ms-language-drop-down></ms-language-drop-down>
+            </div>
+            <mat-horizontal-stepper
+              [linear]="isLinear"
+              #stepperForm
+              [selectedIndex]="selectedIndex"
+              (selectionChange)="selectionChange($event)"
+            >
+              <mat-step
+                *ngIf="!diplomaStepDone"
+                disableRipple="true"
+                [completed]="diplomaStepDone"
+                [label]="'Results BAC' | translate"
+                [stepControl]="diplomaFormGroup"
+              >
+                <fieldset style="margin-top: 20px !important">
+                  <ms-diploma-form [candidateId]="candidateId" [selectedIndex]="selectedIndex"></ms-diploma-form>
+                </fieldset>
+              </mat-step>
+
+              <mat-step
+                *ngIf="diplomaStepDone"
+                state="done"
+                disableRipple="true"
+                [completed]="diplomaStepDone"
+                [label]="'Results BAC' | translate"
+              >
+                <fieldset style="margin-top: 20px !important">
+                  <ms-diploma-form [candidateId]="candidateId" [selectedIndex]="selectedIndex"></ms-diploma-form>
+                </fieldset>
+              </mat-step>
+
+              <ng-template matStepperIcon="done">
+                <mat-icon>done</mat-icon>
+              </ng-template>
+              <ng-template matStepperIcon="1">1 </ng-template>
+              <ng-template matStepperIcon="2">2 </ng-template>
+              <ng-template matStepperIcon="3">3 </ng-template>
+              <ng-template matStepperIcon="4">4 </ng-template>
+              <ng-template matStepperIcon="5">5 </ng-template>
+              <ng-template matStepperIcon="6">6 </ng-template>
+              <ng-template matStepperIcon="7">7 </ng-template>
+              <ng-template matStepperIcon="8">8 </ng-template>
+              <ng-template matStepperIcon="9">9 </ng-template>
+              <ng-template matStepperIcon="10">10 </ng-template>
+            </mat-horizontal-stepper>
+          </mat-card>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

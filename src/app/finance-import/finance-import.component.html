@@ -1,0 +1,48 @@
+<div>
+  <mat-tab-group [selectedIndex]="selected" (click)="checkValidation($event)">
+    <mat-tab value="finance-import-import-payment" label="first-step">
+      <ng-template mat-tab-label>
+        <h5>{{ 'FINANCE_IMPORT.Step 1' | translate }} {{ 'Import' | translate }}</h5>
+      </ng-template>
+      <ng-template matTabContent>
+        <ms-finance-import-import-payment> </ms-finance-import-import-payment>
+      </ng-template>
+    </mat-tab>
+
+    <mat-tab value="finance-import-second-step-table" label="second-step" [disabled]="1 > selected && !secondTab">
+      <ng-template mat-tab-label>
+        <h5>{{ 'FINANCE_IMPORT.Step 2' | translate }} {{ 'Confirm Reconciliations' | translate }}</h5>
+      </ng-template>
+      <ng-template matTabContent>
+        <ms-finance-import-second-step-table> </ms-finance-import-second-step-table>
+      </ng-template>
+    </mat-tab>
+
+    <mat-tab value="finance-import-third-step-table" label="third-step" [disabled]="2 > selected && !thirdTab">
+      <ng-template mat-tab-label>
+        <h5>{{ 'FINANCE_IMPORT.Step 3' | translate }} {{ 'Assign Reconciliations' | translate }}</h5>
+      </ng-template>
+      <ng-template matTabContent>
+        <ms-finance-import-third-step-table> </ms-finance-import-third-step-table>
+      </ng-template>
+    </mat-tab>
+
+    <mat-tab value="finance-import-fourth-step-table" label="fourth-step" [disabled]="3 > selected && !fourthTab">
+      <ng-template mat-tab-label>
+        <h5>{{ 'FINANCE_IMPORT.Step 4' | translate }} {{ 'Confirm Lettrage' | translate }}</h5>
+      </ng-template>
+      <ng-template matTabContent>
+        <ms-finance-import-fourth-step-table> </ms-finance-import-fourth-step-table>
+      </ng-template>
+    </mat-tab>
+
+    <mat-tab value="finance-import-fifth-step-table" label="fifth-step" [disabled]="4 > selected && !fiveTab">
+      <ng-template mat-tab-label>
+        <h5>{{ 'FINANCE_IMPORT.Step 5' | translate }} {{ 'Assign Lettrage' | translate }}</h5>
+      </ng-template>
+      <ng-template matTabContent>
+        <ms-finance-import-fifth-step-table> </ms-finance-import-fifth-step-table>
+      </ng-template>
+    </mat-tab>
+  </mat-tab-group>
+</div>

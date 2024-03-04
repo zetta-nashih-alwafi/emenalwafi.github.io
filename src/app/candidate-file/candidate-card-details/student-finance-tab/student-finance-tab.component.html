@@ -1,0 +1,28 @@
+<div style="padding-top: 15px; min-height: 280px">
+  <div *ngIf="isWaitingForResponse" class="inner-loading-indicator">
+    <mat-spinner color="accent" [diameter]="100"></mat-spinner>
+  </div>
+  <mat-tab-group animationDuration="500ms" style="margin: 0 !important" [(selectedIndex)]="tabIndex">
+    <ng-container *ngIf="scholarSeasons && scholarSeasons.length">
+      <!-- <ng-container *ngFor="let scholar of scholarSeasons">
+        <mat-tab label="{{ intakeChannel(scholar) }}" class="custom-tab">
+          <ng-template matTabContent>
+            <mat-card class="card-background" style="margin-top: 1% !important;">
+              <ms-student-finance-tab-detail [scholarSeasonData]="scholar" [candidateId]="candidateId"></ms-student-finance-tab-detail>
+            </mat-card>
+          </ng-template>
+        </mat-tab>
+      </ng-container> -->
+
+      <ng-container *ngFor="let scholar of scholarSeasons">
+        <mat-tab label="{{ combinedProgram(scholar) }}" class="custom-tab">
+          <ng-template matTabContent>
+            <mat-card class="card-background" style="margin-top: 1% !important">
+              <ms-student-finance-tab-detail [showFinancement]="showFinancement" [scholarSeasonData]="scholar" [candidateId]="candidateId"></ms-student-finance-tab-detail>
+            </mat-card>
+          </ng-template>
+        </mat-tab>
+      </ng-container>
+    </ng-container>
+  </mat-tab-group>
+</div>

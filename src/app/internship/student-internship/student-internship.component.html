@@ -1,0 +1,249 @@
+<div class="horizontal header-button header-action">
+  <div class="text-right" style="display: inline-block; float: right">
+    <button
+      style="padding: 0px 7px !important"
+      color="accent"
+      mat-raised-button
+      matTooltip="{{ 'INTERN_FOLLOW_UP.Ask for agreement' | translate }}"
+      (click)="openDialogAskAgreement()"
+    >
+      <mat-icon svgIcon="plus" class="mat-icon-svgIcon"></mat-icon>
+      {{ 'INTERN_FOLLOW_UP.Ask for agreement' | translate }}
+    </button>
+  </div>
+</div>
+
+<div class="horizontal mat-elevation-z8 follow-up-table">
+  <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8">
+    <!-- <ng-container matColumnDef="dateAgreementAskedFilter">
+      <th mat-header-cell *matHeaderCellDef class="text-center">
+        <mat-form-field>
+          <input matInput class="form-field" placeholder="{{ 'search' | translate }}" />
+        </mat-form-field>
+      </th>
+    </ng-container>
+    <ng-container matColumnDef="studentFilter">
+      <th mat-header-cell *matHeaderCellDef class="text-center"></th>
+    </ng-container>
+    <ng-container matColumnDef="mentorFilter">
+      <th mat-header-cell *matHeaderCellDef class="text-center"></th>
+    </ng-container>
+    <ng-container matColumnDef="companyRelationMemberFilter">
+      <th mat-header-cell *matHeaderCellDef class="text-center"></th>
+    </ng-container>
+    <ng-container matColumnDef="agreementStatusFilter">
+      <th mat-header-cell *matHeaderCellDef class="text-center"></th>
+    </ng-container>
+    <ng-container matColumnDef="internshipStartDateFilter">
+      <th mat-header-cell *matHeaderCellDef class="text-center">
+        <mat-form-field>
+          <input matInput class="form-field" placeholder="{{ 'search' | translate }}" />
+        </mat-form-field>
+      </th>
+    </ng-container>
+    <ng-container matColumnDef="internshipEndDateFilter">
+      <th mat-header-cell *matHeaderCellDef class="text-center"></th>
+    </ng-container>
+    <ng-container matColumnDef="internshipReportFilter">
+      <th mat-header-cell *matHeaderCellDef class="text-center"></th>
+    </ng-container>
+    <ng-container matColumnDef="evalProFilter">
+      <th mat-header-cell *matHeaderCellDef class="text-center"></th>
+    </ng-container>
+    <ng-container matColumnDef="internshipValidatedFilter">
+      <th mat-header-cell *matHeaderCellDef class="text-center"></th>
+    </ng-container>
+    <ng-container matColumnDef="actionFilter">
+      <th mat-header-cell *matHeaderCellDef class="text-center"></th>
+    </ng-container> -->
+
+    <!-- Table Data Start Here -->
+    <ng-container matColumnDef="dateAgreementAsked">
+      <th mat-header-cell *matHeaderCellDef>
+        <h5 mat-sort-header="dateAgreementAsked">{{ 'INTERN_FOLLOW_UP.Date Agreement' | translate }}</h5>
+      </th>
+      <td mat-cell *matCellDef="let element" matTooltip="{{ element?.date_agreement }}">
+        {{ element?.date_agreement }}
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="company">
+      <th mat-header-cell *matHeaderCellDef>
+        <h5>{{ 'INTERN_FOLLOW_UP.Company' | translate }}</h5>
+      </th>
+      <td
+        mat-cell
+        *matCellDef="let element"
+        matTooltip="
+        {{ element?.company?.company_name }}
+      "
+      >
+        {{ element?.company?.company_name }}
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="mentor">
+      <th mat-header-cell *matHeaderCellDef>
+        <h5>{{ 'INTERN_FOLLOW_UP.Mentor' | translate }}</h5>
+      </th>
+      <td
+        mat-cell
+        *matCellDef="let element"
+        matTooltip="
+        {{ element?.mentor?.civility && element?.mentor?.civility === 'neutral' ? '' : (element?.mentor?.civility | translate) }} 
+        {{ element?.mentor?.lastName | uppercase }} 
+        {{ element?.mentor?.firstName }}
+      "
+      >
+        {{ element?.mentor?.civility && element?.mentor?.civility === 'neutral' ? '' : (element?.mentor?.civility | translate) }}
+        {{ element?.mentor?.lastName | uppercase }}
+        {{ element?.mentor?.firstName }}
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="companyRelationMember">
+      <th mat-header-cell *matHeaderCellDef>
+        <h5>{{ 'INTERN_FOLLOW_UP.Company Relation Member' | translate }}</h5>
+      </th>
+      <td
+        mat-cell
+        *matCellDef="let element"
+        matTooltip="
+      {{
+          element?.company_relation_member?.civility && element?.company_relation_member?.civility === 'neutral'
+            ? ''
+            : (element?.company_relation_member?.civility | translate)
+        }} 
+        {{ element?.company_relation_member?.lastName | uppercase }} 
+        {{ element?.company_relation_member?.firstName }}
+      "
+      >
+        {{
+          element?.company_relation_member?.civility && element?.company_relation_member?.civility === 'neutral'
+            ? ''
+            : (element?.company_relation_member?.civility | translate)
+        }}
+        {{ element?.company_relation_member?.lastName | uppercase }}
+        {{ element?.company_relation_member?.firstName }}
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="agreementStatus">
+      <th mat-header-cell *matHeaderCellDef>
+        <h5>{{ 'INTERN_FOLLOW_UP.Agreement Status' | translate }}</h5>
+      </th>
+      <td mat-cell *matCellDef="let element">
+        <mat-icon
+          [matTooltip]="element?.agreement_status | translate"
+          [ngClass]="{
+            red: element?.agreement_status === 'No agreement',
+            orange: element?.agreement_status === 'Waiting for signature',
+            green: element?.agreement_status === 'Agreement published'
+          }"
+          class="mat-icon-status"
+          aria-hidden="true"
+          >lens
+        </mat-icon>
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="internshipStartDate">
+      <th mat-header-cell *matHeaderCellDef>
+        <h5>{{ 'INTERN_FOLLOW_UP.Internship Start Date' | translate }}</h5>
+      </th>
+      <td mat-cell *matCellDef="let element" matTooltip="{{ element?.internship_start_date }}">
+        {{ element?.internship_start_date }}
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="internshipEndDate">
+      <th mat-header-cell *matHeaderCellDef>
+        <h5>{{ 'INTERN_FOLLOW_UP.Internship End Date' | translate }}</h5>
+      </th>
+      <td mat-cell *matCellDef="let element" matTooltip="{{ element?.internship_end_date }}">
+        {{ element?.internship_end_date }}
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="internshipReport">
+      <th mat-header-cell *matHeaderCellDef>
+        <h5>{{ 'INTERN_FOLLOW_UP.Internship Report' | translate }}</h5>
+      </th>
+      <td mat-cell *matCellDef="let element">
+        <mat-icon
+          [matTooltip]="'internship_report.' + element?.internship_report | translate"
+          [ngClass]="{
+            green: element?.internship_report === 'Uploaded',
+            red: element?.internship_report === 'Not uploaded'
+          }"
+          class="mat-icon-status"
+          aria-hidden="true"
+          svgIcon="file-document-outline"
+        >
+        </mat-icon>
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="evalPro">
+      <th mat-header-cell *matHeaderCellDef>
+        <h5>{{ 'INTERN_FOLLOW_UP.Eval Pro' | translate }}</h5>
+      </th>
+      <td mat-cell *matCellDef="let element">
+        <mat-icon
+          [matTooltip]="element?.eval_pro | translate"
+          [ngClass]="{
+            green: element?.eval_pro === 'Completed',
+            red: element?.eval_pro === 'Not completed'
+          }"
+          class="mat-icon-status"
+          aria-hidden="true"
+          svgIcon="file-document-outline"
+        >
+        </mat-icon>
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="internshipValidated">
+      <th mat-header-cell *matHeaderCellDef>
+        <h5>{{ 'INTERN_FOLLOW_UP.Internship Validated' | translate }}</h5>
+      </th>
+      <td mat-cell *matCellDef="let element">
+        <mat-icon
+          [matTooltip]="element?.internship_validated | translate"
+          [ngClass]="{
+            green: element?.internship_validated === 'Validated',
+            red: element?.internship_validated === 'Not validated'
+          }"
+          class="mat-icon-status"
+          aria-hidden="true"
+          >lens
+        </mat-icon>
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="action">
+      <th mat-header-cell *matHeaderCellDef>
+        <h5>{{ 'Action' | translate }}</h5>
+      </th>
+      <td mat-cell *matCellDef="let element" class="action-buttons">
+        <button mat-icon-button class="margin-right-button" matTooltip="{{ 'Email' | translate }}">
+          <mat-icon>send</mat-icon>
+        </button>
+        <button mat-icon-button class="margin-right-button" matTooltip="{{ 'Edit an agreement' | translate }}">
+          <mat-icon>edit</mat-icon>
+        </button>
+        <button mat-icon-button class="margin-right-button" matTooltip="{{ 'View agreement PDF' | translate }}">
+          <mat-icon svgIcon="file-document-outline"></mat-icon>
+        </button>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <!-- <tr mat-header-row *matHeaderRowDef="filterColumns"></tr> -->
+    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+  </table>
+</div>
+<div *ngIf="noData | async" class="no-records" [ngClass]="{ hide: isLoading }">
+  {{ 'NOT RECORD FOUND' | translate }}
+</div>
+<div class="horizontal" style="margin-bottom: 40px">
+  <div [ngClass]="{ hide: noData | async }">
+    <mat-paginator
+      [ngClass]="{ 'hide-pagination-buttons': dataCount <= 10 }"
+      [length]="dataCount"
+      [hidePageSize]="true"
+      [pageSize]="[10]"
+      showFirstLastButtons
+    ></mat-paginator>
+  </div>
+</div>

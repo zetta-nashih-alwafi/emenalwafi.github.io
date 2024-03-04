@@ -1,0 +1,15 @@
+.pt-16 {
+  padding-top: 16px !important;
+}
+
+// *************** ng-select style
+:host::ng-deep.ng-select .ng-select-container {
+  background-color: #fff0;
+  color: black;
+  border: none;
+  border-radius: 0px !important;
+  border-bottom: 1px solid #8c8c8c !important;
+  min-height: 36px;
+  -webkit-box-align: center;
+  align-items: center;
+}

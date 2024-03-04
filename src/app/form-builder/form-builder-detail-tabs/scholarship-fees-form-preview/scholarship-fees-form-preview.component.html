@@ -1,0 +1,76 @@
+<section class="yellow-border">
+  <div class="header" [innerHTML]="sanitizer.bypassSecurityTrustHtml(stepData?.direction)"></div>
+  <div class="row no-margin" style="margin-top: 15px !important">
+    <div *ngFor="let record of listTerms">
+      <mat-card class="card-load fade-in" style="border: 1px solid #eeeeee">
+        <div class="row no-margin">
+          <div class="row no-margin">
+            <div class="available-methods">
+              {{ 'Available:' | translate }}
+              <ng-container *ngIf="record?.select_payment_method_available && record?.select_payment_method_available?.length > 0">
+                <ng-container *ngFor="let method of record?.select_payment_method_available; let i = index">
+                  <span> {{ 'PAYMENT_METHODS.' + method | translate }} </span>
+                  <span *ngIf="method && i !== record?.select_payment_method_available?.length - 1">/</span>
+                </ng-container>
+              </ng-container>
+              <ng-container *ngIf="!record?.select_payment_method_available">- </ng-container>
+            </div>
+            <div><mat-icon class="mat-icon-loan">calendar_today</mat-icon></div>
+            <div class="text-calendar">
+              {{ 'in' | translate }} {{ record?.times }}
+              {{ 'time' | translate }}
+            </div>
+          </div>
+
+          <div class="row text-loan">
+            {{ 'ADMISSION_PAYMENT.Scholarship fees' | translate }}
+            :
+            {{ rateAmount ? (rateAmount | currency: 'EURO':'':'0.2') : '0' }}
+            €
+          </div>
+
+          <div class="row text-loan" *ngIf="discount !== 0">
+            {{ 'ADMISSION_PAYMENT.Discount' | translate }} {{ discount ? discount : 0 }}% : -
+            {{ discountCalculted ? (discountCalculted | currency: 'EURO':'':'0.2') : '0' }}
+            €
+          </div>
+
+          <div class="row text-loan">
+            {{ 'ADMISSION_PAYMENT.Registration fees' | translate }}
+            :
+            {{ registrationFee ? (registrationFee | currency: 'EURO':'':'0.2') : '0' }}
+            €
+          </div>
+
+          <div class="row text-loan">
+            {{ 'ADMISSION_PAYMENT.Additional cost' | translate }} : {{ record?.additional_cost | currency: 'EURO':'':'0.2' }} €
+          </div>
+
+          <div class="row text-loan">
+            <b>{{ 'TOTAL' | translate }} : {{ calcTotal(record) | currency: 'EURO':'':'0.2' }} €</b>
+          </div>
+
+          <div class="row text-loan" style="margin: 4px 0; padding: 4px 0; border-top: 1px solid; border-bottom: 1px solid">
+            > {{ 'ADMISSION_PAYMENT.Down payment to pay' | translate }} : {{ record?.down_payment | currency: 'EURO':'':'0.2' }} €
+          </div>
+
+          <div class="row text-loan">
+            <b>{{ 'ADMISSION_PAYMENT.Remaining to pay' | translate }} : {{ record?.total_amount | currency: 'EURO':'':'0.2' }} €</b>
+            <br />
+            <ng-container *ngIf="record?.times > 0">{{ record?.times }} {{ 'ADMISSION_PAYMENT.terms' | translate }} :</ng-container>
+          </div>
+
+          <div class="row text-loan" *ngFor="let pay of record?.payment_date">
+            - {{ pay?.date }} - {{ pay?.amount ? (pay?.amount | currency: 'EURO':'':'0.2') : '0' }} €
+          </div>
+        </div>
+        <div class="row" style="margin: auto; text-align: center; position: relative">
+          <button mat-raised-button matTooltip="{{ 'I choose' | translate }} " class="btn-plan btn-loan-touch">
+            {{ 'I choose' | translate }}
+            <mat-icon class="mat-icon-default">touch_app</mat-icon>
+          </button>
+        </div>
+      </mat-card>
+    </div>
+  </div>
+</section>

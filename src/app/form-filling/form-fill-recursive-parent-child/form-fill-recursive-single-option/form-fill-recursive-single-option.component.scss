@@ -1,0 +1,14 @@
+@import '~assets/scss/bootstrap';
+
+.single-option-question-container {
+    margin-top: 35px;
+}
+
+.questionLabel {
+    font-size: 12px;
+    margin-bottom: 10px;
+}
+
+:host ::ng-deep .radio-level.mat-radio-button {
+    padding-left: 0px;
+  }

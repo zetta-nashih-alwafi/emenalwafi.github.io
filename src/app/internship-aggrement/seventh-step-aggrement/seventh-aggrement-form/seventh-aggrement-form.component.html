@@ -1,0 +1,767 @@
+<form class="row display-web" [formGroup]="myIdentityForm">
+  <div class="col-lg-12">
+    <div class="col-lg-6">
+      <div class="row">
+        <div class="col-lg-4">
+          <label>{{ 'Civility' | translate }}*</label>
+        </div>
+        <div class="col-lg-8">
+          <div class="form-group">
+            <mat-radio-group formControlName="civility" style="font-size: 12px">
+              <mat-radio-button style="margin-right: 1rem" value="MR">{{ 'CARDDETAIL.MR' | translate }}</mat-radio-button>
+              <mat-radio-button value="MRS">{{ 'CARDDETAIL.MRS' | translate }}</mat-radio-button>
+              <ng-container *ngIf="coreService?.neutralCivility">
+                <mat-radio-button style="margin-left: 1rem" value="neutral">{{ 'Neutral' | translate }}</mat-radio-button>
+              </ng-container>
+            </mat-radio-group>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-lg-4">
+          <label>{{ 'Fist Name' | translate }}*</label>
+        </div>
+        <div class="col-lg-8">
+          <div class="form-group">
+            <input class="form-control" required formControlName="first_name" />
+            <div
+              class="invalid-feedback"
+              *ngIf="
+                myIdentityForm.get('first_name').hasError('required') &&
+                (myIdentityForm.get('first_name').dirty || myIdentityForm.get('first_name').touched)
+              "
+            >
+              {{ 'This field is required' | translate }}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-lg-4">
+          <label>{{ 'Last name' | translate }}*</label>
+        </div>
+        <div class="col-lg-8">
+          <div class="form-group">
+            <input class="form-control" required formControlName="last_name" />
+            <div
+              class="invalid-feedback"
+              *ngIf="
+                myIdentityForm.get('last_name').hasError('required') &&
+                (myIdentityForm.get('last_name').dirty || myIdentityForm.get('last_name').touched)
+              "
+            >
+              {{ 'This field is required' | translate }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-6" style="padding-top: 28px">
+      <div class="row">
+        <div class="col-lg-4"></div>
+        <div class="col-lg-8"></div>
+      </div>
+      <div class="row">
+        <div class="col-lg-4">
+          <label>{{ 'Used first name' | translate }}*</label>
+        </div>
+        <div class="col-lg-8">
+          <div class="form-group">
+            <input class="form-control" required formControlName="first_name_used" />
+            <div
+              class="invalid-feedback"
+              *ngIf="
+                myIdentityForm.get('first_name_used').hasError('required') &&
+                (myIdentityForm.get('first_name_used').dirty || myIdentityForm.get('first_name_used').touched)
+              "
+            >
+              {{ 'This field is required' | translate }}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-lg-4">
+          <label>{{ 'Used Last name' | translate }}*</label>
+        </div>
+        <div class="col-lg-8">
+          <div class="form-group">
+            <input class="form-control" required formControlName="last_name_used" />
+            <div
+              class="invalid-feedback"
+              *ngIf="
+                myIdentityForm.get('last_name_used').hasError('required') &&
+                (myIdentityForm.get('last_name_used').dirty || myIdentityForm.get('last_name_used').touched)
+              "
+            >
+              {{ 'This field is required' | translate }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-12">
+    <hr />
+    <div class="col-lg-6">
+      <div class="row">
+        <div class="col-lg-4">
+          <label>{{ 'Address' | translate }}</label>
+        </div>
+        <div class="col-lg-8">
+          <div class="form-group">
+            <input class="form-control" formControlName="address" />
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-lg-4">
+          <label>{{ 'Additional address' | translate }}</label>
+        </div>
+        <div class="col-lg-8">
+          <div class="form-group">
+            <input class="form-control" formControlName="additional_address" />
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-lg-4">
+          <label>{{ 'Post code' | translate }}</label>
+        </div>
+        <div class="col-lg-8">
+          <div class="form-group">
+            <input class="form-control" formControlName="post_code" />
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-lg-4">
+          <label>{{ 'City' | translate }}</label>
+        </div>
+        <div class="col-lg-8">
+          <div class="form-group">
+            <input class="form-control" formControlName="city" />
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-lg-4">
+          <label>{{ 'Country' | translate }}</label>
+        </div>
+        <div class="col-lg-8">
+          <div class="form-group">
+            <input
+              type="text"
+              matInput
+              class="form-control"
+              formControlName="country"
+              [matAutocomplete]="autoCountrys"
+              (keyup)="filterCountry()"
+            />
+            <mat-autocomplete #autoCountrys="matAutocomplete">
+              <mat-option *ngFor="let option of filteredCountry" [value]="option.name">
+                {{ option.name }}
+              </mat-option>
+            </mat-autocomplete>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-6">
+      <div class="row">
+        <div class="col-lg-4">
+          <label>{{ 'E-mail' | translate }}*</label>
+        </div>
+        <div class="col-lg-8">
+          <div class="form-group">
+            <input class="form-control" required formControlName="email" />
+            <div
+              class="invalid-feedback"
+              *ngIf="
+                myIdentityForm.get('email').hasError('required') &&
+                (myIdentityForm.get('email').dirty || myIdentityForm.get('email').touched)
+              "
+            >
+              {{ 'This field is required' | translate }}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-lg-4">
+          <label>{{ 'Phone number' | translate }}*</label>
+        </div>
+        <div class="col-lg-8">
+          <div class="form-group">
+            <input class="form-control" required formControlName="telephone" />
+            <div
+              class="invalid-feedback"
+              *ngIf="
+                myIdentityForm.get('telephone').hasError('required') &&
+                (myIdentityForm.get('telephone').dirty || myIdentityForm.get('telephone').touched)
+              "
+            >
+              {{ 'This field is required' | translate }}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-lg-4">
+          <label>{{ 'QUESTIONNAIRE_FIELDS.Téléphone Fixe' | translate }}</label>
+        </div>
+        <div class="col-lg-8">
+          <div class="form-group">
+            <input class="form-control" formControlName="fixed_phone" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-12">
+    <hr />
+    <div class="col-lg-6">
+      <div class="row">
+        <div class="col-lg-4">
+          <label>{{ 'Date of birth' | translate }}*</label>
+        </div>
+        <div class="col-lg-8">
+          <div class="form-group" style="margin-bottom: 44px">
+            <input
+              matInput
+              (click)="myDatepickers.open()"
+              readonly
+              style="float: left"
+              class="form-control"
+              formControlName="date_of_birth"
+              [max]="today"
+              [matDatepicker]="myDatepickers"
+            />
+            <mat-datepicker-toggle matSuffix [for]="myDatepickers"></mat-datepicker-toggle>
+            <mat-datepicker #myDatepickers></mat-datepicker>
+            <div
+              class="invalid-feedback"
+              *ngIf="
+                myIdentityForm.get('date_of_birth').hasError('required') &&
+                (myIdentityForm.get('date_of_birth').dirty || myIdentityForm.get('date_of_birth').touched)
+              "
+            >
+              {{ 'This field is required' | translate }}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row" style="margin-top: 5px">
+        <div class="col-lg-4">
+          <label>{{ 'Country of birth' | translate }}*</label>
+        </div>
+        <div class="col-lg-8">
+          <div class="form-group">
+            <input
+              type="text"
+              matInput
+              required
+              class="form-control"
+              formControlName="country_of_birth"
+              [matAutocomplete]="autoCountry"
+              (keyup)="filterCountrySecond()"
+            />
+            <mat-autocomplete #autoCountry="matAutocomplete">
+              <mat-option *ngFor="let option of filteredCountrySecond" [value]="option.name">
+                {{ option.name }}
+              </mat-option>
+            </mat-autocomplete>
+            <div
+              class="invalid-feedback"
+              *ngIf="
+                myIdentityForm.get('country_of_birth').hasError('required') &&
+                (myIdentityForm.get('country_of_birth').dirty || myIdentityForm.get('country_of_birth').touched)
+              "
+            >
+              {{ 'This field is required' | translate }}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-lg-4">
+          <label>{{ 'Nationality 1' | translate }}*</label>
+        </div>
+        <div class="col-lg-8">
+          <div class="form-group">
+            <input
+              type="text"
+              matInput
+              required
+              class="form-control"
+              formControlName="nationality"
+              [matAutocomplete]="autoNationality"
+              (keyup)="filterNationality()"
+            />
+            <mat-autocomplete #autoNationality="matAutocomplete" [displayWith]="displayNationality.bind(this)">
+              <mat-option *ngFor="let nat of nationalList" [value]="nat.countryName">
+                {{ 'NATIONALITY.' + nat.countryName | translate }}
+              </mat-option>
+            </mat-autocomplete>
+            <div
+              class="invalid-feedback"
+              *ngIf="
+                myIdentityForm.get('nationality').hasError('required') &&
+                (myIdentityForm.get('nationality').dirty || myIdentityForm.get('nationality').touched)
+              "
+            >
+              {{ 'This field is required' | translate }}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-lg-4">
+          <label>{{ 'Nationality 2' | translate }}</label>
+        </div>
+        <div class="col-lg-8">
+          <div class="form-group">
+            <input
+              type="text"
+              matInput
+              class="form-control"
+              formControlName="nationality_second"
+              [matAutocomplete]="autoNationalitys"
+              (keyup)="filterNationalitySecond()"
+            />
+            <mat-autocomplete #autoNationalitys="matAutocomplete" [displayWith]="displayNationality.bind(this)">
+              <mat-option *ngFor="let nat of nationalListSecond" [value]="nat.countryName">
+                {{ 'NATIONALITY.' + nat.countryName | translate }}
+              </mat-option>
+            </mat-autocomplete>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-6">
+      <div class="row">
+        <div class="col-lg-4">
+          <label>{{ 'Post code of birth' | translate }}*</label>
+        </div>
+        <div class="col-lg-8">
+          <div class="form-group">
+            <input matInput type="text" required class="form-control" formControlName="post_code_of_birth" />
+            <div
+              class="invalid-feedback"
+              *ngIf="
+                myIdentityForm.get('post_code_of_birth').hasError('required') &&
+                (myIdentityForm.get('post_code_of_birth').dirty || myIdentityForm.get('post_code_of_birth').touched)
+              "
+            >
+              {{ 'This field is required' | translate }}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-lg-4">
+          <label>{{ 'City of birth' | translate }}*</label>
+        </div>
+        <div class="col-lg-8">
+          <div class="form-group">
+            <input class="form-control" required formControlName="city_of_birth" />
+            <div
+              class="invalid-feedback"
+              *ngIf="
+                myIdentityForm.get('city_of_birth').hasError('required') &&
+                (myIdentityForm.get('city_of_birth').dirty || myIdentityForm.get('city_of_birth').touched)
+              "
+            >
+              {{ 'This field is required' | translate }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
+<form class="row display-mobile" [formGroup]="myIdentityForm">
+  <div class="col-lg-12">
+    <div class="row">
+      <div class="col-lg-4">
+        <label>{{ 'Civility' | translate }}*</label>
+      </div>
+      <div class="col-lg-8">
+        <div class="form-group">
+          <mat-radio-group formControlName="civility" style="font-size: 12px">
+            <mat-radio-button style="margin-right: 1rem" value="MR">{{ 'CARDDETAIL.MR' | translate }}</mat-radio-button>
+            <mat-radio-button value="MRS">{{ 'CARDDETAIL.MRS' | translate }}</mat-radio-button>
+            <ng-container *ngIf="coreService?.neutralCivility">
+              <mat-radio-button style="margin-left: 1rem" value="neutral">{{ 'Neutral' | translate }}</mat-radio-button>
+            </ng-container>
+          </mat-radio-group>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-lg-4">
+        <label>{{ 'Fist Name' | translate }}*</label>
+      </div>
+      <div class="col-lg-8">
+        <div class="form-group">
+          <input class="form-control" required formControlName="first_name" />
+          <div
+            class="invalid-feedback"
+            *ngIf="
+              myIdentityForm.get('first_name').hasError('required') &&
+              (myIdentityForm.get('first_name').dirty || myIdentityForm.get('first_name').touched)
+            "
+          >
+            {{ 'This field is required' | translate }}
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-lg-4">
+        <label>{{ 'Last name' | translate }}*</label>
+      </div>
+      <div class="col-lg-8">
+        <div class="form-group">
+          <input class="form-control" required formControlName="last_name" />
+          <div
+            class="invalid-feedback"
+            *ngIf="
+              myIdentityForm.get('last_name').hasError('required') &&
+              (myIdentityForm.get('last_name').dirty || myIdentityForm.get('last_name').touched)
+            "
+          >
+            {{ 'This field is required' | translate }}
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-lg-4">
+        <label>{{ 'Used first name' | translate }}*</label>
+      </div>
+      <div class="col-lg-8">
+        <div class="form-group">
+          <input class="form-control" required formControlName="first_name_used" />
+          <div
+            class="invalid-feedback"
+            *ngIf="
+              myIdentityForm.get('first_name_used').hasError('required') &&
+              (myIdentityForm.get('first_name_used').dirty || myIdentityForm.get('first_name_used').touched)
+            "
+          >
+            {{ 'This field is required' | translate }}
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-lg-4">
+        <label>{{ 'Used Last name' | translate }}*</label>
+      </div>
+      <div class="col-lg-8">
+        <div class="form-group">
+          <input class="form-control" required formControlName="last_name_used" />
+          <div
+            class="invalid-feedback"
+            *ngIf="
+              myIdentityForm.get('last_name_used').hasError('required') &&
+              (myIdentityForm.get('last_name_used').dirty || myIdentityForm.get('last_name_used').touched)
+            "
+          >
+            {{ 'This field is required' | translate }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-12">
+    <div class="row">
+      <div class="col-lg-4">
+        <label>{{ 'Address' | translate }}</label>
+      </div>
+      <div class="col-lg-8">
+        <div class="form-group">
+          <input class="form-control" formControlName="address" />
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-lg-4">
+        <label>{{ 'Additional address' | translate }}</label>
+      </div>
+      <div class="col-lg-8">
+        <div class="form-group">
+          <input class="form-control" formControlName="additional_address" />
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-lg-4">
+        <label>{{ 'Post code' | translate }}</label>
+      </div>
+      <div class="col-lg-8">
+        <div class="form-group">
+          <input class="form-control" formControlName="post_code" />
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-lg-4">
+        <label>{{ 'City' | translate }}</label>
+      </div>
+      <div class="col-lg-8">
+        <div class="form-group">
+          <input class="form-control" formControlName="city" />
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-lg-4">
+        <label>{{ 'Country' | translate }}</label>
+      </div>
+      <div class="col-lg-8">
+        <div class="form-group">
+          <input
+            type="text"
+            matInput
+            class="form-control"
+            formControlName="country"
+            [matAutocomplete]="autoCountrys"
+            (keyup)="filterCountry()"
+          />
+          <mat-autocomplete #autoCountrys="matAutocomplete">
+            <mat-option *ngFor="let option of filteredCountry" [value]="option.name">
+              {{ option.name }}
+            </mat-option>
+          </mat-autocomplete>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-lg-4">
+        <label>{{ 'E-mail' | translate }}*</label>
+      </div>
+      <div class="col-lg-8">
+        <div class="form-group">
+          <input class="form-control" required formControlName="email" />
+          <div
+            class="invalid-feedback"
+            *ngIf="
+              myIdentityForm.get('email').hasError('required') && (myIdentityForm.get('email').dirty || myIdentityForm.get('email').touched)
+            "
+          >
+            {{ 'This field is required' | translate }}
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-lg-4">
+        <label>{{ 'Phone number' | translate }}*</label>
+      </div>
+      <div class="col-lg-8">
+        <div class="form-group">
+          <input class="form-control" required formControlName="telephone" />
+          <div
+            class="invalid-feedback"
+            *ngIf="
+              myIdentityForm.get('telephone').hasError('required') &&
+              (myIdentityForm.get('telephone').dirty || myIdentityForm.get('telephone').touched)
+            "
+          >
+            {{ 'This field is required' | translate }}
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-lg-4">
+        <label>{{ 'QUESTIONNAIRE_FIELDS.Téléphone Fixe' | translate }}</label>
+      </div>
+      <div class="col-lg-8">
+        <div class="form-group">
+          <input class="form-control" formControlName="fixed_phone" />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-12">
+    <div class="row">
+      <div class="col-lg-4">
+        <label>{{ 'Date of birth' | translate }}*</label>
+      </div>
+      <div class="col-lg-8">
+        <div class="form-group" style="margin-bottom: 0px">
+          <input
+            matInput
+            (click)="myDatepicker.open()"
+            readonly
+            style="float: left"
+            class="form-control"
+            formControlName="date_of_birth"
+            [max]="today"
+            [matDatepicker]="myDatepicker"
+          />
+          <mat-datepicker-toggle matSuffix [for]="myDatepicker"></mat-datepicker-toggle>
+          <mat-datepicker #myDatepicker></mat-datepicker>
+          <div
+            class="invalid-feedback"
+            *ngIf="
+              myIdentityForm.get('date_of_birth').hasError('required') &&
+              (myIdentityForm.get('date_of_birth').dirty || myIdentityForm.get('date_of_birth').touched)
+            "
+          >
+            {{ 'This field is required' | translate }}
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row" style="margin-top: 15px">
+      <div class="col-lg-4">
+        <label>{{ 'Country of birth' | translate }}*</label>
+      </div>
+      <div class="col-lg-8">
+        <div class="form-group">
+          <input
+            type="text"
+            matInput
+            required
+            class="form-control"
+            formControlName="country_of_birth"
+            [matAutocomplete]="autoCountry"
+            (keyup)="filterCountrySecond()"
+          />
+          <mat-autocomplete #autoCountry="matAutocomplete">
+            <mat-option *ngFor="let option of filteredCountrySecond" [value]="option.name">
+              {{ option.name }}
+            </mat-option>
+          </mat-autocomplete>
+          <div
+            class="invalid-feedback"
+            *ngIf="
+              myIdentityForm.get('country_of_birth').hasError('required') &&
+              (myIdentityForm.get('country_of_birth').dirty || myIdentityForm.get('country_of_birth').touched)
+            "
+          >
+            {{ 'This field is required' | translate }}
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-lg-4">
+        <label>{{ 'Nationality 1' | translate }}*</label>
+      </div>
+      <div class="col-lg-8">
+        <div class="form-group">
+          <input
+            type="text"
+            matInput
+            class="form-control"
+            required
+            formControlName="nationality"
+            [matAutocomplete]="autoNationality"
+            (keyup)="filterNationality()"
+          />
+          <mat-autocomplete #autoNationality="matAutocomplete" [displayWith]="displayNationality.bind(this)">
+            <mat-option *ngFor="let nat of nationalList" [value]="nat.countryName">
+              {{ 'NATIONALITY.' + nat.countryName | translate }}
+            </mat-option>
+          </mat-autocomplete>
+          <div
+            class="invalid-feedback"
+            *ngIf="
+              myIdentityForm.get('nationality').hasError('required') &&
+              (myIdentityForm.get('nationality').dirty || myIdentityForm.get('nationality').touched)
+            "
+          >
+            {{ 'This field is required' | translate }}
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-lg-4">
+        <label>{{ 'Nationality 2' | translate }}</label>
+      </div>
+      <div class="col-lg-8">
+        <div class="form-group">
+          <input
+            type="text"
+            matInput
+            class="form-control"
+            formControlName="nationality_second"
+            [matAutocomplete]="autoNationalitys"
+            (keyup)="filterNationalitySecond()"
+          />
+          <mat-autocomplete #autoNationalitys="matAutocomplete" [displayWith]="displayNationality.bind(this)">
+            <mat-option *ngFor="let nat of nationalListSecond" [value]="nat.countryName">
+              {{ 'NATIONALITY.' + nat.countryName | translate }}
+            </mat-option>
+          </mat-autocomplete>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-lg-4">
+        <label>{{ 'Post code of birth' | translate }}*</label>
+      </div>
+      <div class="col-lg-8">
+        <div class="form-group">
+          <input matInput type="text" required class="form-control" formControlName="post_code_of_birth" />
+          <div
+            class="invalid-feedback"
+            *ngIf="
+              myIdentityForm.get('post_code_of_birth').hasError('required') &&
+              (myIdentityForm.get('post_code_of_birth').dirty || myIdentityForm.get('post_code_of_birth').touched)
+            "
+          >
+            {{ 'This field is required' | translate }}
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-lg-4">
+        <label>{{ 'City of birth' | translate }}*</label>
+      </div>
+      <div class="col-lg-8">
+        <div class="form-group">
+          <input class="form-control" required formControlName="city_of_birth" />
+          <div
+            class="invalid-feedback"
+            *ngIf="
+              myIdentityForm.get('city_of_birth').hasError('required') &&
+              (myIdentityForm.get('city_of_birth').dirty || myIdentityForm.get('city_of_birth').touched)
+            "
+          >
+            {{ 'This field is required' | translate }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
+
+<div class="btn-conditions">
+  <button
+    color="accent"
+    mat-raised-button
+    class="btn-save"
+    matTooltip="{{ 'CARDDETAIL.Save' | translate }} "
+    (click)="identitySave()"
+    [disabled]="myIdentityForm.invalid"
+  >
+    <mat-icon class="mat-icon-default">save</mat-icon>
+    {{ 'CARDDETAIL.Save' | translate }}
+  </button>
+</div>

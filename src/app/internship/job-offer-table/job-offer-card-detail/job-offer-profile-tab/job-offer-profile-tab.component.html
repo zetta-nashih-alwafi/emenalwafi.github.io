@@ -1,0 +1,110 @@
+<div class="p-grid">
+  <div class="p-col-12" style="text-align: center; margin-top: 15px;">
+    <!-- ************** For Status Cards -->
+    <div class="p-grid justify-around">
+      <div class="p-col no-padding" style="text-align: center">
+        <div class="p-grid" style="padding-top: 4px; display: block">
+          <div class="yellow-button background-status label-status card-status">
+            <div class="font-status">
+              <p class="text-status">
+                {{ 'Done' | translate }}
+              </p>
+            </div>
+            <span title="{{ 'Done' | translate }}">
+              <span class="icon-true">
+                {{ '&#10004;' }}
+              </span>
+            </span>
+          </div>
+        </div>
+      </div>
+      <div class="p-col no-padding" style="text-align: center">
+        <div class="p-grid" style="padding-top: 4px; display: block">
+          <div class="yellow-button background-status label-status card-status">
+            <div class="font-status">
+              <p class="text-status">
+                {{ 'Validate' | translate }}
+              </p>
+            </div>
+            <span title="{{ 'Validate' | translate }}">
+              <span class="icon-true">
+                {{ '&#10004;' }}
+              </span>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<mat-card>
+  <div class="p-grid" style="margin-bottom: -30px !important">
+    <div class="p-col-12">
+      <!-- <button mat-button mat-raised-button color="accent" (click)="createStudentProfile()" style="margin-right: 10px; float: right;">
+        <mat-icon style="font-size: 24px">add</mat-icon> {{ 'Create my profile' | translate }}
+      </button> -->
+      <button mat-button mat-raised-button color="accent" (click)="createStudentProfile()" style="margin-right: 10px; float: right">
+        <mat-icon style="font-size: 24px">edit</mat-icon> {{ 'Edit my profile' | translate }}
+      </button>
+    </div>
+  </div>
+  <div class="p-grid" style="margin-bottom: 20px !important">
+    <legend>{{ 'CV' | translate }}</legend>
+    <div class="p-col-12">
+      <!-- <button mat-button mat-raised-button color="accent" (click)="openUploadWindow()" style="margin-right: 10px; float: right;">
+        <mat-icon style="font-size: 24px">add</mat-icon> {{ 'UPLOAD' | translate }}
+      </button>
+      <button mat-button mat-raised-button color="primary" (click)="resetImage()" style="margin-right: 10px; float: right;">
+        <mat-icon svgIcon="loop" class="mat-icon-svgIcons"></mat-icon> {{ 'Reset' | translate }}
+      </button> -->
+      <input #fileUploadDoc type="file" accept=".pdf" class="hidden" (change)="uploadFile($event)" />
+      <div class="list-img" *ngIf="uploadCV && uploadCV.length">
+        <div class="thumbnail-img" *ngFor="let img of uploadCV; let in = index">
+          <img
+            matTooltip="CV pdf"
+            (click)="openImage(img?.s3_file_name)"
+            [src]="pdfIcon"
+            class="thumb rounded pull-left img-thumbnail"
+            alt="cv pdf"
+          />
+          <!-- <span class="name-file">{{ img?.s3_file_name }}</span> -->
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="p-grid" style="margin-bottom: 20px !important">
+    <legend>{{ 'Letter of Motivation' | translate }}</legend>
+    <div class="p-col-12">
+      <!-- <button mat-button mat-raised-button color="accent" (click)="openUploadWindow()" style="margin-right: 10px; float: right;">
+        <mat-icon style="font-size: 24px">add</mat-icon> {{ 'UPLOAD' | translate }}
+      </button>
+      <button mat-button mat-raised-button color="primary" (click)="resetImage()" style="margin-right: 10px; float: right;">
+        <mat-icon svgIcon="loop" class="mat-icon-svgIcons"></mat-icon> {{ 'Reset' | translate }}
+      </button> -->
+      <input #fileUploadDoc type="file" accept=".pdf" class="hidden" (change)="uploadFile($event)" />
+      <div class="list-img" *ngIf="imageLetter && imageLetter.length">
+        <div class="thumbnail-img" *ngFor="let img of imageLetter; let in = index">
+          <img
+            matTooltip="letter pdf"
+            (click)="openImage(img?.s3_file_name)"
+            [src]="pdfIcon"
+            class="thumb rounded pull-left img-thumbnail"
+            alt="letter pdf"
+          />
+          <!-- <span class="name-file">{{ img?.s3_file_name }}</span> -->
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="p-grid" style="margin-bottom: 20px !important">
+    <legend>{{ 'Video Profile' | translate }}</legend>
+    <div class="p-col-12">
+      <div class="list-img">
+        <div class="img-boxs">
+          <div class="text-uploads" (click)="openVideo('')"><mat-icon class="icon-styles"> play_circle_outline </mat-icon></div>
+          <!-- <div class="text-upload" (click)="openVideo(video)">{{ 'Video' | translate }} - {{ ind + 1 }}</div> -->
+        </div>
+      </div>
+    </div>
+  </div>
+</mat-card>

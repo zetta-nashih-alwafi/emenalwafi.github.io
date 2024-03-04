@@ -1,0 +1,40 @@
+<div class="p-grid form">
+  <div class="p-col-12">
+    <mat-card *ngIf="!isWaitingForResponse">
+      <div style="position: absolute; top: 0; right: 0" class="p-grid p-justify-end pad-all-md">
+        <ms-language-drop-down></ms-language-drop-down>
+        <img class="school-logo" [src]="serverimgPath + schoolLogo" *ngIf="schoolLogo" />
+      </div>
+      <mat-card-header>
+        <mat-card-title>
+          <p class="card-title">
+            {{ 'Registration Title' | translate }}
+            {{ candidateData?.school?.short_name }}
+            {{ getLevelSchool(candidateData?.level?.name) }}
+            {{ candidateData?.campus?.name ? (('Registration Title1' | translate) +" "+ candidateData?.campus?.name) : '' }}
+          </p>
+          <p class="card-sub-title">
+            {{ 'Student' | translate }}: {{ candidateData?.last_name | uppercase }} {{ candidateData?.first_name | titlecase }}
+          </p>
+        </mat-card-title>
+      </mat-card-header>
+
+      <mat-card-content>
+        <mat-horizontal-stepper>
+          <ng-template matStepperIcon="done">
+            <mat-icon>done</mat-icon>
+          </ng-template>
+          <ng-template matStepperIcon="edit">
+            <mat-icon>done</mat-icon>
+          </ng-template>
+          <mat-step [label]="'School contract Amendment' | translate">
+            <ms-contract-amendment-form [candidateData]="candidateData" [candidateId]="candidateId" [formId]="formId" [schoolLogo]="schoolLogo"></ms-contract-amendment-form>
+          </mat-step>
+        </mat-horizontal-stepper>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>
+<div *ngIf="isWaitingForResponse" class="loading-indicator">
+  <mat-progress-spinner mode="indeterminate" color="accent"></mat-progress-spinner>
+</div>

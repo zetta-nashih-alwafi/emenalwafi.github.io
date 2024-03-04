@@ -1,0 +1,226 @@
+<div class="dialog-border" cdkDrag cdkDragRootElement=".cdk-overlay-pane" cdkDragHandle>
+  <div class="dialogTitleWrapper">
+    <div class="p-grid">
+      <div class="p-col-10 dialog-title">
+        <h3 class="dialogTitle">{{ 'Detail of Down Payment' | translate }}</h3>
+      </div>
+      <div class="p-col no-padding" cdkDrag cdkDragRootElement=".cdk-overlay-pane" cdkDragHandle>
+        <button mat-icon-button class="close-icon float-right" mat-dialog-close tabindex="-1" data-cy="button-close-dialog">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<mat-dialog-content>
+  <table *ngIf="dpHistory?.dp_histories?.length && !isWaitingForResponse">
+    <!-- *************** Handling when down payment / deposit has status partially paid -->
+    <ng-container *ngIf="dpHistory?.deposit_status === 'partially_paid'">
+      <!-- *************** Handling when down payment / deposit has remaining amount after paid -->
+      <ng-container *ngIf="dpHistory?.deposit - dpHistory?.deposit_pay_amount > 0">
+        <tr>
+          <td>{{ 'Regulation of Down Payment' | translate }}</td>
+          <td style="padding-left: 0.5em">
+            {{ translateDate(dpHistory?.dp_histories[0]?.date_inserted?.date, dpHistory?.dp_histories[0]?.date_inserted?.time) }}
+          </td>
+          <td style="padding-left: 1em">:</td>
+          <td style="padding-left: 0.5em">
+            {{
+              formatCurrency(dpHistory?.deposit - dpHistory?.deposit_pay_amount)
+                ? formatCurrency(dpHistory?.deposit - dpHistory?.deposit_pay_amount)
+                : '0'
+            }}
+            €
+          </td>
+          <td style="padding-left: 0.5em">
+            <span>
+              <mat-icon
+                matTooltip="{{ 'Generated' | translate }}"
+                aria-hidden="true"
+                class="mat-icon-status blue"
+                data-cy="term-status-generated"
+                >lens</mat-icon
+              >
+            </span>
+          </td>
+        </tr>
+      </ng-container>
+      <!-- *************** Handling when down payment / deposit has amount already paid -->
+      <ng-container *ngIf="dpHistory?.deposit_pay_amount > 0">
+        <tr>
+          <td>{{ 'Regulation of Down Payment' | translate }}</td>
+          <td style="padding-left: 0.5em">
+            {{ translateDate(dpHistory?.dp_histories[0]?.date_inserted?.date, dpHistory?.dp_histories[0]?.date_inserted?.time) }}
+          </td>
+          <td style="padding-left: 1em">:</td>
+          <td style="padding-left: 0.5em">
+            {{ formatCurrency(dpHistory?.deposit_pay_amount) ? formatCurrency(dpHistory?.deposit_pay_amount) : '0' }} €
+          </td>
+          <td style="padding-left: 0.5em">
+            <span>
+              <mat-icon matTooltip="{{ 'Paid' | translate }}" aria-hidden="true" class="mat-icon-status green" data-cy="term-status-paid"
+                >lens</mat-icon
+              >
+            </span>
+          </td>
+        </tr>
+      </ng-container>
+    </ng-container>
+    <!-- *************** Handling when down payment / deposit has status other than partially paid -->
+    <ng-container *ngIf="dpHistory?.deposit_status !== 'partially_paid' && dpHistory?.deposit">
+      <tr>
+        <td>{{ 'Regulation of Down Payment' | translate }}</td>
+        <td style="padding-left: 0.5em">
+          {{
+            translateDate(
+              dpHistory?.deposit_pay_date?.date ? dpHistory?.deposit_pay_date?.date : dpHistory?.dp_histories[0]?.date_inserted?.date,
+              dpHistory?.deposit_pay_date?.time ? dpHistory?.deposit_pay_date?.time : dpHistory?.dp_histories[0]?.date_inserted?.time
+            )
+          }}
+        </td>
+        <td style="padding-left: 1em">:</td>
+        <td style="padding-left: 0.5em">{{ formatCurrency(dpHistory?.deposit) ? formatCurrency(dpHistory?.deposit) : '0' }} €</td>
+        <td style="padding-left: 0.5em">
+          <span *ngIf="!dpHistory?.deposit_status">-</span>
+          <span *ngIf="dpHistory?.deposit_status === 'billed' && dpHistory?.candidate_id?.payment !== 'not_authorized'">
+            <mat-icon
+              matTooltip="{{ 'Generated' | translate }}"
+              aria-hidden="true"
+              class="mat-icon-status blue"
+              data-cy="term-status-generated"
+              >lens</mat-icon
+            >
+          </span>
+          <span *ngIf="dpHistory?.deposit_status === 'paid' && dpHistory?.candidate_id?.payment !== 'not_authorized'">
+            <mat-icon matTooltip="{{ 'Paid' | translate }}" aria-hidden="true" class="mat-icon-status green" data-cy="term-status-paid"
+              >lens</mat-icon
+            >
+          </span>
+          <span *ngIf="dpHistory?.deposit_status === 'pending' && dpHistory?.candidate_id?.payment !== 'not_authorized'">
+            <mat-icon
+              matTooltip="{{ 'Pending' | translate }}"
+              aria-hidden="true"
+              class="mat-icon-status orange"
+              data-cy="term-status-pending"
+              >lens</mat-icon
+            >
+          </span>
+          <span *ngIf="dpHistory?.deposit_status === 'not_authorised' || dpHistory?.candidate_id?.payment === 'not_authorized'">
+            <mat-icon matTooltip="{{ 'Refused' | translate }}" aria-hidden="true" class="mat-icon-status red" data-cy="term-status-refused"
+              >lens</mat-icon
+            >
+          </span>
+          <span *ngIf="dpHistory?.deposit_status === 'chargeback' && dpHistory?.candidate_id?.payment !== 'not_authorized'">
+            <mat-icon
+              matTooltip="{{ 'Chargeback' | translate }}"
+              aria-hidden="true"
+              class="mat-icon-status purple"
+              data-cy="term-status-chargeback"
+              >lens</mat-icon
+            >
+          </span>
+        </td>
+      </tr>
+    </ng-container>
+
+    <tr *ngFor="let deposit of dpHistory?.dp_histories; let lastIndex = last">
+      <ng-container *ngIf="!lastIndex">
+        <td>{{ 'Regulation of Down Payment' | translate }}</td>
+        <td style="padding-left: 0.5em">{{ translateDate(deposit?.date_inserted?.date, deposit?.date_inserted?.time) }}</td>
+        <td style="padding-left: 1em">:</td>
+        <td style="padding-left: 0.5em">{{ formatCurrency(deposit?.deposit) ? formatCurrency(deposit?.deposit) : '0' }} €</td>
+        <td style="padding-left: 0.5em">
+          <span *ngIf="!deposit?.deposit_status">-</span>
+          <span *ngIf="deposit?.deposit_status === 'billed'">
+            <mat-icon
+              matTooltip="{{ 'Generated' | translate }}"
+              aria-hidden="true"
+              class="mat-icon-status blue"
+              data-cy="term-status-generated"
+              >lens</mat-icon
+            >
+          </span>
+          <span *ngIf="deposit?.deposit_status === 'paid'">
+            <mat-icon matTooltip="{{ 'Paid' | translate }}" aria-hidden="true" class="mat-icon-status green" data-cy="term-status-paid"
+              >lens</mat-icon
+            >
+          </span>
+          <span *ngIf="deposit?.deposit_status === 'pending'">
+            <mat-icon
+              matTooltip="{{ 'Pending' | translate }}"
+              aria-hidden="true"
+              class="mat-icon-status orange"
+              data-cy="term-status-pending"
+              >lens</mat-icon
+            >
+          </span>
+          <span *ngIf="deposit?.deposit_status === 'not_authorised'">
+            <mat-icon matTooltip="{{ 'Refused' | translate }}" aria-hidden="true" class="mat-icon-status red" data-cy="term-status-refused"
+              >lens</mat-icon
+            >
+          </span>
+          <span *ngIf="deposit?.deposit_status === 'chargeback'">
+            <mat-icon
+              matTooltip="{{ 'Chargeback' | translate }}"
+              aria-hidden="true"
+              class="mat-icon-status purple"
+              data-cy="term-status-chargeback"
+              >lens</mat-icon
+            >
+          </span>
+        </td>
+      </ng-container>
+      <!-- Last index of DP history always Down Payment -->
+      <ng-container *ngIf="lastIndex">
+        <td>{{ 'Down Payment' | translate }}</td>
+        <td style="padding-left: 0.5em">{{ translateDate(deposit?.date_inserted?.date, deposit?.date_inserted?.time) }}</td>
+        <td style="padding-left: 1em">:</td>
+        <td style="padding-left: 0.5em">{{ formatCurrency(deposit?.deposit) ? formatCurrency(deposit?.deposit) : '0' }} €</td>
+        <td style="padding-left: 0.5em">
+          <span *ngIf="!deposit?.deposit_status">-</span>
+          <span *ngIf="deposit?.deposit_status === 'billed'">
+            <mat-icon
+              matTooltip="{{ 'Generated' | translate }}"
+              aria-hidden="true"
+              class="mat-icon-status blue"
+              data-cy="term-status-generated"
+              >lens</mat-icon
+            >
+          </span>
+          <span *ngIf="deposit?.deposit_status === 'paid'">
+            <mat-icon matTooltip="{{ 'Paid' | translate }}" aria-hidden="true" class="mat-icon-status green" data-cy="term-status-paid"
+              >lens</mat-icon
+            >
+          </span>
+          <span *ngIf="deposit?.deposit_status === 'pending'">
+            <mat-icon
+              matTooltip="{{ 'Pending' | translate }}"
+              aria-hidden="true"
+              class="mat-icon-status orange"
+              data-cy="term-status-pending"
+              >lens</mat-icon
+            >
+          </span>
+          <span *ngIf="deposit?.deposit_status === 'not_authorised'">
+            <mat-icon matTooltip="{{ 'Refused' | translate }}" aria-hidden="true" class="mat-icon-status red" data-cy="term-status-refused"
+              >lens</mat-icon
+            >
+          </span>
+          <span *ngIf="deposit?.deposit_status === 'chargeback'">
+            <mat-icon
+              matTooltip="{{ 'Chargeback' | translate }}"
+              aria-hidden="true"
+              class="mat-icon-status purple"
+              data-cy="term-status-chargeback"
+              >lens</mat-icon
+            >
+          </span>
+        </td>
+      </ng-container>
+    </tr>
+  </table>
+</mat-dialog-content>
+<div *ngIf="isWaitingForResponse" class="loading-indicator">
+  <mat-progress-spinner mode="indeterminate" color="accent" data-cy="dialog-spinner"></mat-progress-spinner>
+</div>

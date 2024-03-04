@@ -1,0 +1,24 @@
+<div>
+    <mat-tab-group #agreementMatGroup [selectedIndex]="selectedIndex" (click)="checkValidation($event)">
+      <!-- First tab always shown -->
+      <mat-tab label="conditionAgreement">
+        <ng-template mat-tab-label>
+          <h4>{{ 'INTERN_SETTING.Conditions agreement table' | translate }}</h4>
+        </ng-template>
+        <ng-template matTabContent>
+        <ms-internship-condition-table-tab (disableSecondTab)="disableTab($event)"></ms-internship-condition-table-tab>
+        </ng-template>
+      </mat-tab>
+      <mat-tab [disabled]="schoolSelected" label="setupCondition">
+        <ng-template mat-tab-label>
+          <h4>
+            {{ 'INTERN_SETTING.Set up conditions' | translate }}
+          </h4>
+        </ng-template>
+        <ng-template matTabContent>
+          <ms-internship-setup-condition-tab></ms-internship-setup-condition-tab>
+        </ng-template>
+      </mat-tab>
+    </mat-tab-group>
+  </div>
+  

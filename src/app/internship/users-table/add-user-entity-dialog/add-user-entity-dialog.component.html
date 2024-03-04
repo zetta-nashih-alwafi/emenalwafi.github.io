@@ -1,0 +1,89 @@
+<div class="dialog-border" cdkDrag cdkDragRootElement=".cdk-overlay-pane" cdkDragHandle>
+  <div class="dialogTitleWrapper header-dialog">
+    <div class="p-grid">
+      <div class="w-30 no-padding">
+        <mat-icon class="mat-icon-default">add</mat-icon>
+      </div>
+      <div class="p-col-10 no-padding">
+        <h3 class="dialogTitle">{{ 'Add User Type' | translate }}</h3>
+      </div>
+      <div class="w-65 no-padding">
+        <button mat-icon-button class="close-icon float-right" (click)="closeDialog()" tabindex="-1">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div mat-dialog-content class="mat-dialog-content dialog-body" style="overflow: hidden !important">
+  <div class="p-grid" [formGroup]="addNewUserTypeForm">
+    <!-- civility first name last name -->
+    <div class="p-col-4 pad-y-none">
+      <ng-select appendTo="body" formControlName="usertype" class="mrgn-btn" [multiple]="false" placeholder="{{ 'User Type' | translate }}">
+        <ng-option *ngFor="let usertype of userTypeList" [value]="usertype._id">
+          {{ 'USER_TYPES.' + usertype?.name | translate }}
+        </ng-option>
+      </ng-select>
+    </div>
+    <div class="p-col-3 pad-y-none">
+      <ng-select
+        class="mrgn-btn"
+        [items]="schoolList"
+        bindLabel="short_name"
+        bindValue="_id"
+        [multiple]="false"
+        [hideSelected]="true"
+        clearAllText="Clear"
+        [appendTo]="'body'"
+        formControlName="school"
+        placeholder="{{ 'School' | translate }}"
+        (change)="getDataCampus()"
+        (remove)="handleRemoveSchool()"
+        (clear)="clearCampus()"
+      >
+      </ng-select>
+    </div>
+    <div class="p-col-3 pad-y-none">
+      <ng-select
+        class="mrgn-btn"
+        [items]="campusList"
+        bindLabel="name"
+        bindValue="name"
+        [multiple]="true"
+        [hideSelected]="true"
+        clearAllText="Clear"
+        [appendTo]="'body'"
+        formControlName="campus"
+        placeholder="{{ 'Campus' | translate }}"
+        (change)="getDataLevel()"
+        (remove)="handleRemoveCampus()"
+        (clear)="clearLevel()"
+      >
+      </ng-select>
+    </div>
+    <div class="p-col-2 pad-y-none">
+      <ng-select
+        class="mrgn-btn"
+        [items]="levelList"
+        bindLabel="name"
+        bindValue="name"
+        [multiple]="true"
+        [hideSelected]="true"
+        clearAllText="Clear"
+        [appendTo]="'body'"
+        formControlName="level"
+        (change)="getDataByLevel()"
+        placeholder="{{ 'Level' | translate }}"
+      >
+      </ng-select>
+    </div>
+  </div>
+</div>
+
+<div mat-dialog-actions class="justify-content-end mr-10">
+  <button mat-button mat-raised-button color="warn" (click)="closeDialog()">{{ 'CANCEL' | translate }}</button>
+  <button (click)="submit()" mat-button mat-raised-button color="primary" class="mr-0" [disabled]="addNewUserTypeForm.invalid">
+    {{ 'Submit' | translate }}
+  </button>
+</div>

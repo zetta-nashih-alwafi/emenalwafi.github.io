@@ -1,0 +1,85 @@
+<div class="dialog-border" cdkDrag cdkDragRootElement=".cdk-overlay-pane" cdkDragHandle>
+  <div class="dialogTitleWrapper">
+    <div class="p-grid">
+      <div class="w-30 no-padding">
+        <mat-icon style="vertical-align: middle" svgIcon="whatsapp" data-cy="dialog-icon"></mat-icon>
+      </div>
+      <div class="p-col-10 acad-title">
+        <h3 class="dialogTitle" data-cy="dialog-title">
+          {{ 'Whatsapp' | translate }}
+        </h3>
+      </div>
+      <div class="w-65 no-padding">
+        <button mat-icon-button class="close-icon float-right" mat-dialog-close tabindex="-1" data-cy="button-close-dialog">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<form [formGroup]="identityForm">
+  <div class="fontColor">
+    <mat-dialog-content>
+      <div class="p-grid">
+        <div class="p-col-12 no-padding header-who">
+          <h4>{{ 'Who do you want to Whatsapp?' | translate }}</h4>
+        </div>
+      </div>
+
+      <div class="p-grid">
+        <div class="p-col-12 no-padding" style="text-align: center">
+          <div
+            class="card"
+            [ngClass]="{
+              'card-selected': isStudentSelected
+            }"
+            (click)="selectedWhoCall(data?.candidate_id)"
+            data-cy="card-candidate"
+          >
+            <div class="icon-who no-padding">
+              <mat-icon style="vertical-align: middle" data-cy="candidate-icon">school</mat-icon>
+            </div>
+            <div class="name-who">
+              <h5 class="dialogTitles" data-cy="candidate-name">
+                {{ data?.candidate_id?.civility && data?.candidate_id?.civility ==='neutral' ? '' : (data?.candidate_id?.civility | translate) }}
+                {{ data?.candidate_id?.first_name }} {{ data?.candidate_id?.last_name | uppercase }}
+              </h5>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="dataFinanceList.length > 0">
+        <div class="p-grid" *ngFor="let finance of dataFinanceList; let in = index">
+          <div class="p-col-12 no-padding" style="text-align: center">
+            <div
+              class="card"
+              [ngClass]="{
+                'card-selected': finance.status
+              }"
+              (click)="selectedWhoCallParent(finance, in)"
+              data-cy="card-financial-support"
+            >
+              <div class="icon-who no-padding">
+                <mat-icon style="vertical-align: middle" svgIcon="account-heart" data-cy="financial-support-icon"></mat-icon>
+              </div>
+              <div class="name-who">
+                <h5 class="dialogTitles" data-cy="financial-support-name">
+                  {{ finance?.civility && finance?.civility ==='neutral' ? '' : (finance?.civility | translate) }}
+                  {{ finance?.first_name }} {{ finance?.last_name | uppercase }}
+                  {{ '(' + ('CARDDETAIL.RELATION.' + finance?.relation | translate) + ')' }}
+                </h5>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </mat-dialog-content>
+    <mat-dialog-actions align="right">
+      <button mat-raised-button type="button" color="warn" mat-dialog-close data-cy="button-cancel">{{ 'CANCEL' | translate }}</button>
+      <button mat-raised-button color="primary" [disabled]="!isStudentSelected && !isParentSelected" (click)="submitVerification()" data-cy="button-validate">
+        {{ 'Validate' | translate }}
+      </button>
+    </mat-dialog-actions>
+  </div>
+</form>

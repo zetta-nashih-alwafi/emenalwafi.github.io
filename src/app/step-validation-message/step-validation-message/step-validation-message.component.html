@@ -1,0 +1,396 @@
+<div class="top-space">
+  <ms-filter-breadcrumb [filterBreadcrumbData]="filterBreadcrumbData" (removeFilterTrigger)="removeFilterBreadcrumb($event)"></ms-filter-breadcrumb>
+  <table mat-table [dataSource]="dataSource" matSort (matSortChange)="sortData($event)" class="mat-elevation-z8">
+    <!---START BUTTONS ABOVE HEADER-->
+    <ng-container matColumnDef="reset">
+      <th mat-header-cell *matHeaderCellDef colspan="8" class="action-header-column text-right">
+        <div class="p-grid">
+          <div class="p-col-12 text-right">
+            <button
+              matTooltip="{{ 'Action' | translate }} "
+              style="padding: 0px 7px !important"
+              mat-raised-button
+              color="accent"
+              [disabled]="isLoading"
+              [matMenuTriggerFor]="action"
+            >
+              {{ 'Action' | translate }}
+              <mat-icon>expand_more</mat-icon>
+            </button>
+            <!-- Start Action button above table -->
+            <mat-menu #action="matMenu">
+              <button
+                mat-menu-item
+                matTooltip="{{ 'Add new registration step message' | translate }}"
+                (click)="addValidationPopUp()"
+                *ngIf="permission.addMassageStepsPerm()"
+              >
+                {{ 'Add new registration step message' | translate }}
+              </button>
+            </mat-menu>
+            <!-- End Action button above table -->
+            <button
+              mat-raised-button
+              color="primary"
+              matTooltip="{{ 'EXPORT' | translate }}"
+              (click)="downloadCSV()"
+              *ngIf="permission.exportCsvMassageStepsPerm()"
+            >
+              <mat-icon svgIcon="file-excel" class="mat-icon-svgIcon"></mat-icon>
+              {{ 'Export' | translate }}
+            </button>
+            <!-- <button mat-raised-button color="primary" matTooltip="{{ 'SEND' | translate }}" (click)="sendMail()">
+              <mat-icon svgIcon="send" class="mat-icon-svgIcon"></mat-icon>
+              {{ 'Send by Email' | translate }}
+            </button> -->
+            <button
+              mat-raised-button
+              color="primary"
+              [matTooltipDisabled]="false"
+              [disabled]="isLoading"
+              (click)="resetStepValidation()"
+              matTooltip="{{ 'Reset Filter' | translate }}"
+              *ngIf="permission.resetMassageStepsPerm()"
+            >
+              <mat-icon svgIcon="loop" class="mat-icon-svgIcon"></mat-icon>
+              {{ 'RESET' | translate }}
+            </button>
+          </div>
+        </div>
+      </th>
+    </ng-container>
+    <!---END BUTTONS ABOVE HEADER-->
+    <!---START FILTER COLUMNS BODY-->
+    <ng-container matColumnDef="selectFilter">
+      <th mat-header-cell *matHeaderCellDef class="text-center"></th>
+    </ng-container>
+    <ng-container matColumnDef="stepFilter">
+      <th mat-header-cell *matHeaderCellDef>
+        <mat-form-field>
+          <mat-select [formControl]="stepFilter" [disableOptionCentering]="true" panelClass="filterPanel custom-matselect-dropdown">
+            <mat-option value="">{{ 'AllM' | translate }}</mat-option>
+            <mat-option [value]="step" *ngFor="let step of stepList">
+              {{ step }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </th>
+    </ng-container>
+    <ng-container matColumnDef="firstTitleFilter">
+      <th mat-header-cell *matHeaderCellDef>
+        <mat-form-field>
+          <input matInput class="form-field" [formControl]="firstTitleFilter" placeholder="{{ 'search' | translate }}" />
+        </mat-form-field>
+      </th>
+    </ng-container>
+    <ng-container matColumnDef="secondTitleFilter">
+      <th mat-header-cell *matHeaderCellDef>
+        <mat-form-field>
+          <input matInput class="form-field" [formControl]="secondTitleFilter" placeholder="{{ 'search' | translate }}" />
+        </mat-form-field>
+      </th>
+    </ng-container>
+    <ng-container matColumnDef="schoolFilter">
+      <th mat-header-cell *matHeaderCellDef>
+        <mat-form-field>
+          <input type="text" matInput [placeholder]="'School' | translate" [formControl]="schoolFilter" [matAutocomplete]="schools" />
+          <mat-icon matSuffix class="mat-icon-svgIcon" svgIcon="menu-down">menu_down</mat-icon>
+          <mat-autocomplete #schools="matAutocomplete" [panelWidth]="'fit'" [displayWith]="displayWith.bind(this)">
+            <mat-option (click)="chooseSchool('All')" value="All">{{ 'All' | translate }}</mat-option>
+            <mat-option
+              (click)="chooseSchool(school.short_name)"
+              *ngFor="let school of schoolFilteredList | async"
+              [value]="school.short_name"
+            >
+              {{ school.short_name }}
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
+      </th>
+    </ng-container>
+    <ng-container matColumnDef="campusFilter">
+      <th mat-header-cell *matHeaderCellDef>
+        <mat-form-field>
+          <input matInput class="form-field" [formControl]="campusFilter" placeholder="{{ 'search' | translate }}" />
+        </mat-form-field>
+      </th>
+    </ng-container>
+    <ng-container matColumnDef="publishedFilter">
+      <th mat-header-cell *matHeaderCellDef>
+        <mat-form-field>
+          <mat-select [formControl]="publishedFilter" [disableOptionCentering]="true" panelClass="filterPanel custom-matselect-dropdown">
+            <mat-option value="">{{ 'AllM' | translate }}</mat-option>
+            <mat-option [value]="campus" *ngFor="let campus of publishList">
+              {{ campus | translate }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </th>
+    </ng-container>
+
+    <ng-container matColumnDef="actionFilter">
+      <th mat-header-cell *matHeaderCellDef></th>
+    </ng-container>
+    <!---END FILTER COLUMNS BODY-->
+    <!---START COLUMNS BODY-->
+    <ng-container matColumnDef="select">
+      <th mat-header-cell *matHeaderCellDef class="text-center">
+        <mat-checkbox
+          (change)="$event ? masterToggle() : null"
+          (change)="showOptions('all', '')"
+          [checked]="(selection.hasValue() && isAllSelected()) || isCheckedAll"
+          [indeterminate]="selection.hasValue() && !isAllSelected()"
+          [aria-label]="checkboxLabel()"
+        >
+        </mat-checkbox>
+      </th>
+      <td mat-cell *matCellDef="let row" class="text-center">
+        <mat-checkbox
+          (click)="$event.stopPropagation()"
+          (change)="$event ? selection.toggle(row._id) : null"
+          [checked]="selection.isSelected(row._id)"
+          (change)="showOptions('one', row)"
+          [aria-label]="checkboxLabel(row)"
+        >
+        </mat-checkbox>
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="step">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header="validation_step" matTooltip="{{ 'Validation of Step' | translate }}">
+        <h5 style="font-size: 11px">{{ 'Validation of Step' | translate }}</h5>
+      </th>
+      <td mat-cell *matCellDef="let element" matTooltip="{{ element?.validation_step }}">
+        <span> {{ element?.validation_step }}</span>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="firstTitle">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header="first_title" matTooltip="{{ 'Title 1' | translate }}">
+        <h5 style="font-size: 11px">{{ 'Title 1' | translate }}</h5>
+      </th>
+      <td mat-cell *matCellDef="let element" matTooltip="{{ stripTags(element?.first_title) }}">
+        <span>{{ stripTags(element?.first_title) }}</span>
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="secondTitle">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header="second_title" matTooltip="{{ 'Title 2' | translate }}">
+        <h5 style="font-size: 11px">{{ 'Title 2' | translate }}</h5>
+      </th>
+      <td mat-cell *matCellDef="let element" matTooltip="{{ stripTags(element?.second_title) }}">
+        <span>{{ stripTags(element?.second_title) }}</span>
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="school">
+      <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'School' | translate }}">
+        <h5 style="font-size: 11px">{{ 'School' | translate }}</h5>
+      </th>
+      <td mat-cell *matCellDef="let element" matTooltip="{{ element?.school }}">
+        <span>{{ element?.school }}</span>
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="campus">
+      <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'Campus' | translate }}">
+        <h5 style="font-size: 11px">{{ 'Campus' | translate }}</h5>
+      </th>
+      <td mat-cell *matCellDef="let element" matTooltip="{{ element?.campus ? element?.campus : ('All' | translate) }}">
+        <span>{{
+          element?.campus ? element?.campus : ('All' | translate)
+        }}</span>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="published">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header="is_published" matTooltip="{{ 'Published' | translate }}">
+        <h5>
+          <mat-icon svgIcon="bullhorn" class="mat-icon-svgIcon"> bullhorn </mat-icon>
+        </h5>
+      </th>
+      <td mat-cell *matCellDef="let element">
+        <mat-icon
+          [ngClass]="{
+            green: element?.is_published === true,
+            red: !element?.is_published
+          }"
+          [matTooltip]="(element?.is_published ? 'yes' : 'no') | translate"
+          class="mat-icon-status"
+          aria-hidden="true"
+          >lens
+        </mat-icon>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="action">
+      <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'Action' | translate }}">
+        <h5>{{ 'Action' | translate }}</h5>
+      </th>
+      <td mat-cell *matCellDef="let element" class="action-buttons">
+        <button
+          [disabled]="element?.is_published"
+          mat-icon-button
+          class="margin-right-button"
+          matTooltip="{{ 'Publish' | translate }}"
+          (click)="publishStepValidationMessage(element)"
+          *ngIf="permission.publishUnpublishMassageStepsPerm()"
+        >
+          <mat-icon svgIcon="bullhorn"> bullhorn </mat-icon>
+        </button>
+        <button
+          mat-icon-button
+          class="margin-right-button"
+          (click)="sendMail(element)"
+          matTooltip="{{ 'Send by Email' | translate }}"
+          *ngIf="permission.sendByEmailMassageStepsPerm()"
+        >
+          <mat-icon>send</mat-icon>
+        </button>
+        <button
+          mat-icon-button
+          class="margin-right-button"
+          matTooltip="{{ 'Delete' | translate }}"
+          (click)="deleteStepValidation(element?._id)"
+          *ngIf="permission.deleteMassageStepsPerm()"
+        >
+          <mat-icon svgIcon="close-thick"> close_thick </mat-icon>
+        </button>
+        <button
+          mat-icon-button
+          class="margin-right-button"
+          matTooltip="{{ 'Edit' | translate }}"
+          (click)="editStepValidationMessage(element)"
+          *ngIf="permission.editMassageStepsPerm()"
+        >
+          <mat-icon>edit</mat-icon>
+        </button>
+        <button
+          mat-icon-button
+          class="margin-right-button"
+          matTooltip="{{ 'Duplicate' | translate }}"
+          (click)="duplicateStepValidationMessage(element)"
+          *ngIf="permission.duplicateMassageStepsPerm()"
+        >
+          <mat-icon svgIcon="content-duplicate"> content_duplicate </mat-icon>
+        </button>
+        <button
+          mat-icon-button
+          class="margin-right-button"
+          matTooltip="{{ 'View' | translate }}"
+          (click)="viewValidationStep(element)"
+          *ngIf="permission.viewMassageStepsPerm()"
+        >
+          <mat-icon>visibility</mat-icon>
+        </button>
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="loading">
+      <th mat-header-cell *matHeaderCellDef colspan="8" class="text-center">
+        <div class="center-spinner">
+          <mat-spinner color="accent"></mat-spinner>
+        </div>
+      </th>
+    </ng-container>
+    <!---END COLUMNS BODY-->
+    <tr mat-header-row *matHeaderRowDef="['reset']"></tr>
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-header-row *matHeaderRowDef="filterColumns"></tr>
+    <tr mat-header-row *matHeaderRowDef="['loading']" [hidden]="!isLoading"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns" [hidden]="isLoading"></tr>
+  </table>
+  <div *ngIf="noData | async" class="no-records">
+    {{ 'NOT RECORD FOUND' | translate }}
+  </div>
+  <div [ngClass]="{ hide: noData | async }">
+    <mat-paginator
+      [ngClass]="{ 'hide-pagination-buttons': promoExternalCount <= 10 }"
+      [length]="promoExternalCount"
+      [hidePageSize]="true"
+      [pageSize]="[10]"
+      showFirstLastButtons
+    ></mat-paginator>
+  </div>
+</div>
+<swal
+  #publishSwal
+  type="warning"
+  title="{{ 'REG_STEP_VAL.This registration step message will be published' | translate }}"
+  [showConfirmButton]="true"
+  [allowOutsideClick]="false"
+  [showCancelButton]="true"
+  confirmButtonText="{{ 'REG_STEP_VAL.Ok' | translate }}"
+  cancelButtonText="{{ 'REG_STEP_VAL.Cancel' | translate }}"
+  (confirm)="publishConfirm(currStep)"
+>
+  <!-- <div
+    *swalPartial
+    style="
+      transform: scale(0.5);
+      position: relative;
+      height: 175px;
+      vertical-align: top;
+      top: -67px;
+      padding: 0px;
+      width: 340px;
+      margin: auto;
+      display: flex;
+    "
+  >
+    <div class="congratulations-container" style="height: 400px;">
+      <div class="title1">
+        <h5 class="text-inverse" innerHTML="{{ currStep?.first_title }}"></h5>
+      </div>
+      <div class="media-container">
+        <div [ngClass]="{ hidden: disableImage }" style="margin: auto; text-align: center">
+          <img class="photo" style="max-height: 305px;" [src]="sanitizeImageUrl(currStep?.image_upload)" *ngIf="currStep?.image_upload" />
+          <div class="no-content" *ngIf="!currStep?.image_upload">
+            <p>{{ 'REG_STEP_VAL.Add an Image' | translate }}</p>
+          </div>
+        </div>
+        <div [ngClass]="{ hidden: disableVideo }">
+          <div class="no-content" *ngIf="!currStep?.video_link">
+            <p>{{ 'REG_STEP_VAL.Add a Video' | translate }}</p>
+          </div>
+          <iframe
+            style="height: 290px; width: 400px; margin: 150px auto"
+            width="300"
+            height="290"
+            [src]="sanitizeVideoUrl(video_link)"
+            frameborder="0"
+            allow="autoplay; encrypted-media"
+            allowfullscreen
+            *ngIf="currStep?.video_link"
+          >
+          </iframe>
+        </div>
+      </div>
+      <div class="title2">
+        <h5 class="text-inverse" innerHTML="{{ currStep?.second_title }}"></h5>
+      </div>
+      <div class="actions">
+            <mat-dialog-actions align="center">
+              <button mat-raised-button type="button" class="grey" mat-dialog-close>
+                <mat-icon svgIcon="backup-restore"></mat-icon>{{ currStep?.first_button }}
+              </button>
+              <button mat-raised-button color="accent">
+                {{ currStep?.second_button }} <mat-icon class="mat-icon-default">touch_app</mat-icon>
+              </button>
+            </mat-dialog-actions>
+          </div>
+    </div> -->
+
+  <!--<ms-reg-step-validation-message
+      [firstTitle]="currStep?.first_title"
+      [secondTitle]="currStep?.second_title"
+      [videoLink]="currStep?.video_link"
+      [imageUpload]="currStep?.image_upload"
+    ></ms-reg-step-validation-message>
+  </div>-->
+</swal>
+<!-- <ng-template #stepDisplayTemplate let-data>
+  <ms-reg-step-validation-message
+    [firstTitle]="data?.first_title"
+    [secondTitle]="data?.second_title"
+    [imageUpload]="data?.image_upload"
+    [videoLink]="data?.video_link"
+    [validationStep]="data?.validation_step"
+    [closeIcon]="true"
+  ></ms-reg-step-validation-message>
+</ng-template> -->

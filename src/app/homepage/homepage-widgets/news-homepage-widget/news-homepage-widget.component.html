@@ -1,0 +1,24 @@
+<div class="news-widget-container">
+    <div (click)="openNews(news?._id)" *ngFor="let news of dataAllNews; let i = index" class="news-widget-card tw-mb-2 tw-bg-app-primary">
+        <div class="header">
+            <p class="tw-bg-app-secondary">{{ news?.published_date?.date }}</p>
+            <p class="title-news tw-font-bold">{{ news?.title }}</p>
+            <p class="tw-w-full tw-contents">{{ 'NEWS.by' | translate }} {{news?.created_by?.last_name}} {{news?.created_by?.first_name}}</p>
+        </div>
+        <div class="content">
+            <div class="text content-inner tw-line-clamp-1 tw-gap-1" [innerHTML]="news?.description"></div>
+        </div>
+    </div>
+</div>
+
+<ng-container *ngIf="isWaitingForResponse">
+    <div class="center-spinner inner-loading-indicator tw-w-full tw-h-full tw-flex tw-justify-center tw-items-center">
+      <mat-spinner color="accent"></mat-spinner>
+    </div>
+</ng-container>
+
+<div *ngIf="!dataAllNews?.length && !isWaitingForResponse" class="tw-flex tw-flex-col tw-items-center tw-justify-center tw-h-full tw-opacity-75">
+    <h4 class="tw-mt-4 tw-text-center">
+      {{ 'NEWS.no news' | translate }}
+    </h4>
+  </div>

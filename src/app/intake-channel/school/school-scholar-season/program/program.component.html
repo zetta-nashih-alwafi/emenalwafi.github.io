@@ -1,0 +1,283 @@
+<div class="p-col-12 no-padding">
+  <ms-filter-breadcrumb
+    [filterBreadcrumbData]="filterBreadcrumbData"
+    (removeFilterTrigger)="removeFilterBreadcrumb($event)"
+  ></ms-filter-breadcrumb>
+</div>
+<div class="top-space">
+  <table mat-table matSort [dataSource]="dataSource" class="mat-elevation-z8">
+    <!-- ROW RESET START -->
+    <ng-container matColumnDef="reset">
+      <th mat-header-cell *matHeaderCellDef colspan="100%" class="action-header-column text-right">
+        <div class="p-col-12 p-grid no-padding">
+          <div class="p-col text-right">
+            <button
+              matTooltip="{{ 'Action' | translate }} "
+              mat-raised-button
+              color="accent"
+              [disabled]="isWaitingForResponse"
+              [matMenuTriggerFor]="action"
+            >
+              {{ 'Action' | translate }}
+              <mat-icon>expand_more</mat-icon>
+            </button>
+            <mat-menu #action="matMenu" class="action-dropdown-button-above-table">
+              <button
+                mat-menu-item
+                (click)="onOpenAddDialog(false)"
+                matTooltip="{{ 'Button_Program_Above_Table_School_Detail.Add program' | translate }}"
+              >
+                {{ 'Button_Program_Above_Table_School_Detail.Add program' | translate }}
+              </button>
+            </mat-menu>
+            <button
+              mat-raised-button
+              color="primary"
+              matTooltip="{{ 'Export' | translate }}"
+              (click)="buttonClicked = 'export'; controlButton('export')"
+              [disabled]="isWaitingForResponse"
+              *ngIf="permission.exportSchoolProgram()"
+            >
+              <mat-icon svgIcon="file-excel" class="mat-icon-svgIcon"></mat-icon>
+              {{ 'Export' | translate }}
+            </button>
+            <button
+              mat-raised-button
+              color="primary"
+              matTooltip="{{ 'RESET' | translate }}"
+              [disabled]="isWaitingForResponse"
+              (click)="resetFilter()"
+              *ngIf="permission.resetSchoolProgram()"
+            >
+              <mat-icon svgIcon="loop" class="mat-icon-svgIcon"></mat-icon>
+              {{ 'RESET' | translate }}
+            </button>
+          </div>
+        </div>
+      </th>
+    </ng-container>
+    <!-- ROW RESET END -->
+    <!---ROW FILTER START-->
+    <ng-container matColumnDef="selectFilter" sticky>
+      <th mat-header-cell *matHeaderCellDef></th>
+    </ng-container>
+    <ng-container matColumnDef="scholarSeasonFilter">
+      <th mat-header-cell *matHeaderCellDef></th>
+    </ng-container>
+    <ng-container matColumnDef="schoolFilter">
+      <th mat-header-cell *matHeaderCellDef></th>
+    </ng-container>
+    <ng-container matColumnDef="campusFilter">
+      <th mat-header-cell *matHeaderCellDef>
+        <mat-form-field appearance="legacy">
+          <mat-select
+            [formControl]="campusFilterCtrl"
+            multiple
+            disableOptionCentering
+            panelClass="filterPanel custom-matselect-dropdown-margin"
+          >
+            <mat-option *ngIf="!campusList.length" [disabled]="true">{{ 'NOT RECORD FOUND' | translate }}</mat-option>
+            <mat-option *ngIf="campusList && campusList?.length >= 1" [value]="'All'" (click)="selectAll('campus')">{{
+              'AllS' | translate
+            }}</mat-option>
+            <mat-option *ngFor="let campus of campusList" [value]="campus._id" (click)="setFilterSelected('campus')">{{
+              campus.name
+            }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </th>
+    </ng-container>
+    <ng-container matColumnDef="levelFilter">
+      <th mat-header-cell *matHeaderCellDef>
+        <mat-form-field appearance="legacy">
+          <mat-select
+            [formControl]="levelFilterCtrl"
+            multiple
+            disableOptionCentering
+            panelClass="filterPanel custom-matselect-dropdown-margin"
+          >
+            <mat-option *ngIf="!levelList.length" [disabled]="true">{{ 'NOT RECORD FOUND' | translate }}</mat-option>
+            <mat-option *ngIf="levelList && levelList?.length >= 1" [value]="'All'" (click)="selectAll('level')">{{
+              'AllS' | translate
+            }}</mat-option>
+            <mat-option *ngFor="let level of levelList" [value]="level._id" (click)="setFilterSelected('level')">{{
+              level.name
+            }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </th>
+    </ng-container>
+    <ng-container matColumnDef="sectorFilter">
+      <th mat-header-cell *matHeaderCellDef>
+        <mat-form-field appearance="legacy">
+          <mat-select
+            [formControl]="sectorFilterCtrl"
+            multiple
+            disableOptionCentering
+            panelClass="filterPanel custom-matselect-dropdown-margin"
+          >
+            <mat-option *ngIf="!sectorList.length" [disabled]="true">{{ 'NOT RECORD FOUND' | translate }}</mat-option>
+            <mat-option *ngIf="sectorList && sectorList?.length >= 1" [value]="'All'" (click)="selectAll('sector')">{{
+              'AllS' | translate
+            }}</mat-option>
+            <mat-option *ngFor="let sector of sectorList" [value]="sector._id" (click)="setFilterSelected('sector')">{{
+              sector.name
+            }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </th>
+    </ng-container>
+    <ng-container matColumnDef="specialityFilter">
+      <th mat-header-cell *matHeaderCellDef>
+        <mat-form-field appearance="legacy">
+          <mat-select
+            [formControl]="specialityFilterCtrl"
+            multiple
+            disableOptionCentering
+            panelClass="filterPanel custom-matselect-dropdown-margin"
+          >
+            <mat-option *ngIf="!specialityList.length" [disabled]="true">{{ 'NOT RECORD FOUND' | translate }}</mat-option>
+            <mat-option *ngIf="specialityList && specialityList?.length >= 1" [value]="'All'" (click)="selectAll('speciality')">{{
+              'AllS' | translate
+            }}</mat-option>
+            <mat-option *ngFor="let speciality of specialityList" [value]="speciality._id" (click)="setFilterSelected('speciality')">{{
+              speciality.name
+            }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </th>
+    </ng-container>
+    <ng-container matColumnDef="actionFilter">
+      <th mat-header-cell *matHeaderCellDef></th>
+    </ng-container>
+    <!--ROW FILTER END-->
+    <!-- ROW HEADER AND CONTENT START -->
+
+    <ng-container matColumnDef="select" class="mat-column-select">
+      <th mat-header-cell *matHeaderCellDef class="text-center">
+        <mat-checkbox
+          (change)="$event ? masterToggle() : null"
+          (change)="showOptions('all', '')"
+          [checked]="(selection.hasValue() && isAllSelected()) || isCheckedAll"
+          [indeterminate]="selection.hasValue() && !isAllSelected()"
+          [aria-label]="checkboxLabel()"
+        >
+        </mat-checkbox>
+      </th>
+      <td mat-cell *matCellDef="let row" class="text-center">
+        <mat-checkbox
+          (click)="$event.stopPropagation()"
+          (change)="$event ? selection.toggle(row._id) : null"
+          [checked]="selection.isSelected(row?._id) || (isCheckedAll && !dataUnselect.includes(row?._id))"
+          (change)="showOptions('one', row)"
+          [aria-label]="checkboxLabel(row)"
+        >
+        </mat-checkbox>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="scholarSeason">
+      <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'Program_Table_School_Detail.Scholar season' | translate }}">
+        <h5>{{ 'Program_Table_School_Detail.Scholar season' | translate }}</h5>
+      </th>
+      <td mat-cell *matCellDef="let element" [matTooltip]="element?.scholar_season_id?.scholar_season">
+        {{ element?.scholar_season_id?.scholar_season }}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="school">
+      <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'Program_Table_School_Detail.School' | translate }}">
+        <h5>{{ 'Program_Table_School_Detail.School' | translate }}</h5>
+      </th>
+      <td mat-cell *matCellDef="let element" [matTooltip]="element?.school_id?.short_name">
+        {{ element?.school_id?.short_name }}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="campus">
+      <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'Program_Table_School_Detail.Campus' | translate }}">
+        <h5>{{ 'Program_Table_School_Detail.Campus' | translate }}</h5>
+      </th>
+      <td mat-cell *matCellDef="let element" [matTooltip]="element?.campus?.name">
+        {{ element?.campus?.name }}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="level">
+      <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'Program_Table_School_Detail.Level' | translate }}">
+        <h5>{{ 'Program_Table_School_Detail.Level' | translate }}</h5>
+      </th>
+      <td mat-cell *matCellDef="let element" [matTooltip]="element?.level?.name">
+        {{ element?.level?.name }}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="sector">
+      <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'Program_Table_School_Detail.Sector' | translate }}">
+        <h5>{{ 'Program_Table_School_Detail.Sector' | translate }}</h5>
+      </th>
+      <td mat-cell *matCellDef="let element" [matTooltip]="element?.sector_id?.name">
+        {{ element?.sector_id?.name }}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="speciality">
+      <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'Program_Table_School_Detail.Speciality' | translate }}">
+        <h5>{{ 'Program_Table_School_Detail.Speciality' | translate }}</h5>
+      </th>
+      <td mat-cell *matCellDef="let element" [matTooltip]="element?.speciality_id?.name">
+        {{ element?.speciality_id?.name }}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="action">
+      <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'Action' | translate }}">
+        <h5>{{ 'Action' | translate }}</h5>
+      </th>
+      <td mat-cell *matCellDef="let element">
+        <button
+          [disabled]="(dataSelected && dataSelected.length > 0) || isCheckedAll"
+          mat-icon-button
+          class="margin-right-button"
+          matTooltip="{{ 'Delete' | translate }}"
+          matTooltipPosition="above"
+          (click)="onDelete(element)"
+          *ngIf="permission.deleteSchoolProgram()"
+        >
+          <mat-icon>delete</mat-icon>
+        </button>
+      </td>
+    </ng-container>
+    <!-- ROW HEADER AND CONTENT END -->
+    <ng-container matColumnDef="loading">
+      <th mat-header-cell *matHeaderCellDef colspan="100%" class="text-center">
+        <div class="center-spinner">
+          <mat-spinner color="accent"></mat-spinner>
+        </div>
+      </th>
+    </ng-container>
+    <tr mat-header-row *matHeaderRowDef="['reset']"></tr>
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-header-row *matHeaderRowDef="filterColumns"></tr>
+    <tr mat-header-row *matHeaderRowDef="['loading']" [hidden]="!isWaitingForResponse"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns" [hidden]="isWaitingForResponse"></tr>
+  </table>
+  <ng-container *ngIf="!isWaitingForResponse">
+    <div *ngIf="noData | async" class="no-records">
+      {{ 'NOT RECORD FOUND' | translate }}
+    </div>
+  </ng-container>
+  <div [ngClass]="{ hide: noData | async }">
+    <mat-paginator
+      [ngClass]="{ 'hide-pagination-buttons': dataCount <= 10 }"
+      [length]="dataCount"
+      [hidePageSize]="true"
+      [pageSize]="[10]"
+      showFirstLastButtons
+    ></mat-paginator>
+  </div>
+</div>
+
+<div *ngIf="isLoading" class="loading-indicator">
+  <mat-progress-spinner mode="indeterminate" color="accent"></mat-progress-spinner>
+</div>

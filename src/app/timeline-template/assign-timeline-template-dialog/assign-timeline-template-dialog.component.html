@@ -1,0 +1,169 @@
+<div class="dialog-border" cdkDrag cdkDragRootElement=".cdk-overlay-pane" cdkDragHandle>
+  <div class="dialogTitleWrapper">
+    <div class="p-grid">
+      <div class="w-30 no-padding">
+        <mat-icon style="vertical-align: middle" data-cy="dialog-icon">event_busy</mat-icon>
+      </div>
+      <div class="p-col-10 acad-title">
+        <h3 class="dialogTitle" data-cy="dialog-title">
+          {{ parentData?.comps?.title | translate }}
+        </h3>
+      </div>
+      <div class="w-65 no-padding" style="right: -133px">
+        <button mat-icon-button class="close-icon float-right" mat-dialog-close tabindex="-1" data-cy="button-close-dialog">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<form [formGroup]="assignTimelineForm" style="margin-top: 20px">
+  <div class="fontColor">
+    <mat-dialog-content>
+      <div class="p-grid">
+        <div class="p-col-12 no-padding">
+          <div class="p-grid">
+            <div class="p-col-fixed center-label no-padding-left label-align" style="width: 180px">
+              <label>{{ 'Select timeline template' | translate }}*</label>
+            </div>
+            <div class="p-col no-padding">
+              <ng-select
+                aria-required="true"
+                class="mrgn-btn custom-style-ngselect input-timeline-template"
+                [items]="timelineTemplateList"
+                bindLabel="template_name"
+                bindValue="_id"
+                [hideSelected]="true"
+                clearAllText="Clear"
+                [appendTo]="'body'"
+                formControlName="template_id"
+                placeholder="{{ 'Select timeline template' | translate }}*"
+                (change)="populateAssignDialog($event)"
+                data-cy="input-timeline-template"
+              >
+              </ng-select>
+              <!-- <mat-form-field floatLabel="never">
+                    <mat-select formControlName="name">
+                        <mat-option value="dummy1">Dummy 1</mat-option>
+                        <mat-option value="dummy2">Dummy 2</mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="assignTimelineForm.get('name')?.hasError('required')" style="font-size: 9px">
+                      {{ 'Select timeline template' | translate }}
+                      </mat-error>
+                </mat-form-field> -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <ng-container *ngIf="showDetailTimeline">
+        <div class="p-grid">
+          <div class="p-col-12 no-padding">
+            <div class="p-grid">
+              <div class="p-col-fixed center-label no-padding-left label-align" style="width: 180px">
+                <label>{{ 'Preview of timeline' | translate }}:</label>
+              </div>
+              <div class="p-col no-padding"></div>
+            </div>
+          </div>
+        </div>
+        <div class="p-grid">
+          <div class="p-col-12 no-padding">
+            <div class="p-grid">
+              <div class="p-col-fixed center-label no-padding-left label-align" style="width: 180px">
+                <label>{{ 'Number of Terms' | translate }}</label>
+              </div>
+              <div class="p-col no-padding">
+                <mat-slider
+                  class="example-margin"
+                  [max]="12"
+                  [min]="1"
+                  [step]="1"
+                  [thumbLabel]="true"
+                  formControlName="terms"
+                  (change)="changeSlider()"
+                  [disabled]="true"
+                  data-cy="input-number-of-terms"
+                >
+                </mat-slider>
+                <span class="point" data-cy="number-of-terms">{{ assignTimelineForm.get('terms').value }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="p-grid" *ngIf="assignTimelineForm.get('terms').value !== 0" formArrayName="percentage_by_term">
+          <div class="p-col-12 no-padding">
+            <div class="p-grid">
+              <div class="p-col-fixed center-label no-padding-left label-align" style="width: 180px">
+                <label>{{ 'Date of terms' | translate }}*</label>
+              </div>
+              <div class="p-col no-padding">
+                <ng-container *ngFor="let data of payment.controls; let in = index" [formGroupName]="in">
+                  <div class="card" data-cy="card-date-of-terms">
+                    <div class="card-term">{{ 'terms' | translate }} {{ in + 1 }}</div>
+                    <div class="card-date">
+                      <mat-form-field floatLabel="never" style="height: 46px; line-height: 25px">
+                        <input matInput readonly formControlName="date" [matDatepicker]="myDatepicker" data-cy="input-date-of-terms" />
+                        <mat-datepicker-toggle matSuffix [for]="myDatepicker" [disabled]="true"></mat-datepicker-toggle>
+                        <mat-datepicker #myDatepicker></mat-datepicker>
+                      </mat-form-field>
+                    </div>
+                  </div>
+                </ng-container>
+              </div>
+            </div>
+          </div>
+          <div class="p-col-12 no-padding">
+            <div class="p-grid">
+              <div class="p-col-fixed center-label no-padding-left label-align" style="width: 180px">
+                <label>{{ 'Percentage of total amount' | translate }}*</label>
+              </div>
+              <div class="p-col no-padding">
+                <ng-container *ngFor="let data of payment.controls; let in = index" [formGroupName]="in">
+                  <div class="card" data-cy="card-precentage-of-total-amount">
+                    <mat-form-field floatLabel="never" style="width: 60px">
+                      <input
+                        matInput
+                        formControlName="percentage"
+                        (keyup)="recalculateDisc(in)"
+                        (wheel)="onWheel($event)"
+                        type="number"
+                        min="0"
+                        max="100"
+                        readonly
+                        data-cy="input-precentage-of-total-amount"
+                      />
+                      <mat-error
+                        *ngIf="assignTimelineForm.get('percentage_by_term')?.get(in.toString())?.get('percentage').hasError('min')"
+                        style="font-size: 9px"
+                        >{{ 'No negative number' | translate }}</mat-error
+                      >
+                      <mat-error
+                        *ngIf="assignTimelineForm.get('percentage_by_term')?.get(in.toString())?.get('percentage').hasError('required')"
+                        style="font-size: 9px"
+                        >{{ 'This field is required' | translate }}</mat-error
+                      >
+                    </mat-form-field>
+                    <span class="point">%</span>
+                  </div>
+                </ng-container>
+              </div>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+    </mat-dialog-content>
+    <mat-dialog-actions align="right">
+      <button mat-raised-button type="button" color="warn" mat-dialog-close data-cy="button-cancel">{{ 'CANCEL' | translate }}</button>
+      <!-- <button mat-raised-button color="primary" [disabled]="!assignTimelineForm.valid" (click)="handleSubmit()"> -->
+      <button mat-raised-button color="primary" (click)="handleSubmit()" data-cy="button-submit">
+        {{ 'Submit' | translate }}
+      </button>
+    </mat-dialog-actions>
+  </div>
+</form>
+
+<div *ngIf="isWaitingForResponse" class="loading-indicator">
+  <mat-progress-spinner mode="indeterminate" color="accent" data-cy="dialog-spinner"></mat-progress-spinner>
+</div>

@@ -1,0 +1,750 @@
+<div class="p-grid" [formGroup]="identityForm">
+  <div class="p-col-12" style="padding-left: 0px; padding-right: 0px">
+    <div class="p-grid" style="margin-top: 0.5rem">
+      <div class="p-col-12" style="text-align: right; padding-right: 0px">
+        <button mat-raised-button color="accent" (click)="updateCandidate()" *ngIf="permissionService.editPermCandidate()" [disabled]="disableButtonSave">
+          <mat-icon class="mat-icon-default">save</mat-icon>
+          {{ 'CARDDETAIL.Save' | translate }}
+        </button>
+      </div>
+    </div>
+    <fieldset class="fieldset-class">
+      <mat-card class="overlow-auto" style="margin-top: 0 !important">
+        <div class="p-grid">
+          <!-- Avatar -->
+          <div class="p-col-fixed" style="width: 150px">
+            <div class="imgContainer">
+              <img
+                [src]="
+                  is_photo_in_s3
+                    ? serverimgPath + photo_s3_path
+                    : photo
+                    ? serverimgPath + photo
+                    : identityForm.get('civility').value === 'MR'
+                    ? maleStudentIcon
+                    : identityForm.get('civility').value === 'neutral'
+                    ? neutralStudentIcon
+                    : femaleStudentIcon
+                "
+                class="student-details-img"
+                style="cursor: pointer; object-fit: cover"
+                *ngIf="is_photo_in_s3"
+              />
+
+              <img
+                class="student-details-img"
+                style="cursor: pointer; object-fit: cover"
+                *ngIf="!is_photo_in_s3"
+                [src]="
+                  identityForm.get('civility').value === 'MR'
+                    ? maleStudentIcon
+                    : identityForm.get('civility').value === 'neutral'
+                    ? neutralStudentIcon
+                    : femaleStudentIcon
+                "
+              />
+              <input
+                type="file"
+                #userphoto
+                style="display: none"
+                name="file"
+                accept="image/png, image/jpeg, image/jpg"
+                (change)="selectFile($event)"
+              />
+              <div class="overlay" (click)="openUploadWindow()">
+                <div class="text">{{ 'DOCUMENT.IMAGE' | translate }}</div>
+              </div>
+            </div>
+          </div>
+          <div class="p-col">
+            <!-- Civility -->
+            <div class="p-grid">
+              <div class="p-col-6 no-padding">
+                <div class="p-grid" style="margin-bottom: 10px">
+                  <div class="p-col-fixed center-label no-padding-y" style="width: 80px">
+                    <label>{{ 'CARDDETAIL.Civility' | translate }}*</label>
+                  </div>
+                  <div class="p-col-9 no-padding-y">
+                    <mat-radio-group formControlName="civility" style="font-size: 12px">
+                      <mat-radio-button style="margin-right: 1rem" value="MR">{{ 'CARDDETAIL.MR' | translate }}</mat-radio-button>
+                      <mat-radio-button value="MRS">{{ 'CARDDETAIL.MRS' | translate }}</mat-radio-button>
+                      <ng-container *ngIf="coreService?.neutralCivility">
+                        <mat-radio-button style="margin-left: 1rem" value="neutral">{{ 'Neutral' | translate }}</mat-radio-button>
+                      </ng-container>
+                    </mat-radio-group>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Firstname and Lastname -->
+            <div class="p-grid">
+              <div class="p-col-6 no-padding">
+                <div class="p-grid">
+                  <div class="p-col no-padding-y pad-right-15">
+                    <mat-form-field>
+                      <mat-label>{{ 'CARDDETAIL.First Name (Identity card)' | translate }}</mat-label>
+                      <input matInput formControlName="first_name" type="text" />
+                      <mat-error
+                        *ngIf="
+                          identityForm.get('first_name').hasError('required') &&
+                          (identityForm.get('first_name').touched || identityForm.get('first_name').dirty)
+                        "
+                      >
+                        {{ 'This field is required' | translate }}
+                      </mat-error>
+                    </mat-form-field>
+                  </div>
+                </div>
+              </div>
+              <div class="p-col-6 no-padding pad-left-5">
+                <div class="p-grid">
+                  <div class="p-col no-padding-y">
+                    <mat-form-field>
+                      <mat-label>{{ 'CARDDETAIL.Used first name' | translate }}</mat-label>
+                      <input matInput type="text" formControlName="first_name_used" />
+                    </mat-form-field>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Phone and Email -->
+            <div class="p-grid">
+              <div class="p-col-6 no-padding">
+                <div class="p-grid">
+                  <div class="p-col no-padding-y pad-right-15">
+                    <mat-form-field>
+                      <mat-label>{{ 'CARDDETAIL.Last Name (Identity card)' | translate }}</mat-label>
+                      <input matInput formControlName="last_name" type="text" />
+                      <mat-error
+                        *ngIf="
+                          identityForm.get('last_name').hasError('required') &&
+                          (identityForm.get('last_name').touched || identityForm.get('last_name').dirty)
+                        "
+                      >
+                        {{ 'This field is required' | translate }}
+                      </mat-error>
+                    </mat-form-field>
+                  </div>
+                </div>
+              </div>
+              <div class="p-col-6 no-padding pad-left-5">
+                <div class="p-grid">
+                  <div class="p-col no-padding-y">
+                    <mat-form-field>
+                      <mat-label>{{ 'CARDDETAIL.Used last name' | translate }}</mat-label>
+                      <input matInput type="text" formControlName="last_name_used" />
+                    </mat-form-field>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="p-grid">
+              <div class="p-col-6 no-padding">
+                <div class="p-grid">
+                  <div class="p-col no-padding-y pad-right-15">
+                    <mat-form-field>
+                      <mat-label>{{ 'CARDDETAIL.Date of Birth' | translate }}</mat-label>
+                      <input
+                        matInput
+                        (click)="myDatepicker.open()"
+                        readonly
+                        formControlName="date_of_birth"
+                        [max]="minimumDateOfBirth"
+                        [matDatepicker]="myDatepicker"
+                      />
+                      <mat-datepicker-toggle matSuffix [for]="myDatepicker"></mat-datepicker-toggle>
+                      <mat-datepicker #myDatepicker></mat-datepicker>
+                    </mat-form-field>
+                  </div>
+                </div>
+              </div>
+              <div class="p-col-6 no-padding pad-left-5">
+                <div class="p-grid">
+                  <div class="p-col no-padding-y p-grid" style="position: relative">
+                    <mat-label class="label-for-phone">{{ 'CARDDETAIL.Phone' | translate }}</mat-label>
+                    <div class="phone-number p-col-2">
+                      <ng-select
+                        [formControl]="dialCodeControl"
+                        (change)="selectionDialCode($event)"
+                        [clearable]="false"
+                        bindLabel="name"
+                        [appendTo]="'body'"
+                        class="custom-dropdownpanel-dialcode"
+                      >
+                        <ng-template ng-label-tmp let-item="item">
+                          <img class="flag-icon-trigger" [src]="flagsIconPath + item?.flagIcon + '.svg'"/>
+                          <span *ngIf="item?.flagIcon" class="ml-4">+{{ item?.dialCode }}</span>
+                        </ng-template>
+                        <ng-option *ngFor="let country of countryCodeList" [value]="country">
+                          <ng-container *ngIf="country?.name">
+                            <img class="flag-icon" [src]="flagsIconPath + country?.flagIcon + '.svg'" /> {{ country?.name | translate }} +{{ country?.dialCode }}
+                          </ng-container>
+                        </ng-option>
+                      </ng-select>
+                    </div>
+                    <div class="phone-number p-col-10">
+                      <mat-form-field>
+                        <input matInput formControlName="telephone" type="text" />
+                        <mat-error
+                          *ngIf="
+                            identityForm.get('telephone').hasError('pattern') &&
+                            (identityForm.get('telephone').touched || identityForm.get('telephone').dirty)
+                          "
+                        >
+                          {{ 'Phone number is not valid' | translate }}
+                        </mat-error>
+                      </mat-form-field>
+                    </div>
+                  </div>                  
+                </div>
+              </div>
+            </div>
+
+            <!-- Date -->
+            <div class="p-grid">
+              <div class="p-col-6 no-padding">
+                <div class="p-grid">
+                  <div class="p-col no-padding-y pad-right-15">
+                    <mat-form-field>
+                      <mat-label>{{ 'CARDDETAIL.Place of Birth' | translate }}</mat-label>
+                      <input matInput formControlName="place_of_birth" type="text" />
+                    </mat-form-field>
+                  </div>
+                </div>
+              </div>
+              <div class="p-col-6 no-padding pad-left-5">
+                <div class="p-grid">
+                  <div class="p-col no-padding-y">
+                    <mat-form-field>
+                      <mat-label>{{ 'QUESTIONNAIRE_FIELDS.Téléphone Fixe' | translate }}</mat-label>
+                      <input type="text" matInput formControlName="fixed_phone" />
+                    </mat-form-field>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="p-grid">
+              <div class="p-col-6 no-padding">
+                <div class="p-grid">
+                  <div class="p-col no-padding-y pad-right-15">
+                    <mat-form-field>
+                      <mat-label>{{ 'CARDDETAIL.City of birth' | translate }}</mat-label>
+                      <input matInput formControlName="city_of_birth" type="text" />
+                    </mat-form-field>
+                  </div>
+                </div>
+              </div>
+              <div class="p-col-6 no-padding pad-left-5">
+                <div class="p-grid">
+                  <div class="p-col no-padding-y">
+                    <mat-form-field>
+                      <mat-label>{{ 'CARDDETAIL.Personal Email' | translate }}</mat-label>
+                      <div class="p-grid no-padding">
+                        <div class="p-col no-padding">
+                          <input matInput formControlName="email" type="email" />
+                        </div>
+                        <div class="p-col no-padding">
+                          <div class="check-email">
+                            <div class="p-grid p-justify-end">
+                              <button [disabled]="identityForm.get('email').invalid || disableButtonVerify" mat-raised-button color="accent" class="custom-button" (click)="verifyEmail()">
+                                {{ 'COMPANY.Check Email Availability' | translate }}
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <mat-error>
+                        <p
+                          *ngIf="
+                            identityForm.get('email').hasError('required') &&
+                            (identityForm.get('email').touched || identityForm.get('email').dirty)
+                          "
+                        >
+                          {{ 'This field is required' | translate }}
+                        </p>
+                        <p
+                          *ngIf="
+                            identityForm.get('email').hasError('email') &&
+                            (identityForm.get('email').touched || identityForm.get('email').dirty)
+                          "
+                        >
+                          {{ 'Invalid email format' | translate }}
+                        </p>
+                      </mat-error>
+                    </mat-form-field>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="p-grid">
+              <div class="p-col-6 no-padding">
+                <div class="p-grid">
+                  <div class="p-col no-padding-y pad-right-15">
+                    <mat-form-field>
+                      <mat-label>{{ 'CARDDETAIL.Country of birth' | translate }}</mat-label>
+                      <input
+                        type="text"
+                        placeholder="{{ 'CARDDETAIL.Country' | translate }}"
+                        matInput
+                        formControlName="country_of_birth"
+                        [matAutocomplete]="autoCountryBirth"
+                        (keyup)="filterCountry(0, 'country_of_birth')"
+                        (focus)="restoreCountry(0, 'country_of_birth')"
+                      />
+                      <mat-autocomplete #autoCountryBirth="matAutocomplete" [panelWidth]="'fit'" [displayWith]="displayCountry.bind(this)">
+                        <mat-option
+                          *ngFor="let option of filteredCountryOfBirth[0]"
+                          [value]="option"
+                          (click)="countrySelected('country_of_birth')"
+                        >
+                          {{ 'COUNTRY.' + option | translate: { default: option } }}
+                        </mat-option>
+                      </mat-autocomplete>
+                      <mat-error
+                        *ngIf="
+                          identityForm.get('country_of_birth').errors &&
+                          (identityForm.get('country_of_birth').touched || identityForm.get('country_of_birth').dirty)
+                        "
+                      >
+                        <ng-container *ngIf="identityForm.get('country_of_birth').hasError('wrongCountry')">
+                          {{ 'Please select valid country' | translate }}
+                        </ng-container>
+                      </mat-error>
+                    </mat-form-field>
+                  </div>
+                </div>
+              </div>
+              <div class="p-col-6 no-padding pad-left-5">
+                <div class="p-grid">
+                  <div class="p-col no-padding-y">
+                    <mat-form-field>
+                      <mat-label>{{ 'CARDDETAIL.Postal code of birth' | translate }}</mat-label>
+                      <input matInput formControlName="post_code_of_birth" type="text" />
+                    </mat-form-field>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="p-grid">
+              <div class="p-col-6 no-padding">
+                <div class="p-grid">
+                  <div class="p-col no-padding-y">
+                    <mat-form-field color="accent">
+                      <mat-label>{{ 'CARDDETAIL.Nationality 1' | translate }}</mat-label>
+                      <input
+                        type="text"
+                        matInput
+                        formControlName="nationality"
+                        [matAutocomplete]="autoNationality1"
+                        (keyup)="filterNationality(identityForm.get('nationality').value)"
+                        (focus)="restoreNationality()"
+                      />
+                      <mat-autocomplete
+                        #autoNationality1="matAutocomplete"
+                        [displayWith]="displayNationality.bind(this)"
+                        [panelWidth]="'fit'"
+                      >
+                        <mat-option *ngFor="let nat of nationalList" [value]="nat.nationality_en" (click)="nationalityOptionClicked()">
+                          {{ 'NATIONALITY.' + nat.nationality_en | translate:{ default: nat.nationality_en } }}
+                        </mat-option>
+                      </mat-autocomplete>
+                      <mat-error
+                        *ngIf="
+                          identityForm.get('nationality').errors &&
+                          (identityForm.get('nationality').touched || identityForm.get('nationality').dirty)
+                        "
+                      >
+                        <ng-container *ngIf="identityForm.get('nationality').hasError('wrongNationality')">
+                          {{ 'Please select valid nationality' | translate }}
+                        </ng-container>
+                      </mat-error>
+                    </mat-form-field>
+                  </div>
+                </div>
+              </div>
+              <div class="p-col-6 no-padding pad-left-5">
+                <div class="p-grid">
+                  <div class="p-col no-padding-y">
+                    <mat-form-field color="accent">
+                      <mat-label>{{ 'CARDDETAIL.Nationality 2' | translate }}</mat-label>
+                      <input
+                        type="text"
+                        matInput
+                        formControlName="nationality_second"
+                        [matAutocomplete]="autoNationality2"
+                        (keyup)="filterNationality(identityForm.get('nationality_second').value)"
+                        (focus)="restoreNationality()"
+                      />
+                      <mat-autocomplete
+                        #autoNationality2="matAutocomplete"
+                        [displayWith]="displayNationality.bind(this)"
+                        [panelWidth]="'fit'"
+                      >
+                        <mat-option *ngFor="let nat of nationalList" [value]="nat.nationality_en" (click)="nationalityOptionClicked()">
+                          {{ 'NATIONALITY.' + nat.nationality_en | translate:{ default: nat.nationality_en } }}
+                        </mat-option>
+                      </mat-autocomplete>
+                      <mat-error
+                        *ngIf="
+                          identityForm.get('nationality_second').errors &&
+                          (identityForm.get('nationality_second').touched || identityForm.get('nationality_second').dirty)
+                        "
+                      >
+                        <ng-container *ngIf="identityForm.get('nationality_second').hasError('wrongNationality')">
+                          {{ 'Please select valid nationality' | translate }}
+                        </ng-container>
+                      </mat-error>
+                    </mat-form-field>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="p-grid">
+              <div class="p-col-6 no-padding">
+                <div class="p-grid">
+                  <div class="p-col no-padding-y pad-right-15">
+                    <mat-form-field>
+                      <mat-label>{{ 'Account holder name' | translate }}</mat-label>
+                      <input matInput formControlName="account_holder_name" type="text" />
+                    </mat-form-field>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="p-grid">
+              <div class="p-col-6 no-padding">
+                <div class="p-grid">
+                  <div class="p-col no-padding-y pad-right-15">
+                    <mat-form-field>
+                      <mat-label>{{ 'IBAN' | translate }}</mat-label>
+                      <input matInput formControlName="iban" type="text" />
+                    </mat-form-field>
+                  </div>
+                </div>
+              </div>
+              <div class="p-col-6 no-padding pad-left-5">
+                <div class="p-grid">
+                  <div class="p-col no-padding-y">
+                    <mat-form-field>
+                      <mat-label>{{ 'BIC' | translate }}</mat-label>
+                      <input matInput formControlName="bic" type="text" />
+                    </mat-form-field>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- <ng-container formGroupName="college">
+              <div class="p-grid">
+                <div class="p-col-6 no-padding">
+                  <div class="p-grid">
+                    <div class="p-col no-padding-y pad-right-15">
+                      <mat-form-field>
+                        <mat-label>{{ 'CARDDETAIL.COLLEGE.College name' | translate }}</mat-label>
+                        <input matInput formControlName="name" type="text" />
+                      </mat-form-field>
+                    </div>
+                  </div>
+                </div>
+                <div class="p-col-6 no-padding pad-left-5">
+                  <div class="p-grid">
+                    <div class="p-col no-padding-y">
+                      <mat-form-field>
+                        <mat-label>{{ 'CARDDETAIL.COLLEGE.College postal code' | translate }}</mat-label>
+                        <input 
+                          matInput
+                          type="text"
+                          formControlName="postal_code"
+                          placeholder="{{ 'CARDDETAIL.COLLEGE.College postal code' | translate }}"
+                          maxlength="5"
+                        />
+                      </mat-form-field>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="p-grid">
+                <div class="p-col-6 no-padding">
+                  <div class="p-grid">
+                    <div class="p-col no-padding-y pad-right-15">
+                      <mat-form-field>
+                        <mat-label>{{ 'CARDDETAIL.COLLEGE.College country' | translate }}</mat-label>
+                        <input
+                          type="text"
+                          matInput
+                          formControlName="country"
+                          [matAutocomplete]="autoCountryCollege"
+                          (keyup)="filterCountry(0, 'college_country')"
+                          (focus)="restoreCountry(0, 'college_country')"
+                        />
+                        <mat-autocomplete #autoCountryCollege="matAutocomplete" [panelWidth]="'fit'" [displayWith]="displayCountry.bind(this)">
+                          <mat-option
+                            *ngFor="let option of filteredCountryCollege[0]"
+                            [value]="option"
+                            (click)="countrySelected('college_country')"
+                          >
+                            {{ 'COUNTRY.' + option | translate: { default: option } }}
+                          </mat-option>
+                        </mat-autocomplete>
+                      </mat-form-field>
+                    </div>
+                  </div>
+                </div>
+                <div class="p-col-6 no-padding pad-left-5">
+                  <div class="p-grid">
+                    <div class="p-col no-padding-y">
+                      <mat-form-field>
+                        <mat-label>{{ 'CARDDETAIL.COLLEGE.College city' | translate }}</mat-label>
+                        <input matInput formControlName="city" type="text" />
+                      </mat-form-field>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </ng-container> -->
+          </div>
+        </div>
+
+        <div class="p-grid" style="padding-top: 10px">
+          <div
+            class="p-col-12 mb-1rem border-white"
+            style="padding-bottom: 0px; margin-left: 7px; margin-right: 7px !important; width: 98%"
+          >
+            <div class="p-grid">
+              <div class="p-col-12 no-padding" style="padding-top: 10px">
+                <div class="p-grid flex-hidden-mr-1">
+                  <div class="p-col no-padding">
+                    <mat-form-field color="accent" class="full-width">
+                      <input matInput type="text" formControlName="address" placeholder="{{ 'CARDDETAIL.Address' | translate }}" />
+                    </mat-form-field>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="p-grid">
+              <div class="p-col-12 no-padding">
+                <div class="p-grid">
+                  <div class="p-col-4 no-padding">
+                    <div class="p-grid flex-hidden-mr-1">
+                      <div class="p-col no-padding">
+                        <mat-form-field color="accent">
+                          <input
+                            matInput
+                            type="text"
+                            formControlName="post_code"
+                            (keyup)="getPostcodeData()"
+                            placeholder="{{ 'CARDDETAIL.Zip Code' | translate }}"
+                            maxlength="5"
+                          />
+                        </mat-form-field>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="p-col-4 no-padding">
+                    <div class="p-grid flex-hidden-mr-1">
+                      <div class="p-col no-padding">
+                        <mat-form-field color="accent">
+                          <input
+                            type="text"
+                            placeholder="{{ 'CARDDETAIL.Country' | translate }}"
+                            matInput
+                            formControlName="country"
+                            [matAutocomplete]="autoCountry"
+                            (keyup)="filterCountry(0, 'country')"
+                            (focus)="restoreCountry(0, 'country')"
+                          />
+                          <mat-autocomplete
+                            #autoCountry="matAutocomplete"
+                            (optionSelected)="getPostcodeData()"
+                            [panelWidth]="'fit'"
+                            [displayWith]="displayCountry.bind(this)"
+                          >
+                            <mat-option *ngFor="let option of filteredCountry[0]" [value]="option" (click)="countrySelected('country')">
+                              {{ 'COUNTRY.' + option | translate: { default: option } }}
+                            </mat-option>
+                          </mat-autocomplete>
+                          <mat-error
+                            *ngIf="
+                              identityForm.get('country').errors &&
+                              (identityForm.get('country').touched || identityForm.get('country').dirty)
+                            "
+                          >
+                            <ng-container *ngIf="identityForm.get('country').hasError('wrongCountry')">
+                              {{ 'Please select valid country' | translate }}
+                            </ng-container>
+                          </mat-error>
+                        </mat-form-field>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="p-grid">
+              <div class="p-col-12 no-padding">
+                <div class="p-grid">
+                  <div class="p-col-4 no-padding">
+                    <div class="p-grid flex-hidden-mr-1">
+                      <div class="p-col no-padding">
+                        <mat-form-field color="accent" class="full-width">
+                          <input
+                            type="text"
+                            matInput
+                            placeholder="{{ 'CARDDETAIL.City' | translate }}"
+                            formControlName="city"
+                            [matAutocomplete]="autoCity"
+                            (keyup)="filterCity(0)"
+                          />
+                          <mat-autocomplete #autoCity="matAutocomplete" [panelWidth]="'fit'">
+                            <mat-option *ngFor="let option of filteredCities[0]" [value]="option">
+                              {{ option }}
+                            </mat-option>
+                          </mat-autocomplete>
+                        </mat-form-field>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="p-col-4 no-padding">
+                    <div class="p-grid flex-hidden-mr-1">
+                      <div class="p-col no-padding">
+                        <mat-form-field color="accent" class="full-width">
+                          <input
+                            type="text"
+                            placeholder="{{ 'CARDDETAIL.Department' | translate }}"
+                            matInput
+                            formControlName="department"
+                            [matAutocomplete]="autoDepartment"
+                            (keyup)="filterDepartment(0)"
+                          />
+                          <mat-autocomplete #autoDepartment="matAutocomplete" [panelWidth]="'fit'">
+                            <mat-option *ngFor="let option of filteredDepartments[0]" [value]="option">
+                              {{ option }}
+                            </mat-option>
+                          </mat-autocomplete>
+                        </mat-form-field>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="p-col-4 no-padding">
+                    <div class="p-grid flex-hidden-mr-1">
+                      <div class="p-col no-padding">
+                        <mat-form-field color="accent" class="full-width">
+                          <input
+                            type="text"
+                            matInput
+                            placeholder="{{ 'CARDDETAIL.Region' | translate }}"
+                            formControlName="region"
+                            [matAutocomplete]="autoRegion"
+                            (keyup)="filterRegion(0)"
+                          />
+                          <mat-autocomplete #autoRegion="matAutocomplete" [panelWidth]="'fit'">
+                            <mat-option *ngFor="let option of filteredRegions[0]" [value]="option">
+                              {{ option }}
+                            </mat-option>
+                          </mat-autocomplete>
+                        </mat-form-field>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="p-grid" style="padding-top: 10px">
+          <div
+            class="p-col-12 mb-1rem border-white"
+            style="padding-bottom: 0px; margin-left: 7px; margin-right: 7px !important; width: 98%"
+            formGroupName="college"
+          >
+            <div class="p-grid">
+              <div class="p-col-12 no-padding" style="padding-top: 10px">
+                <div class="p-grid flex-hidden-mr-1">
+                  <div class="p-col no-padding">
+                    <mat-form-field color="accent" class="full-width">
+                      <input matInput type="text" formControlName="name" placeholder="{{ 'CARDDETAIL.COLLEGE.College name' | translate }}" />
+                    </mat-form-field>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="p-grid">
+              <div class="p-col-12 no-padding" style="padding-top: 10px">
+                <div class="p-grid flex-hidden-mr-1">
+                  <div class="p-col no-padding">
+                    <mat-form-field>
+                      <input matInput formControlName="city" type="text" placeholder="{{ 'CARDDETAIL.COLLEGE.College city' | translate }}" />
+                    </mat-form-field>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="p-grid">
+              <div class="p-col-12 no-padding">
+                <div class="p-grid">
+                  <div class="p-col-4 no-padding">
+                    <div class="p-grid flex-hidden-mr-1">
+                      <div class="p-col no-padding">
+                        <mat-form-field color="accent">
+                          <input
+                            matInput
+                            type="text"
+                            formControlName="postal_code"
+                            placeholder="{{ 'CARDDETAIL.COLLEGE.College postal code' | translate }}"
+                            maxlength="5"
+                          />
+                        </mat-form-field>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="p-col-4 no-padding">
+                    <div class="p-grid flex-hidden-mr-1">
+                      <div class="p-col no-padding">
+                        <mat-form-field color="accent">
+                          <input
+                            type="text"
+                            placeholder="{{ 'CARDDETAIL.COLLEGE.College country' | translate }}"
+                            matInput
+                            formControlName="country"
+                            [matAutocomplete]="autoCountryCollege"
+                            (keyup)="filterCountry(0, 'college_country')"
+                            (focus)="restoreCountry(0, 'college_country')"
+                          />
+                          <mat-autocomplete #autoCountryCollege="matAutocomplete" [panelWidth]="'fit'" [displayWith]="displayCountry.bind(this)">
+                            <mat-option 
+                              *ngFor="let option of filteredCountryCollege[0]"
+                              [value]="option"
+                              (click)="countrySelected('college_country')"
+                            >
+                              {{ 'COUNTRY.' + option | translate: { default: option } }}
+                            </mat-option>
+                          </mat-autocomplete>
+                        </mat-form-field>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </mat-card>
+    </fieldset>
+  </div>
+</div>
+
+<div *ngIf="isWaitingForResponse" class="loading-indicator">
+  <mat-progress-spinner mode="indeterminate" color="accent"></mat-progress-spinner>
+</div>

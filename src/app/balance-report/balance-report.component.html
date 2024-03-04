@@ -1,0 +1,403 @@
+<ms-filter-breadcrumb [filterBreadcrumbData]="filterBreadcrumbData" (removeFilterTrigger)="removeFilterBreadcrumb($event)"></ms-filter-breadcrumb>
+
+<div class="top-space">
+  <table
+    mat-table
+    matSort
+    (matSortChange)="sortData($event)"
+    [dataSource]="dataSource"
+    class="mat-elevation-z8"
+    data-cy="table-balance-report"
+  >
+    <!-- ROW RESET START -->
+    <ng-container matColumnDef="reset">
+      <th mat-header-cell *matHeaderCellDef colspan="100%" class="action-header-column text-right" data-cy="table-col-reset">
+        <div class="p-grid">
+          <div class="p-col-6 filter-date">
+            <div class="width-datepick">
+              <mat-form-field class="form-field-above">
+                <input
+                  matInput
+                  (click)="fromDatePick.open()"
+                  readonly
+                  class="form-field"
+                  [matDatepicker]="fromDatePick"
+                  [formControl]="fromDateFilter"
+                  placeholder="{{ 'From' | translate }}"
+                  [max]="toDateFilter.value"
+                  data-cy="table-date-from"
+                />
+                <mat-datepicker-toggle matSuffix [for]="fromDatePick"></mat-datepicker-toggle>
+                <mat-datepicker #fromDatePick></mat-datepicker>
+              </mat-form-field>
+            </div>
+            <div class="width-datepick">
+              <mat-form-field class="form-field-above">
+                <input
+                  matInput
+                  (click)="toDatePick.open()"
+                  readonly
+                  class="form-field"
+                  [matDatepicker]="toDatePick"
+                  [formControl]="toDateFilter"
+                  placeholder="{{ 'To' | translate }}"
+                  [min]="fromDateFilter.value"
+                  data-cy="table-date-to"
+                />
+                <mat-datepicker-toggle matSuffix [for]="toDatePick"></mat-datepicker-toggle>
+                <mat-datepicker #toDatePick></mat-datepicker>
+              </mat-form-field>
+            </div>
+          </div>
+          <div class="p-col-6 text-right action-above-table">
+            <!-- <button mat-raised-button matTooltip="{{ 'Last Transaction' | translate }}" [disabled]="isWaitingForResponse" color="accent">
+                {{ 'Last Transaction' | translate }}
+              </button> -->
+            <button
+              mat-raised-button
+              color="primary"
+              matTooltip="{{ 'Export Payout' | translate }}"
+              [disabled]="isWaitingForResponse"
+              *ngIf="!isProd && permission?.exportCsvFinanceBalanceReportPerm()"
+              (click)="exportPayout()"
+            >
+              <mat-icon svgIcon="file-excel" class="mat-icon-svgIcon"></mat-icon>
+              {{ 'Export Payout' | translate }}
+            </button>
+            <button
+              mat-raised-button
+              color="primary"
+              matTooltip="{{ 'Export' | translate }}"
+              [disabled]="isWaitingForResponse"
+              *ngIf="!isProd && permission?.exportCsvFinanceBalanceReportPerm()"
+              (click)="getDataExportForCheckbox(0)"
+              data-cy="button-export"
+            >
+              <mat-icon svgIcon="file-excel" class="mat-icon-svgIcon"></mat-icon>
+              {{ 'Export' | translate }}
+            </button>
+            <button
+              mat-raised-button
+              color="primary"
+              (click)="resetTable()"
+              [disabled]="isWaitingForResponse"
+              matTooltip="{{ 'Reset Filter' | translate }}"
+              *ngIf="permission?.resetFinanceBalanceReportPerm()"
+              data-cy="button-reset"
+            >
+              <mat-icon svgIcon="loop" class="mat-icon-svgIcon"></mat-icon>
+              {{ 'RESET' | translate }}
+            </button>
+          </div>
+        </div>
+      </th>
+    </ng-container>
+    <!-- ROW RESET END -->
+    <!---ROW FILTER START-->
+    <ng-container matColumnDef="selectFilter" sticky>
+      <th mat-header-cell *matHeaderCellDef></th>
+    </ng-container>
+    <ng-container matColumnDef="dateFilter">
+      <th mat-header-cell *matHeaderCellDef>
+        <mat-form-field>
+          <input
+            matInput
+            (click)="transactionDatePick.open()"
+            [formControl]="dateFilter"
+            readonly
+            class="form-field"
+            [matDatepicker]="transactionDatePick"
+            data-cy="table-filter-date-initiated"
+          />
+          <mat-datepicker-toggle matSuffix [for]="transactionDatePick"></mat-datepicker-toggle>
+          <mat-datepicker #transactionDatePick></mat-datepicker>
+        </mat-form-field>
+      </th>
+    </ng-container>
+    <ng-container matColumnDef="legalEntityFilter">
+      <th mat-header-cell *matHeaderCellDef>
+        <!-- <ng-select
+          class="program-dropdown"
+          [appendTo]="'body'"
+          placeholder="{{ 'Filter' | translate }}"
+          [formControl]="legalEntityFilter"
+          [clearable]="false"
+          data-cy="table-filter-legal-entity"
+        >
+          <ng-option value="" data-cy="table-filter-legal-entity-option">
+            {{ 'All' | translate }}
+          </ng-option>
+          <ng-option *ngFor="let item of listOfLegalEntity" [value]="item.legal_entity_name" data-cy="table-filter-legal-entity-option">
+            {{ item.legal_entity_name }}
+          </ng-option>
+        </ng-select> -->
+        <ng-select
+          class="margin custom-ngselect-content custom-dropdownpanel"
+          [items]="listOfLegalEntity"
+          bindValue="legal_entity_name"
+          bindLabel="legal_entity_name"
+          [appendTo]="'body'"
+          [multiple]="true"
+          [closeOnSelect]="false"
+          [clearable]="false"
+          placeholder="{{ 'search' | translate }}"
+          [formControl]="legalEntityFilter">
+          <ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index">
+            <input id="item-{{ index }}" type="checkbox" [ngModel]="item$.selected" /> {{ item.legal_entity_name }}
+          </ng-template>
+          <ng-template ng-header-tmp *ngIf="listOfLegalEntity?.length">
+            <mat-checkbox
+              class="all-input"
+              style="cursor: pointer"
+              [checked]="isAllDropdownSelected('legal_entity')"
+              [indeterminate]="isSomeDropdownSelected('legal_entity')"
+              (change)="selectAllData($event, 'legal_entity')">
+              {{ 'AllF' | translate }}
+            </mat-checkbox>
+          </ng-template>
+        </ng-select>
+      </th>
+    </ng-container>
+    <ng-container matColumnDef="studentFilter">
+      <th mat-header-cell *matHeaderCellDef>
+        <mat-form-field floatLabel="never">
+          <input
+            matInput
+            class="form-field"
+            [formControl]="studentFilter"
+            placeholder="{{ 'search' | translate }}"
+            data-cy="table-filter-student"
+          />
+        </mat-form-field>
+      </th>
+    </ng-container>
+    <ng-container matColumnDef="numberFilter">
+      <th mat-header-cell *matHeaderCellDef>
+        <mat-form-field>
+          <input
+            matInput
+            class="form-field"
+            [formControl]="studentNumberFilter"
+            placeholder="{{ 'search' | translate }}"
+            data-cy="table-filter-student-number"
+          />
+        </mat-form-field>
+      </th>
+    </ng-container>
+    <ng-container matColumnDef="statusFilter">
+      <th mat-header-cell *matHeaderCellDef>
+          <!-- <mat-select [formControl]="statusFilter" multiple panelClass="filterPanel" [disableOptionCentering]="true">
+            <mat-option *ngFor="let status of statusFilterDropdown" [value]="status?.value">
+              {{ 'BALANCE_STATUS.' + status?.viewValue | translate }}
+            </mat-option>
+          </mat-select> -->
+          <ng-select
+            class="margin custom-ngselect-content custom-dropdownpanel"
+            [items]="statusFilterDropdown"
+            bindValue="value"
+            bindLabel="label"
+            [appendTo]="'body'"
+            [multiple]="true"
+            [closeOnSelect]="false"
+            [clearable]="false"
+            placeholder="{{ 'search' | translate }}"
+            [formControl]="statusFilter">
+            <ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index">
+              <input id="item-{{ index }}" type="checkbox" [ngModel]="item$.selected" /> {{ item.label }}
+            </ng-template>
+            <ng-template ng-header-tmp *ngIf="statusFilterDropdown?.length">
+              <mat-checkbox
+                class="all-input"
+                style="cursor: pointer"
+                [checked]="isAllDropdownSelected('status')"
+                [indeterminate]="isSomeDropdownSelected('status')"
+                (change)="selectAllData($event, 'status')">
+                {{ 'AllF' | translate }}
+              </mat-checkbox>
+            </ng-template>
+          </ng-select>
+      </th>
+    </ng-container>
+    <ng-container matColumnDef="currencyFilter">
+      <th mat-header-cell *matHeaderCellDef></th>
+    </ng-container>
+    <ng-container matColumnDef="amountFilter">
+      <th mat-header-cell *matHeaderCellDef></th>
+    </ng-container>
+    <ng-container matColumnDef="actionFilter">
+      <th mat-header-cell *matHeaderCellDef></th>
+    </ng-container>
+    <!--ROW FILTER END-->
+    <!-- ROW HEADER AND CONTENT START -->
+    <ng-container matColumnDef="select" class="mat-column-select">
+      <th mat-header-cell *matHeaderCellDef class="text-center" data-cy="table-col-selection">
+        <mat-checkbox
+          (change)="$event ? masterToggle() : null"
+          (change)="showOptions('all')"
+          [checked]="(selection.hasValue() && isAllSelected()) || isCheckedAll"
+          [indeterminate]="selection.hasValue() && (dataUnselectUser?.length > 0 || !isAllSelected())"
+          [aria-label]="checkboxLabel()"
+        >
+        </mat-checkbox>
+      </th>
+      <td mat-cell *matCellDef="let row" class="text-center" data-cy="table-col-selection">
+        <mat-checkbox
+          (click)="$event.stopPropagation()"
+          (change)="$event ? selection.toggle(row._id) : null"
+          [checked]="selection.isSelected(row._id) || (isCheckedAll && !dataUnselectUser.includes(row?._id))"
+          (change)="showOptions('one', row)"
+          [aria-label]="checkboxLabel(row._id)"
+        >
+        </mat-checkbox>
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="legal_entity">
+      <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'Legal Entity' | translate }}" data-cy="table-col-legal-entity">
+        <h5 mat-sort-header="legal_entity">{{ 'Legal Entity' | translate }}</h5>
+      </th>
+      <td mat-cell *matCellDef="let element" matTooltip="{{ element?.legal_entity?.legal_entity_name }}" data-cy="table-col-legal-entity">
+        <ng-container *ngIf="element?.legal_entity?.legal_entity_name">
+          {{ element?.legal_entity?.legal_entity_name }}
+        </ng-container>
+        <ng-container *ngIf="!element.legal_entity"> - </ng-container>
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="number">
+      <th
+        mat-header-cell
+        *matHeaderCellDef
+        matTooltip="{{ 'student number' | translate }}"
+        matTooltipPosition="above"
+        data-cy="table-col-student-number"
+      >
+        <h5>
+          <mat-icon class="mat-icon-status"> account_box </mat-icon>
+        </h5>
+      </th>
+      <td
+        mat-cell
+        *matCellDef="let element"
+        matTooltip="{{ element?.candidate_id?.candidate_unique_number }}"
+        data-cy="table-col-student-number"
+      >
+        {{ element?.candidate_id?.candidate_unique_number }}
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="candidate">
+      <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'Student' | translate }}" data-cy="table-col-student">
+        <h5 mat-sort-header="candidate_last_name">{{ 'Student' | translate }}</h5>
+      </th>
+      <td
+        mat-cell
+        *matCellDef="let element"
+        matTooltip="{{ element?.candidate_id?.last_name | uppercase }} {{ element?.student?.first_name }}"
+        data-cy="table-col-student"
+      >
+        <ng-container *ngIf="element?.candidate_id">
+          <ng-container *ngIf="element?.candidate_id?.civility === 'neutral'">
+            {{ element?.candidate_id?.last_name | uppercase }} {{ element?.candidate_id?.first_name }}
+          </ng-container>
+          <ng-container *ngIf="element?.candidate_id?.civility !== 'neutral'">
+            {{ element?.candidate_id?.last_name | uppercase }} {{ element?.candidate_id?.first_name }}
+            {{ element?.candidate_id?.civility | translate }}
+          </ng-container>
+        </ng-container>
+        <ng-container *ngIf="!element?.candidate_id"> - </ng-container>
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="currency">
+      <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'Currency' | translate }}" data-cy="table-col-currency">
+        <h5 mat-sort-header="currency">{{ 'Currency' | translate }}</h5>
+      </th>
+      <td mat-cell *matCellDef="let element" matTooltip="{{ element?.currency }}" data-cy="table-col-currency">
+        {{ element?.currency }}
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="amount">
+      <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'Amount' | translate }}" data-cy="table-col-amount">
+        <h5 mat-sort-header="amount">{{ 'Amount' | translate }}</h5>
+      </th>
+      <td mat-cell *matCellDef="let element" matTooltip="{{ translateTotal(element?.amount) }}" data-cy="table-col-amount">
+        {{ translateTotal(element?.amount) }}
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="transaction_status">
+      <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'Status' | translate }}" data-cy="table-col-status">
+        <h5 style="text-align: center;">{{ 'Status' | translate }}</h5>
+      </th>
+      <td
+        mat-cell
+        *matCellDef="let element"
+        matTooltip="{{ 'BALANCE_STATUS_DESC.' + element?.transaction_status | translate }}"
+        data-cy="table-col-status"
+      >
+        {{
+          element?.transaction_status === 'Chargeback'
+            ? ('chargeback' | translate)
+            : ('BALANCE_STATUS.' + element?.transaction_status | translate)
+        }}
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="date">
+      <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'Date Initiated' | translate }}" data-cy="table-col-date-initiated">
+        <h5 mat-sort-header="date">{{ 'Date Initiated' | translate }}</h5>
+      </th>
+      <td
+        mat-cell
+        *matCellDef="let element"
+        matTooltip="{{ parseDateToLocal(element?.date_initiated) }}"
+        data-cy="table-col-date-initiated"
+      >
+        {{ parseDateToLocal(element?.date_initiated) }} {{ parseTimeToLocal(element?.date_initiated) }}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="action">
+      <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'Action' | translate }}" data-cy="table-col-action">
+        <h5>{{ 'Action' | translate }}</h5>
+      </th>
+      <td mat-cell *matCellDef="let element" data-cy="table-col-action">
+        <button
+          *ngIf="element?.transaction_status?.toLowerCase() === 'payout' && permission?.viewBalanceDetailFinanceBalanceReportPerm()"
+          mat-icon-button
+          class="margin-right-button"
+          matTooltip="{{ 'Payout Detail' | translate }}"
+          matTooltipPosition="above"
+          (click)="viewDetail(element._id)"
+          data-cy="table-action-payout-detail"
+        >
+          <mat-icon svgIcon="eye"></mat-icon>
+        </button>
+      </td>
+    </ng-container>
+    <!-- ROW HEADER AND CONTENT END -->
+    <ng-container matColumnDef="loading">
+      <th mat-header-cell *matHeaderCellDef colspan="100%" class="text-center">
+        <div class="center-spinner">
+          <mat-spinner color="accent" data-cy="table-spinner"></mat-spinner>
+        </div>
+      </th>
+    </ng-container>
+    <tr mat-header-row *matHeaderRowDef="['reset']"></tr>
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-header-row *matHeaderRowDef="filterColumns"></tr>
+    <tr mat-header-row *matHeaderRowDef="['loading']" [hidden]="!isWaitingForResponse"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns" [hidden]="isWaitingForResponse"></tr>
+  </table>
+  <div *ngIf="noData | async" class="no-records" data-cy="no-data">
+    {{ 'No record for Balance Report' | translate }}
+  </div>
+  <div [ngClass]="{ hide: noData | async }">
+    <mat-paginator
+      [ngClass]="{ 'hide-pagination-buttons': dataCount <= 10 }"
+      [length]="dataCount"
+      [hidePageSize]="true"
+      [pageSize]="[10]"
+      showFirstLastButtons
+      data-cy="mat-paginator"
+    ></mat-paginator>
+  </div>
+</div>
+<div *ngIf="isLoading" class="inner-loading-indicator">
+  <mat-spinner color="accent" [diameter]="100" data-cy="page-spinner"></mat-spinner>
+</div>

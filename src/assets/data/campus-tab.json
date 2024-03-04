@@ -1,0 +1,72 @@
+[
+    {
+        "school": "EFAP",
+        "name": "Aix-en-Provenance",
+        "level": [
+            "GE 1",
+            "GE 2",
+            "GE 3",
+            "GE 4",
+            "GE 5",
+            "MBA MKG",
+            "MBA EVENT",
+            "MBA DIGITAL FT",
+            "MBA SANTE",
+            "MBA FASHION"            
+        ],
+        "campus": [
+            "Aix-en-Provenance",
+            "Bordeaux",
+            "Lille",
+            "Lyon",
+            "Montpellier",
+            "Paris",
+            "Strasbourg",
+            "Toulouse",
+            "New York",
+            "Shanghai"
+        ]
+    },
+    {
+        "school": "ICART",
+        "name": "Toulouse",
+        "level": [
+            "GE 1",
+            "GE 2",
+            "GE 3",
+            "GE 4",
+            "GE 5",
+            "MBA CULTURE",
+            "MBA EVENT",
+            "MBA AUDIOVISUEL"            
+        ],
+        "campus": [
+            "Bordeaux",
+            "Lille",
+            "Lyon",
+            "Paris",
+            "New York"
+        ]
+    },
+    {
+        "school": "BRASSART",
+        "name": "Montpellier",
+        "level": [
+            "GE 1",
+            "GE 2",
+            "GE 3",
+            "GE 4",
+            "GE 5"         
+        ],
+        "campus": [
+            "Bordeaux",
+            "Lille",
+            "Lyon",
+            "Paris",
+            "Montpellier",
+            "Toulouse",
+            "Strasbourg",
+            "Nantes"
+        ]
+    }
+]

@@ -1,0 +1,104 @@
+@import '~assets/scss/theme/admtc.variables';
+@import '~assets/scss/theme/admtc';
+
+.imgContainer:hover .overlay {
+  opacity: 1;
+}
+
+.imgContainer {
+  height: 200px;
+  text-align: center;
+  overflow: hidden;
+  position: relative;
+  background-color: transparent;
+}
+.text {
+  width: 165px;
+  color: white;
+  font-size: 20px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -webkit-transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+  text-align: center;
+  margin-left: 0;
+}
+
+.no-image {
+  height: 200px;
+  background-color: #6f6f6f;
+  color: white;
+  text-align: center;
+  cursor: pointer;
+}
+.overlay {
+  position: absolute;
+  height: 200px;
+  width: 100%;
+  bottom: 0px;
+  opacity: 0;
+  transition: 0.5s ease;
+  background-color: #2f2f2f !important;
+  cursor: pointer;
+}
+
+.logo-img-wrapper {
+  height: 200px;
+  background-color: #6f6f6f;
+  margin: auto;
+  text-align: center;
+  overflow: hidden;
+  position: relative;
+  margin-left: 0px;
+}
+.text-logo-section {
+  width: 200px;
+  display: flex;
+  justify-content: center;
+}
+
+.buttonContainer {
+  padding-top: 0.5rem;
+  text-align: center;
+}
+.center-image {
+  max-height: 100%;
+  max-width: 100%;
+  width: auto;
+  height: auto;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  margin: auto;
+  padding: 3px;
+}
+.image-text {
+  font-size: larger;
+  font-weight: bold;
+  padding-top: 1rem;
+}
+.logo-spinner-wrapper {
+  height: 200px;
+  width: 173px;
+  background-color: #6f6f6f;
+  margin: auto;
+  display: flex;
+  align-items: center;
+}
+
+.loading-indicator {
+  position: fixed;
+  z-index: 999;
+  height: 2em;
+  width: 6em;
+  overflow: show;
+  margin: auto;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+}

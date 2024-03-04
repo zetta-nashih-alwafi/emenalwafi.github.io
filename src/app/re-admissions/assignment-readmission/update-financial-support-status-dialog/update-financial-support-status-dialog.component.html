@@ -1,0 +1,49 @@
+<div class="dialog-border" cdkDrag cdkDragRootElement=".cdk-overlay-pane" cdkDragHandle>
+  <div class="dialogTitleWrapper">
+    <div class="p-grid">
+      <div class="p-col-10 no-padding">
+        <h3 class="dialogTitle">{{ 'Change the financial situation' | translate }}</h3>
+      </div>
+      <div class="w-65 no-padding">
+        <button mat-icon-button class="close-icon float-right" (click)="closeDialog()" tabindex="-1">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div mat-dialog-content class="mat-dialog-content dialog-body" style="overflow: hidden !important">
+  <div [formGroup]="financialSupportForm">
+    <div class="p-grid" style="margin-bottom: 0.5em">
+      <div class="p-col-12" style="align-self: center">
+        <p>{{ 'Change the financial situation of' | translate }} {{ formData?.length }} {{ 'students selected:' | translate }}</p>
+      </div>
+      <div class="p-col-12" style="align-self: center">
+        <div class="p-grid">
+          <div class="p-col-3" style="margin-top: 15px">{{ 'Change to:' | translate }}*</div>
+          <div class="p-col-9">
+            <mat-form-field>
+              <mat-select formControlName="financial_situation" placeholder="{{ 'Financial situation' | translate }}" required>
+                <mat-option [value]="item" *ngFor="let item of typeList">{{ 'Status Financial Support.' + item | translate }}</mat-option>
+              </mat-select>
+              <mat-error *ngIf="financialSupportForm.get('financial_situation').hasError('required')">{{
+                'This field is required' | translate
+              }}</mat-error>
+            </mat-form-field>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div mat-dialog-actions class="justify-content-end mr-10">
+  <button mat-button mat-raised-button color="warn" (click)="closeDialog()">{{ 'CANCEL' | translate }}</button>
+  <button mat-button mat-raised-button color="primary" class="mr-0" (click)="submit()">
+    {{ 'Validate' | translate }}
+  </button>
+</div>
+<div *ngIf="isWaitingForResponse" class="loading-indicator">
+  <mat-progress-spinner mode="indeterminate" color="accent"></mat-progress-spinner>
+</div>

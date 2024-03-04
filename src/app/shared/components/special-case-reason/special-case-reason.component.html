@@ -1,0 +1,36 @@
+<div class="header-dialog">
+  <div class="p-grid">
+    <div class="p-col-10 no-padding">
+      <h3>{{ 'Reason' | translate }}</h3>
+    </div>
+    <div class="no-padding p-col-2">
+      <button mat-icon-button class="close-icon float-right" (click)="close()" tabindex="-1">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+  </div>
+</div>
+
+<div mat-dialog-content class="mat-dialog-content" [formGroup]="form">
+  <div class="p-col-12 no-padding">
+    <mat-form-field appearance="outline">
+      <textarea
+        matInput
+        placeholder="{{ 'Type a note' | translate }}"
+        formControlName="comment"
+        cdkTextareaAutosize
+        cdkAutosizeMinRows="3"
+      ></textarea>
+    </mat-form-field>
+  </div>
+</div>
+
+<mat-dialog-actions class="action-button">
+  <button mat-raised-button color="warn" mat-dialog-close>{{ 'CANCEL' | translate }}</button>
+  <button mat-raised-button color="primary" (click)="validate()">
+    {{ 'Validate' | translate }}
+  </button>
+</mat-dialog-actions>
+<div *ngIf="isWaitingForResponse" class="loading-indicator">
+  <mat-spinner color="accent" [diameter]="100"></mat-spinner>
+</div>

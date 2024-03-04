@@ -1,0 +1,42 @@
+<div class="dialog-border" cdkDrag cdkDragRootElement=".cdk-overlay-pane" cdkDragHandle>
+    <div class="dialogTitleWrapper header-dialog">
+      <div class="p-grid">
+        <div class="p-col-10 no-padding">
+          <h3 class="dialogTitle">{{ 'BTN_ADMISSIONDOCUMENT' | translate }}</h3>
+        </div>
+        <div class="w-90 no-padding">
+          <button mat-icon-button class="close-icon float-right" (click)="closeDialog()" tabindex="-1">
+            <mat-icon>close</mat-icon>
+          </button>
+        </div>
+      </div>
+    </div>
+</div>
+  
+<div mat-dialog-content class="mat-dialog-content dialog-body">
+    <div class="p-grid">
+        <div class="p-col-12">
+            {{ 'Tick the box of the document you wish to connect to be selected program(s)' | translate }} : *
+        </div>
+        <div class="p-col-12">
+            <form class="p-grid" *ngIf="blockList?.length" [formGroup]="admissionDocForm">
+                <div class="test-item p-col-12 pad-y-none" *ngFor="let block of blockList; let blockIndex = index">
+                    <mat-checkbox [checked]="block?.isChecked" (change)="onCheckTest($event, block, blockIndex)">{{ block?.name | translate}}</mat-checkbox>
+                </div>
+            </form>
+            <div *ngIf="!isValid" style="color: #f44336; font-size: 16px; padding: 8px; transition: ease-in-out 0.5ms;">
+              {{ 'This field is required' | translate }} !
+            </div>
+        </div>
+    </div>
+    <div *ngIf="isWaitingForResponse" class="inner-loading-indicator">
+      <mat-spinner color="accent" [diameter]="100"></mat-spinner>
+    </div>
+</div>
+  
+<div mat-dialog-actions class="justify-content-end custom-padding">
+    <button mat-button mat-raised-button color="warn" (click)="closeDialog()">{{ 'Cancel' | translate }}</button>
+    <button mat-button mat-raised-button color="primary" class="mr-0" (click)="validate()">
+        {{ 'Validate' | translate }}
+    </button>
+</div>  

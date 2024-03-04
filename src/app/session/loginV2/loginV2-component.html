@@ -1,0 +1,240 @@
+<div class="gene-login login-v2 pad-y-xl primary-login-container">
+  <div fxLayout="row" fxLayoutWrap="wrap" class="cookie-consent-container" *ngIf="!this.visited">
+    <div fxFlex="90" fxFlex.lt-md="100">
+      <div fxFlex class="cookie-consent-text">
+        <span class="white">{{ 'PRIVACY_POLICY.COOKIES_CONSENT_TEXT' | translate }}</span>
+        <span (click)="gotoPrivacyPolicy()" class="privacy-hypertext white">{{ 'PRIVACY_POLICY.LEARN_MORE' | translate }}</span>
+      </div>
+    </div>
+    <div fxFlex="7" fxFlex.lt-md="100">
+      <button (click)="setVisited()" mat-flat-button class="btn-standart full-wid ok-button">
+        {{ 'PRIVACY_POLICY.GOT_IT' | translate }}
+      </button>
+    </div>
+  </div>
+  <div fxLayout="row" fxLayoutAlign="center start">
+    <div fxLayout="column" fxFlex="100" fxFlex.xs="90" fxFlex.sm="80" fxFlex.md="95" fxFlex.lg="70" fxFlex.xl="60">
+      <div fxLayout="row wrap" fxLayoutAlign="center stretch" class="height-full pad-t-xl pad-b-xl form-wrap-row set-resp-space">
+        <div fxLayout="column" fxFlex="100" fxFlex.xs="100" fxFlex.sm="100" fxFlex.md="60" fxFlex.lg="60" fxFlex.xl="60">
+          <mat-card class="login-background gene-login-v2" [ngClass]="{'h-550': isUserHasOneEntity}">
+            <div>
+              <div>
+                <span class="float-right">
+                  <ms-language-drop-down></ms-language-drop-down>
+                </span>
+                <span fxLayout="column" fxLayoutAlign="center center" class="mrgn-b-lg text-center m-1">
+                  <h1 style="color: #f2de57">{{ appData && appData.group_name ? appData.group_name : 'Groupe EDH' }}</h1>
+                  <p class="white">{{ 'USERS.SETPASSWORD.WELCOME' | translate }}</p>
+                </span>
+              </div>
+              <form #form="ngForm" (ngSubmit)="login(form.value)" fxLayoutAlign="center start">
+                <div
+                  class="white-form-label"
+                  fxLayout="column"
+                  fxFlex.xs="100"
+                  fxFlex.sm="80"
+                  fxFlex.md="80"
+                  fxFlex.lg="70"
+                  fxFlex.xl="70"
+                  fxLayoutAlign="start"
+                >
+                  <mat-form-field color="accent" class="full-wid mrgn-b-md white">
+                    <input
+                      class="mrgn-t-none white"
+                      matInput
+                      value="email"
+                      placeholder="{{ 'LOGIN.EMAIL' | translate }}"
+                      type="text"
+                      name="email"
+                      required
+                      email
+                      #name="ngModel"
+                      [(ngModel)]="email"
+                    />
+                    <span matSuffix><i class="material-icons">verified_user</i></span>
+                    <mat-error *ngIf="name.invalid && (name.dirty || name.touched)" class="alert alert-danger">
+                      <mat-error *ngIf="name.errors.required"> {{'LOGIN.EMAIL_REQUIRED' |translate}} </mat-error>
+                      <mat-error *ngIf="name.errors.email"> {{'LOGIN.EMAIL_INVALID' |translate}} </mat-error>
+                    </mat-error>
+                  </mat-form-field>
+                  <mat-form-field color="accent" class="full-wid mrgn-b-md white">
+                    <input
+                      class="mrgn-t-none white"
+                      matInput
+                      placeholder="{{ 'LOGIN.PASSWORD' | translate }}"
+                      type="password"
+                      name="password"
+                      required
+                      #pass="ngModel"
+                      #passwordField
+                      [(ngModel)]="password"
+                    />
+                    <span matSuffix>
+                      <ng-container *ngIf="password?.length">
+                        <mat-icon (click)="showPassword()" *ngIf="!passwordVisibility" class="toggle-password-icon">visibility</mat-icon>
+                        <mat-icon (click)="showPassword()" *ngIf="passwordVisibility" class="toggle-password-icon">visibility_off</mat-icon>
+                      </ng-container>
+                      <i class="material-icons">vpn_key</i>
+                    </span>
+                    <mat-error *ngIf="pass.invalid && (pass.dirty || pass.touched)" class="alert alert-danger">
+                      <mat-error *ngIf="pass.errors.required"> {{'LOGIN.PASSWORD REQUIRED' |translate}} </mat-error>
+                    </mat-error>
+                  </mat-form-field>
+                  <div>
+                    <div class="p-grid">
+                      <div class="p-col-12 no-padding">
+                        <div class="p-col-12 no-padding">
+                          <!-- entity radio group -->
+                          <mat-form-field *ngIf="email && !isEmailInvalid && !isUserHasOneEntity" class="full-width radioButtons">
+                            <mat-label>{{ 'Select Entity*' | translate }}</mat-label>
+                            <mat-select class="select-login">
+                              <mat-option
+                                (click)="setEntityChecked(entity.label)"
+                                *ngFor="let entity of entityVisible"
+                                [value]="entity.label"
+                              >
+                                {{ entity.label | translate }}
+                              </mat-option>
+                            </mat-select>
+                          </mat-form-field>
+                        </div>
+                        <!-- EDH do not have school type pc / cr -->
+                        <!-- <div [ngClass]="{'p-col-6 field-entity-y': selectedEntityName === 'academic', 'p-col-12': selectedEntityName !== 'academic'}" class="no-padding">
+                          <mat-form-field
+                            *ngIf="selectedEntityName === 'academic' && !isEmailInvalid && !isUserHasOneEntity"
+                            class="full-width radioButtons"
+                          >
+                            <mat-label>{{ 'Select School Type*' | translate }}</mat-label>
+                            <mat-select class="select-login">
+                              <mat-option
+                                (click)="getSchools(schoolType.label)"
+                                *ngFor="let schoolType of schoolTypeVisible"
+                                [value]="schoolType.label"
+                              >
+                                {{ schoolType.label | translate }}
+                              </mat-option>
+                            </mat-select>
+                          </mat-form-field>
+                        </div> -->
+                      </div>
+                    </div>
+                    <!-- school radio group -->
+                    <!-- <mat-form-field
+                      *ngIf="schools.length > 0 && selectedEntityName === 'academic' && !isEmailInvalid && !isUserHasOneEntity && !isSchoolTypeHasOneSchool"
+                      class="full-width radioButtons"
+                    >
+                      <mat-label>{{ 'Select School*' | translate }}</mat-label>
+                      <mat-select class="select-login">
+                        <mat-option (click)="setSelectedSchool(school)" *ngFor="let school of schools" [value]="school._id">
+                          {{ school.shortName | translate }}
+                        </mat-option>
+                      </mat-select>
+                    </mat-form-field> -->
+
+                    <!-- User type radio group -->
+                    <mat-form-field
+                      *ngIf="userTypeList.length > 0 && !isEmailInvalid && !isUserHasOneEntity"
+                      class="full-width radioButtons"
+                    >
+                      <mat-label>{{ 'TEST.SELECT_USERTYPE' | translate }}*</mat-label>
+                      <mat-select class="select-login">
+                        <mat-option (click)="setSelectedUserType(type)" *ngFor="let type of userTypeList" [value]="type.value">
+                          {{ 'USER_TYPES.' + type.label | translate }}
+                        </mat-option>
+                      </mat-select>
+                    </mat-form-field>
+                  </div>
+                  <div class="mrgn-b-md white" style="margin-top: 1em">
+                    <a [routerLink]="['/session/forgot-password']">{{ 'Forgot Password?' | translate }}</a>
+                  </div>
+
+                  <div fxLayoutAlign="center start" class="mrgn-b-lg">
+                    <button mat-raised-button color="success" class="login-button" [disabled]="form.invalid || isWaitingForResponse">
+                      {{ 'LOGIN.LOGIN' | translate }}
+                    </button>
+                  </div>
+
+                  <div class="mrgn-b-md white" style="margin-top: 1em" *ngIf="incorrectLogin">
+                    <p style="color: red">{{'INCORRECT_LOGIN' | translate}}</p>
+                  </div>
+                </div>
+              </form>
+            </div>
+            <section class="sso-continue">
+              <section class="continue-with-section">
+                <hr class="horizontal-line" />
+                <p class="fit-content space-nowrap">{{'orcontinuewith' | translate}}</p>
+                <hr class="horizontal-line" />
+              </section>
+              <section class="sso-option">
+                <button
+                (click)="redirectMicrosoft()"
+                class="sso-icon"
+                  ><svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <g clip-path="url(#clip0_2_36)">
+                      <path d="M15.2076 15.2051H0V0H15.2076V15.2051Z" fill="#F1511B" />
+                      <path d="M32 15.2051H16.7911V0H31.9987V15.2051H32Z" fill="#80CC28" />
+                      <path d="M15.2076 32H0V16.7949H15.2076V32Z" fill="#00ADEF" />
+                      <path d="M32 32H16.7911V16.7949H31.9987V32H32Z" fill="#FBBC09" />
+                    </g>
+                    <defs>
+                      <clipPath id="clip0_2_36">
+                        <rect width="32" height="32" fill="white" />
+                      </clipPath>
+                    </defs>
+                  </svg>
+                </button>
+              </section>
+            </section>
+          </mat-card>
+        </div>
+
+        <div
+          fxLayout="column"
+          *ngIf="showSessionSlider"
+          fxFlex="100"
+          fxFlex.xs="100"
+          fxFlex.sm="100"
+          fxFlex.md="38"
+          fxFlex.lg="38"
+          fxFlex.xl="38"
+          fxHide.lt-md
+        >
+          <div class="height-full full-wid">
+            <div fxLayout="column" fxLayoutAlign="center center" class="height-full full-wid">
+              <ngx-slick-carousel [config]="slideConfig" class="carousel full-wid height-full h-550" #slickModal="slick-carousel">
+                <div ngxSlickItem *ngFor="let slide of sessionSlider" class="height-full full-wid h-550">
+                  <div class="session-slider overlay-wrap height-full full-wid h-550" [style.height.px]="getAutomaticHeight()">
+                    <div
+                      class="slider-bg-img full-wid"
+                      [ngStyle]="{
+                        'background-image': 'url(' + slide.image_url + ')'
+                      }"
+                    ></div>
+                    <div class="overlay-content" fxLayoutAlign="start end">
+                      <div class="content-wrap">
+                        <div class="sec-title">
+                          <h5 class="text-inverse" innerHTML="{{ slide.title }}"></h5>
+                          <span class="text-inverse" innerHTML="{{ slide.sub_title }}"></span>
+                        </div>
+                        <div class="sec-content">
+                          <p class="text-inverse" innerHTML="{{ slide.description }}"></p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </ngx-slick-carousel>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="!this.visited" class="loading-indicator"></div>
+
+<div *ngIf="isWaitingForResponse" class="loading-indicator">
+  <mat-progress-spinner mode="indeterminate" color="accent"></mat-progress-spinner>
+</div>

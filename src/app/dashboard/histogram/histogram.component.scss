@@ -1,0 +1,27 @@
+:host ::ng-deep .k-chart-surface {
+    height: 385px !important;
+}
+.color-gradient {
+    height: 20px;
+    width: 300px;
+    margin-left: 41px;
+    background-color: white;
+    border: 1px solid #42424261;
+}
+.color-red {
+    width: 100px;
+    float: left;
+    background: #cc0000;
+    height: 19px;
+}
+.color-yellow {
+    width: 99px;
+    float: left;
+    background: #ff9900;
+    height: 19px;
+}
+.color-green {    
+    width: 94px;
+    float: left;
+    height: 19px;
+}

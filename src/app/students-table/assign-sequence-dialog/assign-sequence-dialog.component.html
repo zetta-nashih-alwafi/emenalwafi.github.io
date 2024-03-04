@@ -1,0 +1,58 @@
+<div class="dialog-border" cdkDrag cdkDragRootElement=".cdk-overlay-pane" cdkDragHandle>
+  <div class="dialogTitleWrapper">
+    <div class="p-grid">
+      <div class="w-30 no-padding">
+        <!-- <mat-icon style="vertical-align: middle">add</mat-icon> -->
+      </div>
+      <div class="p-col-10 acad-title">
+        <h3 class="dialogTitle">
+          {{ 'Assign sequence' | translate }}
+        </h3>
+      </div>
+      <div class="p-col no-padding">
+        <button mat-icon-button class="close-icon float-right" mat-dialog-close tabindex="-1">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<form [formGroup]="sequenceForm">
+  <mat-dialog-content>
+    <div class="p-grid">
+      <div class="p-col-12 no-padding">
+        <div class="p-grid p-dir-col">
+          <p class="font-bold">{{ 'Please select one or multiple sequence to assign to the selected students' | translate }}:</p>
+          <mat-form-field>
+            <mat-label>{{ 'course_sequence.Sequences' | translate }}</mat-label>
+            <mat-select formControlName="program_sequence_ids" multiple [disableOptionCentering]="true" panelClass="sequencePanel">
+              <mat-option
+                #sequenceCheck
+                (click)="checkSequence(sequenceCheck, sequence, seqIndex)"
+                *ngFor="let sequence of sequenceList; let seqIndex = index"
+                [value]="sequence._id"
+                >{{ sequence.name }}</mat-option
+              >
+              <mat-option *ngIf="sequenceList.length === 0" disabled>{{ 'NOT RECORD FOUND' | translate }}</mat-option>
+            </mat-select>
+            <mat-error
+              *ngIf="sequenceForm.get('program_sequence_ids').hasError('required') && sequenceForm.get('program_sequence_ids').touched"
+              >{{ 'This field is required' | translate }}</mat-error
+            >
+          </mat-form-field>
+        </div>
+      </div>
+    </div>
+  </mat-dialog-content>
+  <mat-dialog-actions align="right">
+    <button mat-raised-button type="button" color="warn" mat-dialog-close>{{ 'CANCEL' | translate }}</button>
+    <button mat-raised-button color="primary" (click)="onValidate()">
+      {{ 'Validate' | translate }}
+    </button>
+  </mat-dialog-actions>
+</form>
+
+<div *ngIf="isWaitingForResponse" class="loading-indicator">
+  <mat-progress-spinner mode="indeterminate" color="accent"></mat-progress-spinner>
+</div>

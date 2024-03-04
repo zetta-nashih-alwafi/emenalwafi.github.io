@@ -1,0 +1,438 @@
+<div class="p-grid" *ngIf="isWaitingForResponse" class="p-col-12" style="text-align: center !important; display: contents">
+  <div class="center-spinner spinner-wrapper">
+    <mat-spinner color="accent"></mat-spinner>
+  </div>
+</div>
+<div *ngIf="!isWaitingForResponse && selectedUser" class="p-grid" [formGroup]="identityForm">
+  <div class="p-col-12" style="padding-left: 0px; padding-right: 0px">
+    <div class="p-grid" style="margin-top: 0.5rem">
+      <div class="p-col-12" style="text-align: right; padding-right: 0px">
+        <button mat-raised-button color="accent" (click)="onSave()">
+          <mat-icon class="mat-icon-default">save</mat-icon>
+          {{ 'CARDDETAIL.Save' | translate }}
+        </button>
+        <button mat-raised-button color="accent" class="margin-right-0" [disabled]="isWaitingForResponse" (click)="onContinue()">
+          {{ 'CARDDETAIL.Continue' | translate }}
+          <mat-icon class="mat-icon-default">keyboard_arrow_right</mat-icon>
+        </button>
+      </div>
+    </div>
+    <fieldset class="fieldset-class">
+      <mat-card [style.height.px]="getAutomaticHeight()" [style.max-height.px]="getAutomaticHeight()" class="overlow-auto">
+        <div class="p-grid">
+          <!-- Avatar -->
+          <div class="p-col-fixed" style="width: 150px">
+            <div class="imgContainer">
+              <img
+                [src]="
+                  is_photo_in_s3
+                    ? serverimgPath + photo_s3_path
+                    : photo
+                    ? serverimgPath + photo
+                    : identityForm.get('civility').value === 'MR'
+                    ? maleStudentIcon
+                    : identityForm.get('civility').value === 'neutral'
+                    ? neutralStudentIcon
+                    : femaleStudentIcon
+                "
+                class="user-details-img"
+                *ngIf="is_photo_in_s3"
+              />
+
+              <img
+                class="user-details-img"
+                *ngIf="!is_photo_in_s3"
+                [src]="
+                  identityForm.get('civility').value === 'MR'
+                    ? maleStudentIcon
+                    : identityForm.get('civility').value === 'neutral'
+                    ? neutralStudentIcon
+                    : femaleStudentIcon
+                "
+              />
+              <input
+                type="file"
+                #userphoto
+                style="display: none"
+                name="file"
+                accept="image/png, image/jpeg, image/jpg"
+                (change)="handleInputChange($event)"
+              />
+              <div class="overlay" (click)="openUploadWindow()">
+                <div class="text">{{ 'DOCUMENT.IMAGE' | translate }}</div>
+              </div>
+            </div>
+          </div>
+          <div class="p-col">
+            <!-- Civility -->
+            <div class="p-grid">
+              <div class="p-col-8 no-padding">
+                <div class="p-grid" style="margin-bottom: 10px">
+                  <div class="p-col-fixed center-label no-padding-y" style="width: 80px">
+                    <label>{{ 'CARDDETAIL.Civility' | translate }}*</label>
+                  </div>
+                  <div class="p-col-7 no-padding-y">
+                    <mat-radio-group formControlName="civility" style="font-size: 12px">
+                      <mat-radio-button style="margin-right: 1rem" value="MRS">{{ 'CARDDETAIL.MRS' | translate }}</mat-radio-button>
+                      <mat-radio-button value="MR">{{ 'CARDDETAIL.MR' | translate }}</mat-radio-button>
+                      <ng-container *ngIf="coreService?.neutralCivility">
+                        <mat-radio-button style="margin-left: 8px" value="neutral">{{ 'Neutral' | translate }}</mat-radio-button>
+                      </ng-container>
+                      <mat-error
+                        *ngIf="
+                          identityForm.get('civility').hasError('required') &&
+                          (identityForm.get('civility').dirty || identityForm.get('civility').touched)
+                        "
+                        >{{ 'This field is required' | translate }}</mat-error
+                      >
+                    </mat-radio-group>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Firstname, Lastname, Email -->
+            <div class="p-grid">
+              <div class="p-col-4 no-padding">
+                <div class="p-grid">
+                  <!--  <div class="p-col-fixed center-label no-padding" style="width: 120px">
+                      <label>{{ 'CARDDETAIL.First Name' | translate }}*</label>
+                    </div>  -->
+                  <div class="p-col no-padding-y pad-right-15">
+                    <mat-form-field>
+                      <mat-label>{{ 'CARDDETAIL.First Name' | translate }}</mat-label>
+                      <input matInput required formControlName="first_name" type="text" />
+                      <mat-error
+                        *ngIf="
+                          identityForm.get('first_name').hasError('required') &&
+                          (identityForm.get('first_name').dirty || identityForm.get('first_name').touched)
+                        "
+                        >{{ 'This field is required' | translate }}</mat-error
+                      >
+                    </mat-form-field>
+                  </div>
+                </div>
+              </div>
+
+              <div class="p-col-4 no-padding">
+                <div class="p-grid">
+                  <!-- <div class="p-col-fixed center-label no-padding" style="width: 120px">
+                      <label>{{ 'CARDDETAIL.Last Name' | translate }}*</label>
+                    </div> -->
+                  <div class="p-col no-padding-y pad-right-15">
+                    <mat-form-field>
+                      <mat-label>{{ 'CARDDETAIL.Last Name' | translate }}</mat-label>
+                      <input matInput required formControlName="last_name" type="text" />
+                      <mat-error
+                        *ngIf="
+                          identityForm.get('last_name').hasError('required') &&
+                          (identityForm.get('last_name').dirty || identityForm.get('last_name').touched)
+                        "
+                        >{{ 'This field is required' | translate }}</mat-error
+                      >
+                    </mat-form-field>
+                  </div>
+                </div>
+              </div>
+
+              <div class="p-col-4 no-padding pad-left-5">
+                <div class="p-grid">
+                  <!-- <div class="p-col-fixed center-label no-padding" style="width: 110px">
+                      <label>{{ 'CARDDETAIL.Email' | translate }}*</label>
+                    </div> -->
+                  <div class="p-col no-padding-y">
+                    <mat-form-field>
+                      <mat-label>{{ 'CARDDETAIL.Email' | translate }}</mat-label>
+                      <input matInput required formControlName="email" type="email" />
+                      <mat-error>
+                        <p
+                          *ngIf="
+                            identityForm.get('email').hasError('email') &&
+                            (identityForm.get('email').touched || identityForm.get('email').dirty)
+                          "
+                        >
+                          {{ 'Invalid email format' | translate }}
+                        </p>
+                        <p
+                          *ngIf="
+                            identityForm.get('email').hasError('required') &&
+                            (identityForm.get('email').dirty || identityForm.get('email').touched)
+                          "
+                        >
+                          {{ 'This field is required' | translate }}
+                        </p>
+                      </mat-error>
+                    </mat-form-field>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Phone and Email -->
+            <div class="p-grid">
+              <div class="p-col-4 no-padding pad-left-5">
+                <div class="p-grid">
+                  <!--  <div class="p-col-fixed center-label no-padding" style="width: 110px">
+                          <label>{{ 'CARDDETAIL.Phone' | translate }}*</label>
+                        </div> -->
+                  <div class="p-col no-padding-y">
+                    <mat-form-field>
+                      <mat-label>{{ 'Office Phone' | translate }}</mat-label>
+                      <input matInput formControlName="office_phone" type="text" pattern="^[0-9]+$" maxlength="10" />
+                    </mat-form-field>
+                  </div>
+                </div>
+              </div>
+
+              <div class="p-col-4 no-padding pad-left-5">
+                <div class="p-grid">
+                  <!--  <div class="p-col-fixed center-label no-padding" style="width: 110px">
+                          <label>{{ 'CARDDETAIL.Phone' | translate }}*</label>
+                        </div> -->
+                  <div class="p-col no-padding-y">
+                    <mat-form-field>
+                      <mat-label>{{ 'Mobile Phone' | translate }}</mat-label>
+                      <input matInput formControlName="portable_phone" type="text" pattern="^[0-9]+$" maxlength="10" />
+                    </mat-form-field>
+                  </div>
+                </div>
+              </div>
+
+              <div class="p-col-4 no-padding pad-left-5">
+                <div class="p-grid">
+                  <!--  <div class="p-col-fixed center-label no-padding" style="width: 110px">
+                          <label>{{ 'CARDDETAIL.Phone' | translate }}*</label>
+                        </div> -->
+                  <div class="p-col no-padding-y">
+                    <mat-form-field>
+                      <mat-label>{{ 'Position' | translate }}</mat-label>
+                      <input matInput formControlName="position" type="text" />
+                    </mat-form-field>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="p-grid" formArrayName="user_addresses" style="padding-top: 105px">
+          <div
+            class="p-col-12 mb-1rem border-white"
+            *ngFor="let address of userAddressFormArray.controls; let addressIndex = index"
+            [formGroupName]="addressIndex"
+            style="padding-bottom: 0px; margin-left: 7px; margin-right: 7px !important; width: 98%"
+          >
+            <!-- only show delete button if more than 1 address -->
+            <div class="p-grid" *ngIf="userAddressFormArray?.length > 1">
+              <div class="p-col-12 text-right no-padding">
+                <mat-slide-toggle
+                  formControlName="is_main_address"
+                  (change)="checkMainAddress($event)"
+                  *ngIf="!isMainAddressSelected || address.get('is_main_address').value"
+                >
+                  <span [ngStyle]="{ color: address.get('is_main_address').value ? '#ffe77a' : 'white' }" style="font-size: 12px">{{
+                    'CARDDETAIL.MAIN_ADDRESS' | translate
+                  }}</span>
+                </mat-slide-toggle>
+                <button mat-icon-button class="small-icon" color="red" (click)="removeUserAddressForm(addressIndex)">
+                  <mat-icon>remove</mat-icon>
+                </button>
+              </div>
+            </div>
+            <!-- End of delete -->
+
+            <div class="p-grid">
+              <div class="p-col-12 no-padding" style="padding-top: 10px">
+                <div class="p-grid flex-hidden-mr-1">
+                  <!-- <div class="p-col-fixed center-label no-padding" style="width: 7.5rem;">
+                    <label>{{'CARDDETAIL.Address' | translate}}*</label>
+                  </div> -->
+                  <div class="p-col no-padding">
+                    <mat-form-field color="accent" class="full-width">
+                      <input matInput type="text" formControlName="address" placeholder="{{ 'CARDDETAIL.Address' | translate }} *" />
+                      <mat-error
+                        *ngIf="
+                          address.get('address').hasError('required') && (address.get('address').dirty || address.get('address').touched)
+                        "
+                        >{{ 'This field is required' | translate }}</mat-error
+                      >
+                    </mat-form-field>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="p-grid">
+              <div class="p-col-12 no-padding">
+                <div class="p-grid">
+                  <div class="p-col-4 no-padding">
+                    <div class="p-grid flex-hidden-mr-1">
+                      <!-- <div class="p-col-fixed no-padding center-label" style="width: 7.5rem;">
+                        <label>{{'CARDDETAIL.Zip Code' | translate}}*</label>
+                      </div> -->
+                      <div class="p-col no-padding">
+                        <mat-form-field color="accent">
+                          <input
+                            matInput
+                            type="text"
+                            formControlName="postal_code"
+                            (keyup)="getPostcodeData(addressIndex)"
+                            placeholder="{{ 'CARDDETAIL.Zip Code' | translate }} *"
+                            maxlength="5"
+                          />
+                          <mat-error
+                            *ngIf="
+                              address.get('postal_code').hasError('required') &&
+                              (address.get('postal_code').dirty || address.get('postal_code').touched)
+                            "
+                            >{{ 'This field is required' | translate }}</mat-error
+                          >
+                        </mat-form-field>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="p-col-4 no-padding">
+                    <div class="p-grid flex-hidden-mr-1">
+                      <!-- <div class="p-col-fixed no-padding center-label" style="width: 7.5rem;">
+                        <label>{{'CARDDETAIL.Country' | translate}}*</label>
+                      </div> -->
+                      <div class="p-col no-padding">
+                        <mat-form-field color="accent">
+                          <input
+                            type="text"
+                            placeholder="{{ 'CARDDETAIL.Country' | translate }} *"
+                            matInput
+                            formControlName="country"
+                            [matAutocomplete]="autoCountry"
+                            (keyup)="filterCountry(addressIndex)"
+                          />
+                          <mat-autocomplete #autoCountry="matAutocomplete" (optionSelected)="getPostcodeData(addressIndex)">
+                            <mat-option *ngFor="let option of filteredCountry[addressIndex]" [value]="option.name">
+                              {{ option.name }}
+                            </mat-option>
+                          </mat-autocomplete>
+                          <mat-error
+                            *ngIf="
+                              address.get('country').hasError('required') &&
+                              (address.get('country').dirty || address.get('country').touched)
+                            "
+                            >{{ 'This field is required' | translate }}</mat-error
+                          >
+                        </mat-form-field>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="p-grid">
+              <div class="p-col-12 no-padding">
+                <div class="p-grid">
+                  <div class="p-col-4 no-padding">
+                    <div class="p-grid flex-hidden-mr-1">
+                      <!-- <div class="p-col-fixed no-padding center-label" style="width: 7.5rem;">
+                        <label>{{'CARDDETAIL.City' | translate}}*</label>
+                      </div> -->
+                      <div class="p-col no-padding">
+                        <mat-form-field color="accent" class="full-width">
+                          <input
+                            type="text"
+                            matInput
+                            placeholder="{{ 'CARDDETAIL.City' | translate }}"
+                            formControlName="city"
+                            [matAutocomplete]="autoCity"
+                            (keyup)="filterCity(addressIndex)"
+                          />
+                          <mat-autocomplete #autoCity="matAutocomplete">
+                            <mat-option *ngFor="let option of filteredCities[addressIndex]" [value]="option">
+                              {{ option }}
+                            </mat-option>
+                          </mat-autocomplete>
+                          <mat-error
+                            *ngIf="address.get('city').hasError('required') && (address.get('city').dirty || address.get('city').touched)"
+                            >{{ 'This field is required' | translate }}</mat-error
+                          >
+                        </mat-form-field>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="p-col-4 no-padding">
+                    <div class="p-grid flex-hidden-mr-1">
+                      <!-- <div class="p-col-fixed no-padding center-label" style="width: 7.5rem;">
+                        <label>{{'CARDDETAIL.Department' | translate}}*</label>
+                      </div> -->
+                      <div class="p-col no-padding">
+                        <mat-form-field color="accent" class="full-width">
+                          <input
+                            type="text"
+                            placeholder="{{ 'CARDDETAIL.Department' | translate }}"
+                            matInput
+                            formControlName="department"
+                            [matAutocomplete]="autoDepartment"
+                            (keyup)="filterDepartment(addressIndex)"
+                          />
+                          <mat-autocomplete #autoDepartment="matAutocomplete">
+                            <mat-option *ngFor="let option of filteredDepartments[addressIndex]" [value]="option">
+                              {{ option }}
+                            </mat-option>
+                          </mat-autocomplete>
+                          <mat-error
+                            *ngIf="
+                              address.get('department').hasError('required') &&
+                              (address.get('department').dirty || address.get('department').touched)
+                            "
+                            >{{ 'This field is required' | translate }}</mat-error
+                          >
+                        </mat-form-field>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="p-col-4 no-padding">
+                    <div class="p-grid flex-hidden-mr-1">
+                      <!-- <div class="p-col-fixed no-padding center-label" style="width: 7.5rem;">
+                        <label>{{'CARDDETAIL.Region' | translate}}*</label>
+                      </div> -->
+                      <div class="p-col no-padding">
+                        <mat-form-field color="accent" class="full-width">
+                          <input
+                            type="text"
+                            matInput
+                            placeholder="{{ 'CARDDETAIL.Region' | translate }}"
+                            formControlName="region"
+                            [matAutocomplete]="autoRegion"
+                            (keyup)="filterRegion(addressIndex)"
+                          />
+                          <mat-autocomplete #autoRegion="matAutocomplete">
+                            <mat-option *ngFor="let option of filteredRegions[addressIndex]" [value]="option">
+                              {{ option }}
+                            </mat-option>
+                          </mat-autocomplete>
+                          <mat-error
+                            *ngIf="
+                              address.get('region').hasError('required') && (address.get('region').dirty || address.get('region').touched)
+                            "
+                            >{{ 'This field is required' | translate }}</mat-error
+                          >
+                        </mat-form-field>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="p-grid">
+          <div class="p-col-12 no-padding" style="text-align: right; font-size: 12px">
+            {{ 'CARDDETAIL.Add more address' | translate }}
+            <button mat-icon-button class="small-icon" color="success" (click)="addUserAddressForm()">
+              <mat-icon>add</mat-icon>
+            </button>
+          </div>
+        </div>
+      </mat-card>
+    </fieldset>
+  </div>
+</div>

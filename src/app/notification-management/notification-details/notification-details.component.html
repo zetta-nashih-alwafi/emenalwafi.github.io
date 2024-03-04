@@ -1,0 +1,25 @@
+<mat-tab-group #templateTabGroup [(selectedIndex)]="selectedIndex">
+  <ng-container *ngIf="detail">
+    <mat-tab [label]="'Identity' | translate">
+      <ng-template matTabContent>
+        <ms-notification-identity
+          (notifyTabChange)="navigateToTabWithId($event)"
+          [notification_id]="notification_id"
+          [notificationDetail]="detail"
+          [templates]="templates"
+        ></ms-notification-identity>
+      </ng-template>
+    </mat-tab>
+  </ng-container>
+  <ng-container *ngIf="templates?.length">
+    <mat-tab *ngFor="let template of templates" [label]="template?.template_name">
+      <ng-template matTabContent>
+        <ms-notification-template #templateId [templateId]="template?._id"></ms-notification-template>
+      </ng-template>
+    </mat-tab>
+  </ng-container>
+</mat-tab-group>
+
+<div *ngIf="isWaitingForResponse" class="inner-loading-indicator">
+  <mat-spinner color="accent" [diameter]="100"></mat-spinner>
+</div>

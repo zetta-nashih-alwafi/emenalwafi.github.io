@@ -1,0 +1,25 @@
+<div>
+  <mat-tab-group [(selectedIndex)]="selectedIndex" #docBuilderTabGroup>
+    <!-- First tab always shown -->
+    <mat-tab label="documentTemplate">
+      <ng-template mat-tab-label class="main-tab">
+        {{ 'Document Parameters' | translate }}
+      </ng-template>
+      <ng-template matTabContent>
+        <ms-document-template-parameter-step #documentParameter [templateId]="templateId"></ms-document-template-parameter-step>
+      </ng-template>
+    </mat-tab>
+    <mat-tab label="documentBuilder" *ngIf="templateId">
+      <ng-template mat-tab-label class="main-tab">
+        {{ 'Document Builder' | translate }}
+      </ng-template>
+      <ng-template matTabContent>
+        <ms-document-template-builder-step
+          #documentBuilder
+          [templateData]="templateData"
+          [templateId]="templateId"
+        ></ms-document-template-builder-step>
+      </ng-template>
+    </mat-tab>
+  </mat-tab-group>
+</div>

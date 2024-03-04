@@ -1,0 +1,264 @@
+@import '~assets/scss/theme/admtc.variables';
+@import '~assets/scss/theme/admtc';
+
+:host::ng-deep table {
+  tr {
+    td,
+    th {
+      border-right: 1px solid $grey;
+
+      &:nth-child(1) {
+        width: 34%;
+        text-align: left;
+        .mat-form-field {
+          width: 96%;
+          padding-left: 8px;
+        }
+      }
+      &:nth-child(2) {
+        width: 20%;
+        min-width: 120px;
+        max-width: 120px;
+        text-align: center;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        color: black;
+        ng-select {
+          width: 96%;
+          padding-left: 8px;
+        }
+      }
+      &:nth-child(3) {
+        width: 15%;
+        text-align: left;
+        min-width: 120px;
+        max-width: 120px;
+
+        .mat-form-field {
+          width: 96%;
+          padding-left: 8px;
+        }
+      }
+      &:nth-child(4) {
+        width: 15%;
+        text-align: left;
+        min-width: 120px;
+        max-width: 120px;
+        .mat-form-field {
+          width: 96%;
+          padding-left: 8px;
+        }
+      }
+      &:nth-child(5) {
+        width: 15%;
+        text-align: center;
+        min-width: 120px;
+        max-width: 120px;
+        ng-select {
+          width: 96%;
+          padding-left: 8px;
+        }
+      }
+      &:nth-child(6) {
+        min-width: 160px;
+        max-width: 160px;
+        text-align: center;
+      }
+    }
+    td {
+      &:nth-child(1) {
+        padding-left: 8px !important;
+      }
+    }
+    th {
+      &:nth-child(2) {
+        padding-left: 0.5rem !important;
+      }
+      &:nth-child(3) {
+        padding-left: 0.5rem !important;
+      }
+      &:nth-child(4) {
+        padding-left: 0.5rem !important;
+      }
+      &:nth-child(5) {
+        padding-left: 0.5rem !important;
+      }
+    }
+  }
+
+  thead tr {
+    &:nth-child(2),
+    &:nth-child(3) {
+      background: $light-black;
+      th {
+        color: $white;
+      }
+    }
+  }
+
+  td.mat-cell {
+    padding-left: 8px;
+  }
+
+  th.mat-header-cell:first-of-type,
+  td.mat-cell:first-of-type {
+    padding: 0;
+  }
+  th.mat-header-cell:last-of-type,
+  td.mat-cell:last-of-type {
+    padding: 0;
+  }
+}
+
+.border-button {
+  border-bottom: 1px solid #dadada;
+}
+
+:host::ng-deep.ng-select .ng-select-container {
+  background-color: #fff0;
+  color: #fff;
+  border: none;
+  border-radius: 0px !important;
+  border-bottom: 1px solid rgb(241, 241, 241) !important;
+  min-height: 36px;
+  -webkit-box-align: center;
+  align-items: center;
+  overflow: hidden;
+}
+:host::ng-deep.ng-select.ng-invalid.ng-touched .ng-select-container {
+  border-bottom: 1px solid #f44336 !important;
+}
+:host::ng-deep.ng-select.ng-invalid.ng-touched .ng-placeholder {
+  color: #f44336 !important;
+}
+:host::ng-deep.ng-select {
+  margin-bottom: 16px;
+  padding-top: 3px;
+  padding-right: 8px;
+  width: 95%;
+}
+:host::ng-deep.ng-select .ng-select-container .ng-value-container .ng-input > input {
+  color: white;
+  box-sizing: content-box;
+  background: none;
+  border: 0;
+  box-shadow: none;
+  outline: 0;
+  cursor: default;
+  padding-left: 0px !important;
+  width: 100%;
+}
+:host::ng-deep.ng-select.ng-select-single .ng-select-container .ng-value-container .ng-input {
+  padding-left: 0px !important;
+}
+:host::ng-deep.ng-select .ng-select-container .ng-value-container {
+  padding-left: 0px !important;
+}
+:host::ng-deep.ng-select.ng-select-single .ng-select-container .ng-value-container,
+.ng-select.ng-select-single .ng-select-container .ng-value-container .ng-value {
+  font-size: 14px !important;
+  color: white;
+}
+.ng-select-custom-header {
+  cursor: pointer;
+}
+:host::ng-deep.ng-select .ng-dropdown-panel {
+  text-align: left !important;
+  font-size: 15px !important;
+}
+:host::ng-deep.ng-select.ng-select-multiple .ng-select-container .ng-value-container {
+  flex-wrap: nowrap !important;
+}
+:host::ng-deep.ng-select.ng-select-multiple .ng-select-container .ng-value-container .ng-value {
+  background-color: transparent !important;
+  color: white;
+}
+:host::ng-deep.ng-select.ng-select-multiple .ng-select-container .ng-value-container .ng-value:not(:nth-last-child(2))::after {
+  content: ',';
+}
+:host::ng-deep.ng-select.ng-select-multiple .ng-select-container .ng-value-container .ng-value .ng-value-icon {
+  display: none;
+}
+
+:host::ng-deep.ng-select.ng-select-single .ng-select-container .ng-value-container .ng-placeholder {
+  font-size: 16px;
+}
+
+:host::ng-deep .ng-select.ng-select-multiple .ng-select-container .ng-value-container .ng-placeholder {
+  top: 11px;
+  font-size: 14px;
+  padding: 0;
+}
+
+::ng-deep.ng-dropdown-panel.custom-dropdownpanel {
+  width: fit-content !important;
+}
+::ng-deep.ng-dropdown-panel.custom-dropdownpanel-table {
+  width: fit-content !important;
+  .ng-dropdown-panel-items .ng-option {
+    white-space: normal !important;
+  }
+}
+::ng-deep.ng-select.custom-dropdownpanel-table .ng-select-container .ng-value-container .ng-input > input {
+  color: white !important;
+}
+// multiple All header styling
+::ng-deep.all-input .mat-checkbox-layout .mat-checkbox-inner-container {
+  width: 12px;
+  height: 12px;
+  margin-left: 7px;
+}
+::ng-deep.all-input .mat-checkbox-layout .mat-checkbox-inner-container .mat-checkbox-background {
+  background-color: transparent;
+}
+
+::ng-deep.all-input
+  .mat-checkbox-layout
+  .mat-checkbox-inner-container
+  .mat-checkbox-background
+  .mat-checkbox-checkmark
+  .mat-checkbox-checkmark-path {
+  stroke: black !important;
+}
+
+::ng-deep.all-input.mat-checkbox-indeterminate
+  .mat-checkbox-layout
+  .mat-checkbox-inner-container
+  .mat-checkbox-background
+  .mat-checkbox-mixedmark {
+  background-color: black !important;
+}
+.no-records {
+  background-color: #424242;
+  font-size: 14px;
+  padding: 10px 12px;
+  border-right: 1px solid #545454;
+  border-bottom: 1px solid #545454;
+}
+
+.octagon-button {
+  vertical-align: middle;
+  cursor: pointer;
+  max-width: 35px;
+  max-height: 35px;
+}
+.red-icon {
+  color: #ff4a4a;
+  margin-right: 2px;
+  width: 35px;
+}
+.orange {
+  color: #f49f36;
+}
+.red {
+  color: #ff4040;
+}
+.green {
+  color: #adff2f;
+}
+.purple {
+  color: #ff46f9;
+}
+.black {
+  color: #000000;
+}

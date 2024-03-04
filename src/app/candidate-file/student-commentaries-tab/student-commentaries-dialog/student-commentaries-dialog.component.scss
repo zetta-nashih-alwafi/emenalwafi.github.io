@@ -1,0 +1,73 @@
+.dialogTitle {
+  display: inline-block;
+}
+.dialogTitleWrapper {
+  color: rgb(255, 255, 255);
+}
+.dialog-border {
+  border-bottom: 1px solid rgb(255, 255, 255);
+}
+.no-padding {
+  padding: 0px;
+}
+.float-right {
+  float: right;
+}
+.mt-15 {
+  margin-top: 15px;
+}
+.mr-0 {
+  margin-right: 0px;
+}
+.mr-10 {
+  margin-right: 10px;
+}
+.header-dialog {
+  padding: 0 5px 0 15px;
+}
+.mat-dialog-content {
+  margin-right: 0px;
+  margin-left: 0px;
+  margin-top: 15px;
+  padding: 0;
+}
+.w-30 {
+  width: 30px;
+}
+.w-65 {
+  width: 65px;
+}
+.mt-5px {
+  margin-top: 5px;
+}
+
+:host::ng-deep.ckeditor {
+  .ck-content {
+    min-height: 10rem !important;
+    background: rgba(114, 114, 114, 0) !important;
+    color: rgb(255, 255, 255) !important;
+  }
+  .ck-editor__editable_inline {
+    border: 1px solid #b8b8b8;
+  }
+}
+
+:host::ng-deep.ck.ck-toolbar {
+  border: none;
+}
+:host::ng-deep.dialog-body {
+  color: white;
+}
+input {
+  color: white;
+}
+:host::ng-deep .mat-form-field-appearance-legacy .mat-form-field-underline {
+  background-color: rgb(255 255 255 / 40%);
+}
+:host::ng-deep .mat-form-field-appearance-legacy .mat-form-field-label,
+.mat-form-field-appearance-legacy .mat-hint {
+  color: rgb(255 255 255 / 85%);
+}
+:host::ng-deep .mat-checkbox-inner-container {
+  border: 1px solid white;
+}

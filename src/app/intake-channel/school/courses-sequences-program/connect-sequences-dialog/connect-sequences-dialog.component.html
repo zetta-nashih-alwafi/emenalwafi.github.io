@@ -1,0 +1,47 @@
+<div class="header-dialog" cdkDrag cdkDragRootElement=".cdk-overlay-pane" cdkDragHandle>
+  <div class="dialog-border">
+    <div class="p-grid">
+      <div class="p-col-10 no-padding">
+        <h3 class="inline-block">{{ 'course_sequence.Connect template' | translate }}</h3>
+      </div>
+      <div class="no-padding p-col-2">
+        <button mat-icon-button class="close-icon float-right" tabindex="-1" (click)="close()">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div mat-dialog-content class="mat-dialog-content dialog-body" style="overflow: hidden !important">
+  <div class="p-grid" [formGroup]="form" *ngIf="!isWaitingForResponse">
+    <div class="p-col-12">
+      <ng-select
+        class="mrgn-btn"
+        [items]="templateList"
+        formControlName="template"
+        bindLabel="name"
+        bindValue="_id"
+        placeholder="{{ 'course_sequence.Select template' | translate }}*"
+        [appendTo]="'body'"
+        (change)="patchTemplate()"
+      >
+      </ng-select>
+      <p
+        *ngIf="form?.get('template')?.hasError('required') && (form?.get('template')?.touched || isEmpty)"
+        style="color: #f44336; font-size: 75%; margin: 0"
+      >
+        {{ 'This field is required' | translate }}
+      </p>
+    </div>
+  </div>
+</div>
+<div mat-dialog-actions class="justify-content-end mr-10">
+  <button mat-raised-button type="button" color="warn" mat-dialog-close>{{ 'CANCEL' | translate }}</button>
+  <button mat-raised-button color="primary" (click)="connectTemplate()">
+    {{ 'Validate' | translate }}
+  </button>
+</div>
+<div *ngIf="isWaitingForResponse" class="loading-indicator">
+  <mat-progress-spinner mode="indeterminate" color="accent"></mat-progress-spinner>
+</div>

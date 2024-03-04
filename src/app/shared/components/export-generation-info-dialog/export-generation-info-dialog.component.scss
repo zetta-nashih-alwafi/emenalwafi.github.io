@@ -1,0 +1,17 @@
+.bold {
+  font-weight: 700;
+  font-size: x-large;
+}
+
+.mat-form-field {
+  padding-left: 0.5rem !important;
+}
+
+.action-header-column {
+  vertical-align: middle !important;
+  padding-right: 0 !important;
+  text-align: right !important;
+  .p-grid {
+    margin-top: unset !important;
+  }
+}

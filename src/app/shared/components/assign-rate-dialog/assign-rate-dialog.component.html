@@ -1,0 +1,205 @@
+<div class="header-div header-registarion-profile-dialog" cdkDrag cdkDragRootElement=".cdk-overlay-pane" cdkDragHandle>
+  <mat-icon svgIcon="clipboard-account-outline" class="svg-style-account">
+  </mat-icon>
+  <h2 class="header-text">
+    <span *ngIf="data.from === 'crm'">{{ 'Registration Profile' | translate }}</span>
+    <span *ngIf="data.from === 'readmission'">{{ 'Readmission profile' | translate }}</span>
+  </h2>
+  <!-- <h2 *ngIf="!data.selected[0].isVolumeOfHours" class="header-text">
+    {{ 'CANDIDATE_POPUP_4.TITLE' | translate }}
+  </h2> -->
+  <button mat-icon-button type="button" (click)="closeDialog()" class="header-icon">
+    <mat-icon>close</mat-icon>
+  </button>
+</div>
+<hr />
+<form [formGroup]="assignProfilRateForm" class="header-form" *ngIf="!isWaitingForResponse">
+  <div style="color: black">
+    <mat-dialog-content class="content-height">
+      <!-- <div class="p-grid">
+        <div class="p-col-12">
+          <b>{{ 'CANDIDATE_POPUP_4.Please select 1 Rate Profile for' | translate }} </b>
+        </div>
+      </div> -->
+      <div class="p-grid" *ngIf="isSingleSelected">
+        <div class="p-col-12 no-padding-t">
+          <div class="p-col-12 no-padding float-left">
+            <b
+              >{{ 'CANDIDATE_POPUP_4.Please select 1 Rate Profile for' | translate }} {{ 'CANDIDATE_POPUP_1.the Candidate' | translate }}
+              {{ singleCandidate.first_name }} {{ singleCandidate.last_name | uppercase }}</b
+            >
+          </div>
+          <!-- <div class="p-col-8 no-padding">
+            <div>: {{ singleCandidate.civility | translate }} {{ singleCandidate.first_name }} {{ singleCandidate.last_name }}</div>
+          </div> -->
+        </div>
+      </div>
+      <div class="p-grid" *ngIf="isMultipleSelected">
+        <div class="p-col-12 no-padding-t">
+          <b
+            >{{ 'CANDIDATE_POPUP_4.Candidates selected according to the following criteria' | translate }} {{ totalCandidate }}
+            {{ 'CANDIDATE_POPUP_4.selected candidates' | translate }}</b
+          >
+          <!-- <div class="p-grid">
+            <div class="p-col-4 no-padding">
+              <b>{{ 'CANDIDATE_POPUP_4.Intake Channel' | translate }} </b>
+            </div>
+            <div class="p-col-8 no-padding">
+              <div>: {{ intakeChannel ? intakeChannel : '-' }}</div>
+            </div>
+          </div>
+          <div class="p-grid">
+            <div class="p-col-4 no-padding">
+              <b>{{ 'CARDDETAIL.Nationality' | translate }} </b>
+            </div>
+            <div class="p-col-8 no-padding">
+              <div>: {{ nationality ? (nationality | translate) : '-' }}</div>
+            </div>
+          </div> -->
+        </div>
+      </div>
+      <br />
+      <div class="p-grid">
+        <div class="p-col-12 no-padding-b">
+          <b>{{ 'CANDIDATE_POPUP_4.Profile Rates available for this Intake Channel' | translate }}. </b>
+        </div>
+      </div>
+
+      <div class="p-grid no-padding">
+        <div class="p-col-12">
+          <mat-form-field *ngIf="!isSameData && rateProfilList?.length !== 0">
+            <mat-select
+              color="accent"
+              [placeholder]="'CANDIDATE_POPUP_4.Assign one of several Rate Profile' | translate"
+              formControlName="profile_rate"
+              [disableOptionCentering]="true" 
+              panelClass="filterPanel"
+
+            >
+              <mat-option *ngFor="let rate of rateProfilList" [value]="rate._id">
+                {{ rate.name | translate }}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="assignProfilRateForm.get('profile_rate').errors">{{ 'This field is mandatory' | translate }}</mat-error>
+          </mat-form-field>
+
+          <mat-form-field *ngIf="isSameData || rateProfilList?.length === 0">
+            <input
+              type="text"
+              readonly
+              matInput
+              disabled
+              class="text-normal"
+              [placeholder]="'CANDIDATE_POPUP_4.Assign one of several Rate Profile' | translate"
+            />
+          </mat-form-field>
+        </div>
+      </div>
+
+      <div class="p-grid no-padding">
+        <div class="p-col-12">
+          <mat-form-field floatLabel="auto">
+            <mat-select 
+              color="accent" 
+              placeholder="{{ 'Rate type' | translate }}" 
+              formControlName="registration_profile_type"              
+              [disableOptionCentering]="true" 
+              panelClass="filterPanel">
+              <mat-option *ngFor="let type of registrationProfileTypeList" [value]="type.value">
+                {{ type.name | translate }}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="assignProfilRateForm.get('registration_profile_type').errors">{{
+              'This field is mandatory' | translate
+            }}</mat-error>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <div class="p-grid no-padding" *ngIf="showVolumeofHour">
+        <div class="p-col-12">
+          <mat-form-field>
+            <div class="field-wrap">
+              <input formControlName="volume_hour" matInput type="number" (wheel)="onWheel($event)" placeholder="{{ 'Volume of hours' | translate }}" />
+            </div>
+            <mat-error
+              *ngIf="
+                assignProfilRateForm.get('volume_hour').hasError('required') &&
+                (assignProfilRateForm.get('volume_hour').dirty || assignProfilRateForm.get('volume_hour').touched)
+              "
+            >
+              <span class="error-message"> {{ 'This field is mandatory' | translate }}</span>
+            </mat-error>
+            <mat-error
+              class="error-message"
+              *ngIf="
+                assignProfilRateForm.get('volume_hour').hasError('pattern') &&
+                (assignProfilRateForm.get('volume_hour').dirty || assignProfilRateForm.get('volume_hour').touched)
+              "
+            >
+              <span class="error-message"> {{ 'Please input number only' | translate }} </span>
+            </mat-error>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <div *ngIf="data.from === 'readmission'" class="p-grid no-padding">
+        <div class="p-col-12">
+          <mat-checkbox style="margin-right: 10px" (change)="onSelectSend($event)">
+            {{ 'READMISSION.Send readmission email2' | translate }}
+          </mat-checkbox>
+        </div>
+      </div>
+      <!-- <div class="p-grid no-padding">
+        <div class="p-col-12">
+          <mat-form-field floatLabel="auto">
+            <input type="number" matInput class="form-field" formControlName="volume_hour" placeholder="{{ 'Volume hours' | translate }}" />
+            <mat-error *ngIf="assignProfilRateForm.get('volume_hour').hasError('required')">{{
+              'This field is mandatory' | translate
+            }}</mat-error>
+            <mat-error *ngIf="assignProfilRateForm.get('volume_hour').hasError('min')">{{ 'minimum value' | translate }}</mat-error>
+          </mat-form-field>
+        </div>
+      </div> -->
+    </mat-dialog-content>
+
+    <div *ngIf="assignProfilRateForm.get('profile_rate').value" class="p-grid">
+      <div class="p-col-12 no-padding-y">
+        <b>
+          {{ 'CANDIDATE_POPUP_4.You have selected the Rate Profile' | translate }}
+          {{ getProfileName(assignProfilRateForm.get('profile_rate').value) }}</b
+        >
+      </div>
+    </div>
+
+    <div *ngIf="isSingleSelected && assignProfilRateForm.get('profile_rate').value" class="p-grid">
+      <div class="p-col-12 no-padding-t">
+        <b
+          >{{ 'CANDIDATE_POPUP_4.For' | translate }}
+          {{ singleCandidate?.civility && singleCandidate?.civility === 'neutral' ? '' : (singleCandidate?.civility | translate) }}
+          {{ singleCandidate.first_name }}
+          {{ singleCandidate.last_name | uppercase }}
+        </b>
+      </div>
+    </div>
+
+    <div *ngIf="isMultipleSelected && assignProfilRateForm.get('profile_rate').value" class="p-grid">
+      <div class="p-col-12 no-padding-t">
+        <b>{{ 'CANDIDATE_POPUP_4.por the selected Candidates.' | translate }}</b>
+      </div>
+    </div>
+
+    <mat-dialog-actions align="right">
+      <button mat-raised-button color="warn" type="button" (click)="closeDialog()">
+        {{ 'ASSIGN_CORRECTOR_DIALOG.CANCEL' | translate }}
+      </button>
+      <button mat-raised-button color="primary" (click)="submitAssignMember()" type="button">
+        {{ 'Validate' | translate }}
+      </button>
+    </mat-dialog-actions>
+  </div>
+</form>
+
+<div *ngIf="isWaitingForResponse" class="inner-loading-indicator">
+  <mat-spinner color="accent" [diameter]="100"></mat-spinner>
+</div>

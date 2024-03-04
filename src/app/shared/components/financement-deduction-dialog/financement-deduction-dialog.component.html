@@ -1,0 +1,103 @@
+<div class="header" cdkDrag cdkDragRootElement=".cdk-overlay-pane" cdkDragHandle>
+  <div class="p-grid">
+    <div class="p-col-10 no-padding">
+      <h3 class="dialogTitle">{{ 'AdmissionFollowUp.Financement' | translate }} {{ financementName }}</h3>
+    </div>
+    <div class="p-col-2 no-padding">
+      <button mat-icon-button class="close-icon float-right" (click)="closeDialog()" tabindex="-1">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+  </div>
+</div>
+
+<div mat-dialog-content class="mat-dialog-content">
+  <div class="p-grid" [formGroup]="form" *ngIf="!isWaitingForResponse">
+    <div class="p-col-12 no-padding" *ngIf="data?.changeData?.isRaise === 'deduced' || isRaisedStatus(data) || data?.from === 'delete'">
+      {{ 'Financement deducation dialog text' | translate: { FinancementName: financementName, FinancementAmount: financementAmount } }}
+    </div>
+    <div class="p-col-12 no-padding" *ngIf="(data?.changeData?.isRaise === 'raised' || !data?.changeData?.isRaise  && !isRaisedStatus(data) && data?.from !== 'delete')">
+      {{ 'Financement raised dialog text' | translate: { FinancementName: financementName, FinancementAmount: financementAmount } }}
+    </div>
+    <ng-container formArrayName="financement">
+      <div
+        class="p-col-12 width-card no-padding"
+        *ngFor="let control of getFinancialSupport()?.controls; let controlIndex = index"
+        [formGroupName]="controlIndex"
+      >
+        <div class="p-grid">
+          <div
+            *ngIf="control?.get('term_not_billed')?.value || data?.from === 'delete'"
+            class="p-col-7 card pad-form pad-left"
+            [ngClass]="{
+              'card-selected': cardStatus && cardStatus.length && cardStatus[controlIndex],
+              'card-red': !isValid && !checkSelectedData()
+            }"
+            (click)="checkSelectedCard(controlIndex)"
+          >
+            <div class="name-who">
+              <h5 class="dialogTitles" >
+                {{ 
+                  control?.get('company_name')?.value 
+                  || control?.get('organization_name')?.value 
+                  || ((control?.get('last_name')?.value | uppercase) + ' ' + (control?.get('first_name')?.value) + ' ' + (control?.get('civility')?.value | translate)) }}
+                - {{ billingData[controlIndex]?.cost }} EUR
+              </h5>
+            </div>
+          </div>
+          <ng-container *ngIf="cardStatus[controlIndex]">
+            <div class="p-col-3 pad-form">
+              <mat-form-field>
+                <input  matInput (wheel)="onWheel($event)" formControlName="cost" type="number" />
+              </mat-form-field>
+            </div>
+            <div class="p-col-2 mt-eur">EUR</div>
+          </ng-container>
+        </div>
+        <div class="p-grid" *ngIf="cardStatus[controlIndex]">
+          <div class="p-col-7 pad-form pad-left"></div>
+          <div class="p-col-5 no-padding">
+            <div class="p-grid">
+              <div *ngIf="checkMinDeduction(controlIndex)" style="color: red" class="p-col pad-form">
+                {{ 'minimum value 1' | translate }}
+              </div>
+              <div *ngIf="checkMaxDeduction(controlIndex)" style="color: red" class="p-col pad-form">
+                {{ 'Cannot exceed the cost coverage' | translate }}
+              </div>
+              <div
+                *ngIf="
+                  checkTotalCost() &&
+                  !checkMinDeduction(controlIndex) &&
+                  !checkMaxDeduction(controlIndex)
+                "
+                style="color: red"
+                class="p-col pad-form"
+              >
+                {{ 'Cannot exceed the total amount of financement' | translate }}
+              </div>
+              <div
+                *ngIf="
+                  checkTotalCostAmount() &&
+                  !checkMinDeduction(controlIndex) &&
+                  !checkMaxDeduction(controlIndex) &&
+                  (getFinancialSupport().at(controlIndex).get('cost')?.dirty || getFinancialSupport().at(controlIndex).get('cost')?.touched)
+                "
+                style="color: red"
+                class="p-col pad-form"
+              >
+                {{ 'Must input 100% total amount of financement' | translate }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+  </div>
+</div>
+<div mat-dialog-actions class="justify-content-end mr-action">
+  <button mat-button mat-raised-button color="warn" (click)="closeDialog()">{{ 'CANCEL' | translate }}</button>
+  <button mat-button mat-raised-button color="primary" (click)="submit()">{{ 'Validate' | translate }}</button>
+</div>
+<div *ngIf="isWaitingForResponse" class="inner-loading-indicator">
+  <mat-spinner color="accent" [diameter]="100"></mat-spinner>
+</div>

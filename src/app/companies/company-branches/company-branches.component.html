@@ -1,0 +1,46 @@
+<ng-container>
+  <ng-container>
+    <div class="header-filter list-horizontal flex-layout-row-wrap"></div>
+    <ms-company-header-bar (isReset)="reload($event)"></ms-company-header-bar>
+  </ng-container>
+  <button mat-raised-button color="primary" class="user-list-toggle" (click)="toggleCardList = !toggleCardList">
+    {{ (toggleCardList ? 'Expand' : 'Hide') | translate }}
+  </button>
+  <ng-container>
+    <div class="p-grid" style="padding-top: 10px" [style.height.px]="getAutomaticHeight()" [style.max-height.px]="getAutomaticHeight()">
+      <div class="p-col-4 left-side" [ngClass]="{ 'toggle-card-list': toggleCardList }" style="width: 335px">
+        <div class="p-col-fixed fix-company-list-width">
+          <ms-company-list
+            [companies]="companies"
+            [isWaitingForResponse]="isWaitingForResponse"
+            (selectedChange)="updatedSelectedCompany($event)"
+            [curCompanyId]="curSelectedId"
+            (reload)="reload($event)"
+            [formBranch]="true"
+          ></ms-company-list>
+          <div [ngClass]="{ hide: companies.length === 0 }">
+            <mat-paginator
+              [ngClass]="{ 'hide-pagination-buttons': dataCount <= 6 }"
+              [length]="dataCount"
+              class="paginator"
+              [hidePageSize]="true"
+              [pageSize]="[10]"
+              showFirstLastButtons
+            ></mat-paginator>
+          </div>
+        </div>
+      </div>
+      <div class="p-col-8 right-side" [ngClass]="{ 'toggle-card-list': toggleCardList }" [style.height.px]="getAutomaticHeight()" [style.max-height.px]="getAutomaticHeight()" style="height: 193px; padding-top: 0px; margin-top: 1.4vh;">
+        <!-- <div class="scrollbar" style="overflow-x: hidden; overflow-y: auto" [style.height.px]="getCardHeight()"> -->
+        <ms-company-branch-detail *ngIf="curSelectedId" [quickSearchMentorId]="mentorId" [companyId]="curSelectedId" (isRefresh)="refreshCompanyBranch($event)"></ms-company-branch-detail>
+      </div>
+      <!-- </div> -->
+      <div class="p-grid" *ngIf="companies.length === 0 && !isWaitingForResponse">
+        <h4 class="text-empty">{{ 'COMPANY_EMPTY' | translate }}</h4>
+      </div>
+    </div>
+  </ng-container>
+</ng-container>
+<div *ngIf="isWaitingForResponse" class="loading-indicator">
+  <mat-progress-spinner mode="indeterminate" color="accent"></mat-progress-spinner>
+</div>

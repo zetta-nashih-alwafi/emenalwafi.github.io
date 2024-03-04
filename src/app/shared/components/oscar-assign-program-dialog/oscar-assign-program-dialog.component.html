@@ -1,0 +1,217 @@
+<div class="dialog-border" cdkDrag cdkDragRootElement=".cdk-overlay-pane" cdkDragHandle>
+  <div class="dialogTitleWrapper header-dialog">
+    <div class="p-grid">
+      <div class="w-30 no-padding">
+        <mat-icon mat-icon-button svgIcon="clipboard-check" class="mt-5px"></mat-icon>
+      </div>
+      <div class="p-col-10 no-padding">
+        <h3 class="dialogTitle">{{ 'Assign program' | translate }}</h3>
+      </div>
+      <div class="w-65 no-padding">
+        <button mat-icon-button class="close-icon float-right" (click)="closeDialog()" tabindex="-1">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div [formGroup]="filterFormCtrl" mat-dialog-content class="mat-dialog-content dialog-body">
+  <div class="p-grid">
+    <!-- Scholar Season -->
+    <div class="p-col-6 pad-y-none">
+      <mat-form-field class="full-wid">
+        <input
+          matInput
+          placeholder="{{ 'Scholar Season' | translate }}"
+          formControlName="scholarSeason"
+          [matAutocomplete]="autoScholar"
+          required
+        />
+        <mat-error *ngIf="filterFormCtrl.get('scholarSeason').errors">{{ 'This field is required' | translate }}</mat-error>
+        <mat-autocomplete #autoScholar="matAutocomplete" [panelWidth]="'fit'">
+          <mat-option
+            *ngFor="let option of filteredScholar | async"
+            [value]="option?.scholar_season"
+            (click)="getSchoolDropdown(option?._id)"
+          >
+            {{ option?.scholar_season }}
+          </mat-option>
+        </mat-autocomplete>
+      </mat-form-field>
+    </div>
+
+    <!-- School -->
+    <div class="p-col-6 pad-y-none">
+      <mat-form-field class="full-wid">
+        <input
+          matInput
+          placeholder="{{ 'INTERN_FOLLOW_UP.School' | translate }}"
+          formControlName="school"
+          [matAutocomplete]="autoSchool"
+          required
+        />
+        <mat-error *ngIf="filterFormCtrl.get('school').errors">{{ 'This field is required' | translate }}</mat-error>
+        <mat-autocomplete #autoSchool="matAutocomplete" [panelWidth]="'fit'">
+          <mat-option *ngFor="let option of filteredSchool | async" [value]="option?.short_name" (click)="getCampusDropdown(option?._id)">
+            {{ option?.short_name }}
+          </mat-option>
+        </mat-autocomplete>
+      </mat-form-field>
+    </div>
+
+    <!-- Campus -->
+    <div class="p-col-6 pad-y-none">
+      <mat-form-field class="full-wid">
+        <input
+          matInput
+          placeholder="{{ 'ADMISSION.TABLE_ADMISSION_CHANNEL.Campus' | translate }}"
+          formControlName="campus"
+          [matAutocomplete]="autoCampus"
+          required
+        />
+        <mat-error *ngIf="filterFormCtrl.get('campus').errors">{{ 'This field is required' | translate }}</mat-error>
+        <mat-autocomplete #autoCampus="matAutocomplete" [panelWidth]="'fit'">
+          <mat-option *ngFor="let option of filteredCampus | async" [value]="option?.name" (click)="getLevelDropdown(option?._id)">
+            {{ option?.name }}
+          </mat-option>
+        </mat-autocomplete>
+      </mat-form-field>
+    </div>
+
+    <!-- Level -->
+    <div class="p-col-6 pad-y-none">
+      <mat-form-field class="full-wid">
+        <input
+          matInput
+          placeholder="{{ 'ADMISSION.TABLE_ADMISSION_CHANNEL.Level' | translate }}"
+          formControlName="level"
+          [matAutocomplete]="autoLevel"
+          required
+        />
+        <mat-error *ngIf="filterFormCtrl.get('level').errors">{{ 'This field is required' | translate }}</mat-error>
+        <mat-autocomplete #autoLevel="matAutocomplete" [panelWidth]="'fit'">
+          <mat-option *ngFor="let option of filteredLevel | async" [value]="option?.name" (click)="getSectorDropdown(option?._id)">
+            {{ option?.name }}
+          </mat-option>
+        </mat-autocomplete>
+      </mat-form-field>
+    </div>
+
+    <!-- Sector -->
+    <div class="p-col-6 pad-y-none">
+      <mat-form-field class="full-wid">
+        <input matInput placeholder="{{ 'Sector' | translate }}" formControlName="sector" [matAutocomplete]="autoSector" required />
+        <mat-error *ngIf="filterFormCtrl.get('sector').errors">{{ 'This field is required' | translate }}</mat-error>
+        <mat-autocomplete #autoSector="matAutocomplete" [panelWidth]="'fit'">
+          <mat-option *ngFor="let option of filteredSector | async" [value]="option?.name" (click)="getSpecialityDropdown(option?._id)">
+            {{ option?.name }}
+          </mat-option>
+        </mat-autocomplete>
+      </mat-form-field>
+    </div>
+
+    <!-- Speciality -->
+    <div class="p-col-6 pad-y-none">
+      <mat-form-field class="full-wid">
+        <input matInput placeholder="{{ 'Speciality' | translate }}" formControlName="speciality" [matAutocomplete]="autoSpeciality" />
+        <mat-autocomplete #autoSpeciality="matAutocomplete" [panelWidth]="'fit'">
+          <mat-option *ngIf="isDisplayNone" [value]="'None' | translate" (click)="getTypeFormationDropdown('none')">
+            {{ 'None' | translate }}
+          </mat-option>
+          <mat-option
+            *ngFor="let option of filteredSpeciality | async"
+            [value]="option?.name"
+            (click)="getTypeFormationDropdown(option?._id)"
+          >
+            {{ option?.name }}
+          </mat-option>
+        </mat-autocomplete>
+      </mat-form-field>
+    </div>
+
+    <!-- Speciality -->
+    <div class="p-col-6 pad-y-none">
+      <mat-form-field class="full-wid">
+        <input
+          matInput
+          placeholder="{{ 'ADMISSION.Type Of formation' | translate }}"
+          formControlName="type_of_formation_id"
+          [matAutocomplete]="autoFormation"
+        />
+        <mat-error *ngIf="filterFormCtrl.get('type_of_formation_id').errors">{{ 'This field is required' | translate }}</mat-error>
+        <mat-autocomplete #autoFormation="matAutocomplete" [displayWith]="displayWithType.bind(this)" [panelWidth]="'fit'">
+          <mat-option
+            *ngFor="let option of filteredFormation | async"
+            [value]="option?.type_of_formation"
+            (click)="getDevMemberDropdown(option)"
+          >
+            {{ 'type_formation.' + option?.type_of_formation | translate }}
+          </mat-option>
+        </mat-autocomplete>
+      </mat-form-field>
+    </div>
+
+    <ng-container *ngIf="isContinous">
+      <div class="p-col-6 pad-y-none">
+        <mat-form-field floatLabel="auto">
+          <input
+            matInput
+            placeholder="{{ 'Continuous Formation Manager' | translate }}*"
+            formControlName="continuous_formation_manager_id"
+            [matAutocomplete]="autoContinuousManager"
+          />
+          <mat-autocomplete #autoContinuousManager="matAutocomplete" [panelWidth]="'fit'">
+            <mat-option
+              *ngFor="let option of filteredManager | async"
+              [value]="
+                (option?.civility && option?.civility === 'neutral' ? '' : (option?.civility | translate)) +
+                ' ' +
+                option?.first_name +
+                ' ' +
+                option?.last_name
+              "
+              (click)="selectOptionContinousFormationManager(option)"
+            >
+              {{ option?.civility && option?.civility === 'neutral' ? '' : (option?.civility | translate) }} {{ option?.first_name }}
+              {{ option?.last_name }}
+            </mat-option>
+          </mat-autocomplete>
+          <mat-error *ngIf="filterFormCtrl?.get('continuous_formation_manager_id')?.errors">{{
+            'This field is required' | translate
+          }}</mat-error>
+        </mat-form-field>
+      </div>
+    </ng-container>
+
+    <!-- Dev Member -->
+    <div class="p-col-6 pad-y-none">
+      <mat-form-field class="full-wid">
+        <input
+          matInput
+          placeholder="{{ (data?.from === 'readmission' ? 'Academic Member' : 'Dev Member') | translate }}"
+          formControlName="devMember"
+          [matAutocomplete]="autoMember"
+          required
+        />
+        <mat-error *ngIf="filterFormCtrl.get('devMember').errors">{{ 'This field is required' | translate }}</mat-error>
+        <mat-autocomplete #autoMember="matAutocomplete" [panelWidth]="'fit'">
+          <mat-option *ngFor="let option of filteredMember | async" [value]="option?.name" (click)="selectDevMember(option?._id)">
+            {{ option?.name }}
+          </mat-option>
+        </mat-autocomplete>
+      </mat-form-field>
+    </div>
+  </div>
+
+  <div *ngIf="isWaitingForResponse" class="inner-loading-indicator">
+    <mat-spinner color="accent" [diameter]="100"></mat-spinner>
+  </div>
+</div>
+
+<div mat-dialog-actions class="justify-content-end mr-10">
+  <button mat-button mat-raised-button color="warn" (click)="closeDialog()">{{ 'CANCEL' | translate }}</button>
+  <button mat-button mat-raised-button color="primary" class="mr-0" (click)="submit()">
+    {{ 'Validate' | translate }}
+  </button>
+</div>

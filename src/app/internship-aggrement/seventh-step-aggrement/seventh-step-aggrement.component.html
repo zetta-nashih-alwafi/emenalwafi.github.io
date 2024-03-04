@@ -1,0 +1,65 @@
+<div class="row no-margin padl-13 hd-legend">
+  <label>{{ 'List of Information' | translate }}</label>
+</div>
+<div class="col-lg-12" style="padding-top: 28px;" [formGroup]="detailForm">
+  <div class="row">
+    <div class="col-lg-3">
+      <label>{{ 'Title' | translate }}</label>
+    </div>
+    <div class="col-lg-8">
+      <div class="form-group">
+        <input class="form-control" required [formControl]="title_input" />
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-lg-3">
+      <label>{{ 'Description' | translate }}</label>
+    </div>
+    <div class="col-lg-8">
+      <div class="form-group">
+        <mat-icon
+          style="position: absolute; right: 20px; top: 10px"
+          class="icon-self-right"
+          (click)="openVoiceRecog()"
+          svgIcon="microphone"
+        ></mat-icon>
+        <ckeditor [editor]="Editor" (ready)="onReady($event)" [config]="config" [formControl]="description_inputs"> </ckeditor>
+      </div>
+    </div>
+  </div>
+  <div class="p-grid web-card">
+    <mat-checkbox>{{ 'No Additional Informations' | translate }}</mat-checkbox>
+  </div>
+  <div class="row" style="margin-bottom: 50px !important; padding-right: 10px">
+    <button type="button" style="float: right" mat-raised-button color="primary" (click)="addSpecialization()">
+      <mat-icon style="font-size: 24px">add</mat-icon> {{ 'Add Information' | translate }}
+    </button>
+  </div>
+  <div class="row brd-top" *ngIf="title && title.length">
+    <div class="col-lg-3">
+      <label>{{ 'List of Information' | translate }}</label>
+    </div>
+    <div class="col-lg-8">
+      <div class="list-question" *ngFor="let quest of title; let in = index">
+        <div class="text-question">
+          <label>{{ 'Information' | translate }} {{ in + 1 }} </label> {{ quest }} - {{ utilService.cleanHTML(description[in]) }}
+        </div>
+        <span class="pill-skill">
+          <mat-icon style="cursor: pointer; font-size: 14px; color: red" (click)="remoteSpecialization(in)" class="icon-mat-change"
+            >cancel</mat-icon
+          >
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <div class="row btn-submit">
+    <!-- <button mat-button mat-raised-button color="primary" (click)="skipStepThree()" class="button-submit submit-action">
+      <mat-icon style="font-size: 24px">skip_next</mat-icon> {{ 'Skip Question' | translate }}
+    </button> -->
+    <button mat-button mat-raised-button color="accent" (click)="submitStepThree()" class="button-submit submit-action">
+      <mat-icon style="font-size: 24px">save</mat-icon> {{ 'Save' | translate }}
+    </button>
+  </div>
+</div>

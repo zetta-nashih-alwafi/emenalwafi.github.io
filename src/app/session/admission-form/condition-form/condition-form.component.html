@@ -1,0 +1,78 @@
+<!-- <div (scroll)="scrollComponentAgrement($event)" class="condition-terms">
+    <div class="title-terms">{{ 'Conditions Générales de L`École' | translate }} {{ candidateData?.school?.short_name }}</div>
+    <div class="content-terms" innerHTML="{{ conditionAgrement }}"></div>
+  </div> -->
+
+<div class="title-terms" *ngIf="documentOnPreviewUrl">
+  {{ 'Conditions Générales de L`École' | translate }} {{ candidateData?.school?.short_name }}
+</div>
+<hr />
+<div class="ql-editor document-parent" *ngIf="documentOnPreviewUrl">
+  <ng-container>
+    <div
+      [ngStyle]="{
+        display: documentOnPreviewUrl ? 'block' : 'none'
+      }"
+      class="img-preview container-view-lanscape"
+    >
+      <iframe [src]="documentOnPreviewUrl" frameBorder="0" [style.min-height.px]="getAutomaticHeight()" style="width: 100%;"></iframe>
+    </div>
+  </ng-container>
+</div>
+<div class="row btn-condition" *ngIf="documentOnPreviewUrl">
+  <button
+    class="regirstration-color btn-second"
+    (click)="downloadConditionPDF()"
+    [disabled]="isForLegalRepresentative"
+    mat-raised-button
+    matTooltip="{{ 'I download the condition' | translate }} "
+  >
+    <mat-icon class="mat-icon-default">cloud_download</mat-icon>
+    {{ 'I download the condition' | translate }}
+  </button>
+  <button
+    *ngIf="!agreeCondition && !candidateData?.is_admitted"
+    class="regirstration-color btn-second"
+    [disabled]="isForLegalRepresentative"
+    mat-raised-button
+    matTooltip="{{ 'I read and accept the conditions' | translate }} "
+    (click)="secondSave()"
+  >
+    <mat-icon class="mat-icon-default">assignment_turned_in</mat-icon>
+    {{ 'I read and accept the conditions' | translate }}
+  </button>
+  <button
+    *ngIf="agreeCondition && !candidateData?.is_admitted"
+    [disabled]="agreeCondition || !isForLegalRepresentative"
+    class="btn-second"
+    mat-raised-button
+    matTooltip="{{ 'I read and accept the conditions' | translate }} "
+  >
+    <mat-icon class="mat-icon-default">assignment_turned_in</mat-icon>
+    {{ 'I read and accept the conditions' | translate }}
+  </button>
+</div>
+
+<ng-container *ngIf="!documentOnPreviewUrl">
+  <div style="margin-top: 20px !important; text-align: center">
+    <mat-icon class="content-empty">article</mat-icon>
+    <div class="row no-margin msg-pay" style="font-size: 25px">{{ 'There is no condition agreement uploaded' | translate }}</div>
+  </div>
+</ng-container>
+
+<div class="overlow-auto" id="pdf-condition" style="display: none">
+  <div class="p-col-12" style="padding: 85px 85px">
+    <div class="title-terms">{{ 'Conditions Générales de L`École' | translate }} {{ candidateData?.school?.short_name }}</div>
+    <div class="content-terms" innerHTML="{{ conditionAgrement }}"></div>
+  </div>
+</div>
+
+<!-- <div class="overlow-auto" id="pdf-rib" style="display: none">
+    <div class="p-col-12" style="padding: 85px 85px">
+        <img style="height: 285px" [src]="sanitizeImageUrl()" />
+    </div>
+  </div> -->
+
+<div *ngIf="isWaitingForResponse" class="loading-indicator">
+  <mat-progress-spinner mode="indeterminate" color="accent"></mat-progress-spinner>
+</div>

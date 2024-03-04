@@ -1,0 +1,189 @@
+<form [formGroup]="urgentMessageForm">
+  <div class="dialog-border" style="border-bottom: 1px solid; margin-bottom: 10px" cdkDrag cdkDragRootElement=".cdk-overlay-pane" cdkDragHandle>
+    <div class="dialogTitleWrapper">
+      <div class="p-grid">
+        <div class="w-30 no-padding urgentIcon" style="margin-top: 3px">
+          <i class="fa fa-bolt"></i>
+        </div>
+        <div class="p-col-9 urgent-title">
+          <h3 class="dialogTitle">
+            <span>{{ 'NAV.MESSAGES.SENDURGENTMESSAGE' | translate }}</span>
+          </h3>
+        </div>
+        <div class="w-65 no-padding">
+          <button mat-icon-button class="close-icon float-right closeIcon" mat-dialog-close tabindex="-1">
+            <mat-icon>close</mat-icon>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="fontColor">
+    <mat-dialog-content style="max-height: 78vh !important">
+      <mat-form-field appearance="legacy" [hideRequiredMarker]="true">
+        <mat-label>{{ 'Scholar season' | translate }}*</mat-label>
+        <ng-container *ngIf="scholars.length > 0">
+          <mat-select (selectionChange)="getDataSchool()" formControlName="scholar_season_id">
+            <mat-option *ngFor="let sch of scholars" [value]="sch._id">{{ sch.scholar_season | translate }}</mat-option>
+          </mat-select>
+        </ng-container>
+
+        <ng-container *ngIf="scholars.length === 0">
+          <mat-select>
+            <mat-option *ngIf="scholars.length === 0" disabled>{{ 'NOT RECORD FOUND' | translate }}</mat-option>
+          </mat-select>
+        </ng-container>
+      </mat-form-field>
+
+      <mat-form-field appearance="legacy" [hideRequiredMarker]="true">
+        <mat-label>{{ 'School' | translate }}*</mat-label>
+        <ng-container *ngIf="school.length > 0">
+          <mat-select (selectionChange)="getDataCampus()" formControlName="school_id">
+            <mat-option *ngFor="let sch of school" [value]="sch._id">{{ sch.short_name | translate }}</mat-option>
+          </mat-select>
+        </ng-container>
+
+        <ng-container *ngIf="school.length === 0">
+          <mat-select>
+            <mat-option *ngIf="school.length === 0" disabled>{{ 'NOT RECORD FOUND' | translate }}</mat-option>
+          </mat-select>
+        </ng-container>
+      </mat-form-field>
+
+      <mat-form-field appearance="legacy" [hideRequiredMarker]="true">
+        <mat-label>{{ 'Campus' | translate }}*</mat-label>
+        <ng-container *ngIf="campusList.length > 0">
+          <mat-select (selectionChange)="getDataLevel($event)" formControlName="campuses" multiple>
+            <mat-option *ngFor="let camp of campusList" [value]="camp._id" (click)="clickCampus(camp._id)">{{
+              camp.name | translate
+            }}</mat-option>
+          </mat-select>
+        </ng-container>
+
+        <ng-container *ngIf="campusList.length === 0">
+          <mat-select>
+            <mat-option *ngIf="campusList.length === 0" disabled>{{ 'NOT RECORD FOUND' | translate }}</mat-option>
+          </mat-select>
+        </ng-container>
+      </mat-form-field>
+
+      <mat-form-field appearance="legacy" [hideRequiredMarker]="true">
+        <mat-label>{{ 'Level' | translate }}*</mat-label>
+        <ng-container *ngIf="levels.length > 0">
+          <mat-select (selectionChange)="getSectors($event)" formControlName="levels" multiple>
+            <mat-option *ngFor="let lev of levels" [value]="lev._id" (click)="clickLevel(lev._id)">{{ lev.name | translate }}</mat-option>
+          </mat-select>
+        </ng-container>
+
+        <ng-container *ngIf="levels.length === 0">
+          <mat-select>
+            <mat-option *ngIf="levels.length === 0" disabled>{{ 'NOT RECORD FOUND' | translate }}</mat-option>
+          </mat-select>
+        </ng-container>
+      </mat-form-field>
+
+      <mat-form-field appearance="legacy" [hideRequiredMarker]="true">
+        <mat-label>{{ 'Sector' | translate }}*</mat-label>
+        <ng-container *ngIf="sectorList.length > 0">
+          <mat-select (selectionChange)="getSpeciality($event)" formControlName="sectors" multiple>
+            <mat-option *ngFor="let sec of sectorList" [value]="sec._id" (click)="clickSector(sec._id)">{{
+              sec.name | translate
+            }}</mat-option>
+          </mat-select>
+        </ng-container>
+
+        <ng-container *ngIf="sectorList.length === 0">
+          <mat-select>
+            <mat-option *ngIf="sectorList.length === 0" disabled>{{ 'NOT RECORD FOUND' | translate }}</mat-option>
+          </mat-select>
+        </ng-container>
+      </mat-form-field>
+
+      <mat-form-field appearance="legacy">
+        <mat-label>{{ 'Speciality' | translate }}</mat-label>
+        <mat-select formControlName="specialities" (selectionChange)="selectedSpeciality($event)" multiple>
+          <mat-option [value]="'None'" (click)="selectSpeciality('None')">
+            {{ 'None' | translate }}
+          </mat-option>
+          <mat-option
+            *ngFor="let spec of specialityList"
+            [value]="spec._id"
+            (click)="clickSpeciality(spec._id)"
+            (click)="selectSpeciality(spec._id)"
+            >{{ spec.name | translate }}</mat-option
+          >
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field class="pad-top-8" [hideRequiredMarker]="true">
+        <input matInput placeholder="{{ 'Subject' | translate }}*" formControlName="subject" />
+      </mat-form-field>
+
+      <label>{{ 'User' | translate }} </label>
+      <mat-slide-toggle [checked]="checked" (change)="categoryChange($event)" formControlName="categoryChecked">{{
+        'TUTORIAL_MENU.CATEGORY' | translate
+      }}</mat-slide-toggle>
+
+      <mat-form-field appearance="outline" *ngIf="!urgentMessageForm.get('categoryChecked').value">
+        <input
+          type="text"
+          placeholder="{{ 'User' | translate }}*"
+          (keyup)="keyupUser('type')"
+          matInput
+          formControlName="users"
+          [matAutocomplete]="autoUsers"
+        />
+        <mat-autocomplete autoActiveFirstOption #autoUsers="matAutocomplete" (optionSelected)="valueChange('user')">
+          <mat-option *ngFor="let user of userList" (click)="selectedUser(user)" [value]="user.first_name + ' ' + user.last_name">
+            {{ user.first_name }} {{ user.last_name | uppercase }}
+          </mat-option>
+        </mat-autocomplete>
+      </mat-form-field>
+
+      <mat-form-field *ngIf="urgentMessageForm.get('categoryChecked').value" style="margin-top: 10px" [hideRequiredMarker]="true">
+        <input
+          type="text"
+          placeholder="{{ 'TUTORIAL_MENU.CATEGORY' | translate }}*"
+          matInput
+          formControlName="userTypes"
+          [matAutocomplete]="autoUserTypes"
+          (keyup)="keyupUserType('type')"
+        />
+        <mat-autocomplete autoActiveFirstOption #autoUserTypes="matAutocomplete" (optionSelected)="valueChange('type')">
+          <mat-option
+            *ngFor="let userType of userTypesList"
+            (click)="selectedUserType(userType._id)"
+            value="{{ 'USER_TYPES.' + userType.name | translate }}"
+          >
+            {{ 'USER_TYPES.' + userType.name | translate }}
+          </mat-option>
+        </mat-autocomplete>
+      </mat-form-field>
+
+      <mat-form-field>
+        <textarea matInput placeholder="{{ 'MailBox.MESSAGE' | translate }}" formControlName="message"></textarea>
+      </mat-form-field>
+    </mat-dialog-content>
+    <mat-dialog-actions align="right">
+      <button mat-raised-button mat-dialog-close type="button" color="warn">
+        {{ 'CANCEL' | translate }}
+      </button>
+      <button mat-raised-button (click)="sendMessage()" color="primary">
+        {{ 'SUBMIT' | translate }}
+      </button>
+    </mat-dialog-actions>
+  </div>
+</form>
+
+<div *ngIf="isWaitingForResponseScholar" class="loading-indicator">
+  <mat-progress-spinner mode="indeterminate" color="accent"></mat-progress-spinner>
+</div>
+<div *ngIf="isWaitingForResponseSchool" class="loading-indicator">
+  <mat-progress-spinner mode="indeterminate" color="accent"></mat-progress-spinner>
+</div>
+<div *ngIf="isWaitingForResponseSector" class="loading-indicator">
+  <mat-progress-spinner mode="indeterminate" color="accent"></mat-progress-spinner>
+</div>
+<div *ngIf="isWaitingForResponseSpeciality" class="loading-indicator">
+  <mat-progress-spinner mode="indeterminate" color="accent"></mat-progress-spinner>
+</div>

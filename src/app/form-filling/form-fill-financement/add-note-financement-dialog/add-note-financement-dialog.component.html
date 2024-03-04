@@ -1,0 +1,79 @@
+<div class="header-div" cdkDrag cdkDragRootElement=".cdk-overlay-pane" cdkDragHandle>
+  <mat-icon *ngIf="parentData?.comps?.icon"> {{ parentData?.comps?.icon }} </mat-icon>
+  <h2 class="header-text">{{ 'ADMISIONSTEPFINANCEMENT.' + parentData?.comps?.title | translate }}</h2>
+  <button mat-icon-button type="button" (click)="closeDialog()" class="header-icon">
+    <mat-icon>close</mat-icon>
+  </button>
+</div>
+<hr />
+
+<form [formGroup]="addNoteFinancementForm">
+  <div style="color: black">
+    <!-- ==== -->
+    <div class="p-grid">
+      <!-- LIST OF MESSAGES -->
+      <div class="p-col-12">
+        <div class="p-grid">
+          <div class="p-col-12" style="overflow-y: scroll; max-height: 300px">
+            <!-- MESSAGES LOOP -->
+            <div *ngFor="let message of messages">
+              <div class="p-grid message-wraper">
+                <div class="p-col-12 mesage-top-bar">
+                  <div class="message-info">
+                    {{ 'Addeds the' | translate }} {{ translateDate(message?.createdAt) }} {{ 'by' | translate }}
+                    {{ message?.created_by?.civility | translate }}
+                    {{ message?.created_by?.first_name + ' ' + message?.created_by?.last_name }}
+                  </div>
+                  <button color="warn" style="margin-left: 10px" mat-icon-button (click)="deleteNote(message)">
+                    <mat-icon>close</mat-icon>
+                  </button>
+                </div>
+                <div class="p-col-12 message">{{ message?.comment }}</div>
+              </div>
+            </div>
+
+            <!-- MESSAGES LOOP END -->
+          </div>
+        </div>
+      </div>
+      <!-- LIST OF MESSAGES END -->
+
+      <!-- INPUT TO REPLAY MESSAGE -->
+      <div class="p-col-12">
+        <div class="p-grid">
+          <div class="p-col-10">
+            <mat-form-field style="width: 100%">
+              <textarea
+                formControlName="comment"
+                matInput
+                placeholder="{{ 'ADMISIONSTEPFINANCEMENT.Type a note' | translate }}"
+                style="resize: none"
+              ></textarea>
+            </mat-form-field>
+          </div>
+          <div class="p-col-2 btn-send-msg">
+            <!-- <button (click)="sendNote()" style="margin-left: 10px" mat-icon-button> -->
+            <mat-icon>telegram</mat-icon>
+            <!-- </button> -->
+          </div>
+        </div>
+      </div>
+      <!-- INPUT TO REPLAY MESSAGE END -->
+    </div>
+    <!-- ==== -->
+    <div>
+      <mat-dialog-actions align="right">
+        <button mat-raised-button color="warn" type="button" (click)="closeDialog()">
+          {{ 'Cancel' | translate }}
+        </button>
+        <button mat-raised-button color="primary" type="button" (click)="handleSubmit()">
+          {{ 'Validate' | translate }}
+        </button>
+      </mat-dialog-actions>
+    </div>
+  </div>
+</form>
+
+<div *ngIf="isWaitingForResponse" class="inner-loading-indicator">
+  <mat-spinner color="accent" [diameter]="100"></mat-spinner>
+</div>

@@ -1,0 +1,110 @@
+<div class="dialog-border">
+  <div class="dialogTitleWrapper header-dialog" cdkDrag cdkDragRootElement=".cdk-overlay-pane" cdkDragHandle>
+    <div class="p-grid">
+      <div class="p-col-10 no-padding">
+        <h3 class="dialogTitle">{{ 'Button_Program_Above_Table_School_Detail.Add program' | translate }}</h3>
+      </div>
+      <div class="p-col-2">
+        <button mat-icon-button class="close-icon float-right" (click)="closeDialog()" tabindex="-1">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div mat-dialog-content class="mat-dialog-content dialog-body" style="overflow: hidden !important">
+  <div class="p-grid" [formGroup]="addProgramForm" style="padding-top: 10px">
+    <div class="p-col-1 pad-y-none">
+      <mat-form-field floatLabel="auto">
+        <input
+          matInput
+          class="form-field"
+          placeholder="{{ 'Scholar Season' | translate }}"
+          [value]="parentData?.scholarSeason?.scholar_season"
+          readonly
+        />
+      </mat-form-field>
+    </div>
+    <div class="p-col-1 pad-y-none">
+      <mat-form-field floatLabel="auto">
+        <input matInput class="form-field" placeholder="{{ 'School' | translate }}" [value]="parentData?.school?.short_name" readonly />
+      </mat-form-field>
+    </div>
+    <div class="p-col-2 pad-y-none">
+      <!-- <mat-form-field appearance="legacy">
+        <mat-select multiple placeholder="{{ 'Campus' | translate }}*" formControlName="campus"> </mat-select>
+      </mat-form-field> -->
+      <ng-select
+        class="mrgn-btn"
+        formControlName="campuses"
+        placeholder="{{ 'Campus' | translate }}*"
+        [multiple]="true"
+        [items]="campusList"
+        bindLabel="name"
+        bindValue="_id"
+        [appendTo]="'body'"
+      >
+      </ng-select>
+    </div>
+    <div class="p-col-2 pad-y-none">
+      <!-- <mat-form-field appearance="legacy">
+        <mat-select multiple placeholder="{{ 'Level' | translate }}*" formControlName="level"> </mat-select>
+      </mat-form-field> -->
+      <ng-select
+        class="mrgn-btn"
+        formControlName="levels"
+        placeholder="{{ 'Level' | translate }}*"
+        [multiple]="true"
+        [items]="levelList"
+        bindLabel="name"
+        bindValue="_id"
+        [appendTo]="'body'"
+      >
+      </ng-select>
+    </div>
+    <div class="p-col-3 pad-y-none">
+      <!-- <mat-form-field appearance="legacy">
+        <mat-select multiple placeholder="{{ 'Sector' | translate }}*" formControlName="sector_id"> </mat-select>
+      </mat-form-field> -->
+      <ng-select
+        class="mrgn-btn"
+        formControlName="sectors"
+        placeholder="{{ 'Sector' | translate }}*"
+        [multiple]="true"
+        [items]="sectorList"
+        bindLabel="name"
+        bindValue="_id"
+        [appendTo]="'body'"
+      >
+      </ng-select>
+    </div>
+    <div class="p-col-3 pad-y-none">
+      <!-- <mat-form-field appearance="legacy">
+        <mat-select multiple placeholder="{{ 'Speciality' | translate }}" formControlName="speciality_id"> </mat-select>
+      </mat-form-field> -->
+      <ng-select
+        class="mrgn-btn"
+        formControlName="specialities"
+        placeholder="{{ 'Program_Table_School_Detail.Speciality' | translate }}"
+        [multiple]="true"
+        [items]="specializationList"
+        bindLabel="name"
+        bindValue="_id"
+        [appendTo]="'body'"
+      >
+      </ng-select>
+    </div>
+  </div>
+</div>
+
+<div mat-dialog-actions class="justify-content-end mr-10">
+  <button mat-button mat-raised-button color="warn" (click)="closeDialog()">{{ 'CANCEL' | translate }}</button>
+  <button (click)="submit()" mat-button mat-raised-button color="primary" class="mr-0">
+    {{ 'Validate' | translate }}
+  </button>
+</div>
+
+<div *ngIf="isWaitingForResponse" class="loading-indicator">
+  <mat-progress-spinner mode="indeterminate" color="accent"></mat-progress-spinner>
+</div>

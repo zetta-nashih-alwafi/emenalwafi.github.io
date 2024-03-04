@@ -1,0 +1,424 @@
+{
+  "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+  "version": 1,
+  "newProjectRoot": "projects",
+  "projects": {
+    "Gene": {
+      "root": "",
+      "sourceRoot": "src",
+      "projectType": "application",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:browser",
+          "options": {
+            "outputPath": "dist",
+            "index": "src/index.html",
+            "main": "src/main.ts",
+            "tsConfig": "src/tsconfig.app.json",
+            "polyfills": "src/polyfills.ts",
+            "assets": ["src/assets"],
+            "styles": [
+              "src/assets/scss/style.scss",
+              "node_modules/slick-carousel/slick/slick.scss",
+              "node_modules/slick-carousel/slick/slick-theme.scss",
+              "node_modules/primeflex/primeflex.css"
+            ],
+            "scripts": [
+              "node_modules/jquery/dist/jquery.min.js",
+              "node_modules/slick-carousel/slick/slick.min.js",
+              "node_modules/sortablejs/Sortable.js"
+            ],
+            "vendorChunk": true,
+            "extractLicenses": false,
+            "buildOptimizer": false,
+            "sourceMap": true,
+            "optimization": false,
+            "namedChunks": true,
+            "allowedCommonJsDependencies": [
+              "raf",
+              "util",
+              "luxon",
+              "moment",
+              "crypto-js",
+              "sweetalert2",
+              "ng2-validation",
+              "rgbcolor",
+              "fast-json-stable-stringify",
+              "babel-runtime/helpers/createClass",
+              "babel-runtime/core-js/get-iterator",
+              "babel-runtime/helpers/extends",
+              "babel-runtime/helpers/slicedToArray",
+              "babel-runtime/helpers/classCallCheck",
+              "@babel/runtime/regenerator",
+              "pdfmake/build/pdfmake.js",
+              "xlsx/dist/xlsx.core.min.js",
+              "assets/ckeditor5-custom/ckeditor.js"
+            ]
+          },
+          "configurations": {
+            "production": {
+              "budgets": [
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "150kb"
+                }
+              ],
+              "optimization": true,
+              "sourceMap": false,
+              "namedChunks": false,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "assets": [
+                "src/assets/ckeditor5-custom",
+                "src/assets/data",
+                "src/assets/fonts",
+                "src/assets/i18n",
+                "src/assets/icons",
+                {
+                  "input": "src/assets/img-production",
+                  "output": "assets/img",
+                  "glob": "**/*"
+                },
+                "src/assets/scss"
+              ],
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.prod.ts"
+                }
+              ]
+            },
+            "preProduction": {
+              "budgets": [
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "150kb"
+                }
+              ],
+              "optimization": true,
+              "sourceMap": false,
+              "namedChunks": false,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "assets": [
+                "src/assets/ckeditor5-custom",
+                "src/assets/data",
+                "src/assets/fonts",
+                "src/assets/i18n",
+                "src/assets/icons",
+                {
+                  "input": "src/assets/img-poc",
+                  "output": "assets/img",
+                  "glob": "**/*"
+                },
+                "src/assets/scss"
+              ],
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.poc.ts"
+                }
+              ]
+            },
+            "stagingRedalert": {
+              "budgets": [
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "200kb"
+                },
+                {
+                  "type": "initial",
+                  "maximumWarning": "1mb"
+                },
+                {
+                  "type": "bundle",
+                  "maximumWarning": "1mb"
+                }
+              ],
+              "outputHashing": "all",
+              "optimization": true,
+              "sourceMap": false,
+              "namedChunks": false,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "assets": [
+                "src/assets/ckeditor5-custom",
+                "src/assets/data",
+                "src/assets/fonts",
+                "src/assets/i18n",
+                "src/assets/icons",
+                {
+                  "input": "src/assets/img-staging",
+                  "output": "assets/img",
+                  "glob": "**/*"
+                },
+                "src/assets/scss"
+              ],
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.staging.redalert.ts"
+                }
+              ]
+            },
+            "stagingFeature": {
+              "budgets": [
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "200kb"
+                },
+                {
+                  "type": "initial",
+                  "maximumWarning": "1mb"
+                },
+                {
+                  "type": "bundle",
+                  "maximumWarning": "1mb"
+                }
+              ],
+              "outputHashing": "all",
+              "optimization": true,
+              "sourceMap": false,
+              "namedChunks": false,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "assets": [
+                "src/assets/ckeditor5-custom",
+                "src/assets/data",
+                "src/assets/fonts",
+                "src/assets/i18n",
+                "src/assets/icons",
+                {
+                  "input": "src/assets/img-staging",
+                  "output": "assets/img",
+                  "glob": "**/*"
+                },
+                "src/assets/scss"
+              ],
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.staging.feature.ts"
+                }
+              ]
+            },
+            "testFeature": {
+              "budgets": [
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "200kb"
+                },
+                {
+                  "type": "initial",
+                  "maximumWarning": "1mb"
+                },
+                {
+                  "type": "bundle",
+                  "maximumWarning": "1mb"
+                }
+              ],
+              "outputHashing": "all",
+              "optimization": true,
+              "sourceMap": false,
+              "namedChunks": false,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "assets": [
+                "src/assets/ckeditor5-custom",
+                "src/assets/data",
+                "src/assets/fonts",
+                "src/assets/i18n",
+                "src/assets/icons",
+                {
+                  "input": "src/assets/img-test",
+                  "output": "assets/img",
+                  "glob": "**/*"
+                },
+                "src/assets/scss"
+              ],
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.test.feature.ts"
+                }
+              ]
+            },
+            "simulation": {
+              "budgets": [
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "200kb"
+                },
+                {
+                  "type": "initial",
+                  "maximumWarning": "1mb"
+                },
+                {
+                  "type": "bundle",
+                  "maximumWarning": "1mb"
+                }
+              ],
+              "outputHashing": "all",
+              "optimization": true,
+              "sourceMap": false,
+              "namedChunks": false,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "assets": [
+                "src/assets/ckeditor5-custom",
+                "src/assets/data",
+                "src/assets/fonts",
+                "src/assets/i18n",
+                "src/assets/icons",
+                {
+                  "input": "src/assets/img-staging",
+                  "output": "assets/img",
+                  "glob": "**/*"
+                },
+                "src/assets/scss"
+              ],
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.simulation.ts"
+                }
+              ]
+            },
+            "independentOperator": {
+              "budgets": [
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "150kb"
+                }
+              ],
+              "outputHashing": "all",
+              "optimization": true,
+              "sourceMap": false,
+              "namedChunks": false,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "assets": [
+                "src/assets/ckeditor5-custom",
+                "src/assets/data",
+                "src/assets/fonts",
+                "src/assets/i18n",
+                "src/assets/icons",
+                {
+                  "input": "src/assets/img-staging",
+                  "output": "assets/img",
+                  "glob": "**/*"
+                },
+                "src/assets/scss"
+              ],
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.io.ts"
+                }
+              ]
+            },
+            "development": {
+              "optimization": false,
+              "aot": false,
+              "sourceMap": false,
+              "namedChunks": true,
+              "extractLicenses": false,
+              "vendorChunk": true,
+              "buildOptimizer": false,
+              "assets": [
+                "src/assets/ckeditor5-custom",
+                "src/assets/data",
+                "src/assets/fonts",
+                "src/assets/i18n",
+                "src/assets/icons",
+                {
+                  "input": "src/assets/img-staging",
+                  "output": "assets/img",
+                  "glob": "**/*"
+                },
+                "src/assets/scss"
+              ],
+              "budgets": []
+            }
+          },
+          "defaultConfiguration": ""
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "browserTarget": "Gene:build"
+          },
+          "configurations": {
+            "production": {
+              "browserTarget": "Gene:build:production"
+            },
+            "development": {
+              "browserTarget": "Gene:build:development"
+            }
+          },
+          "defaultConfiguration": "development"
+        },
+        "extract-i18n": {
+          "builder": "@angular-devkit/build-angular:extract-i18n",
+          "options": {
+            "browserTarget": "Gene:build"
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "src/test.ts",
+            "karmaConfig": "./karma.conf.js",
+            "polyfills": "src/polyfills.ts",
+            "tsConfig": "src/tsconfig.spec.json",
+            "scripts": [
+              "node_modules/jquery/dist/jquery.min.js",
+              "node_modules/slick-carousel/slick/slick.min.js",
+              "node_modules/sortablejs/Sortable.js"
+            ],
+            "styles": [
+              "src/assets/scss/style.scss",
+              "node_modules/slick-carousel/slick/slick.scss",
+              "node_modules/slick-carousel/slick/slick-theme.scss",
+              "node_modules/font-awesome/scss/font-awesome.scss"
+            ],
+            "assets": ["src/assets"]
+          }
+        }
+      }
+    },
+    "Gene-e2e": {
+      "root": "",
+      "sourceRoot": "e2e",
+      "projectType": "application",
+      "architect": {
+        "e2e": {
+          "builder": "@angular-devkit/build-angular:protractor",
+          "options": {
+            "protractorConfig": "./protractor.conf.js",
+            "devServerTarget": "Gene:serve"
+          }
+        }
+      }
+    }
+  },
+  "schematics": {
+    "@schematics/angular:component": {
+      "prefix": "ms",
+      "style": "scss"
+    },
+    "@schematics/angular:directive": {
+      "prefix": "ms"
+    }
+  },
+  "cli": {
+    "analytics": false
+  }
+}

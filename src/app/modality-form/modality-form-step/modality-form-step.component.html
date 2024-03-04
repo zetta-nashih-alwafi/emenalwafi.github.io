@@ -1,0 +1,725 @@
+<ng-container *ngIf="!candidateData?.modality_status || candidateData?.modality_status === 'not_done' || candidateData?.modality_status === 'sent'">
+  <div class="row padl-13 hd-legend">
+    <label>{{ 'who pay scholar fees' | translate }}</label>
+    <span class="link-cgv" (click)="openCGV()">{{ 'See the GTCS' | translate }}</span>
+  </div>
+  <form class="row no-margin" [formGroup]="paymentForm">
+    <fieldset>
+      <ng-container>
+        <!-- Payment type -->
+        <div class="web-display">
+          <div class="row no-margin" style="margin-bottom: 15px !important">
+            <div class="card fade-in">
+              <div
+                class="card-body card-payment"
+                [ngClass]="{ 'color-disabled': paymentForm?.get('finance')?.value && paymentForm?.get('finance')?.value !== 'my_self' }"
+              >
+                <div class="row">
+                  <div><mat-icon class="mat-icon-payment icon-size">person</mat-icon></div>
+                </div>
+                <div class="row">
+                  <div class="text-payment">{{ 'I will pay my studies myself' | translate }}</div>
+                </div>
+                <div class="row" style="margin: auto; text-align: center">
+                  <button
+                    mat-raised-button
+                    matTooltip="{{ 'I choose' | translate }}"
+                    [disabled]="candidateData?.candidate_admission_status === 'registered' || candidateData?.candidate_admission_status === 'engaged'"
+                    class="btn-opsi btn-loan-touch"
+                  >
+                    {{ 'I choose' | translate }}
+                    <mat-icon class="mat-icon-default">touch_app</mat-icon>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div class="card fade-in">
+              <div
+                class="card-body card-payment"
+                [ngClass]="{ 'color-disabled': paymentForm?.get('finance')?.value && paymentForm?.get('finance')?.value !== 'family' }"
+              >
+                <div class="row">
+                  <div><mat-icon class="mat-icon-payment icon-size">groups</mat-icon></div>
+                </div>
+                <div class="row">
+                  <div class="text-payment">
+                    {{ 'I will pay my studies through a member of my family' | translate }}
+                  </div>
+                </div>
+                <div class="row" style="margin: auto; text-align: center">
+                  <button
+                    mat-raised-button
+                    matTooltip="{{ 'I choose' | translate }}"
+                    [disabled]="candidateData?.candidate_admission_status === 'registered' || candidateData?.candidate_admission_status === 'engaged'"
+                    class="btn-opsi btn-loan-touch"
+                  >
+                    {{ 'I choose' | translate }}
+                    <mat-icon class="mat-icon-default">touch_app</mat-icon>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Payment Information -->
+        <div class="row pad-all-xl" *ngIf="paymentType">
+          <h2>
+            {{ 'Scholarship fees remaining due (after payment of the down payment)' | translate }}:
+            {{ formatCurrency(candidateData?.selected_payment_plan?.total_amount) || 0 }} EUR
+          </h2>
+          <ng-container *ngIf="candidateData?.selected_payment_plan?.payment_date?.length > 0">
+            <p>
+              {{ 'Payment mode x times' | translate : { x: candidateData?.selected_payment_plan?.payment_date?.length || 0 } }} -
+              {{ (candidateData?.method_of_payment === 'credit_card' ? 'Bank Debit' : candidateData?.method_of_payment) | translate }}
+            </p>
+            <ul>
+              <li *ngFor="let date of candidateData?.selected_payment_plan?.payment_date">{{ date?.date }}</li>
+            </ul>
+          </ng-container>
+        </div>
+
+        <!-- payment type -->
+        <ng-container>
+          <!-- Student card information -->
+          <div class="row no-margin method-two" *ngIf="studentAsFinancialSupport">
+            <div class="row no-margin" style="position: absolute; right: 4em; text-align: right">
+              <!-- <button mat-icon-button class="small-icon" color="red" (click)="removeStudent()">
+                <mat-icon style="font-size: 25px">close</mat-icon>
+              </button> -->
+              <!-- <span (click)="removeStudent()">{{ 'Remove student' | translate }}</span> -->
+            </div>
+            <legend>
+              {{ 'Student' | translate }}:
+              {{ candidateData?.civility && candidateData?.civility === 'neutral' ? '' : (candidateData?.civility | translate) }}
+              {{ candidateData?.first_name }} {{ candidateData?.last_name | uppercase }}
+            </legend>
+            <div class="col-lg-12">
+              <div class="col-lg-12 no-padding" *ngIf="candidateData?.method_of_payment !== 'transfer'">
+                <div class="col-lg-6">
+                  <div class="row">
+                    <div class="col-lg-4">
+                      <label>{{ 'Account Holder Name' | translate }}*</label>
+                    </div>
+                    <div class="col-lg-8">
+                      <div
+                        class="form-group"
+                        [ngClass]="{
+                          'has-error':
+                            paymentForm?.get('account_holder_name')?.invalid &&
+                            (paymentForm?.get('account_holder_name')?.dirty || paymentForm?.get('account_holder_name').touched)
+                        }"
+                      >
+                        <input class="form-control" matInput type="text" formControlName="account_holder_name" />
+                        <div
+                          class="invalid-feedback"
+                          *ngIf="
+                            paymentForm?.get('account_holder_name')?.hasError('required') &&
+                            (paymentForm?.get('account_holder_name')?.dirty || paymentForm?.get('account_holder_name').touched)
+                          "
+                        >
+                          {{ 'This field is required' | translate }}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-lg-12 no-padding">
+                <div class="col-lg-6">
+                  <div class="row">
+                    <div class="col-lg-4">
+                      <label>{{ 'Cost coverage' | translate }}*</label>
+                    </div>
+                    <div class="col-lg-8">
+                      <div
+                        class="form-group"
+                      >
+                        <div class="input-group">
+                          <input type="number" class="form-control" formControlName="cost" readonly />
+                          <div class="input-group-addon">EUR</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-lg-12 no-padding" *ngIf="candidateData?.method_of_payment !== 'transfer'">
+                <div class="col-lg-6">
+                  <div class="row">
+                    <div class="col-lg-4">
+                      <label>{{ 'IBAN' | translate }}*</label>
+                    </div>
+                    <div class="col-lg-8">
+                      <div
+                        class="form-group"
+                        [ngClass]="{
+                          'has-error':
+                            paymentForm?.get('iban')?.invalid && (paymentForm?.get('iban')?.dirty || paymentForm?.get('iban').touched)
+                        }"
+                      >
+                        <input class="form-control" matInput type="text" formControlName="iban" />
+                        <div
+                          class="invalid-feedback"
+                          *ngIf="
+                            paymentForm?.get('iban')?.hasError('required') &&
+                            (paymentForm?.get('iban')?.dirty || paymentForm?.get('iban').touched)
+                          "
+                        >
+                          {{ 'This field is required' | translate }}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-lg-6">
+                  <div class="row">
+                    <div class="col-lg-4">
+                      <label>{{ 'BIC' | translate }}*</label>
+                    </div>
+                    <div class="col-lg-8">
+                      <div
+                        class="form-group"
+                        [ngClass]="{
+                          'has-error':
+                            paymentForm?.get('bic')?.invalid && (paymentForm?.get('bic')?.dirty || paymentForm?.get('bic').touched)
+                        }"
+                      >
+                        <input class="form-control" matInput type="text" formControlName="bic" />
+                        <div
+                          class="invalid-feedback"
+                          *ngIf="
+                            paymentForm?.get('bic')?.hasError('required') &&
+                            (paymentForm?.get('bic')?.dirty || paymentForm?.get('bic').touched)
+                          "
+                        >
+                          {{ 'This field is required' | translate }}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-lg-12 no-padding" *ngIf="candidateData?.method_of_payment !== 'transfer'">
+                <mat-checkbox
+                  [ngClass]="{
+                    'checkbox-error':
+                      paymentForm?.get('autorization_account')?.hasError('required') && paymentForm?.get('autorization_account')?.touched
+                  }"
+                  style="padding-left: 15px"
+                  formControlName="autorization_account"
+                  >{{
+                    'I validate the mandate authorizing the school to present direct debit orders to the bank account indicated above'
+                      | translate
+                  }}*</mat-checkbox
+                >
+                <div
+                  class="invalid-feedback"
+                  style="margin-left: 1.5rem"
+                  *ngIf="
+                    paymentForm?.get('autorization_account')?.hasError('required') &&
+                    (paymentForm?.get('autorization_account')?.dirty || paymentForm?.get('autorization_account')?.touched)
+                  "
+                >
+                  {{ 'This field is required' | translate }}
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Financial support card information -->
+          <div class="row" style="padding: 15px">
+            <ng-container formArrayName="payment_supports">
+              <div
+                class="col-lg-12 no-margin method-two"
+                *ngFor="let financialSupport of financialSupportArray.controls; let fincancialSupportIndex = index"
+                [formGroupName]="fincancialSupportIndex"
+              >
+                <div class="row no-margin" style="position: absolute; right: 1em; text-align: right">
+                  <!-- <button mat-icon-button class="small-icon" color="red" (click)="removeFinancialSupport(fincancialSupportIndex)">
+                    <mat-icon style="font-size: 25px">close</mat-icon>
+                  </button> -->
+                  <!-- <span (click)="removeFinancialSupport(fincancialSupportIndex)">{{ 'Remove financial support' | translate }}</span> -->
+                </div>
+                <legend>{{ 'Financial Respondent' | translate }} {{ fincancialSupportIndex + 1 }}</legend>
+                <div class="col-lg-6" style="padding-left: 30px">
+                  <div class="row">
+                    <div class="col-lg-4">
+                      <label>{{ 'Civility' | translate }}*</label>
+                    </div>
+                    <div class="col-lg-8">
+                      <div
+                        class="form-group"
+                        style="display: flex; flex-direction: column"
+                        [ngClass]="toggleValidationStyle('civility', fincancialSupportIndex)"
+                      >
+                        <mat-radio-group formControlName="civility" style="font-size: 12px">
+                          <mat-radio-button style="margin-right: 1rem" value="MR">{{ 'CARDDETAIL.MR' | translate }}</mat-radio-button>
+                          <mat-radio-button value="MRS">{{ 'CARDDETAIL.MRS' | translate }}</mat-radio-button>
+                          <ng-container *ngIf="coreService?.neutralCivility">
+                            <mat-radio-button style="margin-left: 8px" value="neutral">{{ 'Neutral' | translate }}</mat-radio-button>
+                          </ng-container>
+                        </mat-radio-group>
+                        <div
+                          class="invalid-feedback"
+                          *ngIf="
+                            financialSupport?.get('civility')?.hasError('required') &&
+                            (financialSupport?.get('civility')?.dirty || financialSupport?.get('civility')?.touched)
+                          "
+                        >
+                          {{ 'This field is required' | translate }}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-lg-4">
+                      <label>{{ 'First Name' | translate }}*</label>
+                    </div>
+                    <div class="col-lg-8">
+                      <div class="form-group" [ngClass]="toggleValidationStyle('name', fincancialSupportIndex)">
+                        <input class="form-control" formControlName="name" />
+                        <div
+                          class="invalid-feedback"
+                          *ngIf="
+                            financialSupport?.get('name')?.hasError('required') &&
+                            (financialSupport?.get('name')?.dirty || financialSupport?.get('name')?.touched)
+                          "
+                        >
+                          {{ 'This field is required' | translate }}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-lg-4">
+                      <label>{{ 'Last name' | translate }}*</label>
+                    </div>
+                    <div class="col-lg-8">
+                      <div class="form-group" [ngClass]="toggleValidationStyle('family_name', fincancialSupportIndex)">
+                        <input class="form-control" formControlName="family_name" />
+                        <div
+                          class="invalid-feedback"
+                          *ngIf="
+                            financialSupport?.get('family_name')?.hasError('required') &&
+                            (financialSupport?.get('family_name')?.dirty || financialSupport?.get('family_name')?.touched)
+                          "
+                        >
+                          {{ 'This field is required' | translate }}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row" formGroupName="parent_address">
+                    <div class="col-lg-4">
+                      <label>{{ 'Address' | translate }}*</label>
+                    </div>
+                    <div class="col-lg-8">
+                      <div class="form-group" [ngClass]="toggleValidationStyle('address', fincancialSupportIndex, true)">
+                        <input class="form-control" formControlName="address" />
+                        <div
+                          class="invalid-feedback"
+                          *ngIf="
+                            financialSupport?.get('parent_address')?.get('address')?.hasError('required') &&
+                            (financialSupport?.get('parent_address')?.get('address')?.dirty ||
+                              financialSupport?.get('parent_address')?.get('address')?.touched)
+                          "
+                        >
+                          {{ 'This field is required' | translate }}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row" formGroupName="parent_address">
+                    <div class="col-lg-4">
+                      <label>{{ 'Additional address' | translate }}</label>
+                    </div>
+                    <div class="col-lg-8">
+                      <div class="form-group">
+                        <input class="form-control" formControlName="additional_address" />
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row" formGroupName="parent_address">
+                    <div class="col-lg-4">
+                      <label>{{ 'Post code' | translate }}*</label>
+                    </div>
+                    <div class="col-lg-8">
+                      <div class="form-group" [ngClass]="toggleValidationStyle('postal_code', fincancialSupportIndex, true)">
+                        <input class="form-control" formControlName="postal_code" (keyup)="getPostcodeData(fincancialSupportIndex)" />
+                      </div>
+                      <div
+                        class="invalid-feedback"
+                        *ngIf="
+                          financialSupport?.get('parent_address')?.get('postal_code')?.hasError('required') &&
+                          (financialSupport?.get('parent_address')?.get('postal_code')?.dirty ||
+                            financialSupport?.get('parent_address')?.get('postal_code')?.touched)
+                        "
+                      >
+                        {{ 'This field is required' | translate }}
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row" formGroupName="parent_address">
+                    <div class="col-lg-4">
+                      <label>{{ 'City' | translate }}*</label>
+                    </div>
+                    <div class="col-lg-8">
+                      <div class="form-group" [ngClass]="toggleValidationStyle('city', fincancialSupportIndex, true)">
+                        <input class="form-control" formControlName="city" />
+                        <div
+                          class="invalid-feedback"
+                          *ngIf="
+                            financialSupport?.get('parent_address')?.get('city')?.hasError('required') &&
+                            (financialSupport?.get('parent_address')?.get('city')?.dirty ||
+                              financialSupport?.get('parent_address')?.get('city')?.touched)
+                          "
+                        >
+                          {{ 'This field is required' | translate }}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-lg-6" style="padding-right: 30px">
+                  <div class="row" formGroupName="parent_address">
+                    <div class="col-lg-4">
+                      <label>{{ 'Country' | translate }}*</label>
+                    </div>
+                    <div class="col-lg-8">
+                      <div class="form-group" [ngClass]="toggleValidationStyle('country', fincancialSupportIndex, true)">
+                        <input
+                          type="text"
+                          matInput
+                          class="form-control"
+                          formControlName="country"
+                          [matAutocomplete]="autoCountryss"
+                          (keyup)="filterCountrys(fincancialSupportIndex.toString())"
+                          (focusout)="checkCountry(fincancialSupportIndex.toString())"
+                        />
+                        <mat-autocomplete #autoCountryss="matAutocomplete">
+                          <mat-option *ngFor="let option of filteredCountryFinance" [value]="option.name">
+                            {{ option.name }}
+                          </mat-option>
+                        </mat-autocomplete>
+                        <div
+                          class="invalid-feedback"
+                          *ngIf="
+                            financialSupport?.get('parent_address')?.get('country')?.hasError('required') &&
+                            (financialSupport?.get('parent_address')?.get('country')?.dirty ||
+                              financialSupport?.get('parent_address')?.get('country')?.touched)
+                          "
+                        >
+                          {{ 'This field is required' | translate }}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-lg-4">
+                      <label>{{ 'E-mail' | translate }}*</label>
+                    </div>
+                    <div class="col-lg-8">
+                      <div class="form-group" [ngClass]="toggleValidationStyle('email', fincancialSupportIndex)">
+                        <input class="form-control" formControlName="email" />
+                        <div
+                          class="invalid-feedback"
+                          *ngIf="financialSupport?.get('email')?.hasError('email') && !financialSupport?.get('email')?.hasError('required')"
+                        >
+                          {{ 'Please enter a valid email address' | translate }}
+                        </div>
+                        <div
+                          class="invalid-feedback"
+                          *ngIf="
+                            financialSupport?.get('email')?.hasError('required') &&
+                            (financialSupport?.get('email')?.dirty || financialSupport?.get('email')?.touched)
+                          "
+                        >
+                          {{ 'This field is required' | translate }}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-lg-4">
+                      <label>{{ 'Phone number' | translate }}*</label>
+                    </div>
+                    <div class="col-lg-8">
+                      <div class="form-group" [ngClass]="toggleValidationStyle('tele_phone', fincancialSupportIndex)">
+                        <div class="no-padding-y p-grid" style="position: relative">
+                          <div class="phone-number p-col-4">
+                            <ng-select
+                              [formControl]="dialCodeArray?.at(fincancialSupportIndex)"
+                              (change)="selectionDialCode($event, fincancialSupportIndex)"
+                              [clearable]="false"
+                              bindLabel="name"
+                              [appendTo]="'body'"
+                              class="mrgn-btn"
+                              class="form-control custom-dropdownpanel-dialcode"
+                            >
+                              <ng-template ng-label-tmp let-item="item">
+                                <img class="flag-icon-trigger" [src]="flagsIconPath + item?.flagIcon + '.svg'"/>
+                                <span *ngIf="item?.flagIcon" class="ml-4">+{{ item?.dialCode }}</span>
+                              </ng-template>
+                              <ng-option *ngFor="let country of countryCodeList" [value]="country">
+                                <ng-container *ngIf="country?.name">
+                                  <img class="flag-icon" [src]="flagsIconPath + country?.flagIcon + '.svg'" /> {{ country?.name | translate }} +{{ country?.dialCode }}
+                                </ng-container>
+                              </ng-option>
+                            </ng-select>
+                          </div>
+                          <div class="phone-number p-col-8">
+                            <input class="form-control" matInput type="text" required formControlName="tele_phone" />
+                            <div
+                              class="invalid-feedback"
+                              *ngIf="
+                                paymentForm
+                                  ?.get('payment_supports')
+                                  ?.get(fincancialSupportIndex.toString())
+                                  ?.get('tele_phone')
+                                  ?.hasError('pattern') &&
+                                (paymentForm?.get('payment_supports')?.get(fincancialSupportIndex.toString())?.get('tele_phone')?.dirty ||
+                                  paymentForm?.get('payment_supports')?.get(fincancialSupportIndex.toString())?.get('tele_phone')?.touched)
+                              "
+                            >
+                              {{ 'Please Input Number Only' | translate }}
+                            </div>
+                          </div>
+                          <div
+                            class="invalid-feedback"
+                            *ngIf="
+                              financialSupport?.get('tele_phone')?.hasError('required') &&
+                              (financialSupport?.get('tele_phone')?.dirty || financialSupport?.get('tele_phone')?.touched)
+                            "
+                          >
+                            {{ 'This field is required' | translate }}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-lg-4">
+                      <label>{{ 'Parental link' | translate }}*</label>
+                    </div>
+                    <div class="col-lg-8">
+                      <div class="form-group" [ngClass]="toggleValidationStyle('relation', fincancialSupportIndex)">
+                        <mat-select
+                          class="form-control"
+                          formControlName="relation"
+                          [disableOptionCentering]="true"
+                          panelClass="filterPanel"
+                        >
+                          <mat-option *ngFor="let relation of relationList" [value]="relation">
+                            {{ 'CARDDETAIL.RELATION.' + relation | translate }}</mat-option
+                          >
+                        </mat-select>
+                        <div
+                          class="invalid-feedback"
+                          *ngIf="
+                            financialSupport?.get('relation')?.hasError('required') &&
+                            (financialSupport?.get('relation')?.dirty || financialSupport?.get('relation')?.touched)
+                          "
+                        >
+                          {{ 'This field is required' | translate }}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <ng-container>
+                    <div class="row" *ngIf="candidateData?.method_of_payment !== 'transfer'">
+                      <div class="col-lg-4">
+                        <label>{{ 'Account holder name' | translate }}*</label>
+                      </div>
+                      <div class="col-lg-8">
+                        <div
+                          class="form-group"
+                          [ngClass]="{
+                            'has-error':
+                              !financialSupport?.get('account_holder_name')?.value &&
+                              (financialSupport?.get('account_holder_name')?.dirty || financialSupport?.get('account_holder_name')?.touched)
+                          }"
+                        >
+                          <input class="form-control" matInput type="text" formControlName="account_holder_name" />
+                          <div
+                            class="invalid-feedback"
+                            *ngIf="
+                              !financialSupport?.get('account_holder_name')?.value &&
+                              (financialSupport?.get('account_holder_name')?.dirty || financialSupport?.get('account_holder_name')?.touched)
+                            "
+                          >
+                            {{ 'This field is required' | translate }}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="row" *ngIf="candidateData?.method_of_payment !== 'transfer'">
+                      <div class="col-lg-4">
+                        <label>{{ 'IBAN' | translate }}*</label>
+                      </div>
+                      <div class="col-lg-8">
+                        <div
+                          class="form-group"
+                          [ngClass]="{
+                            'has-error':
+                              !financialSupport?.get('iban')?.value &&
+                              (financialSupport?.get('iban')?.dirty || financialSupport?.get('iban')?.touched)
+                          }"
+                        >
+                          <input class="form-control" matInput type="text" formControlName="iban" />
+                          <div
+                            class="invalid-feedback"
+                            *ngIf="
+                              !financialSupport?.get('iban')?.value &&
+                              (financialSupport?.get('iban')?.dirty || financialSupport?.get('iban')?.touched)
+                            "
+                          >
+                            {{ 'This field is required' | translate }}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="row" *ngIf="candidateData?.method_of_payment !== 'transfer'">
+                      <div class="col-lg-4">
+                        <label>{{ 'BIC' | translate }}*</label>
+                      </div>
+                      <div class="col-lg-8">
+                        <div
+                          class="form-group"
+                          [ngClass]="{
+                            'has-error':
+                              !financialSupport?.get('bic')?.value &&
+                              (financialSupport?.get('bic')?.dirty || financialSupport?.get('bic')?.touched)
+                          }"
+                        >
+                          <input class="form-control" matInput type="text" formControlName="bic" />
+                          <div
+                            class="invalid-feedback"
+                            *ngIf="
+                              !financialSupport?.get('bic')?.value &&
+                              (financialSupport?.get('bic')?.dirty || financialSupport?.get('bic')?.touched)
+                            "
+                          >
+                            {{ 'This field is required' | translate }}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </ng-container>
+
+                  <div class="row">
+                    <div class="col-lg-4">
+                      <label>{{ 'Cost coverage' | translate }}*</label>
+                    </div>
+                    <div class="col-lg-8">
+                      <div
+                        class="form-group"
+                      >
+                        <div class="input-group">
+                          <input
+                            type="number"
+                            class="form-control"
+                            formControlName="cost"
+                            readonly
+                          />
+                          <div class="input-group-addon">EUR</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row" *ngIf="candidateData?.method_of_payment !== 'transfer'">
+                  <div class="col-lg-12" style="padding-left: 35px">
+                    <mat-checkbox
+                      [ngClass]="{
+                        'checkbox-error':
+                          financialSupport?.get('autorization_account')?.hasError('required') &&
+                          financialSupport?.get('autorization_account')?.touched
+                      }"
+                      style="padding-left: 15px"
+                      formControlName="autorization_account"
+                      >{{
+                        'I validate the mandate authorizing the school to present direct debit orders to the bank account indicated above'
+                          | translate
+                      }}*</mat-checkbox
+                    >
+                    <div
+                      class="invalid-feedback"
+                      style="margin-left: 1.5rem"
+                      *ngIf="
+                        financialSupport?.get('autorization_account')?.hasError('required') &&
+                        financialSupport?.get('autorization_account')?.touched
+                      "
+                    >
+                      {{ 'This field is required' | translate }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </ng-container>
+          </div>
+        </ng-container>
+
+        <!-- Button -->
+        <div class="col-lg-12">
+          <div class="row btn-validate" style="margin-top: 10px; bottom: 0px !important">
+            <button
+              class="regirstration-color btn-third"
+              (click)="validateFamily()"
+              mat-raised-button
+              matTooltip="{{ 'Validate' | translate }}"
+              style="margin-right: 0"
+              *ngIf="paymentType === 'family' && (studentAsFinancialSupport || financialSupportArray.length > 0)"
+            >
+              <mat-icon class="mat-icon-default">save</mat-icon>
+              {{ 'Validate' | translate }}
+            </button>
+            <button
+              class="regirstration-color btn-third"
+              (click)="validateMyself()"
+              mat-raised-button
+              matTooltip="{{ 'Validate' | translate }}"
+              style="margin-right: 0"
+              *ngIf="paymentType === 'my_self'"
+            >
+              <mat-icon class="mat-icon-default">save</mat-icon>
+              {{ 'Validate' | translate }}
+            </button>
+          </div>
+        </div>
+      </ng-container>
+    </fieldset>
+  </form>
+</ng-container>
+
+<ng-container *ngIf="candidateData?.modality_status === 'done'">
+  <div style="margin-top: 20px !important; text-align: center">
+    <div *ngIf="candidateData?.school?.school_logo">
+      <div class="row no-margin msg-pay">
+        {{ 'Thank you for completing this form' | translate }}
+      </div>
+      <div class="row no-margin payment-img">
+        <img class="payment-success" style="height: 385px" [src]="serverimgPath + candidateData?.school?.school_logo" />
+      </div>
+    </div>
+    <div *ngIf="!candidateData?.school?.school_logo">
+      <div
+        class="row no-margin msg-pay"
+        style="font-size: 25px; margin-top: 170px !important"
+      >
+        {{ 'Thank you for completing this form' | translate }}
+      </div>
+    </div>
+  </div>
+</ng-container>
+<div *ngIf="isWaitingForResponse" class="loading-indicator">
+  <mat-progress-spinner mode="indeterminate" color="accent"></mat-progress-spinner>
+</div>

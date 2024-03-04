@@ -1,0 +1,71 @@
+<mat-card class="flex-container">
+  <div *ngIf="isWaitingForResponse" class="spinner-container">
+    <mat-spinner color="accent"></mat-spinner>
+  </div>
+  <ng-container class="content-container">
+    <mat-card-header class="tw-w-full tw-flex tw-items-center tw-justify-between tw-pr-5 tw-pt-5">
+      <mat-card-title>
+        <ng-container *ngIf="newsForm?.get('_id').value !== null; else createNewsTitle">
+          <ng-container *ngIf="!isPublished; else notPublished">
+            {{ 'ERP_076.Modify News' | translate }}
+          </ng-container>
+          <ng-template #notPublished>
+            {{ 'ERP_076.News' | translate }}
+          </ng-template>
+        </ng-container>
+        <ng-template #createNewsTitle>
+          {{ 'ERP_076.Create News' | translate }}
+        </ng-template>
+      </mat-card-title>
+
+      <div class="tw-flex tw-items-center tw-gap-x-5">
+        <div class="tw-flex tw-items-center tw-gap-3">
+          <mat-slide-toggle [disabled]="isWaitingForResponse" [checked]="isPublished" (change)="publishNews($event)"> </mat-slide-toggle>
+          <span [class.publish]="isPublished">{{
+            (isPublished ? 'FORM_BUILDER.Published' : 'FORM_BUILDER.Not Published') | translate
+          }}</span>
+        </div>
+        <button
+          mat-raised-button
+          color="accent"
+          *ngIf="!isPublished"
+          [disabled]="isWaitingForResponse"
+          (click)="saveNewsButton()"
+          matTooltip="{{ 'ERP_076.Save' | translate }}"
+        >
+          <mat-icon class="mat-icon-default">save</mat-icon>
+          {{ 'ERP_076.Save' | translate }}
+        </button>
+      </div>
+    </mat-card-header>
+    <mat-card-content class="tw-px-5 tw-pb-5">
+      <form [formGroup]="newsForm">
+        <mat-form-field>
+          <mat-label>{{ 'ERP_076.News Title' | translate }}</mat-label>
+          <input matInput formControlName="title" />
+          <mat-error *ngIf="newsForm?.get('title').hasError('maxlength')">
+            {{ 'ERP_076.Max Length' | translate }}
+          </mat-error>
+          <mat-error *ngIf="newsForm?.get('title').hasError('required')">
+            {{ 'This field is required' | translate }}
+          </mat-error>
+        </mat-form-field>
+
+        <div
+          class="ckeditor"
+          [ngClass]="{ 'error-border': newsForm?.get('description').hasError('required') && newsForm?.get('description').touched }"
+        >
+          <mat-label
+            [ngClass]="{ 'tw-text-red': newsForm?.get('description').hasError('required') && newsForm?.get('description').touched }"
+          >
+            {{ 'ERP_076.Description' | translate }}*
+          </mat-label>
+          <ckeditor #editor [editor]="Editor" formControlName="description" (ready)="onReady($event)" [config]="config"></ckeditor>
+          <mat-error *ngIf="newsForm?.get('description').hasError('required') && newsForm?.get('description').touched">
+            {{ 'This field is required' | translate }}
+          </mat-error>
+        </div>
+      </form>
+    </mat-card-content>
+  </ng-container>
+</mat-card>

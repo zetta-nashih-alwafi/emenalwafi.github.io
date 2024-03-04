@@ -1,0 +1,89 @@
+<div style="position: relative; text-align: right; top: 34px; right: 12px">
+  <ng-container *ngIf="statusLegalEntity === 'publish'">
+    <span style="color: orange; font-size: 18px">{{ 'Legal entity is published' | translate }}</span>
+  </ng-container>
+  <ng-container *ngIf="statusLegalEntity === 'verification_in_progress'">
+    <span style="color: orange; font-size: 18px">{{ 'Legal entity is in verification' | translate }}</span>
+  </ng-container>
+  <ng-container *ngIf="statusLegalEntity === 'pci_not_complete'">
+    <span style="color: orange; font-size: 18px">{{ 'PCI Compliance is not completed' | translate }}</span>
+  </ng-container>
+</div>
+
+<mat-tab-group [(selectedIndex)]="selectedIndex" (click)="checkValidation($event)" #merchantMatGroup>
+  <!-- First tab always shown -->
+  <mat-tab label="Company">
+    <ng-template mat-tab-label class="main-tab">
+      {{ 'Company' | translate }}
+    </ng-template>
+    <ng-template matTabContent>
+      <ms-boarding-merchant-company-detail
+        #companyMerchant
+        (continue)="selectedTab($event)"
+        (addLegalId)="getIdLegalEntity($event)"
+        (cancelTab)="openTable($event)"
+        (updateData)="getOneLegalEntity($event)"
+        [legalEntityId]="legalEntityId"
+      ></ms-boarding-merchant-company-detail>
+    </ng-template>
+  </mat-tab>
+  <mat-tab label="BankAccount" [disabled]="disableStepTwo">
+    <ng-template mat-tab-label class="main-tab">
+      {{ 'Bank Account' | translate }}
+    </ng-template>
+    <ng-template matTabContent>
+      <ms-boarding-merchant-bank-account-detail
+        #bankMerchant
+        [legalEntityId]="legalEntityId"
+        (continue)="selectedTab($event)"
+        (previousTab)="selectedTab($event)"
+        (updateData)="getOneLegalEntity($event)"
+        (cancelTab)="openTable($event)"
+      ></ms-boarding-merchant-bank-account-detail>
+    </ng-template>
+  </mat-tab>
+  <mat-tab label="ShareHolder" [disabled]="disableStepThree">
+    <ng-template mat-tab-label class="main-tab">
+      {{ 'Shareholder' | translate }}
+    </ng-template>
+    <ng-template matTabContent>
+      <ms-boarding-merchant-shareholder-detail
+        #shareholderMerchant
+        [legalEntityId]="legalEntityId"
+        (continue)="selectedTab($event)"
+        (previousTab)="selectedTab($event)"
+        (updateData)="getOneLegalEntity($event)"
+        (cancelTab)="openTable($event)"
+      ></ms-boarding-merchant-shareholder-detail>
+    </ng-template>
+  </mat-tab>
+  <mat-tab label="Signatory" [disabled]="disableStepFour">
+    <ng-template mat-tab-label class="main-tab">
+      {{ 'Signatory' | translate }}
+    </ng-template>
+    <ng-template matTabContent>
+      <ms-boarding-merchant-signatory-detail
+        #signMerchant
+        [legalEntityId]="legalEntityId"
+        (continue)="selectedTab($event)"
+        (previousTab)="selectedTab($event)"
+        (updateData)="getOneLegalEntity($event)"
+        (cancelTab)="openTable($event)"
+      ></ms-boarding-merchant-signatory-detail>
+    </ng-template>
+  </mat-tab>
+  <mat-tab label="PCI" [disabled]="disableStepFive">
+    <ng-template mat-tab-label class="main-tab">
+      {{ 'PCI Compliance' | translate }}
+    </ng-template>
+    <ng-template matTabContent>
+      <ms-boarding-merchant-pci-compliance-detail
+        #pciMerchant
+        [legalEntityId]="legalEntityId"
+        (previousTab)="selectedTab($event)"
+        (updateData)="getOneLegalEntity($event)"
+        (cancelTab)="openTable($event)"
+      ></ms-boarding-merchant-pci-compliance-detail>
+    </ng-template>
+  </mat-tab>
+</mat-tab-group>

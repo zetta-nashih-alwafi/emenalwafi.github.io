@@ -1,0 +1,333 @@
+<div class="p-grid" style="margin-bottom: 5px; border-bottom: 1px solid #4e4e4e">
+  <div class="p-col-12" style="padding-left: 10px">
+    <div style="width: 20px; float: left; padding: 4px 0px 0px 0px; margin-right: 10px">
+      <span><mat-icon style="font-size: 16px">cloud_upload</mat-icon></span>
+    </div>
+    <div>
+      <span class="titleImport">{{ 'Confirm Reconciliations' | translate }}</span>
+      <button
+        mat-button
+        style="
+          margin-left: 10px !important;
+          line-height: 16px;
+          margin: 0px;
+          padding: 0px !important;
+        "
+        [matTooltip]="'Tutorial for this module' | translate"
+        (click)="toggleSidebar()"
+      >
+      <img style="font-size: 16px; width: 65px; position: relative" [src]="tutorialIcon" />
+      </button>
+      <!-- <button
+        mat-button
+        style="
+          margin-left: 10px !important;
+          line-height: 16px;
+          margin: 0px;
+          padding: 0px !important;
+          width: 16px !important;
+          min-width: 16px;
+        "
+        [matTooltip]="'Tutorial for this module' | translate"
+        (click)="viewTutorial($event)"
+      >
+        <mat-icon style="font-size: 16px;width: 19px;padding-top: 3px;" svgIcon="file-presentation-box"></mat-icon>
+      </button> -->
+    </div>
+  </div>
+</div>
+<div class="top-space">
+  <div class="horizontal">
+    <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8" style="font-family: 'firaSans'">
+      <!-- RESET START-->
+      <ng-container matColumnDef="table-action">
+        <th mat-header-cell *matHeaderCellDef colspan="14" class="action-header-column">
+          <div class="p-grid">
+            <div class="p-col-6 padding-none text-left top-table-text">
+              <span *ngIf="dummyData[0]?.to" class="pad-r-md">{{ 'To' | translate }}: {{ dummyData[0]?.to }}</span>
+              <span *ngIf="dummyData[0]?.bank">{{ 'Bank' | translate }}: {{ dummyData[0]?.bank }}</span>
+            </div>
+            <div class="p-col-6 padding-none">
+              <button color="accent" mat-raised-button matTooltip="{{ 'Validate' | translate }}" (click)="validateData()">
+                {{ 'Validate' | translate }}
+              </button>
+              <button color="accent" mat-raised-button matTooltip="{{ 'Reset Filter' | translate }} ">
+                <mat-icon svgIcon="loop" class="mat-icon-svgIcon"></mat-icon>
+                {{ 'Reset' | translate }}
+              </button>
+            </div>
+          </div>
+        </th>
+      </ng-container>
+      <!-- RESET END-->
+      <!---FILTERS START-->
+      <ng-container matColumnDef="selectFilter" class="mat-column-select">
+        <th mat-header-cell *matHeaderCellDef class="text-center"></th>
+      </ng-container>
+      <ng-container matColumnDef="accountingFilter">
+        <th mat-header-cell *matHeaderCellDef>
+          <mat-form-field>
+            <input matInput class="form-field" placeholder="{{ 'search' | translate }}" />
+          </mat-form-field>
+        </th>
+      </ng-container>
+      <ng-container matColumnDef="dateFilter">
+        <th mat-header-cell *matHeaderCellDef>
+          <mat-form-field class="example-full-width" style="margin-top: 5px">
+            <input matInput [formControl]="dateFilter" [matDatepicker]="picker" placeholder="Date" readonly />
+            <mat-datepicker-toggle matSuffix [for]="picker" style="margin-right: 5px"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+          </mat-form-field>
+        </th>
+      </ng-container>
+      <ng-container matColumnDef="typeFilter">
+        <th mat-header-cell *matHeaderCellDef>
+          <mat-form-field>
+            <mat-select>
+              <mat-option [value]="record.value" *ngFor="let record of titleList">{{ record.key | translate }} </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </th>
+      </ng-container>
+      <ng-container matColumnDef="transactionFilter">
+        <th mat-header-cell *matHeaderCellDef>
+          <mat-form-field>
+            <mat-select>
+              <mat-option [value]="record.value" *ngFor="let record of originalTitleList">{{ record.key | translate }} </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </th>
+      </ng-container>
+      <ng-container matColumnDef="fromFilter">
+        <th mat-header-cell *matHeaderCellDef>
+          <mat-form-field>
+            <input matInput class="form-field" placeholder="{{ 'search' | translate }}" />
+          </mat-form-field>
+        </th>
+      </ng-container>
+      <ng-container matColumnDef="toFilter">
+        <th mat-header-cell *matHeaderCellDef></th>
+      </ng-container>
+      <ng-container matColumnDef="bankFilter">
+        <th mat-header-cell *matHeaderCellDef></th>
+      </ng-container>
+      <ng-container matColumnDef="referenceFilter">
+        <th mat-header-cell *matHeaderCellDef></th>
+      </ng-container>
+      <ng-container matColumnDef="amountFilter">
+        <th mat-header-cell *matHeaderCellDef></th>
+      </ng-container>
+      <ng-container matColumnDef="studentFilter">
+        <th mat-header-cell *matHeaderCellDef>
+          <mat-form-field>
+            <input matInput class="form-field" placeholder="{{ 'search' | translate }}" />
+          </mat-form-field>
+        </th>
+      </ng-container>
+      <ng-container matColumnDef="programFilter">
+        <th mat-header-cell *matHeaderCellDef></th>
+      </ng-container>
+      <ng-container matColumnDef="lettrageFilter">
+        <th mat-header-cell *matHeaderCellDef></th>
+      </ng-container>
+      <ng-container matColumnDef="actionFilter">
+        <th mat-header-cell *matHeaderCellDef class="text-center"></th>
+      </ng-container>
+      <!---FILTERS END-->
+      <!---ROW DATA START-->
+      <ng-container matColumnDef="select" class="mat-column-select">
+        <th mat-header-cell *matHeaderCellDef class="text-center">
+          <mat-checkbox
+            (change)="$event ? masterToggle() : null"
+            [checked]="selection.hasValue() && isAllSelected()"
+            [indeterminate]="selection.hasValue() && !isAllSelected()"
+          ></mat-checkbox>
+        </th>
+        <td mat-cell *matCellDef="let row" class="text-center">
+          <mat-checkbox
+            (click)="$event.stopPropagation()"
+            (change)="$event ? selection.toggle(row) : null"
+            [checked]="selection.isSelected(row)"
+          ></mat-checkbox>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="accounting">
+        <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'Accounting document' | translate }}" matTooltipPosition="above">
+          <h5>{{ 'Accounting document' | translate }}</h5>
+        </th>
+        <td mat-cell *matCellDef="let element" [matTooltip]="element?.accounting_document">
+          <span>{{ element?.accounting_document }}</span>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="date">
+        <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'Date' | translate }}" matTooltipPosition="above">
+          <h5>
+            <mat-icon class="mat-icon-status"> date_range </mat-icon>
+          </h5>
+        </th>
+        <td mat-cell *matCellDef="let element" [matTooltip]="element?.date">
+          <span>{{ translateDate(element?.transaction_date, element?.transaction_time) }}</span>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="type">
+        <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'Type of Transaction' | translate }}" matTooltipPosition="above">
+          <h5>{{ 'Type of Transaction' | translate }}</h5>
+        </th>
+        <td mat-cell *matCellDef="let element" [matTooltip]="element?.type">
+          <span>{{ element?.transaction_type }}</span>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="transaction">
+        <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'Transaction' | translate }}" matTooltipPosition="above">
+          <h5>{{ 'Transaction' | translate }}</h5>
+        </th>
+        <td mat-cell *matCellDef="let element" [matTooltip]="element?.transaction">
+          <span>{{ element?.transaction | translate }}</span>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="from">
+        <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'From' | translate }}" matTooltipPosition="above">
+          <h5>{{ 'From' | translate }}</h5>
+        </th>
+        <td mat-cell *matCellDef="let element" [matTooltip]="element?.from" class="pad-l-xs">
+          {{ element?.from }}
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="to">
+        <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'To' | translate }}" matTooltipPosition="above">
+          <h5>{{ 'To' | translate }}</h5>
+        </th>
+        <td mat-cell *matCellDef="let element" [matTooltip]="element?.to">
+          <span>{{ element?.to }}</span>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="bank">
+        <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'Bank' | translate }}" matTooltipPosition="above">
+          <h5>{{ 'Bank' | translate }}</h5>
+        </th>
+        <td mat-cell *matCellDef="let element" [matTooltip]="element?.bank">
+          <span>{{ element?.bank }}</span>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="reference">
+        <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'Reference' | translate }}" matTooltipPosition="above">
+          <h5>{{ 'Reference' | translate }}</h5>
+        </th>
+        <td mat-cell *matCellDef="let element" [matTooltip]="element?.reference">
+          <span>{{ element?.reference }}</span>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="amount">
+        <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'Amount' | translate }}" matTooltipPosition="above">
+          <h5>{{ 'Amount' | translate }}</h5>
+        </th>
+        <td mat-cell *matCellDef="let element" matTooltip="{{ element?.amount | currency: 'EUR':true }}">
+          <span>{{ element?.amount | currency: 'EUR':true }}</span>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="student">
+        <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'Student' | translate }}" matTooltipPosition="above">
+          <h5>{{ 'Student' | translate }}</h5>
+        </th>
+        <td
+          mat-cell
+          *matCellDef="let element"
+          [matTooltip]="
+            (element?.student_id?.civility && element?.student_id?.civility === 'neutral'
+              ? ''
+              : (element?.student_id?.civility | translate)) +
+            ' ' +
+            element?.student_id?.first_name +
+            ' ' +
+            (element?.student_id?.last_name | uppercase)
+          "
+          class="pad-l-xs"
+        >
+          {{
+            (element?.student_id?.civility && element?.student_id?.civility === 'neutral'
+              ? ''
+              : (element?.student_id?.civility | translate)) +
+              ' ' +
+              element?.student_id?.first_name +
+              ' ' +
+              (element?.student_id?.last_name | uppercase)
+          }}
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="program">
+        <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'Program' | translate }}" matTooltipPosition="above">
+          <h5>{{ 'Program' | translate }}</h5>
+        </th>
+        <td mat-cell *matCellDef="let element" [matTooltip]="element?.intake_channel">
+          <span>{{ element?.intake_channel }}</span>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="lettrage">
+        <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'Reconciliations' | translate }}" matTooltipPosition="above">
+          <h5>{{ 'Reconciliations' | translate }}</h5>
+        </th>
+        <td mat-cell *matCellDef="let element; let i = index">
+          <mat-icon
+            class="icon-thumbsup"
+            svgIcon="thumb-up-outline"
+            (click)="thumbsUp(i)"
+            [ngClass]="{
+              red: !element?.letter,
+              green: element?.letter
+            }"
+            aria-hidden="true"
+            class="mat-icon-status clickable"
+            >thumb-up-outline
+          </mat-icon>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="action">
+        <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'Action' | translate }}" matTooltipPosition="above">
+          <h5>{{ 'Action' | translate }}</h5>
+        </th>
+        <td mat-cell *matCellDef="let element">
+          <button mat-icon-button class="margin-right-button" matTooltip="{{ 'Send this transaction by email' | translate }}">
+            <mat-icon> send </mat-icon>
+          </button>
+          <button
+            mat-icon-button
+            class="margin-right-button"
+            matTooltip="{{ 'Create an Internal Task link to that Candidate' | translate }}"
+          >
+            <mat-icon svgIcon="clipboard-check-outline"> clipboard_check_outline </mat-icon>
+          </button>
+          <button mat-icon-button class="margin-right-button" matTooltip="{{ 'see the student file' | translate }}">
+            <mat-icon> school </mat-icon>
+          </button>
+          <button mat-icon-button class="margin-right-button" (click)="lettrageDialog()" matTooltip="{{ 'Reconciliations' | translate }}">
+            <mat-icon> help </mat-icon>
+          </button>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="loading">
+        <th mat-header-cell *matHeaderCellDef colspan="14" style="text-align: center !important">
+          <div class="center-spinner">
+            <mat-spinner color="accent"></mat-spinner>
+          </div>
+        </th>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="['table-action']"></tr>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-header-row *matHeaderRowDef="filterColumns"></tr>
+      <tr mat-header-row *matHeaderRowDef="['loading']" [hidden]="!isLoading"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns" [hidden]="isLoading"></tr>
+    </table>
+    <div *ngIf="noData | async" class="no-records" [ngClass]="{ hide: isLoading }">
+      {{ 'NOT RECORD FOUND' | translate }}
+    </div>
+    <div [ngClass]="{ hide: noData | async }">
+      <mat-paginator
+        [ngClass]="{ 'hide-pagination-buttons': dataCount <= 10 }"
+        [length]="dataCount"
+        [hidePageSize]="true"
+        [pageSize]="[10]"
+        showFirstLastButtons
+      ></mat-paginator>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,117 @@
+:host::ng-deep * {
+  /*font-size: 2em;*/
+}
+
+:host::ng-deep.list-horizontal {
+  padding: 0;
+  flex-wrap: nowrap !important;
+  margin-left: 1.5em !important;
+  & > div {
+    display: inline-block;
+    height: auto;
+    width: 10em;
+    min-width: 9em;
+    margin-right: 10px !important;
+  }
+}
+.devMemberImage {
+  margin-right: 5px !important;
+}
+
+:host::ng-deep.mat-list-item {
+  max-width: 11rem !important;
+}
+:host::ng-deep.float-right {
+  float: right;
+}
+
+.yellow {
+  color: #ffd740;
+}
+.orange {
+  color: #f49f36;
+}
+.blue {
+  color: #36ebf4;
+}
+.red {
+  color: #ff4040;
+}
+.green {
+  color: #adff2f;
+}
+.purple {
+  color: #ff46f9;
+}
+.black {
+  color: #000000;
+}
+:host::ng-deep.ng-select .ng-select-container {
+  background-color: #fff0;
+  color: #fff;
+  border: none;
+  border-radius: 0px !important;
+  border-bottom: 1px solid #8c8c8c !important;
+  min-height: 36px;
+  -webkit-box-align: center;
+  align-items: center;
+}
+:host::ng-deep.mat-select-arrow-wrapper {
+  padding-right: 5px;
+}
+:host::ng-deep.mat-select-value-text {
+  margin-left: 10px;
+  font-size: 13px;
+}
+:host::ng-deep.ng-select .ng-select-container .ng-value-container .ng-input > input {
+  color: white;
+  box-sizing: content-box;
+  background: none;
+  border: 0;
+  box-shadow: none;
+  outline: 0;
+  cursor: default;
+  width: 100%;
+}
+
+.space-top {
+  margin-top: 14px !important;
+}
+
+@media screen and (max-height: 600px) {
+  .space-top {
+    margin-top: 80px !important;
+  }
+}
+::ng-deep.custom-ngselect-content {
+  .ng-dropdown-panel{
+    max-width: fit-content !important;
+    min-width: fit-content !important;
+  }
+  .ng-dropdown-panel-items .ng-option {
+    white-space: break-spaces !important;
+  }
+}
+::ng-deep.custom-ngselect-content.ng-dropdown-panel {
+  max-width: fit-content !important;
+  min-width: fit-content !important;
+}
+.user-list-toggle {
+  margin-left: 1.5rem;
+}
+
+.right-side {
+  overflow: auto;
+  margin-top: 1.3vh;
+} 
+
+.left-side{
+  width: 335px;
+}
+
+.hide-paginator{
+  display: none;
+}
+.left-side.toggle-card-list {
+  width: 0;
+} 

@@ -1,0 +1,64 @@
+<div class="p-grid">
+  <div class="p-col">
+    <div class="p-grid no-padding p-col-12">
+      <div class="p-col-6 scholar-input">
+        <span class="label" style="font-size: 1.1vw">{{ 'Please select a scholar season' | translate }}</span>
+        <mat-form-field appearance="legacy">
+          <mat-select
+            (selectionChange)="scholarSelect()"
+            [formControl]="filterForm?.controls?.scholar_season"
+            [disableOptionCentering]="true"
+            panelClass="filterPanel"
+          >
+            <mat-option *ngIf="scholarSeasonDropdown.length === 0" disabled>{{ 'NOT RECORD FOUND' | translate }}</mat-option>
+            <mat-option *ngFor="let scholar of scholarSeasonDropdown" [value]="scholar._id">{{ scholar.scholar_season }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <div class="p-col-6 student-input">
+        <span class="label" style="font-size: 1.1vw">{{ 'Search student name' | translate }}</span>
+        <mat-form-field appearance="legacy">
+          <input matInput [formControl]="filterForm?.controls?.student_name" />
+        </mat-form-field>
+      </div>
+    </div>
+    <div class="card-container" *ngIf="studentData && studentData.length">
+      <div class="card maring-1rem" *ngFor="let studentCard of studentData">
+        <ms-tromb-card-student [student]="studentCard"></ms-tromb-card-student>
+      </div>
+    </div>
+    <div class="p-grid p-col-12" *ngIf="!isWaitingForResponse && studentData.length === 0" class="no-records">
+      <h4 class="text-empty">{{ 'NOT RECORD FOUND' | translate }}</h4>
+    </div>
+    <div class="paginator" [ngClass]="{ hide: dataCount === 0 }">
+      <mat-paginator
+        [ngClass]="{ 'hide-pagination-buttons': paginator.length <= 12 }"
+        [length]="dataCount"
+        [hidePageSize]="true"
+        [pageSize]="[12]"
+        showFirstLastButtons
+      ></mat-paginator>
+    </div>
+  </div>
+  <div class="p-col-fixed filter-card">
+    <ms-tromb-filter-card
+      [scholarId]="filterForm.get('scholar_season').value"
+      [scholarSeasonChange$]="scholarSeasonId$"
+      (schoolIds)="filteredSchoolIds($event)"
+      (campusIds)="filteredCampusIds($event)"
+      (levelIds)="filteredLevelIds($event)"
+      (sectorIds)="filteredSectorIds($event)"
+      (specialityIds)="filteredSpecialityIds($event)"
+      (sequenceId)="filteredSequenceId($event)"
+      (typeOfGroupId)="filteredTypeOfGroupId($event)"
+      (groupId)="filteredGroupId($event)"
+      (applyFilterValue)="applyFilter($event)"
+      (resetData)="reset($event)"
+      [isShow]="isShow"
+    ></ms-tromb-filter-card>
+  </div>
+</div>
+<div *ngIf="isWaitingForResponse" class="loading-indicator">
+  <mat-progress-spinner mode="indeterminate" color="accent"></mat-progress-spinner>
+</div>

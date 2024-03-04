@@ -1,0 +1,57 @@
+<div class="dialog-border">
+  <div class="dialogTitleWrapper header-dialog" cdkDrag cdkDragRootElement=".cdk-overlay-pane" cdkDragHandle>
+    <div class="p-grid">
+      <div class="p-col-10 no-padding">
+        <h3 class="dialogTitle">{{ 'INTAKE_CHANNEL.Connect registration profile' | translate }}</h3>
+      </div>
+      <div class="p-col-2">
+        <button mat-icon-button class="close-icon float-right" (click)="closeDialog()" tabindex="-1">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div mat-dialog-content class="mat-dialog-content dialog-body">
+  <div class="p-grid" *ngFor="let item of regisList; let idxReg = index">
+    <div class="p-col-6 items-center">
+      <p>{{ item?.name }}</p>
+    </div>
+    <div class="p-col-6">
+      <mat-form-field appearance="legacy">
+        <mat-select
+          (selectionChange)="setItem($event.value, item, idxReg)"
+          [(ngModel)]="regisValue[idxReg]"
+          multiple
+          [disableOptionCentering]="true"
+          panelClass="optionPanel"
+        >
+          <mat-option value="All" (onSelectionChange)="selectAll(idxReg)">{{ 'AllS' | translate }}</mat-option>
+          <ng-container *ngFor="let dat of data">
+            <mat-option
+              *ngIf="!regisSelectedValue[idxReg]?.programs?.includes(dat?._id)"
+              [value]="dat?._id"
+              (onSelectionChange)="selectSingle(idxReg)"
+              >{{ dat?.intake_channel }}</mat-option
+            >
+          </ng-container>
+        </mat-select>
+      </mat-form-field>
+    </div>
+  </div>
+
+  <!-- transparent loading spinner -->
+  <div *ngIf="isWaitingForResponse" class="loading-indicator">
+    <mat-spinner color="accent" [diameter]="100"></mat-spinner>
+  </div>
+</div>
+
+<div mat-dialog-actions class="justify-content-end">
+  <button mat-button mat-raised-button color="warn" (click)="closeDialog()">
+    {{ 'CANCEL' | translate }}
+  </button>
+  <button mat-button mat-raised-button color="primary" (click)="validate()">
+    {{ 'Validate' | translate }}
+  </button>
+</div>

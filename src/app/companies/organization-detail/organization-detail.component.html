@@ -1,0 +1,78 @@
+<ng-container class="main-candidate-file">
+  <ng-container>
+    <div style="position: sticky; top:8px;">
+      <div class="header-filter list-horizontal" fxLayout="row wrap" fxLayoutAlign="start start">
+        <ng-select
+          class="mrgn-btn"
+          [multiple]="false"
+          placeholder="{{ 'Type of Organization' | translate }}"
+          [formControl]="organizationTypeFilter"
+          style="padding-top: 3px; width: 200px; margin-right: 15px"
+        >
+          <ng-option value="">
+            {{ 'All' | translate }}
+          </ng-option>
+          <ng-option *ngFor="let item of organizationType" [value]="item">
+            {{ item }}
+          </ng-option>
+        </ng-select>
+        <div class="search-field">
+          <mat-form-field class="full-width">
+            <input matInput [formControl]="nameFilter" placeholder="{{ 'Organization Name' | translate }}" />
+          </mat-form-field>
+        </div>
+        <button
+          (click)="heandleReset()"
+          mat-raised-button
+          color="primary"
+          style="margin-top: 10px; margin-left: 10px"
+          matTooltip="{{ 'Reset Filter' | translate }} "
+        >
+          <mat-icon class="mat-icon-svgIcon" svgIcon="loop">loop</mat-icon>
+          {{ 'Reset' | translate }}
+        </button>
+      </div>
+      <div>
+        <button mat-raised-button color="primary" class="user-list-toggle" (click)="toggleCardList = !toggleCardList">
+          {{ (toggleCardList ? 'Expand' : 'Hide') | translate }}
+        </button>
+      </div>
+    </div>
+  </ng-container>
+ 
+  <ng-container>
+    <div class="p-grid" style="padding-top: 10px;" [style.height.px]="getAutomaticHeight()" [style.max-height.px]="getAutomaticHeight()">
+      <div class="p-col-4 left-side" [ngClass]="{ 'toggle-card-list': toggleCardList }">
+        <ms-organization-detail-list
+          (selectedOrgChange)="updatedSelectedOrg($event)"
+          [organizationList]="organizationList"
+          [selectedOrganizationId]="currSelectedOrgId"
+        ></ms-organization-detail-list>
+        <div [ngClass]="{ 'hide-paginator': toggleCardList }" class="p-grid display-block" style="margin-top: 14px !important; z-index: 2; position: relative;">
+          <div class="p-col-12 pad-x-none">
+            <mat-paginator
+              [ngClass]="{ 'hide-pagination-buttons': dataCount <= 8 }"
+              [length]="dataCount"
+              [hidePageSize]="true"
+              [pageSize]="[8]"
+              showFirstLastButtons
+            ></mat-paginator>
+          </div>
+        </div>
+      </div>
+      <div class="p-col right-side" [style.height.px]="getAutomaticHeight()" [style.max-height.px]="getAutomaticHeight()">
+        <ng-container *ngIf="currSelectedOrgId && currSelectedOrg">
+          <ms-organization-detail-card
+            [tab]="tab"
+            [orgId]="currSelectedOrgId"
+            (reload)="reload($event)"
+            (loading)="loadingCommentTab($event)"
+          ></ms-organization-detail-card>
+        </ng-container>
+      </div>
+    </div>
+  </ng-container>
+</ng-container>
+<div *ngIf="isWaitingForResponse" class="loading-indicator">
+  <mat-progress-spinner mode="indeterminate" color="accent"></mat-progress-spinner>
+</div>

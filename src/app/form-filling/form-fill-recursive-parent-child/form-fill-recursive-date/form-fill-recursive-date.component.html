@@ -1,0 +1,26 @@
+<div [formGroup]="dateForm">
+    <div>
+      <label class="questionLabel">{{ inputQuestion?.get('question_name')?.value }}</label>
+    </div>
+    <div>
+        <div class="form-group" style="display: flex; position: relative">
+            <input
+              (click)="myDatepickers.open()"
+              class="form-control"
+              [matDatepicker]="myDatepickers"
+              formControlName="answer_date"
+              [placeholder]="inputQuestion?.get('parent_child_options')?.value[0]?.option_text"
+              (dateChange)="updateQuestionAnswer($event)"
+              [readOnly]="isFormDisabled"
+              [disabled]="isFormDisabled"              
+            />
+            <!-- <div class="invalid-feedback" *ngIf="quest.get('is_required')?.value && quest.invalid && quest.touched">
+              {{ 'This field is required' | translate }}
+            </div> -->
+            <mat-datepicker-toggle matSuffix [for]="myDatepickers" style="top: 3px; position: absolute; right: 3px;"></mat-datepicker-toggle>
+
+            <mat-datepicker #myDatepickers></mat-datepicker>
+          </div>
+    </div>
+</div>
+  

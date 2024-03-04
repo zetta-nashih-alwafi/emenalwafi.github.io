@@ -1,0 +1,42 @@
+[
+  {
+    "_id": "1",
+    "legal_entity": {
+      "_id": "1",
+      "name": "ESEC"
+    },
+    "student": {
+      "_id": "1",
+      "civility": "neutral",
+      "first_name": "Abe",
+      "last_name": "BOUTARD"
+    },
+    "currency": "EUR",
+    "amount": "986",
+    "status": "Pending Credit",
+    "date_transaction": {
+      "date": "14/02/2022",
+      "time": "09:53"
+    }
+  },
+  {
+    "_id": "1",
+    "legal_entity": {
+      "_id": "1",
+      "name": "ESEC"
+    },
+    "student": {
+      "_id": "1",
+      "civility": "",
+      "first_name": "",
+      "last_name": ""
+    },
+    "currency": "EUR",
+    "amount": "-1972",
+    "status": "Payout",
+    "date_transaction": {
+      "date": "12/02/2022",
+      "time": "02:53"
+    }
+  }
+]

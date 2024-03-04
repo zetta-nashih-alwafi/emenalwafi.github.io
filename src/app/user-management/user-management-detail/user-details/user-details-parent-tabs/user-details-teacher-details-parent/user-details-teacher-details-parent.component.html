@@ -1,0 +1,13 @@
+<mat-tab-group class="not-custom" *ngIf="!isLoading" [(selectedIndex)]="selectedIndex">
+  <mat-tab *ngFor="let scholarSeason of scholarSeasons">
+    <ng-template mat-tab-label>
+      <h5>{{ scholarSeason?.scholar_season || '' }}</h5>
+    </ng-template>
+    <ng-template matTabContent>
+      <ms-user-details-teacher-details [userId]="userId" [scholarSeasonId]="scholarSeason" (selectedScholarSeason)="selectedTab($event)"></ms-user-details-teacher-details>
+    </ng-template>
+  </mat-tab>
+</mat-tab-group>
+<div *ngIf="isLoading" class="loading-indicator">
+  <mat-spinner color="accent" [diameter]="100"></mat-spinner>
+</div>

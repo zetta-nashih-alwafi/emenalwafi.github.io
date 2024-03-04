@@ -1,0 +1,99 @@
+.pending-container {
+  width: 100%;
+}
+
+.pending-container.half {
+  width: 50%;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+
+  .title {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.5rem;
+
+    .mat-icon {
+      font-size: 16px;
+      width: 16px;
+      height: 16px;
+    }
+  }
+
+  .view-more {
+    font-size: 12px;
+    opacity: 0.75;
+    cursor: pointer;
+  }
+
+  .action {
+    .mat-icon {
+      font-size: 24px;
+      width: 24px;
+      height: 24px;
+    }
+  }
+}
+
+.no-data-wrapper {
+  display: flex;
+
+  .card-title {
+    padding-left: 10px;
+  }
+}
+
+.text-right {
+  text-align: right;
+}
+
+ul.task-list {
+  list-style: none;
+  padding-left: 0;
+  font-size: 16px;
+  cursor: pointer;
+
+  .task-due-date {
+    background-color: green;
+    color: white;
+    border-radius: 4px;
+    padding: 4px 8px;
+    flex-shrink: 0;
+    right: 10px;
+    min-width: max-content;
+  }
+
+  .task-due-date.due-today {
+    background-color: #ff4e00;
+  }
+
+  .school {
+    background-color: #ffd740;
+    color: black;
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 5px;
+    margin-top: 6px;
+  }
+
+  .task-container {
+    display: flex;
+    justify-content: space-between;
+    column-gap: 20px;
+
+    .left-container {
+      width: 80%;
+    }
+
+    .right-container {
+      width: 20%;
+      display: flex;
+      align-items: flex-end;
+      flex-direction: column;
+      font-size: 0.85rem;
+    }
+  }
+}

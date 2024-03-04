@@ -1,0 +1,233 @@
+<div class="background-dark" *ngIf="data.type !== 'confirmTiga'">
+  <form class="header-form" >
+    <div>
+      <mat-dialog-content class="content-height">
+        <div *ngIf="data && data.type === 'confirmOne'">
+          <div class="p-grid">
+            <div class="p-col-12 text-center">
+              <b
+                >{{ 'We are sending your file to the bank' | translate }} {{ data?.data[0]?.campuses[0]?.bank?.name }}
+                {{ 'from' | translate }} {{ data?.data[0]?.campuses[0]?.bank?.city }} - {{ data?.data[0]?.campuses[0]?.bank?.address }}</b
+              >
+            </div>
+          </div>
+          <div class="p-grid">
+            <div class="p-col-12 text-center">
+              <b>{{ 'An email of confirmation that you are in relation will be sent to you' | translate }} </b>
+            </div>
+          </div>
+        </div>
+
+        <div *ngIf="data && data.type === 'confirmTwo'">
+          <div class="p-grid">
+            <div class="p-col-12 text-center">
+              <b>{{ 'Please confirm your choice' | translate }}</b>
+            </div>
+          </div>
+          <div class="p-grid">
+            <div class="p-col-12" style="padding-left: 85px">
+              <b>- {{ 'Deposit' | translate }}: {{ data.depositAmount }} €</b>
+            </div>
+          </div>
+          <div class="p-grid">
+            <div class="p-col-12" style="padding-left: 85px">
+              <b>- {{ 'Payment by' | translate }} {{ data?.data | translate }}</b>
+            </div>
+          </div>
+        </div>
+
+        <div *ngIf="data && data.type === 'stepValidation'">
+          <div class="p-grid">
+            <div class="p-col-12 text-center">
+              <b style="font-size: 18px" [innerHTML]="validationStepList?.first_title"></b>
+            </div>
+          </div>
+          <div class="p-grid" *ngIf="!isVideoLink">
+            <div class="p-col-12 text-center validation-img">
+              <img
+                class="step-validation"
+                [src]="validationStepList && validationStepList?.image_upload ? serverimgPath + validationStepList?.image_upload : ''"
+              />
+            </div>
+          </div>
+          <div class="p-grid" *ngIf="isVideoLink">
+            <div class="p-col-12 text-center validation-video">
+              <div>
+                <iframe
+                  width="320"
+                  height="240"
+                  [src]="sanitizeVideoUrl(validationStepList?.video_link) || sanitizeVideoUrl('https://www.youtube.com/embed/TyTjGZkhNQE')"
+                  frameborder="0"
+                  allow="autoplay; encrypted-media"
+                  allowfullscreen
+                >
+                </iframe>
+              </div>
+            </div>
+          </div>
+          <div class="p-grid">
+            <div class="p-col-12 text-center">
+              <b style="font-size: 18px" [innerHTML]="validationStepList?.second_title"></b>
+            </div>
+          </div>
+        </div>
+        <br />
+      </mat-dialog-content>
+
+      <mat-dialog-actions align="center" class="align-button">
+        <div 
+          class="flex-button"  
+          *ngIf="data && data.type !== 'stepValidation'"
+        >
+          <button
+            mat-raised-button
+            (click)="closeDialog()"
+            matTooltip="{{ 'Go back' | translate }}"
+            matTooltipPosition="above"
+            class="background-grey"
+          >
+            <mat-icon class="icon-style-go-back" svgIcon="backup-restore"></mat-icon>
+            {{ 'Go back' | translate }}
+          </button>
+          <button
+            *ngIf="data && data.type !== 'confirmOne'"
+            mat-raised-button
+            color="accent"
+            matTooltip="{{ 'Confirm' | translate }} "
+            class="btn-opssi"
+            (click)="confirm(true)"
+          >
+            {{ 'Confirm' | translate }}
+            <mat-icon class="mat-icon-default">touch_app</mat-icon>
+          </button>
+          <button
+            *ngIf="data && data.type === 'confirmOne'"
+            mat-raised-button
+            color="accent"
+            matTooltip="{{ 'Confirm' | translate }} "
+            class="btn-opssi"
+            (click)="confirm(true)"
+          >
+            {{ 'Understood' | translate }}
+            <mat-icon class="mat-icon-default">touch_app</mat-icon>
+          </button>
+        </div>
+        <div 
+          class="flex-button" 
+          *ngIf="data && data.type === 'stepValidation'">
+          <button
+            mat-raised-button
+            (click)="closeDialog()"
+            style="padding-left: 5px; padding-right: 8px"
+            matTooltip="{{ 'Go back' | translate }}"
+            matTooltipPosition="above"
+            class="background-grey"
+          >
+            <mat-icon class="icon-style-go-back" svgIcon="backup-restore"></mat-icon>
+            {{ 'Go back' | translate }}
+          </button>
+          <button
+            *ngIf="data && data.step !== 6"
+            mat-raised-button
+            color="accent"
+            matTooltip="{{ 'Confirm' | translate }} "
+            class="btn-opssi"
+            style="padding-left: 5px; padding-right: 8px"
+            [ngClass]="{
+              disabledd: count !== 0
+            }"
+            [disabled]="count !== 0"
+            (click)="confirmValidation(true)"
+          >
+            {{ 'I go to step' | translate }} {{ data.step + 1 }} {{ count ? '(' + count + 's)' : '' }}
+            <mat-icon class="mat-icon-default">touch_app</mat-icon>
+          </button>
+          <button
+            *ngIf="data && data.step === 6"
+            mat-raised-button
+            color="accent"
+            matTooltip="{{ 'Confirm' | translate }} "
+            class="btn-opssi"
+            style="padding-left: 5px; padding-right: 8px"
+            [ngClass]="{
+              disabledd: count !== 0
+            }"
+            [disabled]="count !== 0"
+            (click)="confirmValidation(true)"
+          >
+            {{ 'I disconnect' | translate }} {{ count ? '(' + count + 's)' : '' }}
+            <mat-icon class="mat-icon-default">touch_app</mat-icon>
+          </button>
+        </div>
+      </mat-dialog-actions>
+    </div>
+  </form>
+</div>
+<div class="background-white" *ngIf="data.type === 'confirmTiga'">
+  <form class="header-form">
+    <div>
+      <mat-dialog-content [formGroup]="paymentPlanMethod" class="content-height">
+        <div *ngIf="data && data.type === 'confirmTiga'">
+          <div class="p-grid">
+            <div class="p-col-12" style="padding-left: 27px">
+              <b>{{ 'Please confirm your choice' | translate }}</b>
+            </div>
+          </div>
+          <div class="p-grid">
+            <div class="p-col-12" style="padding-left: 27px">
+              <b>{{ 'Balance' | translate }} {{ data?.balance?.total_amount | currency: 'EURO':'':'0.2' }} €</b>
+            </div>
+          </div>
+          <div class="p-grid">
+            <div class="p-col-12" style="padding-left: 27px">
+              <b>{{ 'Payment in' | translate }} {{ data?.balance?.times }} {{ 'times' | translate }}:</b>
+            </div>
+          </div>
+          <div class="p-grid" style="width: 155px; padding-left: 30px; margin-top: 7px !important">
+            <!--  <div class="p-col-12" *ngFor="let pay of data.balance.payment" style="padding-left: 27px">
+              - {{ pay?.date }} - {{ pay?.balance }} €
+            </div> -->
+            <mat-radio-group formControlName="method" style="font-size: 12px">
+              <mat-radio-button (change)="radioChange('Transfer')" value="transfer" class="radio-alignment"
+                >{{ 'Transfer' | translate }}
+              </mat-radio-button>
+              <mat-radio-button (change)="radioChange('Cheque')" value="check" class="radio-alignment">{{
+                'Cheque' | translate
+              }}</mat-radio-button>
+              <mat-radio-button (change)="radioChange('Bank Debit')" value="credit_card" class="radio-alignment">{{
+                'credit_card' | translate
+              }}</mat-radio-button>
+            </mat-radio-group>
+          </div>
+        </div>
+        <br />
+      </mat-dialog-content>
+
+      <mat-dialog-actions align="center" class="align-button">
+        <button
+          mat-raised-button
+          (click)="closeDialog()"
+          matTooltip="{{ 'Go back' | translate }}"
+          matTooltipPosition="above"
+          class="background-grey"
+          style="padding-left: 5px; padding-right: 8px"
+        >
+          <mat-icon class="icon-style-go-back" svgIcon="backup-restore"></mat-icon>
+          {{ 'Go back' | translate }}
+        </button>
+        <button
+          (click)="confirmPayment(true)"
+          [disabled]="buttonDisabled"
+          mat-raised-button
+          color="accent"
+          style="padding-left: 5px; padding-right: 8px"
+          matTooltip="{{ 'Confirm' | translate }} "
+          class="btn-opssi"
+        >
+          {{ 'Confirm' | translate }}
+          <mat-icon class="mat-icon-default">touch_app</mat-icon>
+        </button>
+      </mat-dialog-actions>
+    </div>
+  </form>
+</div>

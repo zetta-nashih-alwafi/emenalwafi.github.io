@@ -1,0 +1,36 @@
+.school-logo {
+  margin-left: 1rem;
+  max-height: 100px;
+}
+
+:host::ng-deep {
+  .mat-horizontal-content-container {
+    margin-top: 2rem;
+  }
+
+  .mat-step-header:nth-child(1) {
+    margin-left: 1rem;
+  }
+
+  .mat-step-header {
+    font-size: 1rem;
+    color: #fff;
+    background: #283d50;
+    height: auto;
+    padding: 0.75rem 1.5rem;
+    border-radius: 2px;
+    transition: top 0.25s ease-out, background 0.25s ease-out;
+  }
+
+  .mat-step-header:hover {
+    background: #14b5c8;
+  }
+
+  .mat-step-icon-state-number {
+    display: none;
+  }
+
+  .mat-step-text-label {
+    color: #fff;
+  }
+}

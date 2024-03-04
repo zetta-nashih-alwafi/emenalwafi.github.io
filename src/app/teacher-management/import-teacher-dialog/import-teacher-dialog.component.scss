@@ -1,0 +1,67 @@
+.header-form {
+    padding: 18px;
+  }
+  
+  .footer-form {
+    padding-top: 10px;
+  }
+  :host::ng-deep.ng-select .ng-select-container {
+    background-color: #fff0;
+    color: black;
+    border: none;
+    border-radius: 0px !important;
+    border-bottom: 1px solid #8c8c8c !important;
+    min-height: 36px;
+    -webkit-box-align: center;
+    align-items: center;
+  }
+  :host::ng-deep.mat-select-arrow-wrapper {
+    padding-right: 5px;
+  }
+  :host::ng-deep.mat-select-value-text {
+    margin-left: 10px;
+    font-size: 13px;
+  }
+  :host::ng-deep ng-dropdown-panel {
+    z-index: 99999999999;
+  }
+  :host::ng-deep.ng-select .ng-select-container .ng-value-container .ng-input > input {
+    color: black;
+    box-sizing: content-box;
+    background: none;
+    border: 0;
+    box-shadow: none;
+    outline: 0;
+    cursor: default;
+    width: 100%;
+  }
+  .class-scholar {
+    width: 150px;
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 10px;
+  }
+  .title-school {
+    margin-right: 10px;
+  }
+  
+  .border-file {
+    border: 2px solid rgba(0, 0, 0, 0.1);
+    padding: 0.5em;
+  }
+  
+  .icon-delete {
+    color: red;
+    margin-left: 5px;
+    cursor: pointer;
+    font-size: 20px;
+  }
+  
+  .file-name {
+    display: inline-block;
+    width: 330px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  

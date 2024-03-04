@@ -1,0 +1,258 @@
+<ng-container class="main-candidate-file">
+  <ms-filter-breadcrumb  [filterBreadcrumbData]="filterBreadcrumbData" (removeFilterTrigger)="removeFilterBreadcrumb($event)"></ms-filter-breadcrumb>
+  <ng-container  style="position: relative">
+    <div class="header-filter list-horizontal flex-layout-row-wrap">
+      <div>
+        <img
+          matPrefix
+          *ngIf="selectedMentor"
+          [src]="
+            selectedMentor.is_photo_in_s3
+              ? serverimgPath + selectedMentor.photo_s3_path
+              : selectedMentor.photo
+              ? serverimgPath + selectedMentor.photo
+              : selectedMentor.civility === 'MR'
+              ? maleCandidateIcon
+              : selectedMentor?.civility === 'neutral'
+              ? neutralStudentIcon
+              : maleCandidateIcon
+          "
+          class="admissionMemberImage"
+          style="border-radius: 50%; width: 30px"
+        />
+        <label class="float-label" *ngIf="promoFilter?.value && promoFilter?.value?.length !== 0">
+          {{ 'ALUMNI.Promo year' | translate }}
+        </label>
+        <ng-select
+          [items]="promotionList"
+          class="custom-dropdownpanel"
+          [appendTo]="'body'"
+          [multiple]="true"
+          notFoundText="{{ 'NOT RECORD FOUND' | translate }}"
+          placeholder="{{ 'ALUMNI.Promo year' | translate }}"
+          [formControl]="promoFilter"
+          [clearable]="false"
+          [closeOnSelect]="false"
+          (close)="checkSuperFilterPromo()"
+        >
+          <ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index">
+            <input id="item-{{ index }}" type="checkbox" [ngModel]="item$.selected" /> {{ item | translate }}
+          </ng-template>
+          <ng-template ng-header-tmp *ngIf="promotionList?.length">
+            <mat-checkbox
+              class="all-input"
+              style="cursor: pointer"
+              [checked]="isAllDropdownSelected('promo')"
+              [indeterminate]="isSomeDropdownSelected('promo')"
+              (change)="selectAllData($event, 'promo')"
+            >
+              {{ 'AllM' | translate }}
+            </mat-checkbox>
+          </ng-template>
+        </ng-select>
+      </div>
+      <div>
+        <label class="float-label" *ngIf="schoolsFilter?.value && schoolsFilter?.value?.length !== 0">
+          {{ 'ALUMNI.School' | translate }}
+        </label>
+        <ng-select
+          [items]="schoolsList"
+          bindValue="short_name"
+          bindLabel="short_name"
+          class="custom-dropdownpanel"
+          [appendTo]="'body'"
+          [multiple]="true"
+          notFoundText="{{ 'NOT RECORD FOUND' | translate }}"
+          placeholder="{{ 'ALUMNI.School' | translate }}"
+          [formControl]="schoolsFilter"
+          [clearable]="false"
+          [closeOnSelect]="false"
+          (close)="checkSuperFilterSchool()"
+        >
+          <ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index">
+            <input id="item-{{ index }}" type="checkbox" [ngModel]="item$.selected" /> {{ item.short_name | translate }}
+          </ng-template>
+          <ng-template ng-header-tmp  *ngIf="schoolsList?.length">
+            <mat-checkbox
+              class="all-input"
+              style="cursor: pointer"
+              [checked]="isAllDropdownSelected('school')"
+              [indeterminate]="isSomeDropdownSelected('school')"
+              (change)="selectAllData($event, 'school')"
+            >
+              {{ 'AllM' | translate }}
+            </mat-checkbox>
+          </ng-template>
+        </ng-select>
+      </div>
+      <div>
+        <label class="float-label" *ngIf="campusFilter?.value && campusFilter?.value?.length !== 0">
+          {{ 'ALUMNI.Campus' | translate }}
+        </label>
+        <ng-select
+          [items]="campusList"
+          class="custom-dropdownpanel"
+          [appendTo]="'body'"
+          [multiple]="true"
+          notFoundText="{{ 'NOT RECORD FOUND' | translate }}"
+          placeholder="{{ 'ALUMNI.Campus' | translate }}"
+          [formControl]="campusFilter"
+          [clearable]="false"
+          [closeOnSelect]="false"
+          (close)="checkSuperFilterCampus()"
+        >
+          <ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index">
+            <input id="item-{{ index }}" type="checkbox" [ngModel]="item$.selected" /> {{ item | translate }}
+          </ng-template>
+          <ng-template ng-header-tmp *ngIf="campusList?.length">
+            <mat-checkbox
+              class="all-input"
+              style="cursor: pointer"
+              [checked]="isAllDropdownSelected('campus')"
+              [indeterminate]="isSomeDropdownSelected('campus')"
+              (change)="selectAllData($event, 'campus')"
+            >
+              {{ 'AllM' | translate }}
+            </mat-checkbox>
+          </ng-template>
+        </ng-select>
+      </div>
+      <div>
+        <label class="float-label" *ngIf="sectorFilter?.value && sectorFilter?.value?.length !== 0">
+          {{ 'ALUMNI.Sector' | translate }}
+        </label>
+        <ng-select
+          [items]="sectorList"
+          bindValue="_id"
+          bindLabel="name"
+          class="custom-dropdownpanel"
+          [appendTo]="'body'"
+          [multiple]="true"
+          notFoundText="{{ 'NOT RECORD FOUND' | translate }}"
+          placeholder="{{ 'ALUMNI.Sector' | translate }}"
+          [formControl]="sectorFilter"
+          [clearable]="false"
+          [closeOnSelect]="false"
+          (close)="checkSuperFilterSector()"
+        >
+          <ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index">
+            <input id="item-{{ index }}" type="checkbox" [ngModel]="item$.selected" /> {{ item?.name | translate }}
+          </ng-template>
+          <ng-template ng-header-tmp *ngIf="sectorList?.length">
+            <mat-checkbox
+              class="all-input"
+              style="cursor: pointer"
+              [checked]="isAllDropdownSelected('sector')"
+              [indeterminate]="isSomeDropdownSelected('sector')"
+              (change)="selectAllData($event, 'sector')"
+            >
+              {{ 'AllM' | translate }}
+            </mat-checkbox>
+          </ng-template>
+        </ng-select>
+      </div>
+      <div>
+        <label class="float-label" *ngIf="specialityFilter?.value && specialityFilter?.value?.length !== 0">
+          {{ 'ALUMNI.Speciality' | translate }}
+        </label>
+        <ng-select
+          [items]="specilityList"
+          bindValue="_id"
+          bindLabel="name"
+          class="custom-dropdownpanel"
+          [appendTo]="'body'"
+          [multiple]="true"
+          notFoundText="{{ 'NOT RECORD FOUND' | translate }}"
+          placeholder="{{ 'ALUMNI.Speciality' | translate }}"
+          [formControl]="specialityFilter"
+          [clearable]="false"
+          [closeOnSelect]="false"
+          (close)="checkSuperFilterSpeciality()"
+        >
+          <ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index">
+            <input id="item-{{ index }}" type="checkbox" [ngModel]="item$.selected" /> {{ item?.name | translate }}
+          </ng-template>
+          <ng-template ng-header-tmp *ngIf="specilityList?.length">
+            <mat-checkbox
+              class="all-input"
+              style="cursor: pointer"
+              [checked]="isAllDropdownSelected('speciality')"
+              [indeterminate]="isSomeDropdownSelected('speciality')"
+              (change)="selectAllData($event, 'speciality')"
+            >
+              {{ 'AllM' | translate }}
+            </mat-checkbox>
+          </ng-template>
+        </ng-select>
+      </div>
+      <div>
+        <div class="search-list-item flex-layout-row-end">
+          <button mat-raised-button color="accent" matSuffix (click)="addAlumni()" *ngIf="permissionService?.showAlumniCardAddAlumniPerm()">
+            <mat-icon class="mat-icon-default">add</mat-icon>{{ 'Add Alumni' | translate }}
+          </button>
+          <button
+            mat-raised-button
+            color="primary"
+            (click)="resetCandidateFile()"
+            matTooltip="{{ 'Reset Filter' | translate }}"
+            *ngIf="permissionService?.showAlumniCardResetAlumniPerm()"
+          >
+            <mat-icon class="mat-icon-svgIcon" svgIcon="loop">loop</mat-icon>
+            {{ 'RESET' | translate }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+
+  <ng-container>
+    <div class="p-grid" *ngIf="isWaitingForResponse" class="p-col-12" style="text-align: center !important; display: contents">
+      <div class="center-spinner spinner-wrapper">
+        <mat-spinner color="accent"></mat-spinner>
+      </div>
+    </div>
+    <!-- div *ngIf="messageDataEmpty && !selectedCandidateId" class="p-grid">
+          <h4 class="text-empty">{{ 'STUDENT_EMPTY' | translate }}</h4>
+        </div-->
+    <div
+      class="p-grid"
+      style="padding-top: 10px; height: 432px; max-height: 432px"
+      [style.height.px]="getAutomaticHeight()"
+      [style.max-height.px]="getAutomaticHeight()"
+    >
+      <div class="p-col-fixed left-side" style="width: 315px">
+        <div class="search" style="padding-left: 16px; padding-right: 28px">
+          <mat-form-field>
+            <input type="text" placeholder="{{ 'ALUMNI.Search a name' | translate }}" matInput [formControl]="searchByNameFilter" />
+          </mat-form-field>
+        </div>
+        <ms-alumni-card-list
+          *ngIf="!isWaitingForResponse"
+          (selectedCandidateChange)="updatedSelectedCandidate($event)"
+          [candidatesList]="candidatesList"
+          [selectedCandidateId]="currSelectedCandidateId"
+        ></ms-alumni-card-list>
+        <div class="p-grid display-block" style="margin-top: 14px !important">
+          <div class="p-col-12 pad-x-none">
+            <mat-paginator
+              [ngClass]="{ 'hide-pagination-buttons': dataCount <= 6 }"
+              [length]="dataCount"
+              [hidePageSize]="true"
+              [pageSize]="[10]"
+              showFirstLastButtons
+            ></mat-paginator>
+          </div>
+        </div>
+      </div>
+      <div class="p-col right-side" style="width: 1px">
+        <ms-alumni-card-details
+          *ngIf="!isWaitingForResponse && candidatesList?.length"
+          [tab]="tab"
+          (reload)="reload($event)"
+          [candidateList]="candidatesList"
+          [candidateId]="currSelectedCandidateId"
+        ></ms-alumni-card-details>
+      </div>
+    </div>
+  </ng-container>
+</ng-container>

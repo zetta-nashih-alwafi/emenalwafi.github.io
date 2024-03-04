@@ -1,0 +1,377 @@
+<div class="p-grid">
+  <div style="text-align: start" class="p-col-1">
+    <button matTooltip="{{ 'LEAVE' | translate }}" mat-raised-button color="warn" style="padding-left: 10px" (click)="leave()">
+      <mat-icon class="mat-icon-default">keyboard_arrow_left</mat-icon>
+      {{ 'LEAVE' | translate }}
+    </button>
+  </div>
+
+  <div class="p-col-5 text-end-no-pad-r" [formGroup]="stepParamatersForm">
+    <!-- [disabled]="!templateStepForm.valid || isFormChanged() || isPublished" -->
+
+    <button matTooltip="{{ 'Save' | translate }}" mat-raised-button color="accent" (click)="saveStepData()">
+      <mat-icon class="mat-icon-default">save</mat-icon>
+      {{ 'Save' | translate }}
+    </button>
+  </div>
+</div>
+
+<div class="p-grid">
+  <div class="p-col-6 form-side" style="margin-top: 2rem">
+    <div class="p-grid yellow-border card-row">
+      <ng-container *ngIf="templateType === 'alumni'">
+        <div class="p-col-12">
+          <span>{{ 'FORM_BUILDER.No parameters available at the moment' | translate }}</span>
+        </div>
+      </ng-container>
+      <ng-container *ngIf="templateType !== 'alumni'">
+        <div class="p-col-12" [formGroup]="stepParamatersForm">
+          <ng-container *ngIf="templateType === 'fc_contract'">
+            <div class="p-col-12" *ngIf="step?.step_type === 'step_summary'">
+              <span>{{ 'FORM_BUILDER.No parameters available at the moment' | translate }}</span>
+            </div>
+          </ng-container>
+          <!-- validator toggle  -->
+          <div
+            class="p-grid"
+            *ngIf="
+              (step?.step_type === 'document_to_validate' ||
+                step?.step_type === 'document_expected' ||
+                step?.step_type === 'question_and_field' ||
+                step?.step_type === 'step_summary') &&
+              templateType !== 'fc_contract'
+            "
+          >
+            <div class="p-col-12 no-padding-y">
+              <div class="p-grid" style="min-height: 55px">
+                <div class="no-padding-y p-col-6" style="align-self: center">
+                  <!-- [disabled]="isPublished" -->
+                  <mat-slide-toggle
+                    formControlName="is_validation_required"
+                    (change)="onChangeValidationRequirement($event)"
+                    color="accent"
+                  >
+                    <span [ngClass]="stepParamatersForm.get('is_validation_required').value ? 'text-slider-on' : 'text-slider-off'">
+                      {{
+                        (stepParamatersForm.get('is_validation_required').value
+                          ? 'FORM_BUILDER.Validation Required to continue to next steps'
+                          : 'FORM_BUILDER.Validation is not required to continue to next steps'
+                        ) | translate
+                      }}
+                    </span>
+                  </mat-slide-toggle>
+                </div>
+                <div class="p-col-6 no-padding-y" *ngIf="stepParamatersForm.get('is_validation_required').value">
+                  <!-- [disabled]="isPublished" -->
+                  <ng-container *ngIf="!isPublished">
+                    <ng-select
+                      placeholder="{{ 'FORM_BUILDER.Who Validate?' | translate }}*"
+                      formControlName="validator"
+                      [clearable]="false"
+                      [required]="stepParamatersForm?.get('is_validation_required')?.value"
+                    >
+                      <ng-option [value]="'teacher'" *ngIf="templateType === 'teacher_contract'">{{
+                        'USER_TYPES.Teacher' | translate
+                      }}</ng-option>
+                      <ng-option *ngFor="let validator of validatorList" [value]="validator?._id">{{
+                        'USER_TYPES.' + validator?.name | translate
+                      }}</ng-option>
+                    </ng-select>
+                    <mat-error
+                      class="err"
+                      *ngIf="stepParamatersForm?.get('validator').hasError('required') && stepParamatersForm?.get('validator').touched"
+                      >{{ 'This field is required' | translate }}</mat-error
+                    >
+                  </ng-container>
+                  <mat-form-field *ngIf="isPublished && stepParamatersForm?.get('validator')?.value">
+                    <input
+                      matInput
+                      class="form-field capitalize"
+                      type="text"
+                      [value]="displayValueValidator(stepParamatersForm?.get('validator').value)"
+                      placeholder="{{ 'ERP_031_CONTINUOUS_FORMATION.Who Validate?' | translate }}"
+                      readonly
+                    />
+                  </mat-form-field>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- validator toggle END  -->
+
+          <!-- Hide if admission_document  -->
+          <ng-container *ngIf="templateType !== 'admission_document'">
+            <!-- Status Toggle -->
+            <div class="p-grid" *ngIf="!showContract()">
+              <div class="p-col-12 no-padding-y">
+                <div class="p-grid" style="min-height: 55px">
+                  <div class="no-padding-y p-col-6" style="align-self: center">
+                    <mat-slide-toggle
+                      formControlName="is_change_candidate_status_after_validated"
+                      (change)="onChangeStatusRequirement($event)"
+                      color="accent"
+                    >
+                      <span
+                        [ngClass]="
+                          stepParamatersForm.get('is_change_candidate_status_after_validated').value ? 'text-slider-on' : 'text-slider-off'
+                        "
+                      >
+                        {{
+                          (stepParamatersForm.get('is_change_candidate_status_after_validated').value
+                            ? 'FORM_BUILDER.Status of the student change after this step'
+                            : "FORM_BUILDER.Status of the student doesn't change after this step"
+                          ) | translate
+                        }}
+                      </span>
+                    </mat-slide-toggle>
+                  </div>
+                  <div class="p-col-6 no-padding-y" *ngIf="stepParamatersForm.get('is_change_candidate_status_after_validated').value">
+                    <ng-select
+                      placeholder="{{ 'FORM_BUILDER.Whats the new status ?' | translate }}"
+                      formControlName="candidate_status_after_validated"
+                      [clearable]="false"
+                      [appendTo]="'body'"
+                      [required]="stepParamatersForm?.get('is_change_candidate_status_after_validated')?.value"
+                    >
+                      <ng-option *ngFor="let status of statusList" [value]="status">{{ status | translate }}</ng-option>
+                    </ng-select>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Status Toggle END-->
+
+            <!-- Slider Final Step -->
+            <!-- <div
+              class="p-grid"
+              *ngIf="step?.step_type !== 'final_message' && stepParamatersForm.get('is_only_visible_based_on_condition').value !== true"
+            >
+              <div class="p-col-12 no-padding-y">
+                <div class="p-grid" style="min-height: 55px">
+                  <div class="no-padding-y p-col-6" style="align-self: center">
+                    <mat-slide-toggle formControlName="is_final_step">
+                      {{ 'Set this step as Final Step' | translate }}
+                    </mat-slide-toggle>
+                  </div>
+                </div>
+              </div>
+            </div> -->
+
+            <!-- summary toggle -->
+            <div
+              class="p-grid"
+              *ngIf="
+                step?.step_type !== 'campus_validation' && step?.step_type !== 'down_payment_mode' && step?.step_type !== 'step_summary'
+              "
+            >
+              <div class="p-col-12 no-padding-y">
+                <div class="p-grid" style="min-height: 55px">
+                  <div class="no-padding-y p-col-6" style="align-self: center">
+                    <mat-slide-toggle
+                      formControlName="is_step_included_in_summary"
+                      (change)="onChangeSummaryRequirement($event)"
+                      color="accent"
+                    >
+                      <span [ngClass]="stepParamatersForm.get('is_step_included_in_summary').value ? 'text-slider-on' : 'text-slider-off'">
+                        {{
+                          (stepParamatersForm.get('is_step_included_in_summary').value
+                            ? 'FORM_BUILDER.Include this step in the summary'
+                            : 'FORM_BUILDER.Include this step in the summary'
+                          ) | translate
+                        }}
+                      </span>
+                    </mat-slide-toggle>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- summary toggle END -->
+          </ng-container>
+
+          <div class="p-grid" *ngIf="step?.step_type !== 'final_message'">
+            <div class="p-col-12 no-padding-y">
+              <div class="p-grid" style="min-height: 55px">
+                <div class="no-padding-y p-col-6" style="align-self: center">
+                  <mat-slide-toggle formControlName="is_only_visible_based_on_condition">
+                    {{ 'FORM_BUILDER.Step only visible based on condition' | translate }}
+                  </mat-slide-toggle>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+  </div>
+</div>
+
+<!-- <div *ngIf="isWaitingForResponse" class="loading-indicator">
+  <mat-progress-spinner mode="indeterminate" color="accent"></mat-progress-spinner>
+</div> -->
+
+<!-- /////////////////////////////////// -->
+
+<!-- <div class="p-grid" style="min-height: 55px" *ngIf="!finalValidation">
+  <div
+    [ngClass]="templateStepForm.get('is_validation_required').value ? 'p-col-6' : 'p-col-12'"
+    class="no-padding-y"
+    style="align-self: center"
+  >
+    <mat-slide-toggle
+      (change)="onChangeValidationRequirement($event)"
+      color="accent"
+      formControlName="is_validation_required"
+      [disabled]="isPublished"
+    >
+      <span [ngClass]="{ 'text-slider-color': templateStepForm.get('is_validation_required').value }">
+        {{
+          (templateStepForm.get('is_validation_required').value
+            ? 'FORM_BUILDER.Validation Required to continue to next steps'
+            : 'FORM_BUILDER.Validation is not required to continue to next steps'
+          ) | translate
+        }}
+      </span>
+    </mat-slide-toggle>
+  </div>
+  <div class="p-col-6 no-padding-y" *ngIf="templateStepForm.get('is_validation_required').value">
+    <ng-select
+      placeholder="{{ 'ERP_009_TEACHER_CONTRACT.Who Validate?' | translate }}"
+      formControlName="validator"
+      [clearable]="false"
+      [disabled]="isPublished"
+      [required]="templateStepForm?.get('is_validation_required')?.value"
+    >
+      <ng-option *ngFor="let validator of validatorList" [value]="validator?._id">{{ validator?.name | translate }}</ng-option>
+    </ng-select>
+  </div>
+</div> -->
+
+<div *ngIf="isWaitingForResponse" class="loading-indicator">
+  <mat-progress-spinner mode="indeterminate" color="accent"></mat-progress-spinner>
+</div>
+
+<!-- OLD TEMPLATE -->
+<!-- <div class="p-grid">
+  <div style="text-align: start" class="p-col-1">
+    <button matTooltip="{{ 'LEAVE' | translate }}" mat-raised-button color="warn" style="padding-left: 10px" (click)="leave()">
+      <mat-icon class="mat-icon-default">keyboard_arrow_left</mat-icon>
+      {{ 'LEAVE' | translate }}
+    </button>
+  </div>
+
+  <div class="p-col-5 text-end-no-pad-r" [formGroup]="stepParamatersForm">
+    
+
+    <button matTooltip="{{ 'Save' | translate }}" mat-raised-button color="accent" (click)="saveStepData()">
+      <mat-icon class="mat-icon-default">save</mat-icon>
+      {{ 'Save' | translate }}
+    </button>
+  </div>
+</div>
+
+<div class="p-grid">
+  <div class="p-col-6 form-side" style="margin-top: 2rem">
+    <div class="p-grid yellow-border card-row" [formGroup]="stepParamatersForm">
+      <div class="section-header">
+        <h3>{{ 'Step Parameters' | translate }}</h3>
+      </div>
+      <div class="p-col-12 no-padding">
+    
+        <div class="p-grid">
+          <div class="p-col-12 no-padding">
+            <div class="p-grid" style="min-height: 55px">
+              <div class="no-padding p-col-6" style="align-self: center">
+              
+                <mat-slide-toggle formControlName="is_validation_required" (change)="onChangeValidationRequirement($event)" color="accent">
+                  <span [ngClass]="{ 'text-slider-color': stepParamatersForm.get('is_validation_required').value }">
+                    {{
+                      (stepParamatersForm.get('is_validation_required').value
+                        ? 'FORM_BUILDER.Validation Required to continue to next steps'
+                        : 'FORM_BUILDER.Validation is not required to continue to next steps'
+                      ) | translate
+                    }}
+                  </span>
+                </mat-slide-toggle>
+              </div>
+              <div class="p-col-6 no-padding" *ngIf="stepParamatersForm.get('is_validation_required').value">
+               
+                <ng-select
+                  placeholder="{{ 'FORM_BUILDER.Who Validate?' | translate }}"
+                  formControlName="validator"
+                  [clearable]="false"
+                  [required]="stepParamatersForm?.get('is_validation_required')?.value"
+                >
+                  <ng-option *ngFor="let validator of validatorList" [value]="validator?._id">{{ validator?.name | translate }}</ng-option>
+                </ng-select>
+              </div>
+            </div>
+          </div>
+        </div>
+      
+        <div class="p-grid">
+          <div class="p-col-12 no-padding">
+            <div class="p-grid" style="min-height: 55px">
+              <div class="no-padding p-col-6" style="align-self: center">
+                <mat-slide-toggle
+                  formControlName="is_change_candidate_status_after_validated"
+                  (change)="onChangeStatusRequirement($event)"
+                  color="accent"
+                >
+                 
+                  <span [ngClass]="{ 'text-slider-color': stepParamatersForm.get('is_change_candidate_status_after_validated').value }">
+                    {{
+                      (stepParamatersForm.get('is_change_candidate_status_after_validated').value
+                        ? 'FORM_BUILDER.Status of the student change after this step'
+                        : "FORM_BUILDER.Status of the student doesn't change after this step"
+                      ) | translate
+                    }}
+                  </span>
+                </mat-slide-toggle>
+              </div>
+              <div class="p-col-6 no-padding" *ngIf="stepParamatersForm.get('is_change_candidate_status_after_validated').value">
+               
+                <ng-select
+                  placeholder="{{ 'FORM_BUILDER.Whats the new status ?' | translate }}"
+                  formControlName="candidate_status_after_validated"
+                  [clearable]="false"
+                  [required]="stepParamatersForm?.get('is_change_candidate_status_after_validated')?.value"
+                >
+                  <ng-option *ngFor="let status of statusList" [value]="status">{{ status | translate }}</ng-option>
+                </ng-select>
+              </div>
+            </div>
+          </div>
+        </div>
+       
+        <div class="p-grid">
+          <div class="p-col-12 no-padding">
+            <div class="p-grid" style="min-height: 55px">
+              <div class="no-padding p-col-6" style="align-self: center">
+                <mat-slide-toggle
+                  formControlName="is_step_included_in_summary"
+                  (change)="onChangeSummaryRequirement($event)"
+                  color="accent"
+                >
+                 
+                  <span [ngClass]="{ 'text-slider-color': stepParamatersForm.get('is_step_included_in_summary').value }">
+                    {{
+                      (stepParamatersForm.get('is_step_included_in_summary').value
+                        ? 'FORM_BUILDER.Include this step in the summary'
+                        : 'FORM_BUILDER.Include this step in the summary'
+                      ) | translate
+                    }}
+                  </span>
+                </mat-slide-toggle>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+      </div>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="isWaitingForResponse" class="loading-indicator">
+  <mat-progress-spinner mode="indeterminate" color="accent"></mat-progress-spinner>
+</div> -->

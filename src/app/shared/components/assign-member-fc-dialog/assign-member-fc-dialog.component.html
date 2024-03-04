@@ -1,0 +1,223 @@
+<div class="header-container" cdkDrag cdkDragRootElement=".cdk-overlay-pane" cdkDragHandle>
+  <mat-icon svgIcon="account-switch"> account_switch </mat-icon>
+  <h3 class="header-text">
+    {{ 'Transfer to another Member' | translate }}
+  </h3>
+  <button mat-icon-button type="button" (click)="closeDialog()" class="header-icon">
+    <mat-icon>close</mat-icon>
+  </button>
+</div>
+<hr />
+
+<form [formGroup]="assignMemberForm" class="header-form">
+  <div style="color: black">
+    <mat-dialog-content class="content-height">
+      <div class="p-grid" *ngIf="isSingleSelected">
+        <div class="p-col-12">
+          <b
+            >{{ 'Which member do you want to change for' | translate }} {{ 'the Student' | translate }} {{ singleCandidate?.first_name }}
+            {{ singleCandidate?.last_name }}:
+          </b>
+        </div>
+      </div>
+      <div class="p-grid" *ngIf="isMultipleSelected">
+        <div class="p-col-12 no-padding-t">
+          <b>{{ 'Which member do you want to change for' | translate }} {{ 'selected student' | translate }} </b>
+        </div>
+      </div>
+      <br />
+
+      <div class="p-grid">
+        <ng-container *ngIf="parentData?.type !== 're-admission'">
+          <div class="p-col-12">
+            <mat-checkbox class="example-margin" [checked]="isMemberAdmission" (click)="onSelectMemberAdmission($event)">{{
+              'Member of admission' | translate
+            }}</mat-checkbox>
+            <ng-container *ngIf="isMemberAdmission">
+              <mat-form-field>
+                <input
+                  matInput
+                  placeholder="{{ 'Select a member of admission' | translate }}"
+                  formControlName="memberFilterCtrl"
+                  [matAutocomplete]="autoMember"
+                />
+                <mat-error *ngIf="assignMemberForm.get('member_id').errors">{{ 'This field is mandatory' | translate }}</mat-error>
+                <mat-autocomplete #autoMember="matAutocomplete" [panelWidth]="'fit'">
+                  <mat-option
+                    *ngFor="let option of filteredMember | async"
+                    [value]="
+                      (option?.civility && option?.civility === 'neutral' ? '' : (option?.civility | translate)) +
+                      ' ' +
+                      option?.first_name +
+                      ' ' +
+                      option?.last_name
+                    "
+                    (click)="selectDevMember(option?._id)"
+                  >
+                    {{ option?.civility && option?.civility === 'neutral' ? '' : (option?.civility | translate) }} {{ option?.first_name }}
+                    {{ option?.last_name }}
+                  </mat-option>
+                </mat-autocomplete>
+              </mat-form-field>
+            </ng-container>
+          </div>
+        </ng-container>
+
+        <ng-container *ngIf="parentData?.type === 're-admission'">
+          <div class="p-col-12">
+            <mat-checkbox class="example-margin" [checked]="isMemberAdmission" (click)="onSelectMemberAdmission($event)">{{
+              'USER_TYPES.Academic Member' | translate
+            }}</mat-checkbox>
+            <ng-container *ngIf="isMemberAdmission">
+              <mat-form-field>
+                <input
+                  matInput
+                  placeholder="{{ 'USER_TYPES.Academic Member' | translate }}"
+                  formControlName="memberFilterCtrl"
+                  [matAutocomplete]="autoMember"
+                />
+                <mat-error *ngIf="assignMemberForm.get('member_id').errors">{{ 'This field is mandatory' | translate }}</mat-error>
+                <mat-autocomplete #autoMember="matAutocomplete" [panelWidth]="'fit'">
+                  <mat-option
+                    *ngFor="let option of filteredMember | async"
+                    [value]="
+                      (option?.civility && option?.civility === 'neutral' ? '' : (option?.civility | translate)) +
+                      ' ' +
+                      option?.first_name +
+                      ' ' +
+                      option?.last_name
+                    "
+                    (click)="selectDevMember(option?._id)"
+                  >
+                    {{ option?.civility && option?.civility === 'neutral' ? '' : (option?.civility | translate) }} {{ option?.first_name }}
+                    {{ option?.last_name }}
+                  </mat-option>
+                </mat-autocomplete>
+              </mat-form-field>
+            </ng-container>
+          </div>
+        </ng-container>
+      </div>
+
+      <ng-container *ngIf="isShowFC">
+        <div class="p-grid">
+          <div class="p-col-12">
+            <mat-checkbox
+              class="example-margin"
+              [checked]="isContinousFormationManager"
+              (click)="onSelectContinuousFormationManager($event)"
+              >{{ 'Continuous Formation Manager' | translate }}</mat-checkbox
+            >
+            <ng-container *ngIf="isContinousFormationManager">
+              <mat-form-field>
+                <input
+                  matInput
+                  placeholder="{{ 'Select a continuous formation manager' | translate }}"
+                  [formControl]="continuousManagerFilter"
+                  [matAutocomplete]="autoContinuousManager"
+                />
+                <mat-autocomplete #autoContinuousManager="matAutocomplete" [panelWidth]="'fit'">
+                  <mat-option
+                    *ngFor="let option of filteredManager | async"
+                    [value]="
+                      (option?.civility && option?.civility === 'neutral' ? '' : (option?.civility | translate)) +
+                      ' ' +
+                      option?.first_name +
+                      ' ' +
+                      option?.last_name
+                    "
+                    (click)="selectOptionContinousFormationManager(option)"
+                  >
+                    {{ option?.civility && option?.civility === 'neutral' ? '' : (option?.civility | translate) }} {{ option?.first_name }}
+                    {{ option?.last_name }}
+                  </mat-option>
+                </mat-autocomplete>
+              </mat-form-field>
+            </ng-container>
+            <!-- <mat-form-field>
+              <input
+                matInput
+                placeholder="{{ 'CANDIDATE_POPUP_1.TITLE' | translate }}"
+                formControlName="memberFilterCtrl"
+                [matAutocomplete]="autoMember"
+                required
+              />
+              <mat-error *ngIf="assignMemberForm.get('member_id').errors">{{ 'This field is mandatory' | translate }}</mat-error>
+              <mat-autocomplete #autoMember="matAutocomplete">
+                <mat-option
+                  *ngFor="let option of filteredMember | async"
+                  [value]="
+                    (option?.civility && option?.civility === 'neutral' ? '' : (option?.civility | translate)) +
+                    ' ' +
+                    option?.first_name +
+                    ' ' +
+                    option?.last_name
+                  "
+                  (click)="selectDevMember(option?._id)"
+                >
+                  {{ option?.civility && option?.civility === 'neutral' ? '' : (option?.civility | translate) }} {{ option?.first_name }}
+                  {{ option?.last_name }}
+                </mat-option>
+              </mat-autocomplete>
+            </mat-form-field> -->
+          </div>
+        </div>
+      </ng-container>
+    </mat-dialog-content>
+
+    <div *ngIf="assignMemberForm.get('member_id').value.length === 1" class="p-grid">
+      <div class="p-col-12 no-padding-t">
+        <b>{{ messageAfterSelect() }}</b>
+      </div>
+    </div>
+
+    <!-- <div *ngIf="isMultipleSelected && assignMemberForm.get('member_id').value.length > 1 && !isMemberMoreThanCandidate()" class="p-grid">
+        <div class="p-col-12 no-padding-t">
+          <b>{{ 'CANDIDATE_POPUP_1.You have just selected many members to assign the candidates' | translate }}</b>
+          <ng-container *ngFor="let member of memberAssigned">
+            <div class="p-grid">
+              <div class="p-col-5 no-padding float-left">
+                <b>
+                  {{ member?.member?.civility | translate }} {{ member?.member?.first_name }}
+                  {{ member?.member?.last_name }}
+                </b>
+              </div>
+              <div class="p-col-4 no-padding">: {{ member?.candidate ? member?.candidate : 0 }} {{ member?.candidate > 1 ? ('Candidates' | translate) : ('Candidate' | translate) }}</div>
+            </div>
+          </ng-container>
+          <b>{{ 'Every Member will receive the a notification with all necessary information' | translate }}</b>
+        </div>
+      </div> -->
+
+    <!-- <div *ngIf="isMemberMoreThanCandidate()" class="p-grid" style="color: red;">
+        <div *ngIf="isMultipleSelected" class="p-col-12 no-padding-t">
+          <b>{{ 'CANDIDATE_POPUP_1.You cannot have more members than candidates' | translate }}</b>
+        </div>
+        <div *ngIf="isSingleSelected" class="p-col-12 no-padding-t">
+          <b>{{ 'CANDIDATE_POPUP_1.Sorry you can only select 1 Member' | translate }}</b>
+        </div>
+      </div> -->
+
+    <!-- <div *ngIf="isNoMemberWithSimilarIntakeChannel()" class="p-grid">
+        <div class="p-col-12 no-padding-t">
+          <b>{{
+            'CANDIDATE_POPUP_1.You must first assign the same Intake channel to at least 1 Member or create a Member with this Intake Channel.'
+              | translate
+          }}</b>
+        </div>
+      </div> -->
+
+    <mat-dialog-actions align="right">
+      <button mat-raised-button color="warn" type="button" (click)="closeDialog()">
+        {{ 'ASSIGN_CORRECTOR_DIALOG.CANCEL' | translate }}
+      </button>
+      <button mat-raised-button color="primary" (click)="submitAssignMember()" type="button">
+        {{ 'Validate' | translate }}
+      </button>
+    </mat-dialog-actions>
+  </div>
+</form>
+
+<div *ngIf="isWaitingForResponse" class="loading-indicator">
+  <mat-progress-spinner mode="indeterminate" color="accent"></mat-progress-spinner>
+</div>

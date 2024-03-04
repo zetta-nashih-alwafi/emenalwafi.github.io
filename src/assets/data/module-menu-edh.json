@@ -1,0 +1,321 @@
+[
+  {
+    "module": "Admissions",
+    "sub_module": [
+      {
+        "name": "Follow Up FI",
+        "parent_module": "Admissions"
+      },
+      {
+        "name": "Follow Up FC",
+        "parent_module": "Admissions"
+      },
+      {
+        "name": "Follow up Contract/Convention",
+        "parent_module": "Admissions"
+      },
+      {
+        "name": "CRM Oscar Campus",
+        "parent_module": "Admissions"
+      },
+      {
+        "name": "CRM Hubspot",
+        "parent_module": "Admissions"
+      },
+      {
+        "name": "General",
+        "parent_module": "Admissions"
+      }
+    ]
+  },
+  {
+    "module": "Students",
+    "sub_module": [
+      {
+        "name": "Students - Follow up",
+        "parent_module": "Students"
+      },
+      {
+        "name": "All students",
+        "parent_module": "Students"
+      },
+      {
+        "name": "Trombinoscope",
+        "parent_module": "Students"
+      }
+    ]
+  },
+  {
+    "module": "Finance",
+    "sub_module": [
+      {
+        "name": "Follow Up Student",
+        "parent_module": "Finance"
+      },
+      {
+        "name": "Follow Up Organization",
+        "parent_module": "Finance"
+      },
+      {
+        "name": "Operation Lines",
+        "parent_module": "Finance"
+      },
+      {
+        "name": "Unbalanced Balance",
+        "parent_module": "Finance"
+      },
+      {
+        "name": "History",
+        "parent_module": "Finance"
+      },
+      {
+        "name": "Reconciliation and Lettrage",
+        "parent_module": "Finance"
+      },
+      {
+        "name": "Check",
+        "parent_module": "Finance"
+      },
+      {
+        "name": "Timeline template",
+        "parent_module": "Finance"
+      },
+      {
+        "name": "Transaction",
+        "parent_module": "Finance"
+      },
+      {
+        "name": "Transaction Detail",
+        "parent_module": "Finance"
+      },
+      {
+        "name": "Balance Report",
+        "parent_module": "Finance"
+      },
+      {
+        "name": "Payout Detail",
+        "parent_module": "Finance"
+      },
+      {
+        "name": "Master Transaction",
+        "parent_module": "Finance"
+      }
+    ]
+  },
+  {
+    "module": "Internship",
+    "sub_module": [
+      {
+        "name": "Follow Up - Internship",
+        "parent_module": "Internship"
+      },
+      {
+        "name": "Internship Settings",
+        "parent_module": "Internship"
+      }
+    ]
+  },
+  {
+    "module": "Alumni",
+    "sub_module": [
+      {
+        "name": "Follow Up - Alumni",
+        "parent_module": "Alumni"
+      },
+      {
+        "name": "Alumni Card",
+        "parent_module": "Alumni"
+      }
+    ]
+  },
+  {
+    "module": "Companies",
+    "sub_module": [
+      {
+        "name": "Companies Entity",
+        "parent_module": "Companies"
+      },
+      {
+        "name": "Companies Branches",
+        "parent_module": "Companies"
+      },
+      {
+        "name": "Organization",
+        "parent_module": "Companies"
+      }
+    ]
+  },
+  {
+    "module": "Form Follow Up",
+    "sub_module": [
+      {
+        "name": "General Form Follow Up",
+        "parent_module": "Form Follow Up"
+      }
+    ]
+  },
+  {
+    "module": "My Task",
+    "sub_module": []
+  },
+  {
+    "module": "Mailbox",
+    "sub_module": []
+  },
+  {
+    "module": "Contract",
+    "sub_module": [
+      {
+        "name": "Contract Management",
+        "parent_module": "Contract"
+      }
+    ]
+  },
+  {
+    "module": "History",
+    "sub_module": [
+      {
+        "name": "Notifications",
+        "parent_module": "History"
+      }
+    ]
+  },
+  {
+    "module": "Courses & Sequences",
+    "sub_module": [
+      {
+        "name": "Template",
+        "parent_module": "Courses & Sequences"
+      },
+      {
+        "name": "Sequences",
+        "parent_module": "Courses & Sequences"
+      },
+      {
+        "name": "Modules",
+        "parent_module": "Courses & Sequences"
+      },
+      {
+        "name": "Subjects",
+        "parent_module": "Courses & Sequences"
+      }
+    ]
+  },
+  {
+    "module": "Users",
+    "sub_module": []
+  },
+  {
+    "module": "Intake channel",
+    "sub_module": [
+      {
+        "name": "Scholar Season",
+        "parent_module": "Intake channel"
+      },
+      {
+        "name": "Schools",
+        "parent_module": "Intake channel"
+      },
+      {
+        "name": "Campus",
+        "parent_module": "Intake channel"
+      },
+      {
+        "name": "Level",
+        "parent_module": "Intake channel"
+      },
+      {
+        "name": "Sector",
+        "parent_module": "Intake channel"
+      },
+      {
+        "name": "Speciality",
+        "parent_module": "Intake channel"
+      },
+      {
+        "name": "Sites",
+        "parent_module": "Intake channel"
+      },
+      {
+        "name": "Settings",
+        "parent_module": "Intake channel"
+      }
+    ]
+  },
+  {
+    "module": "Setting",
+    "sub_module": [
+      {
+        "name": "Import of Objectives",
+        "parent_module": "Setting"
+      },
+      {
+        "name": "Import of Finance Objectives",
+        "parent_module": "Setting"
+      },
+      {
+        "name": "Import of financial N-1",
+        "parent_module": "Setting"
+      },
+      {
+        "name": "Diapos External",
+        "parent_module": "Setting"
+      },
+      {
+        "name": "Messages Steps",
+        "parent_module": "Setting"
+      },
+      {
+        "name": "Notification Management",
+        "parent_module": "Setting"
+      },
+      {
+        "name": "User Permission",
+        "parent_module": "Setting"
+      }
+    ]
+  },
+  {
+    "module": "Re Admission",
+    "sub_module": [
+      {
+        "name": "Assignment",
+        "parent_module": "Re Admission"
+      },
+      {
+        "name": "Follow Up Admission",
+        "parent_module": "Assignment"
+      }
+    ]
+  },
+  {
+    "module": "Process",
+    "sub_module": [
+      {
+        "name": "Form Builder",
+        "parent_module": "Process"
+      },
+      {
+        "name": "Document Builder",
+        "parent_module": "Process"
+      }
+    ]
+  },
+  {
+    "module": "Teacher Management",
+    "sub_module": [
+      {
+        "name": "Follow Up Teacher Management",
+        "parent_module": "Teacher Management"
+      },
+      {
+        "name": "Teachers",
+        "parent_module": "Teacher Management"
+      }
+    ]
+  },
+  {
+    "module": "InApp Tutorials",
+    "sub_module": []
+  }
+]

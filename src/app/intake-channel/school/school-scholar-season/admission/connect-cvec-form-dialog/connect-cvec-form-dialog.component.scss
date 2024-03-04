@@ -1,0 +1,101 @@
+:host::ng-deep .mat-dialog-actions {
+    padding: 16px;
+    padding-bottom: 16px !important;
+}
+
+:host::ng-deep .mat-dialog-content {
+    overflow: unset !important;
+    margin: 0;
+    padding: 16px;
+  }
+  
+  .doctype-input {
+    width: 90%;
+  }
+  
+  .uploaded-file-wrapper {
+    display: block;
+  }
+  
+  .icon {
+    vertical-align: middle;
+  }
+  
+  .no-padding {
+    padding-top: 0 !important;
+  }
+  
+  h1{
+    color: black;
+    margin-left: 6px;
+    margin-bottom: 10px !important;
+  }
+  
+  .dialog-body {
+    font-size: 14px !important;
+  }
+  
+  .mat-select{
+    margin-bottom: -7px;
+  }
+  .disabled-text {
+    color: #9e9e9ecf;
+    font-weight: 100;
+  }
+
+.dialog-border {
+  border-bottom: 1px solid black;
+  padding: 8px;
+}
+
+:host::ng-deep.ng-select .ng-select-container {
+    background-color: #fff0;
+    border: none;
+    border-radius: 0px !important;
+    border-bottom: 1px solid #8c8c8c !important;
+    min-height: 38px;
+    -webkit-box-align: center;
+    align-items: center;
+}
+
+:host::ng-deep .ng-select .ng-select-container .ng-value-container {
+    padding-left: 0px;
+}
+
+:host::ng-deep .ng-select.ng-select-single .ng-select-container .ng-value-container .ng-input {
+    padding-left: 0px;
+}
+
+:host::ng-deep.ng-select .ng-select-container .ng-value-container .ng-input > input {
+    color: black;
+    box-sizing: content-box;
+    background: none;
+    border: 0;
+    box-shadow: none;
+    outline: 0;
+    cursor: default;
+    width: 100%;
+  }
+
+  .invalidValue {
+    font-size: 12px !important;
+  }
+  
+  :host::ng-deep.ng-select.ng-invalid.ng-touched {
+    .ng-select-container {
+      border-color: #ff5722 !important;
+    }
+    .ng-placeholder {
+      color: #ff5722 !important;
+    }
+  }
+
+  .assign-border {
+    border: 2px solid #fdd835;
+    padding: 5px;
+    margin: 5px;
+  }
+
+  .custom-input {
+    border-bottom: 1px solid rgb(241, 241, 241) !important;
+  }

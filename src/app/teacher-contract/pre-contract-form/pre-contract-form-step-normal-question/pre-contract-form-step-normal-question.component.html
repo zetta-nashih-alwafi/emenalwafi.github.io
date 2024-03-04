@@ -1,0 +1,1090 @@
+<div class="p-grid card-row" style="margin-top: 2rem !important; padding: 10px" [formGroup]="templateStepForm">
+  <div class="p-col-12 no-padding">
+    <div class="revision-box-container" *ngIf="stepData?.revise_request_messages?.length">
+      <ms-revision-box-contract
+        [disabledReply]="stepData?.step_status === 'ask_for_revision'"
+        [formDetail]="formDetail"
+        [stepId]="stepData?._id"
+        [messages]="stepData?.revise_request_messages"
+        (triggerRefresh)="this.triggerRefresh.emit(formId)"
+        [formData]="formData"
+      >
+      </ms-revision-box-contract>
+    </div>
+
+    <div class="header" [innerHTML]="templateStepForm?.get('direction')?.value"></div>
+
+    <ng-container formArrayName="segments">
+      <div
+        class="p-col-12 no-padding"
+        *ngFor="let segment of getSegmentFormarray()?.controls; let segmentIndex = index"
+        [formGroupName]="segmentIndex"
+      >
+        <h3 class="segment-name">{{ segment.get('segment_title')?.value }}</h3>
+
+        <hr />
+
+        <!-- For Question -->
+        <ng-container formArrayName="questions">
+          <div class="p-grid">
+            <div
+              #questionLoop
+              *ngFor="let quest of getQuestionFieldFormArray(segmentIndex)?.controls; let quesIndex = index; let firstIndex = first"
+              [formGroupName]="quesIndex"
+              [ngClass]="[
+                (getNextQuestionField(segmentIndex, quesIndex)?.get('field_position').value === 'right' &&
+                  quest?.get('field_position').value !== 'right') ||
+                (getPreviousQuestionField(segmentIndex, quesIndex).get('field_position').value === 'left' &&
+                  quest?.get('field_position').value === 'right')
+                  ? 'p-col-12 p-md-6'
+                  : 'p-col-12 p-md-6 should-full',
+                questionLoop.classList.contains('should-full') && quest?.get('field_position').value === 'right' ? 'right-end' : 'left-end'
+              ]"
+            >
+              <!-- IF FIELD IS ON -------------------------------------------->
+              <div *ngIf="quest?.get('is_field')?.value">
+                <div class="p-grid" [ngClass]="questionLoop.classList.contains('right-end') ? 'justify-end' : 'justify-start'">
+                  <div class="p-col-12 p-md-4">
+                    <label *ngIf="quest?.get('is_required')?.value"
+                      >{{ 'QUESTIONNAIRE_FIELDS.' + quest?.get('field_type')?.value | translate }}*</label
+                    >
+                    <label *ngIf="!quest?.get('is_required')?.value">{{
+                      'QUESTIONNAIRE_FIELDS.' + quest?.get('field_type')?.value | translate
+                    }}</label>
+                  </div>
+                  <div class="p-col-12 p-md-8 x-pad-none">
+                    <ng-container
+                      *ngIf="
+                        [
+                          'TEACHER_CIVILITY',
+                          'START_DATE',
+                          'END_DATE',
+                          'TEACHER_SUBJECTS',
+                          'CONTRACT_TYPE',
+                          'SCHOLAR_SEASON',
+                          'TEACHER_PROGRAMS',
+                          'TEACHER_TYPE_INTERVENTION',
+                          'TEACHER_TYPE_INTERVENTION_1',
+                          'TEACHER_TYPE_INTERVENTION_2',
+                          'TEACHER_TYPE_INTERVENTION_3',
+                          'TEACHER_TYPE_INTERVENTION_4',
+                          'TEACHER_TYPE_INTERVENTION_5',
+                          'TEACHER_TYPE_INTERVENTION_6',
+                          'TEACHER_PROGRAMS_1',
+                          'TEACHER_PROGRAMS_2',
+                          'TEACHER_PROGRAMS_3',
+                          'TEACHER_PROGRAMS_4',
+                          'TEACHER_PROGRAMS_5',
+                          'TEACHER_PROGRAMS_6',
+                          'TEACHER_SUBJECTS_1',
+                          'TEACHER_SUBJECTS_2',
+                          'TEACHER_SUBJECTS_3',
+                          'TEACHER_SUBJECTS_4',
+                          'TEACHER_SUBJECTS_5',
+                          'TEACHER_SUBJECTS_6',
+                          'financer',
+                          'type_of_financement',
+                          'company_address',
+                          'mentor',
+                          'mentor_function',
+                          'ceo',
+                          'company_siret',
+                          'legal_status',
+                          'student_civility',
+                          'student_first_name',
+                          'student_last_name',
+                          'student_address',
+                          'volume_hour',
+                          'school',
+                          'campus',
+                          'level',
+                          'sector',
+                          'speciality',
+                          'full_rate',
+                          'campus_address',
+                          'school_stamp',
+                          'legal_entity_address',
+                          'legal_entity_region',
+                          'legal_entity_siret',
+                          'start_date',
+                          'today_date',
+                          'end_date',
+                          'EMAIL_SIGNALEMENTS'
+                        ].includes(quest?.get('field_type')?.value);
+                        else default
+                      "
+                    >
+                      <div
+                        *ngIf="
+                          quest?.get('field_type')?.value === 'TEACHER_CIVILITY' || quest?.get('field_type')?.value === 'student_civility'
+                        "
+                      >
+                        <mat-radio-group formControlName="answer" [required]="quest?.get('is_required')?.value && isRequired">
+                          <mat-radio-button value="MR" style="padding-right: 10px" [disabled]="disable || !quest?.get('is_editable')?.value"
+                            >{{ 'Mr' | translate }}
+                          </mat-radio-button>
+                          <mat-radio-button
+                            value="MRS"
+                            style="padding-right: 10px"
+                            [disabled]="disable || !quest?.get('is_editable')?.value"
+                            >{{ 'Mrs' | translate }}
+                          </mat-radio-button>
+                          <mat-radio-button value="neutral" [disabled]="disable || !quest?.get('is_editable')?.value"
+                            >{{ 'Neutral' | translate }}
+                          </mat-radio-button>
+                        </mat-radio-group>
+                        <div class="invalid-feedback" *ngIf="quest.get('is_required')?.value && quest.invalid && quest.touched">
+                          {{ 'This field is required' | translate }}
+                        </div>
+                      </div>
+
+                      <div
+                        class="form-group"
+                        *ngIf="['START_DATE', 'END_DATE', 'start_date', 'end_date', 'today_date'].includes(quest?.get('field_type')?.value)"
+                      >
+                        <input
+                          formControlName="answer"
+                          [readOnly]="!quest?.get('is_editable')?.value || disable"
+                          [disabled]="!quest?.get('is_editable')?.value || disable"
+                          (click)="myDatepickersField.open()"
+                          class="form-control"
+                          [matDatepicker]="myDatepickersField"
+                          [required]="quest?.get('is_required')?.value"
+                        />
+                        <div class="invalid-feedback" *ngIf="quest.get('is_required')?.value && quest.invalid && quest.touched">
+                          {{ 'This field is required' | translate }}
+                        </div>
+                        <mat-datepicker-toggle
+                          *ngIf="quest?.get('is_editable')?.value"
+                          matSuffix
+                          [for]="myDatepickersField"
+                        ></mat-datepicker-toggle>
+                        <mat-datepicker #myDatepickersField></mat-datepicker>
+                      </div>
+
+                      <div class="form-group" *ngIf="quest?.get('field_type')?.value === 'parent_relation'">
+                        <div class="p-grid">
+                          <mat-form-field [ngClass]="{ 'parent-relation': quest?.get('is_editable')?.value && !disable }">
+                            <mat-select
+                              [required]="quest?.get('is_required')?.value && isRequired"
+                              [disabled]="!quest?.get('is_editable')?.value || disable"
+                              formControlName="answer"
+                            >
+                              <mat-option *ngFor="let relation of relationList" [value]="relation">
+                                {{ 'CARDDETAIL.RELATION.' + relation | translate }}
+                              </mat-option>
+                            </mat-select>
+                          </mat-form-field>
+                        </div>
+                      </div>
+
+                      <div
+                        *ngIf="
+                          quest?.get('field_type')?.value === 'TEACHER_SUBJECTS' ||
+                          quest?.get('field_type')?.value === 'TEACHER_SUBJECTS_1' ||
+                          quest?.get('field_type')?.value === 'TEACHER_SUBJECTS_2' ||
+                          quest?.get('field_type')?.value === 'TEACHER_SUBJECTS_3' ||
+                          quest?.get('field_type')?.value === 'TEACHER_SUBJECTS_4' ||
+                          quest?.get('field_type')?.value === 'TEACHER_SUBJECTS_5' ||
+                          quest?.get('field_type')?.value === 'TEACHER_SUBJECTS_6'
+                        "
+                      >
+                        <div class="form-group">
+                          <ng-select
+                            *ngIf="quest?.get('is_editable')?.value && !disable"
+                            [appendTo]="'body'"
+                            [items]="subjectsList"
+                            bindLabel="full_name"
+                            bindValue="full_name"
+                            [multiple]="false"
+                            placeholder="{{ 'Subjects' | translate }}*"
+                            formControlName="answer"
+                            [clearable]="false"
+                          >
+                          </ng-select>
+                          <input
+                            *ngIf="!quest?.get('is_editable')?.value || disable"
+                            [value]="quest?.get('answer')?.value"
+                            class="form-control"
+                            type="text"
+                            [readonly]="!quest?.get('is_editable')?.value || disable"
+                          />
+                          <div class="invalid-feedback" *ngIf="quest.get('is_required')?.value && quest.invalid && quest.touched">
+                            {{ 'This field is required' | translate }}
+                          </div>
+                        </div>
+                      </div>
+
+                      <div *ngIf="quest?.get('field_type')?.value === 'EMAIL_SIGNALEMENTS'">
+                        <div class="form-group">
+                          <ng-select
+                            *ngIf="quest?.get('is_editable')?.value && !disable"
+                            [appendTo]="'body'"
+                            [items]="email_sign"
+                            bindLabel="signalement_email"
+                            bindValue="signalement_email"
+                            [multiple]="true"
+                            placeholder="{{ quest?.get('question_label')?.value }}"
+                            formControlName="answer_multiple"
+                            [clearable]="false"
+                          >
+                          </ng-select>
+                          <input
+                            *ngIf="!quest?.get('is_editable')?.value || disable"
+                            [value]="quest?.get('answer_multiple')?.value"
+                            class="form-control"
+                            type="text"
+                            [readonly]="!quest?.get('is_editable')?.value || disable"
+                          />
+                          <div class="invalid-feedback" *ngIf="quest.get('is_required')?.value && quest.invalid && quest.touched">
+                            {{ 'This field is required' | translate }}
+                          </div>
+                        </div>
+                      </div>
+
+                      <div *ngIf="quest?.get('field_type')?.value === 'CONTRACT_TYPE'">
+                        <div class="form-group">
+                          <ng-select
+                            *ngIf="quest?.get('is_editable')?.value && !disable"
+                            placeholder="{{ 'ADD_CONTRACT_DIALOG.Type of Contract' | translate }}*"
+                            formControlName="answer"
+                            [clearable]="false"
+                          >
+                            <ng-option *ngFor="let type of contract_type" [value]="type">
+                              {{ 'ERP_009_TEACHER_CONTRACT.TYPE_OF_CONTRACT.' + type | translate }}
+                            </ng-option>
+                          </ng-select>
+                          <input
+                            *ngIf="!quest?.get('is_editable')?.value || disable"
+                            [value]="'ERP_009_TEACHER_CONTRACT.TYPE_OF_CONTRACT.' + quest?.get('answer')?.value | translate"
+                            class="form-control"
+                            type="text"
+                            [readonly]="!quest?.get('is_editable')?.value || disable"
+                          />
+                          <div class="invalid-feedback" *ngIf="quest.get('is_required')?.value && quest.invalid && quest.touched">
+                            {{ 'This field is required' | translate }}
+                          </div>
+                        </div>
+                      </div>
+
+                      <div
+                        *ngIf="
+                          quest?.get('field_type')?.value === 'TEACHER_PROGRAMS' ||
+                          quest?.get('field_type')?.value === 'TEACHER_PROGRAMS_1' ||
+                          quest?.get('field_type')?.value === 'TEACHER_PROGRAMS_2' ||
+                          quest?.get('field_type')?.value === 'TEACHER_PROGRAMS_3' ||
+                          quest?.get('field_type')?.value === 'TEACHER_PROGRAMS_4' ||
+                          quest?.get('field_type')?.value === 'TEACHER_PROGRAMS_5' ||
+                          quest?.get('field_type')?.value === 'TEACHER_PROGRAMS_6'
+                        "
+                      >
+                        <div class="form-group">
+                          <ng-select
+                            *ngIf="quest?.get('is_editable')?.value && !disable"
+                            placeholder="{{ 'ADD_CONTRACT_DIALOG.Programs' | translate }}*"
+                            formControlName="answer"
+                            [clearable]="false"
+                          >
+                            <ng-option *ngFor="let type of programs" [value]="type?.program">
+                              {{ type?.program }}
+                            </ng-option>
+                          </ng-select>
+                          <input
+                            *ngIf="!quest?.get('is_editable')?.value || disable"
+                            [value]="quest?.get('answer')?.value"
+                            class="form-control"
+                            type="text"
+                            [readonly]="!quest?.get('is_editable')?.value || disable"
+                          />
+                          <div class="invalid-feedback" *ngIf="quest.get('is_required')?.value && quest.invalid && quest.touched">
+                            {{ 'This field is required' | translate }}
+                          </div>
+                        </div>
+                      </div>
+                      <div *ngIf="quest?.get('field_type')?.value === 'SCHOLAR_SEASON'">
+                        <div class="form-group">
+                          <ng-select
+                            *ngIf="quest?.get('is_editable')?.value && !disable"
+                            placeholder="{{ 'Select Scholar Season' | translate }}*"
+                            formControlName="answer"
+                            [clearable]="false"
+                            [appendTo]="'body'"
+                          >
+                            <ng-option *ngFor="let type of scholars" [value]="type?.scholar_season">
+                              {{ type?.scholar_season }}
+                            </ng-option>
+                          </ng-select>
+                          <input
+                            *ngIf="!quest?.get('is_editable')?.value || disable"
+                            [value]="quest?.get('answer')?.value"
+                            class="form-control"
+                            type="text"
+                            [readonly]="!quest?.get('is_editable')?.value || disable"
+                          />
+                          <div class="invalid-feedback" *ngIf="quest.get('is_required')?.value && quest.invalid && quest.touched">
+                            {{ 'This field is required' | translate }}
+                          </div>
+                        </div>
+                      </div>
+                      <div
+                        *ngIf="
+                          quest?.get('field_type')?.value === 'TEACHER_TYPE_INTERVENTION' ||
+                          quest?.get('field_type')?.value === 'TEACHER_TYPE_INTERVENTION_1' ||
+                          quest?.get('field_type')?.value === 'TEACHER_TYPE_INTERVENTION_2' ||
+                          quest?.get('field_type')?.value === 'TEACHER_TYPE_INTERVENTION_3' ||
+                          quest?.get('field_type')?.value === 'TEACHER_TYPE_INTERVENTION_4' ||
+                          quest?.get('field_type')?.value === 'TEACHER_TYPE_INTERVENTION_5' ||
+                          quest?.get('field_type')?.value === 'TEACHER_TYPE_INTERVENTION_6'
+                        "
+                      >
+                        <div class="form-group">
+                          <ng-select
+                            *ngIf="quest?.get('is_editable')?.value && !disable"
+                            placeholder="{{ 'ADD_CONTRACT_DIALOG.Type of Intervention' | translate }}*"
+                            formControlName="answer"
+                            [clearable]="false"
+                          >
+                            <ng-option *ngFor="let type of interventions" [value]="type?.value">
+                              {{ 'ERP_009_TEACHER_CONTRACT.INTERVETION_TYPE.' + type?.name | translate }}
+                            </ng-option>
+                          </ng-select>
+                          <input
+                            *ngIf="!quest?.get('is_editable')?.value || disable"
+                            [value]="
+                              quest?.get('answer')?.value
+                                ? ('ERP_009_TEACHER_CONTRACT.INTERVETION_TYPE.' + quest?.get('answer')?.value | translate)
+                                : ''
+                            "
+                            class="form-control"
+                            type="text"
+                            [readonly]="!quest?.get('is_editable')?.value || disable"
+                          />
+                          <div class="invalid-feedback" *ngIf="quest.get('is_required')?.value && quest.invalid && quest.touched">
+                            {{ 'This field is required' | translate }}
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- ERP_042 Field Type -->
+
+                      <!-- Input Field Type file -->
+                      <ng-container *ngIf="quest?.get('field_type')?.value === 'school_stamp'">
+                        <div class="form-group">
+                          <div class="p-col-12 p-md-8 x-pad-none" style="position: relative">
+                            <div class="imgContainer">
+                              <div class="p-grid p-justify-center">
+                                <div class="logo-img-wrapper" *ngIf="!isPhotoUploading">
+                                  <img
+                                    class="center-image"
+                                    [src]="
+                                      is_photo_in_s3
+                                        ? serverimgPath + photoIsField_s3_path
+                                        : photoIsField
+                                        ? serverimgPath + photoIsField
+                                        : grayBackground
+                                    "
+                                  />
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </ng-container>
+
+                      <!-- Input field type text field ERP_042 -->
+                      <div
+                        *ngIf="
+                          quest?.get('field_type')?.value === 'student_first_name' ||
+                          quest?.get('field_type')?.value === 'student_last_name' ||
+                          quest?.get('field_type')?.value === 'legal_entity_region' ||
+                          quest?.get('field_type')?.value === 'legal_entity_siret' ||
+                          quest?.get('field_type')?.value === 'company_siret' ||
+                          quest?.get('field_type')?.value === 'mentor_function'
+                        "
+                      >
+                        <div class="form-group">
+                          <input
+                            [required]="quest?.get('is_required')?.value && isRequired"
+                            [readOnly]="!quest?.get('is_editable')?.value || disable"
+                            formControlName="answer"
+                            class="form-control"
+                            type="text"
+                          />
+                          <div class="invalid-feedback" *ngIf="quest.get('is_required')?.value && quest.invalid && quest.touched">
+                            {{ 'This field is required' | translate }}
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- Input Field type number field ERP_042 -->
+                      <div *ngIf="quest?.get('field_type')?.value === 'volume_hour' || quest?.get('field_type')?.value === 'full_rate'">
+                        <div class="form-group">
+                          <input
+                            [required]="quest?.get('is_required')?.value && isRequired"
+                            [readOnly]="!quest?.get('is_editable')?.value || disable"
+                            formControlName="answer_number"
+                            (wheel)="onWheel($event)"
+                            class="form-control"
+                            type="number"
+                          />
+                          <div class="invalid-feedback" *ngIf="quest.get('is_required')?.value && quest.invalid && quest.touched">
+                            {{ 'This field is required' | translate }}
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- School Dropdown -->
+                      <div *ngIf="quest?.get('field_type')?.value === 'school'">
+                        <div class="form-group">
+                          <ng-select
+                            *ngIf="quest?.get('is_editable')?.value && !disable"
+                            (change)="getCampusDropdown(quest?.get('answer')?.value, segmentIndex)"
+                            formControlName="answer"
+                            [clearable]="false"
+                          >
+                            <ng-option *ngFor="let type of schoolList" [value]="type.short_name">
+                              {{ type.short_name }}
+                            </ng-option>
+                          </ng-select>
+                          <input
+                            *ngIf="!quest?.get('is_editable')?.value || disable"
+                            [value]="quest?.get('answer')?.value"
+                            class="form-control"
+                            type="text"
+                            [readonly]="!quest?.get('is_editable')?.value || disable"
+                          />
+                          <div class="invalid-feedback" *ngIf="quest.get('is_required')?.value && quest.invalid && quest.touched">
+                            {{ 'This field is required' | translate }}
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- Legal Status Dropdown -->
+                      <div *ngIf="quest?.get('field_type')?.value === 'legal_status'">
+                        <div class="form-group">
+                          <ng-select *ngIf="quest?.get('is_editable')?.value && !disable" formControlName="answer" [clearable]="false">
+                            <ng-option *ngFor="let type of legalStatusList" [value]="type">
+                              {{ type }}
+                            </ng-option>
+                          </ng-select>
+                          <input
+                            *ngIf="!quest?.get('is_editable')?.value || disable"
+                            [value]="quest?.get('answer')?.value"
+                            class="form-control"
+                            type="text"
+                            [readonly]="!quest?.get('is_editable')?.value || disable"
+                          />
+                          <div class="invalid-feedback" *ngIf="quest.get('is_required')?.value && quest.invalid && quest.touched">
+                            {{ 'This field is required' | translate }}
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- Campus Dropdown -->
+                      <div *ngIf="quest?.get('field_type')?.value === 'campus'">
+                        <div class="form-group">
+                          <ng-select
+                            *ngIf="quest?.get('is_editable')?.value && !disable"
+                            (change)="getLevelDropdown(quest?.get('answer')?.value, segmentIndex)"
+                            formControlName="answer"
+                            [clearable]="false"
+                          >
+                            <ng-option *ngFor="let type of campusList" [value]="type.name">
+                              {{ type.name }}
+                            </ng-option>
+                          </ng-select>
+                          <input
+                            *ngIf="!quest?.get('is_editable')?.value || disable"
+                            [value]="quest?.get('answer')?.value"
+                            class="form-control"
+                            type="text"
+                            [readonly]="!quest?.get('is_editable')?.value || disable"
+                          />
+                          <div class="invalid-feedback" *ngIf="quest.get('is_required')?.value && quest.invalid && quest.touched">
+                            {{ 'This field is required' | translate }}
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- Level Dropdown -->
+                      <div *ngIf="quest?.get('field_type')?.value === 'level'">
+                        <div class="form-group">
+                          <ng-select
+                            *ngIf="quest?.get('is_editable')?.value && !disable"
+                            (change)="getSectorDropdown(selectedSchoolId, selectedCampusId, quest?.get('answer')?.value, segmentIndex)"
+                            formControlName="answer"
+                            [clearable]="false"
+                          >
+                            <ng-option *ngFor="let type of levelList" [value]="type.name">
+                              {{ type.name }}
+                            </ng-option>
+                          </ng-select>
+                          <input
+                            *ngIf="!quest?.get('is_editable')?.value || disable"
+                            [value]="quest?.get('answer')?.value"
+                            class="form-control"
+                            type="text"
+                            [readonly]="!quest?.get('is_editable')?.value || disable"
+                          />
+                          <div class="invalid-feedback" *ngIf="quest.get('is_required')?.value && quest.invalid && quest.touched">
+                            {{ 'This field is required' | translate }}
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- Sector Dropdown -->
+                      <div *ngIf="quest?.get('field_type')?.value === 'sector'">
+                        <div class="form-group">
+                          <ng-select
+                            *ngIf="quest?.get('is_editable')?.value && !disable"
+                            (change)="
+                              getSpecialityDropdown(
+                                selectedSchoolId,
+                                selectedCampusId,
+                                selectedLevelId,
+                                quest?.get('answer')?.value,
+                                segmentIndex
+                              )
+                            "
+                            formControlName="answer"
+                            [clearable]="false"
+                          >
+                            <ng-option *ngFor="let type of sectorList" [value]="type.name">
+                              {{ type.name }}
+                            </ng-option>
+                          </ng-select>
+                          <input
+                            *ngIf="!quest?.get('is_editable')?.value || disable"
+                            [value]="quest?.get('answer')?.value"
+                            class="form-control"
+                            type="text"
+                            [readonly]="!quest?.get('is_editable')?.value || disable"
+                          />
+                          <div class="invalid-feedback" *ngIf="quest.get('is_required')?.value && quest.invalid && quest.touched">
+                            {{ 'This field is required' | translate }}
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- Speciality Dropdown -->
+                      <div *ngIf="quest?.get('field_type')?.value === 'speciality'">
+                        <div class="form-group">
+                          <ng-select *ngIf="quest?.get('is_editable')?.value && !disable" formControlName="answer" [clearable]="false">
+                            <ng-option *ngFor="let type of specialityList" [value]="type.name">
+                              {{ type.name }}
+                            </ng-option>
+                          </ng-select>
+                          <input
+                            *ngIf="!quest?.get('is_editable')?.value || disable"
+                            [value]="quest?.get('answer')?.value"
+                            class="form-control"
+                            type="text"
+                            [readonly]="!quest?.get('is_editable')?.value || disable"
+                          />
+                          <div class="invalid-feedback" *ngIf="quest.get('is_required')?.value && quest.invalid && quest.touched">
+                            {{ 'This field is required' | translate }}
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- Financer Dropdown -->
+                      <div *ngIf="quest?.get('field_type')?.value === 'financer'">
+                        <div class="form-group">
+                          <ng-select
+                            *ngIf="quest?.get('is_editable')?.value && !disable"
+                            formControlName="answer"
+                            (change)="checkFinancer(quest?.get('answer')?.value, segmentIndex, quesIndex)"
+                            [clearable]="false"
+                          >
+                            <ng-option *ngFor="let type of listFinance" [value]="type.name">
+                              {{ type.name }}
+                            </ng-option>
+                          </ng-select>
+                          <input
+                            *ngIf="!quest?.get('is_editable')?.value || disable"
+                            [value]="quest?.get('answer')?.value"
+                            class="form-control"
+                            type="text"
+                            [readonly]="!quest?.get('is_editable')?.value || disable"
+                          />
+                          <div class="invalid-feedback" *ngIf="quest.get('is_required')?.value && quest.invalid && quest.touched">
+                            {{ 'This field is required' | translate }}
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- Type of Financement dropdown -->
+
+                      <div *ngIf="quest?.get('field_type')?.value === 'type_of_financement'">
+                        <div class="form-group">
+                          <ng-select
+                            *ngIf="quest?.get('is_editable')?.value && !disable"
+                            formControlName="answer_multiple"
+                            [clearable]="false"
+                            [multiple]="true"
+                          >
+                            <ng-option *ngFor="let type of listTypeOfFinancement" [value]="type">
+                              {{ type | translate }}
+                            </ng-option>
+                          </ng-select>
+                          <input
+                            *ngIf="!quest?.get('is_editable')?.value || disable"
+                            [value]="quest?.get('answer_multiple')?.value"
+                            class="form-control"
+                            type="text"
+                            [readonly]="!quest?.get('is_editable')?.value || disable"
+                          />
+                          <div class="invalid-feedback" *ngIf="quest.get('is_required')?.value && quest.invalid && quest.touched">
+                            {{ 'This field is required' | translate }}
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- Text area field ERP_042 -->
+
+                      <div
+                        *ngIf="
+                          quest?.get('field_type')?.value === 'student_address' ||
+                          quest?.get('field_type')?.value === 'campus_address' ||
+                          quest?.get('field_type')?.value === 'legal_entity_address' ||
+                          quest?.get('field_type')?.value === 'company_address'
+                        "
+                      >
+                        <div class="form-group">
+                          <textarea
+                            [required]="quest?.get('is_required')?.value && isRequired"
+                            [readOnly]="!quest?.get('is_editable')?.value || disable"
+                            formControlName="answer"
+                            class="form-control custom-text-area"
+                          ></textarea>
+                          <div class="invalid-feedback" *ngIf="quest.get('is_required')?.value && quest.invalid && quest.touched">
+                            {{ 'This field is required' | translate }}
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- Mentor Dropdown -->
+
+                      <div *ngIf="quest?.get('field_type')?.value === 'mentor'">
+                        <div class="form-group">
+                          <ng-select
+                            *ngIf="quest?.get('is_editable')?.value && !disable"
+                            formControlName="answer"
+                            [clearable]="false"
+                            (change)="getAllMentor(selectedFinancer, segmentIndex, quesIndex, quest?.get('answer')?.value)"
+                          >
+                            <ng-option *ngFor="let type of mentorList" value="{{ type?.last_name }} {{ type?.first_name }}">
+                              {{ type?.last_name | uppercase }} {{ type?.first_name }}
+                              {{ type?.civility && type?.civility === 'neutral' ? '' : (type?.civility | translate) }}
+                            </ng-option>
+                          </ng-select>
+                          <input
+                            *ngIf="!quest?.get('is_editable')?.value || disable"
+                            [value]="quest?.get('answer')?.value"
+                            class="form-control"
+                            type="text"
+                            [readonly]="!quest?.get('is_editable')?.value || disable"
+                          />
+
+                          <div class="invalid-feedback" *ngIf="quest.get('is_required')?.value && quest.invalid && quest.touched">
+                            {{ 'This field is required' | translate }}
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- CEO dropdown -->
+
+                      <div *ngIf="quest?.get('field_type')?.value === 'ceo'">
+                        <div class="form-group">
+                          <ng-select *ngIf="quest?.get('is_editable')?.value && !disable" formControlName="answer" [clearable]="false">
+                            <ng-option *ngFor="let type of ceoList" value="{{ type?.last_name }} {{ type?.first_name }}">
+                              {{ type?.last_name | uppercase }} {{ type?.first_name }}
+                              {{ type?.civility && type?.civility === 'neutral' ? '' : (type?.civility | translate) }}
+                            </ng-option>
+                          </ng-select>
+                          <input
+                            *ngIf="!quest?.get('is_editable')?.value || disable"
+                            [value]="quest?.get('answer')?.value"
+                            class="form-control"
+                            type="text"
+                            [readonly]="!quest?.get('is_editable')?.value || disable"
+                          />
+
+                          <div class="invalid-feedback" *ngIf="quest.get('is_required')?.value && quest.invalid && quest.touched">
+                            {{ 'This field is required' | translate }}
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- END Company ERP_042 -->
+
+                      <!-- END Field of ERP_042 -->
+                    </ng-container>
+
+                    <ng-template #default>
+                      <div class="form-group">
+                        <input
+                          [required]="quest?.get('is_required')?.value && isRequired"
+                          [readOnly]="!quest?.get('is_editable')?.value || disable"
+                          formControlName="answer"
+                          class="form-control"
+                          (keyup)="getPostcodeData(quest, segmentIndex, quesIndex)"
+                        />
+                        <div class="invalid-feedback" *ngIf="quest.get('is_required')?.value && quest.invalid && quest.touched">
+                          {{ 'This field is required' | translate }}
+                        </div>
+                      </div>
+                    </ng-template>
+                  </div>
+                </div>
+              </div>
+
+              <!-- IF FIELD IS OFF -------------------------------------------->
+
+              <!-- For question with slider is_field off -->
+              <div *ngIf="!quest?.get('is_field')?.value">
+                <ng-container *ngIf="quest?.get('answer_type')?.value === 'free_text'">
+                  <div class="p-grid" [ngClass]="questionLoop.classList.contains('right-end') ? 'justify-end' : 'justify-start'">
+                    <div class="p-col-12 p-md-4" style="justify-content: start !important">
+                      <label *ngIf="quest?.get('is_required')?.value">{{ quest?.get('question_label')?.value }}*</label>
+                      <label *ngIf="!quest?.get('is_required')?.value">{{ quest?.get('question_label')?.value }}</label>
+                    </div>
+                    <div class="p-col-12 p-md-8 x-pad-none">
+                      <div class="form-group">
+                        <input
+                          [required]="quest?.get('is_required')?.value && isRequired"
+                          [readOnly]="!quest?.get('is_editable')?.value || disable"
+                          formControlName="answer"
+                          class="form-control"
+                        />
+                        <div class="invalid-feedback" *ngIf="quest.get('is_required')?.value && quest.invalid && quest.touched">
+                          {{ 'This field is required' | translate }}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </ng-container>
+                <ng-container *ngIf="quest?.get('answer_type')?.value === 'long_answer'">
+                  <div class="p-grid" [ngClass]="questionLoop.classList.contains('right-end') ? 'justify-end' : 'justify-start'">
+                    <div class="p-col-12 p-md-4" style="justify-content: start !important">
+                      <label *ngIf="quest?.get('is_required')?.value">{{ quest?.get('question_label')?.value }}*</label>
+                      <label *ngIf="!quest?.get('is_required')?.value">{{ quest?.get('question_label')?.value }}</label>
+                    </div>
+                    <div class="p-col-12 p-md-8 x-pad-none">
+                      <div class="form-group">
+                        <textarea
+                          matInput
+                          cdkTextareaAutosize
+                          formControlName="answer"
+                          cdkAutosizeMinRows="1"
+                          [readOnly]="!quest?.get('is_editable')?.value || disable"
+                          #autosize="cdkTextareaAutosize"
+                          [required]="quest?.get('is_required')?.value"
+                        ></textarea>
+                      </div>
+                    </div>
+                  </div>
+                </ng-container>
+
+                <!-- email -->
+                <ng-container
+                  *ngIf="
+                    quest?.get('answer_type')?.value === 'email' ||
+                    quest?.get('field_type')?.value === 'TEACHER_EMAIL' ||
+                    quest?.get('field_type')?.value === 'EMAIL_SIGNALEMENT'
+                  "
+                >
+                  <div class="p-grid" [ngClass]="questionLoop.classList.contains('right-end') ? 'justify-end' : 'justify-start'">
+                    <div class="p-col-12 p-md-4 self-center">
+                      <label *ngIf="quest?.get('is_required')?.value">{{ quest?.get('question_label')?.value }}*</label>
+                      <label *ngIf="!quest?.get('is_required')?.value">{{ quest?.get('question_label')?.value }}</label>
+                    </div>
+                    <div class="p-col-12 p-md-8 x-pad-none">
+                      <div class="form-group">
+                        <input
+                          [readOnly]="!quest?.get('is_editable')?.value || disable"
+                          [required]="quest?.get('is_required')?.value && isRequired"
+                          formControlName="answer"
+                          class="form-control"
+                        />
+                        <div class="invalid-feedback" *ngIf="quest.get('is_required')?.value && quest.invalid && quest.touched">
+                          {{ 'This field is required' | translate }}
+                        </div>
+                        <div class="invalid-feedback" *ngIf="quest.get('answer').hasError('email') && quest.invalid && quest.touched">
+                          {{ 'Invalid email format' | translate }}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </ng-container>
+
+                <!-- Date Type -->
+                <ng-container *ngIf="quest?.get('answer_type')?.value === 'date'">
+                  <div class="p-grid" [ngClass]="questionLoop.classList.contains('right-end') ? 'justify-end' : 'justify-start'">
+                    <div class="p-col-12 p-md-4">
+                      <label *ngIf="quest?.get('is_required')?.value">{{ quest?.get('question_label')?.value }}*</label>
+                      <label *ngIf="!quest?.get('is_required')?.value">{{ quest?.get('question_label')?.value }}</label>
+                    </div>
+                    <div class="p-col-12 p-md-8 x-pad-none">
+                      <div class="form-group">
+                        <input
+                          (click)="myDatepickers.open()"
+                          class="form-control"
+                          formControlName="answer_date"
+                          [matDatepicker]="myDatepickers"
+                          [readOnly]="!quest?.get('is_editable')?.value || disable"
+                          [disabled]="!quest?.get('is_editable')?.value || disable"
+                          [required]="quest?.get('is_required')?.value && isRequired"
+                        />
+                        <div class="invalid-feedback" *ngIf="quest.get('is_required')?.value && quest.invalid && quest.touched">
+                          {{ 'This field is required' | translate }}
+                        </div>
+                        <mat-datepicker-toggle matSuffix [for]="myDatepickers"></mat-datepicker-toggle>
+                        <mat-datepicker #myDatepickers></mat-datepicker>
+                      </div>
+                    </div>
+                  </div>
+                </ng-container>
+
+                <!-- Numeric -->
+                <ng-container *ngIf="quest?.get('answer_type')?.value === 'numeric'">
+                  <div class="p-grid" [ngClass]="questionLoop.classList.contains('right-end') ? 'justify-end' : 'justify-start'">
+                    <div class="p-col-12 p-md-4">
+                      <label *ngIf="quest?.get('is_required')?.value">{{ quest?.get('question_label')?.value }}*</label>
+                      <label *ngIf="!quest?.get('is_required')?.value">{{ quest?.get('question_label')?.value }}</label>
+                    </div>
+                    <div class="p-col-12 p-md-8 x-pad-none">
+                      <!-- <mat-form-field class="width-ninety">
+                          <input appearance="fill" matInput type="number" />
+                        </mat-form-field> -->
+                      <div class="form-group">
+                        <input
+                          #numericInput
+                          [readOnly]="!quest?.get('is_editable')?.value || disable"
+                          formControlName="answer_number"
+                          (wheel)="onWheel($event)"
+                          type="number"
+                          class="form-control"
+                          [required]="quest?.get('is_required')?.value && isRequired"
+                          onKeyPress="if(this.value.length==13) return false;"
+                          (keypress)="preventNonNumericalInput($event)"
+                        />
+                        <div class="invalid-feedback" *ngIf="quest.get('is_required')?.value && quest.invalid && quest.touched">
+                          {{ 'This field is required' | translate }}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </ng-container>
+
+                <!-- Single Option -->
+                <ng-container *ngIf="quest?.get('answer_type')?.value === 'single_option'">
+                  <div class="p-grid" [ngClass]="questionLoop.classList.contains('right-end') ? 'justify-end' : 'justify-start'">
+                    <div class="p-col-12 p-md-4">
+                      <label *ngIf="quest?.get('is_required')?.value">{{ quest?.get('question_label')?.value }}*</label>
+                      <label *ngIf="!quest?.get('is_required')?.value">{{ quest?.get('question_label')?.value }}</label>
+                    </div>
+                    <div class="p-col-12 p-md-8 x-pad-none">
+                      <mat-radio-group [required]="quest?.get('is_required')?.value && isRequired" formControlName="answer">
+                        <mat-radio-button
+                          [value]="option"
+                          *ngFor="let option of quest?.get('options')?.value"
+                          style="padding-right: 10px"
+                          [disabled]="disable"
+                          >{{ option }}</mat-radio-button
+                        >
+                      </mat-radio-group>
+                    </div>
+                    <div class="invalid-feedback" *ngIf="quest.get('is_required')?.value && quest.invalid && quest.touched">
+                      {{ 'This field is required' | translate }}
+                    </div>
+                  </div>
+                </ng-container>
+
+                <!-- Multiple Option -->
+                <ng-container *ngIf="quest?.get('answer_type')?.value === 'multiple_option'">
+                  <div class="p-grid" [ngClass]="questionLoop.classList.contains('right-end') ? 'justify-end' : 'justify-start'">
+                    <div class="p-col-12 p-md-4">
+                      <label *ngIf="quest?.get('is_required')?.value">{{ quest?.get('question_label')?.value }}*</label>
+                      <label *ngIf="!quest?.get('is_required')?.value">{{ quest?.get('question_label')?.value }}</label>
+                    </div>
+                    <div class="p-col-12 p-md-8">
+                      <mat-checkbox
+                        *ngFor="let option of quest?.get('options')?.value"
+                        style="padding-right: 10px"
+                        [disabled]="disable"
+                        [checked]="quest?.get('answer_multiple')?.value?.includes(option)"
+                        (change)="setOptions(segmentIndex, quesIndex, option)"
+                      >
+                        {{ option }}
+                      </mat-checkbox>
+                    </div>
+                    <div class="invalid-feedback" *ngIf="quest.get('is_required')?.value && quest.invalid && quest.touched">
+                      {{ 'This field is required' | translate }}
+                    </div>
+                  </div>
+                </ng-container>
+
+                <!-- School Stamp -->
+                <ng-container *ngIf="quest?.get('answer_type')?.value === 'school_stamp'">
+                  <div class="p-grid" style="text-align: center !important">
+                    <div class="p-col-12 p-md-4">
+                      <label *ngIf="quest?.get('is_required')?.value">{{ quest?.get('question_label')?.value }}*</label>
+                      <label *ngIf="!quest?.get('is_required')?.value">{{ quest?.get('question_label')?.value }}</label>
+                    </div>
+                    <div class="p-col-12 p-md-8 x-pad-none" style="position: relative">
+                      <div class="imgContainer">
+                        <div class="p-grid p-justify-center">
+                          <div class="logo-img-wrapper" *ngIf="!isPhotoUploading">
+                            <img
+                              class="center-image"
+                              [src]="is_photo_in_s3 ? serverimgPath + photo_s3_path : photo ? serverimgPath + photo : grayBackground"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </ng-container>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+      </div>
+    </ng-container>
+  </div>
+</div>
+
+<div class="btn-conditions" *ngIf="!formDetail?.isPreview">
+  <ng-container>
+    <button
+      *ngIf="stepData?.step_status !== 'accept' && formDetail?.contract_status !== 'submitted' && !hideRejectStopButtonFC"
+      color="accent"
+      mat-raised-button
+      class="btn-accept"
+      [disabled]="stepData?.step_status === 'reject_and_stop'"
+      (click)="rejectAndStopProcess()"
+      matTooltip="{{ 'Reject and Stop the process' | translate }} "
+    >
+      {{ 'Reject and Stop the process' | translate }}
+    </button>
+    <button
+      *ngIf="
+        isReceiver &&
+        isValidator &&
+        (stepData?.step_status === 'not_started' ||
+          stepData?.step_status === 'need_validation' ||
+          stepData?.step_status === 'revision_completed') &&
+        stepData?.step_status !== 'reject_and_stop' &&
+        !hideAskForRevisionButtonFC
+      "
+      [disabled]="stepData?.step_status === 'reject_and_stop' || stepData?.step_status === 'accept'"
+      color="accent"
+      mat-raised-button
+      class="btn-accept"
+      matTooltip="{{ 'Ask For Revision' | translate }} "
+      (click)="onAskForRevision()"
+    >
+      {{ 'Ask For Revision' | translate }}
+    </button>
+    <button
+      *ngIf="
+        ((formDetail?.formId === userId && stepData?.is_user_who_receive_the_form_as_validator) ||
+          (isValidator &&
+            (stepData?.step_status === 'need_validation' || stepData?.step_status === 'revision_completed') &&
+            !isReceiver)) &&
+        stepData.step_status !== 'accept' &&
+        stepData?.step_status !== 'reject_and_stop' &&
+        !hideAskForRevisionButtonFC
+      "
+      [disabled]="stepData.step_status === 'accept' || stepData?.step_status === 'reject_and_stop'"
+      color="accent"
+      mat-raised-button
+      class="btn-accept"
+      matTooltip="{{ 'Ask For Revision' | translate }} "
+      (click)="onAskForRevision()"
+    >
+      {{ 'Ask For Revision' | translate }}
+    </button>
+    <button
+      *ngIf="
+        ((formDetail?.formId === userId && stepData?.is_user_who_receive_the_form_as_validator) ||
+          (isValidator &&
+            (stepData?.step_status === 'need_validation' || stepData?.step_status === 'revision_completed') &&
+            !isReceiver)) &&
+        stepData.step_status !== 'accept' &&
+        stepData?.step_status !== 'reject_and_stop'
+      "
+      [disabled]="stepData?.step_status === 'reject_and_stop' || stepData?.step_status === 'accept'"
+      color="accent"
+      mat-raised-button
+      class="btn-accept"
+      (click)="acceptContinueNextStep()"
+      matTooltip="{{ 'I accept all form above' | translate }} "
+    >
+      {{ 'I accept all form above' | translate }}
+    </button>
+  </ng-container>
+  <ng-container *ngIf="isReceiver">
+    <button
+      *ngIf="isReceiver && stepData?.step_status === 'not_started'"
+      color="accent"
+      mat-raised-button
+      class="btn-accept"
+      (click)="acceptContinueNextStep()"
+      matTooltip="{{ 'I accept and continue to next step' | translate }} "
+    >
+      <!--      [disabled]="templateStepForm.invalid"-->
+      {{ 'I accept and continue to next step' | translate }}
+    </button>
+    <button
+      *ngIf="isReceiver && isValidator && stepData?.step_status === 'need_validation'"
+      color="accent"
+      mat-raised-button
+      class="btn-accept"
+      (click)="acceptContinueNextStep()"
+      matTooltip="{{ 'I accept and continue to next step' | translate }} "
+    >
+      {{ 'I accept and continue to next step' | translate }}
+    </button>
+  </ng-container>
+  <ng-container>
+    <button
+      *ngIf="stepData?.step_status === 'ask_for_revision' && isRevisionUser && !isValidator && !hideAskForRevisionButtonFC"
+      color="accent"
+      mat-raised-button
+      class="btn-accept"
+      (click)="onCompleteRevision()"
+      matTooltip="{{ 'Complete Revision' | translate }} "
+    >
+      {{ 'Complete Revision' | translate }}
+    </button>
+    <button
+      *ngIf="
+        ((formDetail?.isFinalRevisionUser && formDetail?.contract_status && formDetail?.contract_status === 'ask_for_revision') ||
+          (isReceiver && stepData?.step_status === 'accept' && formDetail?.is_final_validator_active && !formDetail?.contract_status)) &&
+        !hideAskForRevisionButtonFC
+      "
+      color="accent"
+      mat-raised-button
+      class="btn-accept"
+      (click)="saveOnFinalValidationRevision()"
+      matTooltip="{{ 'Save' | translate }} "
+    >
+      {{ 'Save' | translate }}
+    </button>
+  </ng-container>
+</div>
+
+<div class="btn-conditions" *ngIf="formDetail?.isPreview">
+  <ng-container>
+    <button color="accent" mat-raised-button class="btn-accept" matTooltip="{{ 'I accept and continue to next step' | translate }} ">
+      {{ 'I accept and continue to next step' | translate }}
+    </button>
+    <!-- Button save here if ask for revision by final validation -->
+  </ng-container>
+</div>
+
+<div *ngIf="isWaitingForResponse" class="loading-indicator">
+  <mat-progress-spinner mode="indeterminate" color="accent"></mat-progress-spinner>
+</div>

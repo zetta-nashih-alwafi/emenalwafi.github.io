@@ -1,0 +1,47 @@
+        <div class="height-full full-wid">
+          <div fxLayout="column" fxLayoutAlign="center center" class="height-full full-wid">
+            <ngx-slick-carousel
+              [config]="slideConfig"
+              class="carousel full-wid height-full h-550"
+              [style.height.px]="getAutomaticHeight()"
+            >
+              <div ngxSlickItem class="height-full full-wid h-550">
+                <div class="session-slider overlay-wrap height-full full-wid h-550" [style.height.px]="getAutomaticHeight()">
+                  <div
+
+                    class="slider-bg-img full-wid"
+                    [ngClass]="{'hidden': disableImage}"
+                    [ngStyle]="{
+                      'background-image': 'url(serverimgPath + imageUpload)'
+                    }"
+                  >
+                    <div class="no-content" *ngIf="!imageUpload">
+                      <p> {{'PROMO_POP_4.Add an Image' | translate}} </p>
+                    </div>
+                  </div>
+                  <div
+                    class="slider-bg-img full-wid"
+                    [ngClass]="{'hidden': disableVideo}"
+                  >
+                    <div class="no-content" *ngIf="!videoLink">
+                      <p> {{'PROMO_POP_4.Add a Video' | translate}} </p>
+                    </div>
+                    <iframe *ngIf="videoLink" width="300" height="290" [src]="sanitizeVideoUrl(videoLink) || sanitizeVideoUrl(defaultVideoUrl)" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen>
+                    </iframe>
+                  </div>
+                  <div class="overlay-content" fxLayoutAlign="start end">
+                    <div class="content-wrap">
+                      <div class="sec-title">
+                        <h5 class="text-inverse" innerHTML="{{ title }}"></h5>
+                        <span class="text-inverse" innerHTML="{{ subTitle }}"></span>
+                      </div>
+                      <div class="sec-content">
+                        <p class="text-inverse" innerHTML="{{ story }}"></p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </ngx-slick-carousel>
+          </div>
+        </div>

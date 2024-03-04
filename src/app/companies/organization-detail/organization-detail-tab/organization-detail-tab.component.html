@@ -1,0 +1,21 @@
+<mat-tab-group [(selectedIndex)]="selectedIndex" #candidateMatGroup>
+  <!-- First tab always shown -->
+
+  <mat-tab label="user_type">
+    <ng-template mat-tab-label>
+      <h5>{{ 'Details' | translate }}</h5>
+    </ng-template>
+    <ng-template matTabContent>
+      <ms-organization-detail-form [orgId]="orgId" (reloadData)="passData($event)"></ms-organization-detail-form>
+    </ng-template>
+  </mat-tab>
+
+  <mat-tab label="indentity">
+    <ng-template mat-tab-label>
+      <h5>{{ 'Contacts' | translate }}</h5>
+    </ng-template>
+    <ng-template matTabContent>
+      <ms-organization-detail-contact [orgId]="orgId"></ms-organization-detail-contact>
+    </ng-template>
+  </mat-tab>
+</mat-tab-group>

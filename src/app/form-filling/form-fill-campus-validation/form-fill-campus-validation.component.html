@@ -1,0 +1,121 @@
+<ng-container *ngIf="!processFinish">
+  <div class="responsives">
+    <div class="card web-card">
+      <div class="hd-legend" [innerHTML]="stepData?.direction | safeHtml"></div>
+      <div class="row padl-13 web-card">
+        <h3 class="segment-name">{{ stepData?.segments[0]?.segment_title }}</h3>
+      </div>
+      <div class="card-body card-segment detail-candidate">
+        <div class="p-grid">
+          <div class="p-col-12">
+            <div class="question" [innerHTML]="sanitizer.bypassSecurityTrustHtml(stepData?.segments[0]?.questions[0]?.special_question?.campus_validation)"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- this button with empty function to privew mode -->
+    <div class="web-card" *ngIf="formDetail?.isPreview">
+      <div class="p-grid center">
+        <button
+          color="accent"
+          style="margin: 10px"
+          class="btn-first web-card"
+          mat-raised-button
+          [disabled]="candidateData?.program_confirmed === 'done' || candidateData?.program_confirmed === 'request_transfer'"
+          matTooltip="{{ 'Change my campus' | translate }} "
+        >
+          <i class="fa fa-pencil" aria-hidden="true"></i>
+          {{ 'Change my campus' | translate }}
+        </button>
+
+        <button
+          color="accent"
+          mat-raised-button
+          matTooltip="{{ 'Validate my campus' | translate }} "
+          class="btn-first web-card"
+          style="margin: 10px"
+        >
+          <mat-icon class="mat-icon-default">save</mat-icon>
+          {{ 'Validate my campus' | translate }}
+        </button>
+      </div>
+    </div>
+
+    <div class="web-card" *ngIf="!formDetail?.isPreview">
+      <div class="p-grid center">
+        <button
+          color="accent"
+          style="margin: 10px"
+          class="btn-first web-card"
+          mat-raised-button
+          (click)="changeCampusDialog(1)"
+          [disabled]="candidateData?.program_confirmed === 'done' || candidateData?.program_confirmed === 'request_transfer'"
+          matTooltip="{{ 'Change my campus' | translate }} "
+        >
+          <i class="fa fa-pencil" aria-hidden="true"></i>
+          {{ 'Change my campus' | translate }}
+        </button>
+
+        <button
+          color="accent"
+          mat-raised-button
+          matTooltip="{{ 'Validate my campus' | translate }} "
+          class="btn-first web-card"
+          style="margin: 10px"
+          [disabled]="candidateData?.program_confirmed === 'done' || candidateData?.program_confirmed === 'request_transfer'"
+          (click)="validateCampus()"
+        >
+          <mat-icon class="mat-icon-default">save</mat-icon>
+          {{ 'Validate my campus' | translate }}
+        </button>
+      </div>
+    </div>
+    <!-- <div class="mobile-card" *ngIf="!formDetail?.isPreview">
+      <button
+        color="accent"
+        style="margin: 10px 0px 10px 0px"
+        class="btn-first"
+        mat-raised-button
+        (click)="changeCampusDialog(1)"
+        [disabled]="candidateData?.program_confirmed === 'done' || candidateData?.program_confirmed === 'request_transfer'"
+        matTooltip="{{ 'Change my campus' | translate }} "
+      >
+        <i class="fa fa-pencil" aria-hidden="true"></i>
+        {{ 'Change my campus' | translate }}
+      </button>
+      <button
+        color="accent"
+        mat-raised-button
+        matTooltip="{{ 'Validate my campus' | translate }} "
+        class="btn-first"
+        style="margin: 10px 0px 10px 0px"
+        (click)="validateCampus()"
+        [disabled]="candidateData?.program_confirmed === 'done' || candidateData?.program_confirmed === 'request_transfer'"
+      >
+        <mat-icon class="mat-icon-default">save</mat-icon>
+        {{ 'Validate my campus' | translate }}
+      </button>
+    </div> -->
+  </div>
+</ng-container>
+
+<ng-container *ngIf="processFinish">
+  <div style="margin-top: 20px !important; text-align: center">
+    <div *ngIf="candidateData?.school?.school_logo">
+      <div class="row no-margin msg-pay">{{ 'Thank You For Submitting Your Admission' | translate }}</div>
+      <div class="row no-margin payment-img">
+        <img class="payment-success" style="height: 385px" [src]="serverimgPath + candidateData?.school?.school_logo" />
+      </div>
+    </div>
+    <div *ngIf="!candidateData?.school?.school_logo">
+      <div class="row no-margin msg-pay" style="font-size: 25px; margin-top: 170px !important">
+        {{ 'Thank You For Submitting Your Admission' | translate }}
+      </div>
+    </div>
+  </div>
+</ng-container>
+
+<div *ngIf="isWaitingForResponse" class="loading-indicator">
+  <mat-progress-spinner mode="indeterminate" color="accent"></mat-progress-spinner>
+</div>

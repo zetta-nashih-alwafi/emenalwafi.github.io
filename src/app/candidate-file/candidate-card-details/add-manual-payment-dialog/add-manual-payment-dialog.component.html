@@ -1,0 +1,359 @@
+<div class="dialog-border" cdkDrag cdkDragRootElement=".cdk-overlay-pane" cdkDragHandle>
+  <div class="dialogTitleWrapper">
+    <div class="p-grid">
+      <div class="p-col no-padding acad-title">
+        <h3 class="dialogTitle" data-cy="label-add-payment-line">
+          <span *ngIf="!isUpdate">
+            {{ 'Add payment line' | translate }}
+          </span>
+          <span *ngIf="isUpdate">
+            {{ 'Edit payment line' | translate }}
+          </span>
+        </h3>
+      </div>
+      <div class="no-padding w-65">
+        <button
+          mat-icon-button
+          class="close-icon float-right"
+          mat-dialog-close
+          tabindex="-1"
+          data-cy="button-close-add-payment-line-dialog"
+        >
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<div [formGroup]="formAddManualPaymentLine" style="margin-top: 20px">
+  <mat-dialog-content>
+    <div class="p-grid">
+      <div class="p-col-12 no-padding">
+        <div class="p-grid">
+          <div class="p-col-fixed center-label no-padding-left label-align" style="width: 160px">
+            <label>{{ 'Amount' | translate }}*</label>
+          </div>
+          <div class="p-col no-padding">
+            <mat-form-field floatLabel="never">
+              <input
+                matInput
+                formControlName="amount"
+                (wheel)="onWheel($event)"
+                type="number"
+                placeholder="{{ 'Amount' | translate }}"
+                (keypress)="decimalFilter($event)"
+                (keyup)="listenAmount()"
+                data-cy="input-amount"
+              />
+              <span matSuffix>€</span>
+              <mat-error
+                *ngIf="
+                  formAddManualPaymentLine.get('amount').hasError('required') &&
+                  (formAddManualPaymentLine.get('amount').dirty || formAddManualPaymentLine.get('amount').touched)
+                "
+                >{{ 'This field is required' | translate }}</mat-error
+              >
+              <mat-error
+                *ngIf="
+                  formAddManualPaymentLine?.get('amount')?.hasError('min')
+                "
+                >{{ 'minimum value 2' | translate }}</mat-error
+              >
+            </mat-form-field>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="p-grid">
+      <div class="p-col-12 no-padding">
+        <div class="p-grid">
+          <div class="p-col-fixed center-label no-padding-left label-align" style="width: 160px">
+            <label>{{ 'Operation name' | translate }}*</label>
+          </div>
+          <div class="p-col no-padding">
+            <mat-form-field floatLabel="never">
+              <mat-label>{{ 'Operation name' | translate }}</mat-label>
+              <mat-select
+                formControlName="operation_name"
+                [disabled]="isUpdate"
+                [disableOptionCentering]="true"
+                panelClass="filterPanel"
+                data-cy="input-select-operation-name"
+              >
+                <mat-option data-cy="input-select-option-operation-name" *ngFor="let item of operationNameList" [value]="item.value">{{
+                  item.key | translate
+                }}</mat-option>
+              </mat-select>
+              <mat-error
+                *ngIf="
+                  formAddManualPaymentLine.get('operation_name').hasError('required') &&
+                  (formAddManualPaymentLine.get('operation_name').dirty || formAddManualPaymentLine.get('operation_name').touched)
+                "
+                >{{ 'This field is required' | translate }}</mat-error
+              >
+            </mat-form-field>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="p-grid">
+      <div class="p-col-12 no-padding">
+        <div class="p-grid">
+          <div class="p-col-fixed center-label no-padding-left label-align" style="width: 160px">
+            <label>{{ 'Payeur' | translate }}*</label>
+          </div>
+          <div class="p-col no-padding">
+            <ng-container>
+              <mat-form-field floatLabel="never">
+                <mat-label>{{ 'Payeur' | translate }}</mat-label>
+                <mat-select
+                  formControlName="payeur"
+                  [disabled]="isUpdate"
+                  [disableOptionCentering]="true"
+                  panelClass="filterPanel"
+                  data-cy="input-select-payer"
+                >
+                  <mat-option
+                    *ngFor="let item of data?.dropdown"
+                    [value]="item._id"
+                    (click)="payerSelect(item)"
+                    data-cy="input-select-option-payer"
+                  >
+                    <span *ngIf="!item?.is_financial_support && !item?.company_branch_id && !item?.organization_id">
+                      {{
+                        (item?.candidate_id?.last_name | uppercase) +
+                          ' ' +
+                          item?.candidate_id?.first_name +
+                          ' ' +
+                          (item?.candidate_id?.civility && item?.candidate_id?.civility === 'neutral'
+                            ? ''
+                            : (item?.candidate_id?.civility | translate))
+                      }}
+                    </span>
+                    <span *ngIf="item?.is_financial_support && !item?.company_branch_id && !item?.organization_id">
+                      {{
+                        (item?.financial_support_info?.family_name | uppercase) +
+                          ' ' +
+                          item?.financial_support_info?.name +
+                          ' ' +
+                          (item?.financial_support_info?.civility && item?.financial_support_info?.civility === 'neutral'
+                            ? ''
+                            : (item?.financial_support_info?.civility | translate)) +
+                          (item?.financial_support_info?.relation
+                            ? ' (' + ('CARDDETAIL.RELATION.' + item?.financial_support_info?.relation | translate) + ')'
+                            : '')
+                      }}
+                    </span>
+                    <span *ngIf="(item?.is_financial_support || !item?.is_financial_support) && item?.company_branch_id">
+                      {{ item?.company_branch_id?.company_name }}
+                    </span>
+                    <span *ngIf="item?.organization_id">
+                      {{ item?.organization_id?.name }}
+                    </span>
+                  </mat-option>
+                </mat-select>
+                <mat-error
+                  *ngIf="
+                    formAddManualPaymentLine.get('payeur').hasError('required') &&
+                    (formAddManualPaymentLine.get('payeur').dirty || formAddManualPaymentLine.get('payeur').touched)
+                  "
+                  >{{ 'This field is required' | translate }}</mat-error
+                >
+              </mat-form-field>
+            </ng-container>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="p-grid">
+      <div class="p-col-12 no-padding">
+        <div class="p-grid">
+          <div class="p-col-fixed center-label no-padding-left label-align" style="width: 160px">
+            <label>{{ 'Method Of Payment' | translate }}*</label>
+          </div>
+          <div class="p-col no-padding">
+            <mat-form-field floatLabel="never">
+              <mat-label>{{ 'Method Of Payment' | translate }}</mat-label>
+              <mat-select
+                formControlName="method_of_payment"
+                [disabled]="isUpdate"
+                [disableOptionCentering]="true"
+                panelClass="filterPanel"
+                data-cy="input-select-method-of-payment"
+              >
+                <mat-option [value]="item.value" *ngFor="let item of methodOfPaymentList" data-cy="input-select-option-method-of-payment">{{
+                  'method_of_payment.' + item.key | translate
+                }}</mat-option>
+              </mat-select>
+              <mat-error
+                *ngIf="
+                  formAddManualPaymentLine.get('method_of_payment').hasError('required') &&
+                  (formAddManualPaymentLine.get('method_of_payment').dirty || formAddManualPaymentLine.get('method_of_payment').touched)
+                "
+                >{{ 'This field is required' | translate }}</mat-error
+              >
+            </mat-form-field>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="p-grid">
+      <div class="p-col-12 no-padding" formArrayName="dateCollectArray">
+        <div class="p-grid" *ngFor="let item of dateArray.controls; let i = index" [formGroupName]="i">
+          <div class="p-col-fixed center-label no-padding-left label-align" style="width: 160px">
+            <label>{{ 'Date' | translate }}*</label>
+          </div>
+          <div [ngClass]="dateArray?.controls?.length > 1 ? 'p-col margin-right-date-remove no-padding' : 'p-col no-padding'">
+            <mat-form-field floatLabel="never" [ngClass]="{'form-disable' : isUpdate}">
+              <input
+                matInput
+                (click)="myDatepicker.open()"
+                readonly
+                formControlName="date"
+                [matDatepicker]="myDatepicker"
+                [placeholder]="'Date' | translate"
+                [disabled]="isUpdate"
+                data-cy="input-date"
+                [ngClass]="{'disable' : isUpdate}"
+              />
+              <mat-datepicker-toggle [disabled]="isUpdate" matSuffix [for]="myDatepicker"></mat-datepicker-toggle>
+              <mat-datepicker #myDatepicker></mat-datepicker>
+            </mat-form-field>
+            <div
+              class="error-date-form-array"
+              *ngIf="
+                dateArray?.at(i)?.get('date')?.hasError('required') &&
+                (dateArray?.at(i)?.get('date')?.touched || dateArray?.at(i)?.get('date')?.dirty)
+              "
+            >
+              {{ 'This field is required' | translate }}
+            </div>
+          </div>
+          <div
+            *ngIf="dateArray?.controls?.length > 1"
+            [ngClass]="dateArray?.controls?.length > 1 ? 'p-col margin-right-date-remove no-padding' : 'p-col no-padding'"
+          >
+            <mat-form-field floatLabel="never">
+              <input matInput formControlName="amount_date" (wheel)="onWheel($event)" type="number" data-cy="input-amount-date" />
+              <span matSuffix>€</span>
+            </mat-form-field>
+            <div class="error-date-form-array" *ngIf="checkMinDeduction(i)">
+              {{ 'minimum value 2' | translate }}
+            </div>
+            <div class="error-date-form-array" *ngIf="checkMaxDeduction(i)">
+              {{ 'Cannot exceed the cost coverage' | translate }}
+            </div>
+            <div
+              class="error-date-form-array"
+              *ngIf="
+                checkTotalCost() &&
+                !checkMinDeduction(i) &&
+                !checkMaxDeduction(i) &&
+                (dateArray.at(i).get('amount_date')?.touched || dateArray.at(i).get('amount_date')?.dirty)
+              "
+            >
+              {{ 'Cannot exceed the total amount of financement' | translate }}
+            </div>
+            <div
+              class="error-date-form-array"
+              *ngIf="
+                checkTotalCostAmount() &&
+                !checkMinDeduction(i) &&
+                !checkMaxDeduction(i) &&
+                (dateArray.at(i).get('amount_date')?.touched || dateArray.at(i).get('amount_date')?.dirty)
+              "
+            >
+              {{ 'Must input 100% total amount of financement' | translate }} penalty
+            </div>
+          </div>
+          <div *ngIf="dateArray?.controls?.length > 1" class="p-col no-padding remove-date">
+            <button mat-icon-button class="small-icon" color="red" (click)="removeAmountDate(i)" data-cy="button-remove-selected-date">
+              <mat-icon>remove</mat-icon>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="p-grid">
+      <div class="p-col-12 no-padding">
+        <div class="p-grid">
+          <div class="p-col-fixed center-label no-padding-left label-align" style="width: 160px">
+            <label>{{ 'Référence' | translate }}</label>
+          </div>
+          <div class="p-col no-padding">
+            <mat-form-field floatLabel="never">
+              <textarea
+                data-cy="input-reference"
+                matInput
+                placeholder="{{ 'Référence' | translate }}"
+                msPreventInputTagCharacters
+                formControlName="reference"
+                [readonly]="isUpdate"
+              ></textarea>
+            </mat-form-field>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="p-grid">
+      <div class="p-col-12 no-padding">
+        <div class="p-grid">
+          <div class="p-col-fixed center-label no-padding-left label-align" style="width: 160px">
+            <label>{{ 'Note' | translate }}</label>
+          </div>
+          <div class="p-col no-padding">
+            <mat-form-field floatLabel="never">
+              <textarea
+                data-cy="input-note"
+                matInput
+                msPreventInputTagCharacters
+                placeholder="{{ 'Note' | translate }}"
+                formControlName="note"
+                [readonly]="isUpdate"
+              ></textarea>
+            </mat-form-field>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    
+    <div class="p-grid">
+      <div class="p-col">
+        <button
+          *ngIf="!isUpdate"
+          type="button"
+          color="accent"
+          (click)="addDateDynamic()"
+          [disabled]="formAddManualPaymentLine.get('amount').hasError('required')"
+          mat-raised-button
+          data-cy="button-add-new-date"
+        >
+          <mat-icon style="vertical-align: middle">add</mat-icon>
+          {{ 'JURY_ORGANIZATION.Add Date' | translate }}
+        </button>
+      </div>
+    </div>
+
+  </mat-dialog-content>
+  <mat-dialog-actions align="end">
+    <button mat-raised-button type="button" color="warn" mat-dialog-close data-cy="button-cancel-add-payment-line-dialog">
+      {{ 'CANCEL' | translate }}
+    </button>
+    <button
+      mat-raised-button
+      color="primary"
+      type="submit"
+      (click)="submitVerification()"
+      data-cy="button-validate-add-payment-line-dialog"
+    >
+      {{ 'Validate' | translate }}
+    </button>
+  </mat-dialog-actions>
+</div>
+
+<div *ngIf="isWaitingForResponse" class="inner-loading-indicator" data-cy="spinner-add-payment-line-dialog">
+  <mat-spinner color="accent" [diameter]="100"></mat-spinner>
+</div>

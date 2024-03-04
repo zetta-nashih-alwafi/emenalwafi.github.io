@@ -1,0 +1,159 @@
+<div class="dialog-border" cdkDrag cdkDragRootElement=".cdk-overlay-pane" cdkDragHandle>
+  <div class="dialogTitleWrapper">
+    <div class="p-grid">
+      <div class="w-30 no-padding">
+        <mat-icon style="vertical-align: middle">add</mat-icon>
+      </div>
+      <div class="p-col-10 acad-title">
+        <h3 class="dialogTitle">
+          {{ 'Add Contract' | translate }}
+        </h3>
+      </div>
+      <div class="w-65 no-padding">
+        <button mat-icon-button class="close-icon float-right" mat-dialog-close tabindex="-1">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<form [formGroup]="typeForm">
+  <div class="fontColor">
+    <mat-dialog-content>
+      <div class="p-grid">
+        <div class="p-col-12 no-padding">
+          <div class="p-grid" *ngIf="!data?.candidate_id">
+            <div class="p-col-12 no-padding custom-input">              
+              <ng-select
+                aria-required="true"
+                class="mrgn-btn custom-ngselect-content"                
+                [clearable]="false"
+                [appendTo]="'body'"
+                [typeahead]="inputStudent$"
+                [loading]="isLoadingFilter"
+                placeholder="{{ 'CONTRACT/CONVENTION.Student name' | translate }}*"                
+                formControlName="candidate_id"              
+                (change)="recheckStudent()"
+              >
+                <ng-option *ngFor="let element of filteredStudent$ | async" [value]="element?._id">
+                  {{ element?.last_name | uppercase }}
+                  {{ element?.first_name }}
+                  {{ element?.civility && element?.civility === 'neutral' ? '' : (element?.civility | translate) }}
+                </ng-option>
+              </ng-select>
+              <p
+                *ngIf="typeForm?.get('candidate_id')?.hasError('required') && typeForm?.get('candidate_id')?.touched && displayTextError"
+                style="color: #f44336; font-size: 75%; margin: 0"
+              >
+                {{ 'This field is required' | translate }}
+              </p>
+            </div>
+          </div>
+          <div class="p-grid">
+            <div class="p-col-12 no-padding custom-input">
+              <ng-select
+                [items]="templateData"
+                bindLabel="form_builder_name"
+                bindValue="_id"
+                aria-required="true"
+                class="mrgn-btn ccustom-ngselect-content"
+                clearAllText="Clear"
+                [appendTo]="'body'"
+                placeholder="{{ 'CONTRACT/CONVENTION.Select for template' | translate }}*"
+                formControlName="form_builder_id"
+                (change)="selectedTemplate($event)"
+              >
+              </ng-select>
+              <p
+                *ngIf="
+                  typeForm?.get('form_builder_id')?.hasError('required') && typeForm?.get('form_builder_id')?.touched && displayTextError
+                "
+                style="color: #f44336; font-size: 75%; margin: 0"
+              >
+                {{ 'This field is required' | translate }}
+              </p>
+            </div>
+          </div>
+          <div class="p-grid">
+            <div class="p-col-12 no-padding custom-input">
+              <ng-select
+                aria-required="true"
+                [clearable]="false"
+                class="mrgn-btn custom-ngselect-content"
+                clearAllText="Clear"
+                [appendTo]="'body'"
+                placeholder="{{ 'CONTRACT/CONVENTION.FC Contract manager' | translate }}*"
+                formControlName="contract_manager_id"
+                (change)="recheckFC()"
+              >
+                <ng-option *ngFor="let element of managerData" [value]="element?._id">
+                  {{ element?.last_name | uppercase }}
+                  {{ element?.first_name }}
+                  {{ element?.civility && element?.civility === 'neutral' ? '' : (element?.civility | translate) }}
+                </ng-option>
+              </ng-select>
+              <p
+                *ngIf="
+                  typeForm?.get('contract_manager_id')?.hasError('required') &&
+                  typeForm?.get('contract_manager_id')?.touched &&
+                  displayTextError
+                "
+                style="color: #f44336; font-size: 75%; margin: 0"
+              >
+                {{ 'This field is required' | translate }}
+              </p>
+            </div>
+          </div>
+          <ng-container *ngIf="typeForm?.get('form_builder_id').value && signatoryArr?.controls?.length">
+            <div class="assign-border" formArrayName="contract_validator_signatory_status">
+              <h4 class="section-title">{{ 'SENDING_CONTRACT_DIALOG.assign user for signatory' | translate }}</h4>
+              <div>
+                <div class="p-grid" *ngFor="let form of signatoryArr?.controls; let formArrIndex = index" [formGroupName]="formArrIndex">
+                  <div class="p-col-4 section-field-title">{{ getNameOfUserType(form, 'signatory') }}*</div>
+                  <div class="p-col-8">
+                    <input
+                      matInput
+                      type="text"
+                      class="custom-input"
+                      formControlName="user"
+                      placeholder="{{ 'search' | translate }}"
+                      [readonly]="listSignatoryAuto.includes(form?.value?.user_type_id)"
+                      [matAutocomplete]="auto"
+                      (keyup)="filterSignatoryUser($event.target.value, formArrIndex, form.value.user_type_id)"
+                      [ngClass]="{
+                        'invalid-user-id':
+                          getSignatoryArray()?.at(formArrIndex)?.get('user_id')?.invalid &&
+                          (getSignatoryArray()?.at(formArrIndex)?.get('user_id')?.touched ||
+                            getSignatoryArray()?.at(formArrIndex)?.get('user_id')?.dirty)
+                      }"
+                    />
+                    <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFullName.bind(this)" [panelWidth]="'fit'">
+                      <mat-option
+                        *ngFor="let user of signatoryUserList[formArrIndex]"
+                        [value]="user"
+                        (click)="selectedUser(formArrIndex, user)"
+                      >
+                        {{ user?.last_name | uppercase }} {{ user?.first_name }}
+                        {{ user?.civility && user?.civility === 'neutral' ? '' : (user?.civility | translate) }}
+                      </mat-option>
+                    </mat-autocomplete>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </ng-container>
+        </div>
+      </div>
+    </mat-dialog-content>
+    <mat-dialog-actions align="right" style="min-height: 45px">
+      <button mat-raised-button type="button" color="warn" mat-dialog-close>{{ 'FORM_BUILDER.Cancel' | translate }}</button>
+      <button mat-raised-button color="primary" (click)="onValidate()">
+        {{ 'FORM_BUILDER.Validate' | translate }}
+      </button>
+    </mat-dialog-actions>
+  </div>
+</form>
+
+<div *ngIf="isWaitingForResponse" class="loading-indicator">
+  <mat-progress-spinner mode="indeterminate" color="accent"></mat-progress-spinner>
+</div>

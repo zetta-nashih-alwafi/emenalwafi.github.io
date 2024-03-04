@@ -1,0 +1,64 @@
+@import '~assets/scss/bootstrap';
+
+.card-document {
+  display: block;
+  width: 100%;
+  padding: 12px;
+  background-color: #283d50;
+  color: white;
+}
+.pdf-document {
+  padding: 15px;
+  background-color: white;
+  color: black;
+}
+
+.content-terms {
+  text-align: justify;
+}
+
+.ql-editor {
+  margin: 1rem auto;
+}
+
+.schoolLogo {
+  width: 190px;
+}
+.school {
+  width: 100%;
+}
+.box {
+  text-align: center;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+.signedAt {
+  border: 1px solid black;
+  width: 300px;
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+}
+
+.web-display {
+  display: block;
+}
+.mobile-display {
+  display: none;
+}
+
+@media screen and (max-width: 500px) {
+  .web-display {
+    display: none !important;
+  }
+  .mobile-display {
+    display: block !important;
+  }
+  .box {
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+}

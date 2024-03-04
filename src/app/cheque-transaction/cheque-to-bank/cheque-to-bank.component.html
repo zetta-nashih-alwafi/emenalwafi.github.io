@@ -1,0 +1,337 @@
+<div class="p-col-12 no-padding" style="min-height: 505px">
+  <div class="p-grid" style="margin-bottom: 5px; border-bottom: 1px solid #4e4e4e">
+    <div class="p-col-12" style="padding-left: 10px">
+      <div style="width: 20px; float: left; padding: 4px 0px 0px 0px; margin-right: 10px">
+        <span><mat-icon style="font-size: 16px">account_balance</mat-icon></span>
+      </div>
+      <div>
+        <span class="titleImport">{{ 'Cheques to Banking' | translate }}</span>
+        <button
+          mat-button
+          style="
+            margin-left: 10px !important;
+            line-height: 16px;
+            margin: 0px;
+            padding: 0px !important;
+          "
+          [matTooltip]="'Tutorial for this module' | translate"
+          (click)="toggleSidebar()"
+        >
+        <img style="font-size: 16px; width: 65px; position: relative" [src]="tutorialIcon" />
+          <!-- <mat-icon style="font-size: 16px; width: 16px">help</mat-icon> -->
+        </button>
+      </div>
+    </div>
+  </div>
+  <div class="p-grid">
+    <div class="p-col-12" style="padding-left: 0px; padding-right: 0px">
+      <!-- <ng-container *ngIf="isWaitingForResponse"> -->
+      <div *ngIf="isWaitingForResponse" class="p-col-12" style="text-align: center !important; display: contents">
+        <div class="center-spinner spinner-wrapper">
+          <mat-spinner color="accent"></mat-spinner>
+        </div>
+      </div>
+      <!-- </ng-container> -->
+
+      <mat-card>
+        <form [formGroup]="importForm">
+          <div class="p-grid">
+            <div class="p-col-12 no-padding" style="text-align: right; font-size: 12px">
+              {{ 'Add cheque' | translate }}
+              <button mat-icon-button class="small-icon" color="success" (click)="addChequeBank()" [disabled]="importForm.invalid">
+                <mat-icon>add</mat-icon>
+              </button>
+            </div>
+          </div>
+
+          <div class="p-grid" style="padding-top: 10px">
+            <div class="p-col-12" style="padding-bottom: 0px; margin-left: 7px; margin-right: 7px !important; width: 98%">
+              <div class="p-grid">
+                <div class="p-col no-padding">
+                  <div class="p-grid">
+                    <div class="p-col-3 pad-y-none">
+                      <div class="p-grid baseline" style="width: 45%; display: inline-block; margin-right: 7px !important">
+                        <mat-form-field>
+                          <input
+                            matInput
+                            (click)="myDatepickers.open()"
+                            readonly
+                            placeholder="{{ 'Date' | translate }}*"
+                            formControlName="date"
+                            [matDatepicker]="myDatepickers"
+                          />
+                          <mat-datepicker-toggle matSuffix [for]="myDatepickers"></mat-datepicker-toggle>
+                          <mat-datepicker #myDatepickers></mat-datepicker>
+                        </mat-form-field>
+                      </div>
+                      <div class="p-grid baseline" style="width: 50%; display: inline-block">
+                        <mat-form-field>
+                          <mat-label>{{ 'Chq Nber' | translate }}*</mat-label>
+                          <input matInput formControlName="cheque_number" type="text" />
+                        </mat-form-field>
+                      </div>
+                    </div>
+                    <div class="p-col-3 pad-y-none">
+                      <div class="p-grid baseline">
+                        <ng-select
+                          style="width: 100%"
+                          class="mrgn-btn"
+                          [items]="bank"
+                          [multiple]="false"
+                          placeholder="{{ 'Bank' | translate }}*"
+                          formControlName="bank_name"
+                        >
+                        </ng-select>
+                      </div>
+                    </div>
+                    <div class="p-col-3 pad-y-none">
+                      <div class="p-grid baseline" style="width: 60%; display: inline-block; margin-right: 7px !important">
+                        <mat-form-field>
+                          <mat-label>{{ 'Amount' | translate }}*</mat-label>
+                          <input matInput (wheel)="onWheel($event)" formControlName="amount" type="number" />
+                        </mat-form-field>
+                      </div>
+                      <div class="p-grid baseline" style="width: 35%; display: inline-block">
+                        <mat-form-field>
+                          <mat-label>{{ 'Curr.' | translate }}*</mat-label>
+                          <mat-select formControlName="currency">
+                            <mat-option [value]="record.code" *ngFor="let record of currencyList"
+                              >{{ record.code | translate }}
+                            </mat-option>
+                          </mat-select>
+                        </mat-form-field>
+                      </div>
+                    </div>
+                    <div class="p-col-3 pad-y-none">
+                      <div class="p-grid baseline">
+                        <mat-form-field>
+                          <mat-label> {{ 'Ref payor' | translate }}*</mat-label>
+                          <input matInput formControlName="payor" type="text" />
+                        </mat-form-field>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="p-grid">
+                    <div class="p-col-3 pad-y-none">
+                      <div class="p-grid baseline">
+                        <ng-select
+                          style="width: 100%"
+                          class="mrgn-btn"
+                          [items]="mappingBilling"
+                          bindLabel="student_name"
+                          bindValue="student_name"
+                          [multiple]="false"
+                          placeholder="{{ 'Student' | translate }}*"
+                          formControlName="student"
+                          (change)="studentSelected($event)"
+                        >
+                        </ng-select>
+                      </div>
+                    </div>
+                    <div class="p-col-3 pad-y-none">
+                      <div class="p-grid baseline custom-mat-form">
+                        <mat-form-field>
+                          <mat-label>{{ 'Student Account' | translate }}*</mat-label>
+                          <input
+                            matInput
+                            formControlName="student_account"
+                            (keydown.enter)="selectStudent()"
+                            (keyup)="selectStudent()"
+                            type="text"
+                          />
+                        </mat-form-field>
+                      </div>
+                    </div>
+                    <div class="p-col-3 pad-y-none">
+                      <div class="p-grid baseline">
+                        <ng-select
+                          style="width: 100%"
+                          class="mrgn-btn"
+                          [items]="financialList"
+                          bindLabel="finance"
+                          bindValue="finance"
+                          [multiple]="false"
+                          placeholder="{{ 'Financial Support' | translate }}*"
+                          formControlName="financial_support"
+                          (change)="financeSelected($event)"
+                        >
+                        </ng-select>
+                      </div>
+                    </div>
+                    <div class="p-col-3 pad-y-none">
+                      <div class="p-grid baseline">
+                        <ng-select
+                          style="width: 100%"
+                          class="mrgn-btn"
+                          [items]="termsList"
+                          bindLabel="name"
+                          bindValue="name"
+                          [multiple]="true"
+                          placeholder="{{ 'Lettering' | translate }}*"
+                          formControlName="letter"
+                          (change)="letterSelected($event)"
+                        >
+                        </ng-select>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="p-grid form-border" *ngIf="arrayCheque?.length" formArrayName="cheque_bank">
+            <div
+              class="p-col-12 border-white"
+              *ngFor="let cheque of arrayCheque.controls; let addressIndex = index"
+              [formGroupName]="addressIndex"
+            >
+              <div class="p-grid">
+                <div class="p-col no-padding">
+                  <div class="p-grid">
+                    <div class="p-col-3 pad-y-none">
+                      <div class="p-grid baseline" style="width: 45%; display: inline-block; margin-right: 7px !important">
+                        <mat-form-field>
+                          <input
+                            matInput
+                            (click)="myDatepickers.open()"
+                            readonly
+                            placeholder="{{ 'Date' | translate }}*"
+                            formControlName="date"
+                            [matDatepicker]="myDatepickers"
+                          />
+                          <mat-datepicker-toggle matSuffix [for]="myDatepickers"></mat-datepicker-toggle>
+                          <mat-datepicker #myDatepickers></mat-datepicker>
+                        </mat-form-field>
+                      </div>
+                      <div class="p-grid baseline" style="width: 50%; display: inline-block">
+                        <mat-form-field>
+                          <mat-label>{{ 'Chq Nber' | translate }}*</mat-label>
+                          <input matInput formControlName="cheque_number" type="text" />
+                        </mat-form-field>
+                      </div>
+                    </div>
+                    <div class="p-col-3 pad-y-none">
+                      <div class="p-grid baseline">
+                        <ng-select
+                          style="width: 100%"
+                          class="mrgn-btn"
+                          [items]="bank"
+                          [multiple]="false"
+                          placeholder="{{ 'Bank' | translate }}*"
+                          formControlName="bank_name"
+                        >
+                        </ng-select>
+                      </div>
+                    </div>
+                    <div class="p-col-3 pad-y-none">
+                      <div class="p-grid baseline" style="width: 60%; display: inline-block; margin-right: 7px !important">
+                        <mat-form-field>
+                          <mat-label>{{ 'Amount' | translate }}*</mat-label>
+                          <input matInput (wheel)="onWheel($event)" formControlName="amount" type="number" />
+                        </mat-form-field>
+                      </div>
+                      <div class="p-grid baseline" style="width: 35%; display: inline-block">
+                        <mat-form-field>
+                          <mat-label>{{ 'Curr.' | translate }}*</mat-label>
+                          <mat-select formControlName="currency">
+                            <mat-option [value]="record.code" *ngFor="let record of currencyList"
+                              >{{ record.code | translate }}
+                            </mat-option>
+                          </mat-select>
+                        </mat-form-field>
+                      </div>
+                    </div>
+                    <div class="p-col-3 pad-y-none">
+                      <div class="p-grid baseline">
+                        <mat-form-field>
+                          <mat-label> {{ 'Ref payor' | translate }}*</mat-label>
+                          <input matInput formControlName="payor" type="text" />
+                        </mat-form-field>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="p-grid">
+                    <div class="p-col-3 pad-y-none">
+                      <div class="p-grid baseline">
+                        <ng-select
+                          style="width: 100%"
+                          class="mrgn-btn"
+                          [items]="studentArrayList[addressIndex]"
+                          bindLabel="student_name"
+                          bindValue="student_name"
+                          [multiple]="false"
+                          placeholder="{{ 'Student' | translate }}*"
+                          formControlName="student"
+                          (change)="studentSelectedArray($event, addressIndex)"
+                        >
+                        </ng-select>
+                      </div>
+                    </div>
+                    <div class="p-col-3 pad-y-none">
+                      <div class="p-grid baseline">
+                        <mat-form-field>
+                          <mat-label>{{ 'Student Account' | translate }}*</mat-label>
+                          <input matInput formControlName="student_account" type="text" />
+                        </mat-form-field>
+                      </div>
+                    </div>
+                    <div class="p-col-3 pad-y-none">
+                      <div class="p-grid baseline">
+                        <ng-select
+                          style="width: 100%"
+                          class="mrgn-btn"
+                          [items]="financialArrayList[addressIndex]"
+                          bindLabel="finance"
+                          bindValue="finance"
+                          [multiple]="false"
+                          placeholder="{{ 'Financial Support' | translate }}*"
+                          formControlName="financial_support"
+                          (change)="financeSelectedArray($event, addressIndex)"
+                        >
+                        </ng-select>
+                      </div>
+                    </div>
+                    <div class="p-col-3 pad-y-none">
+                      <div class="p-grid baseline">
+                        <ng-select
+                          style="width: 100%"
+                          class="mrgn-btn"
+                          [items]="termArrayList[addressIndex]"
+                          bindLabel="name"
+                          bindValue="name"
+                          [multiple]="true"
+                          placeholder="{{ 'Lettering' | translate }}*"
+                          formControlName="letter"
+                          (change)="letterSelectedArray($event, addressIndex)"
+                        >
+                        </ng-select>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="p-col-fixed text-right no-padding" *ngIf="arrayCheque?.length">
+                  <button mat-icon-button class="small-icon" color="red" (click)="removeArrayCheque(addressIndex)">
+                    <mat-icon>remove</mat-icon>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+      </mat-card>
+    </div>
+  </div>
+  <div class="p-grid mrgn-t-sm" style="margin-bottom: 20px !important">
+    <div class="p-col-12" style="text-align: right; padding: 0px">
+      <button mat-raised-button color="warn" (click)="previous()">
+        <!-- <mat-icon class="mat-icon-default">cancel</mat-icon> -->
+        {{ 'PREVIOUS' | translate }}
+      </button>
+      <button mat-raised-button color="accent" (click)="submitImport()" [disabled]="!arrayCheque?.length" class="margin-right-0">
+        <!-- <mat-icon class="mat-icon-default">cloud_upload</mat-icon> -->
+        {{ 'Next' | translate }}
+      </button>
+    </div>
+  </div>
+</div>

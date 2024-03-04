@@ -1,0 +1,41 @@
+<div class="p-grid no-margin" style="margin-top: 20px !important">
+  <h3 style="margin: 0px; z-index: 9">{{ 'Students registered / day' | translate }} {{ listFilter }}</h3>
+  <hr />
+</div>
+<div class="p-grid no-margin" style="margin-top: 20px !important">
+  <div class="periode">
+    <mat-form-field style="margin-right: 40px; padding: 7px 12px 2px 7px; border: 1px solid #8c8c8c" [floatLabel]="'never'">
+      <input
+        style="cursor: pointer"
+        matInput
+        (click)="startPicker.open()"
+        readonly
+        class="form-field"
+        [formControl]="startPeriode"
+        placeholder="{{ 'Start Periode' | translate }}"
+        [matDatepicker]="startPicker"
+        [max]="endPeriode.value"
+      />
+      <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
+      <mat-datepicker #startPicker></mat-datepicker>
+    </mat-form-field>
+    <mat-form-field style="padding: 7px 12px 2px 7px; border: 1px solid #8c8c8c" [floatLabel]="'never'">
+      <input
+        style="cursor: pointer"
+        [disabled]="!startPeriode?.value"
+        [min]="startPeriode.value"
+        matInput
+        (click)="endPicker.open()"
+        readonly
+        class="form-field"
+        [formControl]="endPeriode"
+        placeholder="{{ 'End Periode' | translate }}"
+        [matDatepicker]="endPicker"
+      />
+      <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
+      <mat-datepicker #endPicker></mat-datepicker>
+    </mat-form-field>
+  </div>
+</div>
+<div id="chartdaily" style="width: 100%; height: 330px"></div>
+<div class="block-hide"></div>

@@ -1,0 +1,42 @@
+<div class="dialog-border" cdkDrag cdkDragRootElement=".cdk-overlay-pane" cdkDragHandle>
+  <div class="dialogTitleWrapper">
+    <div class="p-grid">
+      <div class="w-30 no-padding">
+        <mat-icon style="vertical-align: middle">event_note</mat-icon>
+      </div>
+      <div class="p-col-10 dialog-title">
+        <h3 class="dialogTitle">
+          {{ 'Operation details' | translate }}
+        </h3>
+      </div>
+      <div class="p-col no-padding">
+        <button mat-icon-button class="close-icon float-right" mat-dialog-close tabindex="-1">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<mat-dialog-content>
+  <div class="p-grid">
+    <div class="p-col-12 no-padding">
+      <div class="p-grid p-col-12">
+        <div class="p-col-3">{{ 'Legal entity' | translate }}:</div>
+        <div class="p-col-9">{{ legalEntityName ? legalEntityName : '-' }}</div>
+      </div>
+      <div class="p-grid p-col-12">
+        <div class="p-col-3">{{ 'Référence' | translate }}:</div>
+        <div class="p-col-9">{{ reference ? reference : '-' }}</div>
+      </div>
+      <div class="p-grid p-col-12">
+        <div class="p-col-3">{{ 'Notes' | translate }}:</div>
+        <div class="p-col-9">{{ note ? note : '-' }}</div>
+      </div>
+    </div>
+  </div>
+</mat-dialog-content>
+
+<div *ngIf="isWaitingForResponse" class="loading-indicator">
+  <mat-progress-spinner mode="indeterminate" color="accent"></mat-progress-spinner>
+</div>

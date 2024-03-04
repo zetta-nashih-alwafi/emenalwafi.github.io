@@ -1,0 +1,100 @@
+<div class="language-dropdown-wrap">
+  <button mat-button [matMenuTriggerFor]="menu_mentor" class="btn-mentor">
+    <div
+      *ngIf="menSelected.photo"
+      style="display: inline-block; margin-right: 5px"
+    >
+      <img
+        alt="user list image"
+        class="img-responsive img-circle"
+        height="30"
+        [src]="menSelected.photo"
+        width="30"
+      />
+    </div>
+    <div style="display: contents">
+      {{ menSelected.civility ? menSelected.civility : "" }}
+      {{ menSelected.first_name ? menSelected.first_name : "" }}
+      {{ menSelected.last_name ? (menSelected.last_name | uppercase) : "" }}
+    </div>
+  </button>
+  <mat-menu #menu_mentor>
+    <div class="gene-lang-popup" style="width: 250px">
+      <div fxLayout="row wrap" class="pad-all-xs">
+        <ng-container>
+          <div
+            class="mentor-card"
+            (click)="mentorSelected(dataMentor)"
+            style="padding-left: 40px"
+          >
+            <div
+              *ngIf="dataMentor.photo"
+              style="display: inline-block; margin-right: 5px"
+            >
+              <img
+                alt="user list image"
+                class="img-responsive img-circle"
+                height="30"
+                [src]="dataMentor.photo"
+                width="30"
+              />
+            </div>
+            <div style="display: contents">
+              {{ dataMentor.civility ? dataMentor.civility : "" }}
+              {{ dataMentor.first_name ? dataMentor.first_name : "" }}
+              {{ dataMentor.last_name ? (dataMentor.last_name | uppercase) : "" }}
+            </div>
+          </div>
+        </ng-container>
+        <ng-container *ngFor="let mentor of mentorList">
+          <div class="mentor-card" (click)="mentorSelected(mentor)">
+            <div
+              *ngIf="mentor.photo"
+              style="display: inline-block; margin-right: 5px"
+            >
+              <img
+                alt="user list image"
+                class="img-responsive img-circle"
+                height="30"
+                [src]="mentor.photo"
+                width="30"
+              />
+            </div>
+            <div style="display: contents">
+              {{ mentor.civility ? mentor.civility : "" }}
+              {{ mentor.first_name ? mentor.first_name : "" }}
+              {{ mentor.last_name ? (mentor.last_name | uppercase) : "" }}
+            </div>
+          </div>
+        </ng-container>
+      </div>
+    </div>
+  </mat-menu>
+</div>
+
+<div style="padding-left: 15px; margin-top: 10px">
+  <mat-tab-group
+    [@.disabled]="true"
+    animationDuration="500ms"
+    (selectedTabChange)="filterSchool($event.tab.textLabel, $event.index)"
+  >
+    <mat-tab label="{{ 'All' | translate }}">
+      <ng-template matTabContent>
+        <ms-school-dashboard
+          [filteredSchool]="filteredSchool"
+        ></ms-school-dashboard>
+      </ng-template>
+    </mat-tab>
+    <ng-container *ngIf="listOfSchool && listOfSchool.length">
+      <ng-container *ngFor="let school of listOfSchool">
+        <mat-tab label="{{ school }}">
+          <ng-template matTabContent>
+            <ms-school-dashboard
+              [filteredSchool]="filteredSchool"
+            ></ms-school-dashboard>
+          </ng-template>
+        </mat-tab>
+      </ng-container>
+    </ng-container>
+  </mat-tab-group>
+</div>

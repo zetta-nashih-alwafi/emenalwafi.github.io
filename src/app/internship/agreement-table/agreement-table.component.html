@@ -1,0 +1,499 @@
+<div class="horizontal">
+  <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8">
+    <ng-container matColumnDef="reset">
+      <th mat-header-cell *matHeaderCellDef colspan="17" class="action-header-column">
+        <button [disabled]="!selection.hasValue()" mat-raised-button color="primary" matTooltip="{{ 'Export' | translate }} ">
+          <mat-icon svgIcon="file-excel-outline" class="mat-icon-svgIcon"></mat-icon>
+          {{ 'Export' | translate }}
+        </button>
+
+        <button
+          [disabled]="!selection.hasValue()"
+          mat-raised-button
+          color="primary"
+          matTooltip="{{ 'Send the job posting SELECTED by Email' | translate }} "
+        >
+          <mat-icon> send </mat-icon>
+          {{ 'Send the job posting SELECTED by Email' | translate }}
+        </button>
+
+        <button mat-raised-button color="accent" matTooltip="{{ 'Reset Filter' | translate }}">
+          <mat-icon svgIcon="loop" class="mat-icon-svgIcon"></mat-icon>
+          {{ 'RESET' | translate }}
+        </button>
+      </th>
+    </ng-container>
+
+    <ng-container matColumnDef="select">
+      <th mat-header-cell *matHeaderCellDef class="text-center">
+        <mat-checkbox
+          (change)="$event ? masterToggle() : null"
+          (change)="showOptions('all')"
+          [checked]="(selection.hasValue() && isAllSelected()) || isCheckedAll"
+          [indeterminate]="selection.hasValue() && !isAllSelected()"
+          [aria-label]="checkboxLabel()"
+        >
+        </mat-checkbox>
+      </th>
+      <td mat-cell *matCellDef="let row" class="text-center">
+        <mat-checkbox
+          (click)="$event.stopPropagation()"
+          (change)="$event ? selection.toggle(row) : null"
+          [checked]="selection.isSelected(row) || isCheckedAll"
+          (change)="showOptions('one')"
+          [aria-label]="checkboxLabel(row)"
+        >
+        </mat-checkbox>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="studentNameFilter">
+      <th mat-header-cell *matHeaderCellDef>
+        <mat-form-field>
+          <input matInput class="form-field" placeholder="{{ 'search' | translate }}" />
+        </mat-form-field>
+      </th>
+    </ng-container>
+
+    <ng-container matColumnDef="currentProgramFilter">
+      <th mat-header-cell *matHeaderCellDef>
+        <mat-form-field>
+          <mat-select>
+            <mat-option [value]="AllF">{{ 'AllS' | translate }} </mat-option>
+            <mat-option value="20-21 EFAPAR 1">{{ '20-21 EFAPAR 1' }} </mat-option>
+            <mat-option value="21-22 EFATOU 2">{{ '21-22 EFATOU 2' }} </mat-option>
+            <mat-option value="21-22 EFATOU 2">{{ '20-21 ICABOR 1' }} </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </th>
+    </ng-container>
+
+    <ng-container matColumnDef="businessRelationNameFilter">
+      <th mat-header-cell *matHeaderCellDef>
+        <mat-form-field>
+          <input matInput class="form-field" placeholder="{{ 'search' | translate }}" />
+        </mat-form-field>
+      </th>
+    </ng-container>
+
+    <ng-container matColumnDef="conventionRequestFilter">
+      <th mat-header-cell *matHeaderCellDef></th>
+    </ng-container>
+
+    <ng-container matColumnDef="startDateFilter">
+      <th mat-header-cell *matHeaderCellDef></th>
+    </ng-container>
+
+    <ng-container matColumnDef="endDateFilter">
+      <th mat-header-cell *matHeaderCellDef></th>
+    </ng-container>
+
+    <ng-container matColumnDef="durationInWeeksFilter">
+      <th mat-header-cell *matHeaderCellDef></th>
+    </ng-container>
+
+    <ng-container matColumnDef="brandFilter">
+      <th mat-header-cell *matHeaderCellDef>
+        <mat-form-field>
+          <input matInput class="form-field" placeholder="{{ 'search' | translate }}" />
+        </mat-form-field>
+      </th>
+    </ng-container>
+
+    <ng-container matColumnDef="jobTitleFilter">
+      <th mat-header-cell *matHeaderCellDef>
+        <mat-form-field>
+          <input matInput class="form-field" placeholder="{{ 'search' | translate }}" />
+        </mat-form-field>
+      </th>
+    </ng-container>
+    <ng-container matColumnDef="typeFilter">
+      <th mat-header-cell *matHeaderCellDef>
+        <mat-form-field>
+          <mat-select>
+            <mat-option [value]="AllF">{{ 'AllS' | translate }} </mat-option>
+            <mat-option value="temporary">{{ 'temporary' | translate }} </mat-option>
+            <mat-option value="ongoing">{{ 'ongoing' | translate }} </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </th>
+    </ng-container>
+
+    <ng-container matColumnDef="jobCountryFilter">
+      <th mat-header-cell *matHeaderCellDef>
+        <mat-form-field>
+          <input matInput class="form-field" placeholder="{{ 'search' | translate }}" />
+        </mat-form-field>
+      </th>
+    </ng-container>
+
+    <ng-container matColumnDef="businessRelationStatusFilter">
+      <th mat-header-cell *matHeaderCellDef>
+        <mat-form-field>
+          <mat-select>
+            <mat-option [value]="AllF">{{ 'AllS' | translate }} </mat-option>
+            <mat-option value="South Korea">{{ 'Agrement request sent to School Business Relations' | translate }} </mat-option>
+            <mat-option value="Belgium">{{ 'Agrement request validated by School Business Relations' | translate }} </mat-option>
+            <mat-option value="United Kingdom">{{ 'Agrement request rejected by School Business Relations' | translate }} </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </th>
+    </ng-container>
+
+    <ng-container matColumnDef="companyHRFilter">
+      <th mat-header-cell *matHeaderCellDef>
+        <mat-form-field>
+          <mat-select>
+            <mat-option [value]="AllF">{{ 'AllS' | translate }} </mat-option>
+            <mat-option value="South Korea">{{ 'Agrement sent to Company HR' | translate }} </mat-option>
+            <mat-option value="Belgium">{{ 'Agrement validated Company HR' | translate }} </mat-option>
+            <mat-option value="United Kingdom">{{ 'Agrement rejected Company HR' | translate }} </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </th>
+    </ng-container>
+
+    <ng-container matColumnDef="studentStatusFilter">
+      <th mat-header-cell *matHeaderCellDef>
+        <mat-form-field>
+          <mat-select>
+            <mat-option [value]="AllF">{{ 'AllS' | translate }} </mat-option>
+            <mat-option value="South Korea">{{ 'Agrement sent to Student' | translate }} </mat-option>
+            <mat-option value="Belgium">{{ 'Agrement validated  by Student' | translate }} </mat-option>
+            <mat-option value="United Kingdom">{{ 'Agrement rejected by Student' | translate }} </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </th>
+    </ng-container>
+
+    <ng-container matColumnDef="conventionCompletedFilter">
+      <th mat-header-cell *matHeaderCellDef>
+        <mat-form-field>
+          <mat-select>
+            <mat-option [value]="AllF">{{ 'AllS' | translate }} </mat-option>
+            <mat-option value="Agreement Complete">{{ 'Agreement Complete' | translate }} </mat-option>
+            <mat-option value="Agreement Amendment">{{ 'Agreement Amendment' | translate }} </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </th>
+    </ng-container>
+
+    <ng-container matColumnDef="actionFilter">
+      <th mat-header-cell *matHeaderCellDef></th>
+    </ng-container>
+
+    <ng-container matColumnDef="selectFilter">
+      <th mat-header-cell *matHeaderCellDef></th>
+    </ng-container>
+
+    <ng-container matColumnDef="studentName">
+      <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'INTERN_AGREEMENT.Student' | translate }}" matTooltipPosition="above">
+        <h5>
+          <mat-icon svgIcon="school" class="mat-icon-svgIcon"> school </mat-icon>
+        </h5>
+      </th>
+      <td mat-cell *matCellDef="let element" matTooltip="{{ element?.student_name }}" matTooltipPosition="above" class="pad-l-xs">
+        {{ element?.student_name }}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="currentProgram">
+      <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'INTERN_AGREEMENT.Current Program' | translate }}" matTooltipPosition="above">
+        <h5>{{ 'INTERN_AGREEMENT.Current Program' | translate }}</h5>
+      </th>
+      <td mat-cell *matCellDef="let element" matTooltip="{{ element?.current_program }}" matTooltipPosition="above" class="pad-l-xs">
+        {{ element?.current_program }}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="businessRelationName">
+      <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'INTERN_AGREEMENT.Business Relation' | translate }}" matTooltipPosition="above">
+        <h5>
+          <mat-icon svgIcon="account-hard-hat" class="mat-icon-svgIcon"> account-hard-hat </mat-icon>
+        </h5>
+      </th>
+      <td mat-cell *matCellDef="let element" matTooltip="{{ element?.business_relation_name }}" matTooltipPosition="above" class="pad-l-xs">
+        {{ element?.business_relation_name }}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="conventionRequest">
+      <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'INTERN_AGREEMENT.Convention Request' | translate }}" matTooltipPosition="above">
+        <h5>
+          <mat-icon svgIcon="calendar-blank" class="mat-icon-svgIcon"> calendar-blank </mat-icon>
+        </h5>
+        <!-- <h5>{{ 'INTERN_AGREEMENT.Convention Request' | translate }}</h5> -->
+      </th>
+      <td mat-cell *matCellDef="let element" matTooltip="{{ element?.convention_request }}" matTooltipPosition="above" class="pad-l-xs">
+        {{ element?.convention_request }}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="startDate">
+      <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'INTERN_AGREEMENT.Start Date' | translate }}" matTooltipPosition="above">
+        <h5>
+          <mat-icon svgIcon="calendar-blank" class="mat-icon-svgIcon"> calendar-blank </mat-icon>
+        </h5>
+      </th>
+      <td mat-cell *matCellDef="let element" matTooltip="{{ element?.start_date }}" matTooltipPosition="above" class="pad-l-xs">
+        {{ element?.start_date }}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="endDate">
+      <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'INTERN_AGREEMENT.End Date' | translate }}" matTooltipPosition="above">
+        <h5>
+          <mat-icon svgIcon="calendar-blank" class="mat-icon-svgIcon"> calendar-blank </mat-icon>
+        </h5>
+        <!-- <h5>{{ 'INTERN_AGREEMENT.End Date' | translate }}</h5> -->
+      </th>
+      <td mat-cell *matCellDef="let element" matTooltip="{{ element?.end_date }}" matTooltipPosition="above" class="pad-l-xs">
+        {{ element?.end_date }}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="durationInWeeks">
+      <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'INTERN_AGREEMENT.Duration in weeks' | translate }}" matTooltipPosition="above">
+        <h5>
+          <mat-icon svgIcon="calendar-weekend" class="mat-icon-svgIcon"> calendar-weekend </mat-icon>
+        </h5>
+      </th>
+      <td mat-cell *matCellDef="let element" matTooltip="{{ element?.duration }}" matTooltipPosition="above" class="pad-l-xs">
+        {{ element?.duration }}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="brand">
+      <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'INTERN_AGREEMENT.Brand' | translate }}" matTooltipPosition="above">
+        <h5>{{ 'INTERN_AGREEMENT.Brand' | translate }}</h5>
+      </th>
+      <td mat-cell *matCellDef="let element" matTooltip="{{ element?.brand }}" matTooltipPosition="above" class="pad-l-xs">
+        {{ element?.brand }}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="jobTitle">
+      <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'INTERN_AGREEMENT.Job Title' | translate }}" matTooltipPosition="above">
+        <h5>{{ 'INTERN_AGREEMENT.Job Title' | translate }}</h5>
+      </th>
+      <td mat-cell *matCellDef="let element" class="pad-l-xs" matTooltip="{{ element?.job_title }}" matTooltipPosition="above">
+        {{ element?.job_title }}
+        <!-- <mat-icon
+          [matTooltip]="element?.type | translate"
+          matTooltipPosition="above"
+          *ngIf="element?.type"
+          [ngClass]="{
+            'purple': element?.type === 'classic',
+            'yellow': element?.type === 'alternance',
+            'blue': element?.type === 'special'
+          }"
+          aria-hidden="true">lens
+        </mat-icon> -->
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="type">
+      <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'INTERN_AGREEMENT.Type' | translate }}" matTooltipPosition="above">
+        <!-- <h5>{{ 'INTERN_AGREEMENT.Type' | translate }}</h5> -->
+        <h5>
+          <mat-icon svgIcon="infinity" class="mat-icon-svgIcon"> infinity </mat-icon>
+        </h5>
+      </th>
+      <td mat-cell *matCellDef="let element" class="pad-l-xs">
+        <mat-icon
+          class="mat-icon-status"
+          [matTooltip]="element?.type | translate"
+          matTooltipPosition="above"
+          *ngIf="element?.type === 'temporary'"
+          aria-hidden="true"
+          svgIcon="calendar-alert"
+          >calendar-alert
+        </mat-icon>
+        <mat-icon
+          class="mat-icon-status"
+          [matTooltip]="element?.type | translate"
+          matTooltipPosition="above"
+          *ngIf="element?.type === 'ongoing'"
+          aria-hidden="true"
+          svgIcon="infinity"
+          >infinity
+        </mat-icon>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="jobCountry">
+      <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'INTERN_AGREEMENT.Company Mentor' | translate }}" matTooltipPosition="above">
+        <h5>
+          <mat-icon svgIcon="office-building" class="mat-icon-svgIcon"> office-building </mat-icon>
+        </h5>
+      </th>
+      <td
+        mat-cell
+        *matCellDef="let element"
+        class="pad-l-xs"
+        matTooltip="{{ 'country_job.' + element?.business_relation_name | translate }}"
+        matTooltipPosition="above"
+      >
+        {{ element?.business_relation_name }}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="businessRelationStatus">
+      <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'INTERN_AGREEMENT.Business Relation' | translate }}" matTooltipPosition="above">
+        <h5>
+          <mat-icon svgIcon="account-hard-hat" class="mat-icon-svgIcon"> account-hard-hat </mat-icon>
+        </h5>
+      </th>
+      <td mat-cell *matCellDef="let element" class="pad-l-xs">
+        <mat-icon
+          class="mat-icon-status"
+          [matTooltip]="element?.business_relation_status | translate"
+          matTooltipPosition="above"
+          *ngIf="element?.business_relation_status"
+          [ngClass]="{
+            green: element?.business_relation_status === 'done'
+          }"
+          aria-hidden="true"
+          >lens
+        </mat-icon>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="companyHR">
+      <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'INTERN_AGREEMENT.Company HR' | translate }}" matTooltipPosition="above">
+        <h5>
+          <mat-icon svgIcon="office-building" class="mat-icon-svgIcon"> office-building </mat-icon>
+        </h5>
+      </th>
+      <td mat-cell *matCellDef="let element" class="pad-l-xs">
+        <mat-icon
+          class="mat-icon-status"
+          [matTooltip]="element?.company_hr | translate"
+          matTooltipPosition="above"
+          *ngIf="element?.company_hr"
+          [ngClass]="{
+            green: element?.company_hr === 'done'
+          }"
+          aria-hidden="true"
+          >lens
+        </mat-icon>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="studentStatus">
+      <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'INTERN_AGREEMENT.Student' | translate }}" matTooltipPosition="above">
+        <h5>
+          <mat-icon svgIcon="school" class="mat-icon-svgIcon"> school </mat-icon>
+        </h5>
+      </th>
+      <td mat-cell *matCellDef="let element" class="pad-l-xs">
+        <mat-icon
+          class="mat-icon-status"
+          [matTooltip]="element?.student_status | translate"
+          matTooltipPosition="above"
+          *ngIf="element?.student_status"
+          [ngClass]="{
+            green: element?.student_status === 'done'
+          }"
+          aria-hidden="true"
+          >lens
+        </mat-icon>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="conventionCompleted">
+      <th
+        mat-header-cell
+        *matHeaderCellDef
+        matTooltip="{{ 'INTERN_AGREEMENT.Convention Completed' | translate }}"
+        matTooltipPosition="above"
+      >
+        <h5>
+          <mat-icon svgIcon="signature-freehand" class="mat-icon-svgIcon"> signature-freehand </mat-icon>
+        </h5>
+      </th>
+      <td mat-cell *matCellDef="let element" class="pad-l-xs">
+        <mat-icon
+          class="mat-icon-status"
+          [matTooltip]="element?.convention_completed | translate"
+          matTooltipPosition="above"
+          *ngIf="element?.convention_completed && element?.convention_completed !== 'done'"
+          aria-hidden="true"
+          >lens
+        </mat-icon>
+        <span *ngIf="element?.convention_completed && element?.convention_completed === 'done'">{{ element?.convention_date }}</span>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="action">
+      <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'Action' | translate }}" matTooltipPosition="above">
+        <h5>{{ 'Action' | translate }}</h5>
+      </th>
+      <td mat-cell *matCellDef="let element" class="pad-l-xs">
+        <button
+          *ngIf="element?.convention_completed === 'done'"
+          mat-icon-button
+          [matTooltipDisabled]="false"
+          class="margin-right-button"
+          (click)="amendmentAggrement()"
+          matTooltip="{{ 'Add an amendment' | translate }}"
+        >
+          <mat-icon svgIcon="text-box-plus"> text-box-plus </mat-icon>
+        </button>
+        <button
+          mat-icon-button
+          [matTooltipDisabled]="false"
+          class="margin-right-button"
+          matTooltip="{{ 'Send this job posting by Email' | translate }}"
+        >
+          <mat-icon> send </mat-icon>
+        </button>
+        <button
+          mat-icon-button
+          [matTooltipDisabled]="false"
+          class="margin-right-button"
+          matTooltip="{{ 'send this job posting by Whatsapp' | translate }}"
+        >
+          <mat-icon svgIcon="whatsapp"> whatsapp </mat-icon>
+        </button>
+        <button mat-icon-button [matTooltipDisabled]="false" class="margin-right-button" matTooltip="{{ 'Edit an agreement' | translate }}">
+          <mat-icon svgIcon="pencil"> pencil </mat-icon>
+        </button>
+        <button
+          mat-icon-button
+          [matTooltipDisabled]="false"
+          class="margin-right-button"
+          matTooltip="{{ 'see Agreement' | translate }}"
+          (click)="viewAggrement()"
+        >
+          <mat-icon svgIcon="eye"> eye </mat-icon>
+        </button>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="loading">
+      <th mat-header-cell *matHeaderCellDef colspan="17" style="text-align: center !important">
+        <div class="center-spinner">
+          <mat-spinner color="accent"></mat-spinner>
+        </div>
+      </th>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="['reset']"></tr>
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-header-row *matHeaderRowDef="filterColumns"></tr>
+    <tr mat-header-row *matHeaderRowDef="['loading']" [hidden]="!isLoading"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns" [hidden]="isLoading"></tr>
+  </table>
+  <div *ngIf="noData | async" class="no-records" [ngClass]="{ hide: isLoading }">
+    {{ 'NOT RECORD FOUND' | translate }}
+  </div>
+  <div [ngClass]="{ hide: noData | async }">
+    <mat-paginator
+      [ngClass]="{ 'hide-pagination-buttons': paginator.length <= 10 }"
+      [hidePageSize]="true"
+      [pageSize]="[10]"
+      showFirstLastButtons
+    ></mat-paginator>
+  </div>
+</div>

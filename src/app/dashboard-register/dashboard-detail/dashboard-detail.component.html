@@ -1,0 +1,288 @@
+<!-- <div class="p-grid">
+  <div class="p-col-8 no-padding">
+    <div id="chartdiv" style="width: 100%; height: 500px"></div>
+  </div>
+  <div class="p-col-4 no-padding">
+    <div id="chartpie" style="width: 100%; height: 500px"></div>
+  </div>
+</div> -->
+<div class="detail-school" *ngIf="!isWaitingForResponse && !isGetRegistrationProgramLoading">
+  <div class="title-school p-grid">
+    <div class="p-col-fixed scholar-school" style="margin: 0">
+      <div class="p-col" style="display: flex; padding: 0">
+        <span style="margin-top: 10px; margin-right: 10px">{{ 'Periode Scolaire' | translate }} :</span>
+        <div class="p-col" style="padding: 0">
+          <ng-select *ngIf="!scholars" class="mrgn-btn" [multiple]="false" placeholder="{{ 'CARDDETAIL.Scholar Season' | translate }}">
+          </ng-select>
+          <ng-select
+            class="mrgn-btn"
+            bindLabel="scholar_season"
+            bindValue="_id"
+            [multiple]="false"
+            [clearable]="false"
+            [appendTo]="'body'"
+            placeholder="{{ 'CARDDETAIL.Scholar Season' | translate }}"
+            [formControl]="scholarFilter"
+            (change)="scholarSelected($event)"
+          >
+            <ng-option *ngFor="let type of scholars" [value]="type._id">{{ type?.scholar_season | translate }}</ng-option>
+          </ng-select>
+        </div>
+      </div>
+    </div>
+    <div class="p-col-fixed school-name">{{ 'School' | translate }} : {{ schoolData?.short_name ? schoolData?.short_name : '-' }}</div>
+    <div class="p-col-fixed date-today">{{ 'Date' | translate }} : {{ translateDate() }}</div>
+    <div class="p-col-2">
+      <ng-select *ngIf="!schoolData?.levels" class="mrgn-btn" [multiple]="false" placeholder="{{ 'Level' | translate }}"> </ng-select>
+      <ng-select
+        *ngIf="schoolData?.levels"
+        class="mrgn-btn"
+        [items]="schoolData?.levels"
+        bindLabel="name"
+        bindValue="_id"
+        [appendTo]="'body'"
+        [multiple]="false"
+        placeholder="{{ 'Level' | translate }}"
+        [formControl]="levelFilter"
+        (change)="getDataByLevel($event)"
+        (clear)="onClearLevel()"
+        [clearable]="false"
+      >
+      </ng-select>
+    </div>
+    <div class="p-col-2">
+      <ng-select *ngIf="!sector" class="mrgn-btn" [multiple]="false" placeholder="{{ 'Sector' | translate }}"> </ng-select>
+      <ng-select
+        *ngIf="sector"
+        class="mrgn-btn"
+        [items]="sector"
+        bindLabel="name"
+        bindValue="_id"
+        [appendTo]="'body'"
+        [multiple]="false"
+        placeholder="{{ 'Sector' | translate }}"
+        [formControl]="sectorFilter"
+        (change)="getDataSpeciality($event)"
+        (clear)="onClearSector()"
+        [disabled]="disabledSectors"
+        [clearable]="false"
+      >
+      </ng-select>
+    </div>
+    <div class="p-col-2">
+      <ng-select *ngIf="!speciality" class="mrgn-btn" [multiple]="false" placeholder="{{ 'Speciality' | translate }}"> </ng-select>
+      <ng-select
+        *ngIf="speciality"
+        class="mrgn-btn"
+        [items]="speciality"
+        bindLabel="name"
+        bindValue="_id"
+        [appendTo]="'body'"
+        [multiple]="false"
+        placeholder="{{ 'Speciality' | translate }}"
+        [formControl]="specialityFilter"
+        [disabled]="disabledSpeciality"
+        (change)="getDataBySpeciality($event)"
+        [clearable]="false"
+      >
+      </ng-select>
+    </div>
+    <div class="p-col-2">
+      <button mat-raised-button color="primary" (click)="reset()">
+        {{ 'RESET' | translate }}
+      </button>
+    </div>
+  </div>
+  <div class="table-school" (scroll)="dashboardScroll($event)">
+    <div class="detail-table">
+      <div class="list-headers">
+        <div class="label-array" style="padding: 0px !important">
+          <div class="label-level-first">{{ 'Program' | translate }}</div>
+          <div class="label-school-first">Campus</div>
+        </div>
+      </div>
+      <div class="list-body">
+        <div class="list-level fixed-header">
+          <div class="label-array"></div>
+          <div class="array-data" style="padding: 0px !important" *ngFor="let school of schoolData?.campuses">
+            <div class="label-list-schools">{{ school?.name }}</div>
+            <div class="label-sub-school">
+              <div class="label-sub" style="font-weight: 600">Real.</div>
+              <div class="label-sub" style="color: #dcdcdc">Obj.</div>
+            </div>
+          </div>
+        </div>
+        <div class="list-level" *ngFor="let level of formGenerated; let nex = index">
+          <div class="label-array" style="height: 40px !important; padding: 0px 5px !important">
+            <div class="label-level">{{ getNameLevel(level) }}</div>
+          </div>
+          <div *ngIf="dataMapping && dataMapping.length && dataMapping[nex] && dataMapping[nex].length">
+            <div class="array-data" *ngFor="let school of schoolData?.campuses; let n = index">
+              <div *ngFor="let data of dataMapping[nex]">
+                <div
+                  *ngIf="
+                    (data?.name | lowercase) === (school?.name | lowercase) &&
+                    data?.counter >= 0 &&
+                    data?.objective >= 0 &&
+                    data?.percentage >= 0 &&
+                    data?.is_from_registration
+                  "
+                >
+                  <!-- <div class="label-list-school">
+                    <mat-icon
+                      class="mat-icon-status"
+                      [ngClass]="{
+                        grey: data?.status === 'lost' || data?.status === 'down',
+                        red: data?.status === 'low',
+                        orange: data?.status === 'medium',
+                        green: data?.status === 'high'
+                      }"
+                      aria-hidden="true"
+                      >lens
+                    </mat-icon>
+                  </div> -->
+                  <div class="list-data">
+                    <div>
+                      <div class="registereds">{{ data?.counter ? data?.counter : '0' }}</div>
+                    </div>
+                    <div>
+                      <div
+                        class="status"
+                        [ngClass]="{
+                          bkgrey: data?.status === 'lost' || data?.status === 'down',
+                          bkred: data?.status === 'low',
+                          bkorange: data?.status === 'medium',
+                          bkgreen: data?.status === 'high'
+                        }"
+                      ></div>
+                    </div>
+                    <div>
+                      <div class="objectives">{{ data?.objective ? data?.objective : '0' }}</div>
+                    </div>
+                    <!-- <div *ngIf="data?.total_registered" class="label-list-registered">
+                      |
+                      <div class="registered">{{ data?.total_registered }}</div>
+                    </div>
+                    <div *ngIf="data?.total_target" class="label-list-objectives">
+                      O
+                      <div class="objective">{{ data?.total_target }}</div>
+                    </div> -->
+                  </div>
+                </div>
+                <div
+                  class="list-data"
+                  *ngIf="(data?.name | lowercase) === (school?.name | lowercase) && !data?.is_from_registration"
+                  style="text-align: center !important; justify-content: center; height: 35px"
+                >
+                  -
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- <div *ngIf="dataMapping && dataMapping.length && dataMapping[nex] && !dataMapping[nex].length">
+            <div class="array-data" *ngFor="let school of schoolData?.campuses; let n = index">
+              <div>
+                <div>
+                  <div class="list-data">
+                    <div>
+                      <div class="registereds"></div>
+                    </div>
+                    <div>
+                      <div class="empty"></div>
+                    </div>
+                    <div>
+                      <div class="objectives"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div> -->
+          <div *ngIf="!(dataMapping && dataMapping.length) || !dataMapping[nex]">
+            <div class="array-data" *ngFor="let data of schoolData?.campuses">
+              <div class="label-list-school">
+                <!--  <mat-icon class="mat-icon-status grey" aria-hidden="true">lens </mat-icon> -->
+              </div>
+              <div class="list-data"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div *ngIf="isWaitingForResponse || isGetRegistrationProgramLoading" class="load-data">
+  <mat-progress-spinner mode="indeterminate" color="accent"></mat-progress-spinner>
+</div>
+
+<!--
+    <div class="detail-table">
+      <div class="list-header">
+        <div class="list-level">
+          <div class="label-first">
+            <div class="label-level-first">Level</div>
+            <div class="label-school-first">Campus</div>
+          </div>
+          <div class="array-school" *ngFor="let school of dataSchool">
+            <div class="label-list-schools">{{ school?.school }}</div>
+          </div>
+        </div>
+      </div>
+      <div class="list-body">
+        <div class="list-level" *ngFor="let level of arraySchool">
+          <div class="label-array">
+            <div class="label-level">{{ level?.level }}</div>
+          </div>
+          <div class="array-data" *ngFor="let data of level?.data">
+            <div class="label-list-school">
+              <mat-icon
+                class="mat-icon-status"
+                [ngClass]="{
+                  grey: data?.status === 'lost' || data?.status === 'down',
+                  red: data?.status === 'low',
+                  orange: data?.status === 'modert',
+                  green: data?.status === 'high'
+                }"
+                aria-hidden="true"
+                >lens
+              </mat-icon>
+            </div>
+            <div class="list-data">
+              <div *ngIf="data?.registered" class="label-list-registered">
+                |
+                <div class="registered">{{ data?.registered }}</div>
+              </div>
+              <div *ngIf="data?.objective" class="label-list-objectives">
+                O
+                <div class="objective">{{ data?.objective }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+        <div class="table-dashboard">
+    <div class="detail-dashboard">
+      <div class="header-dashboard">
+        <div class="list-header">
+          <div class="list-level">
+            <div class="label-first">
+              <div class="label-level-first">Level</div>
+              <div class="label-school-first">Campus</div>
+            </div>
+            <div class="array-school" *ngFor="let school of dataSchool">
+              <div class="label-list-schools">{{ school?.school }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="body-dashboard">
+        <div class="width-50"></div>
+        <div class="width-auto"></div>
+      </div>
+    </div>
+  </div>
+
+-->

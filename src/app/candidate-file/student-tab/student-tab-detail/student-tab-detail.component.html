@@ -1,0 +1,895 @@
+<div *ngIf="isWaitingForResponse" class="inner-loading-indicator">
+  <mat-spinner color="accent" [diameter]="100"></mat-spinner>
+</div>
+<div class="center-card mrgn-btn50 mrgn-t1" *ngIf="registrationData">
+  <div>
+    <mat-accordion class="example-headers-align">
+      <mat-expansion-panel [expanded]="expanded" style="background: #424242" class="panel-spacing">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            <h4 style="color: white; align-self: center; margin: 0px">
+              {{ registrationData?.readmission_status ? ('perimeter.readmission' | translate) : ('Registration' | translate) }}
+              {{ registrationData?.intake_channel?.program }}
+            </h4>
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+        <div class="p-grid panel-divider" [formGroup]="form">
+          <div class="p-grid">
+            <div class="p-col-12 no-padding">
+              <div class="p-grid">
+                <div class="p-col-6 no-padding">
+                  <div class="p-grid" style="align-items: center">
+                    <div class="p-col-4">
+                      <span>
+                        {{ 'INTERN_FOLLOW_UP.Student Status' | translate }}
+                      </span>
+                    </div>
+                    <span style="padding: 0.5em">:</span>
+                    <div class="p-col">
+                      <button mat-raised-button color="accent" class="pillbox" [matMenuTriggerFor]="studentStatus">
+                        {{
+                          (registrationData?.candidate_admission_status === 'registered' && registrationData?.program_status === 'active'
+                            ? 'Registered - Active'
+                            : registrationData?.candidate_admission_status === 'registered' &&
+                              registrationData?.program_status === 'not_active'
+                            ? 'Registered - Non Active'
+                            : registrationData?.candidate_admission_status === 'registered' &&
+                              registrationData?.program_status === 'completed'
+                            ? 'Registered - Complete'
+                            : registrationData?.candidate_admission_status === 'deactivated'
+                            ? 'Deactivated'
+                            : registrationData?.candidate_admission_status
+                          ) | translate
+                        }}
+                      </button>
+                      <mat-menu #studentStatus="matMenu">
+                        <button mat-menu-item *ngFor="let item of studentStatusList" (click)="updateStatus(item?.value)">
+                          <span>{{ item?.key | translate }}</span>
+                        </button>
+                      </mat-menu>
+                    </div>
+                  </div>
+                </div>
+                <div class="p-col-6 no-padding">
+                  <div class="p-grid">
+                    <div class="p-col" style="text-align: right">
+                      <button mat-raised-button color="accent" (click)="onSave()" [disabled]="disableButtonSave">
+                        <mat-icon class="mat-icon-default">save</mat-icon>
+                        {{ 'CARDDETAIL.Save' | translate }}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="p-col-12 no-padding">
+              <div class="p-grid" style="align-items: baseline">
+                <div class="p-col-6 no-padding" style="margin-bottom: 10px;">
+                  <div class="p-grid" style="align-items: center">
+                    <div class="registration-profile p-col-4">
+                      <span>
+                        {{ 'Readmission Improvement.School Email' | translate }}
+                      </span>
+                    </div>
+                    <span style="padding: 0.5em">:</span>
+                    <div class="p-col">
+                      <mat-form-field style="width: 80%">
+                        <input matInput type="text" formControlName="school_mail" />
+                        <mat-error
+                          style="color: red"
+                          *ngIf="
+                            form?.get('school_mail')?.hasError('email') &&
+                            (form?.get('school_mail')?.touched || form?.get('school_mail')?.dirty)
+                          "
+                        >
+                          {{ 'Invalid email format' | translate }}
+                        </mat-error>
+                      </mat-form-field>
+                      <div class="check-email">
+                        <button [disabled]="form.get('school_mail').invalid || disableButtonVerify" mat-raised-button color="accent" (click)="verifyEmail()">
+                          {{ 'COMPANY.Check Email Availability' | translate }}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="p-col-6 no-padding">
+                  <div class="p-grid">
+                    <div class="registration-profile p-col-5">
+                      <span> {{ 'Type of Formation' | translate }} </span>
+                    </div>
+                    <span style="padding: 0.5em">:</span>
+                    <div class="p-col">
+                      <span *ngIf="registrationData?.type_of_formation_id?.type_of_formation !== null">
+                        {{ 'type_formation.' + registrationData?.type_of_formation_id?.type_of_formation | translate }}
+                      </span>
+                      <span *ngIf="registrationData?.type_of_formation_id?.type_of_formation === null"> - </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="p-col-12 no-padding">
+              <div class="p-grid">
+                <div class="p-col-6 no-padding">
+                  <div class="p-grid">
+                    <div class="registration-profile p-col-4">
+                      <span>
+                        {{
+                          registrationData?.readmission_status
+                            ? ('Readmission profile' | translate)
+                            : ('AdmissionFollowUp.Registration profile' | translate)
+                        }}
+                      </span>
+                    </div>
+                    <span style="padding: 0.5em">:</span>
+                    <div class="p-col">
+                      <span>
+                        {{ registrationData?.registration_profile?.name ? registrationData?.registration_profile?.name : '-' }}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <div class="p-col-6 no-padding">
+                  <div class="p-grid">
+                    <div class="registration-profile p-col-5">
+                      <span> {{ 'AdmissionFollowUp.Payment mode' | translate }} </span>
+                    </div>
+                    <span style="padding: 0.5em">:</span>
+                    <div class="p-col">
+                      <span *ngIf="registrationData?.registration_profile?.discount_on_full_rate === 100 && !registrationFee">
+                        {{ 'None' | translate }}
+                      </span>
+                      <span *ngIf="registrationData?.registration_profile?.discount_on_full_rate === 100 && registrationFee">
+                        {{ 'None' | translate }}
+                      </span>
+                      <span *ngIf="registrationData?.registration_profile?.discount_on_full_rate !== 100">
+                        <ng-container *ngIf="registrationData?.method_of_payment !== 'avoir'">
+                          {{
+                            (registrationData?.method_of_payment === 'credit_card' ? 'Bank Debit' : registrationData?.method_of_payment)
+                              | translate
+                          }}
+                        </ng-container>
+                        <ng-container *ngIf="registrationData?.method_of_payment === 'avoir'">
+                          {{ 'None' | translate }}
+                        </ng-container>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="p-col-12 no-padding">
+              <div class="p-grid">
+                <div class="p-col-6 no-padding">
+                  <div class="p-grid">
+                    <div class="1st-call-admission p-col-4">
+                      <span> {{ '1st Call Admission' | translate }} </span>
+                    </div>
+                    <span style="padding: 0.5em">:</span>
+                    <div class="p-col">
+                      <span>
+                        {{ registrationData?.announcement_call | translate }}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="p-col-6 no-padding">
+                  <div class="p-grid">
+                    <div class="registration-profile p-col-5">
+                      <span> {{ 'AdmissionFollowUp.Down payment method' | translate }} </span>
+                    </div>
+                    <span style="padding: 0.5em">:</span>
+                    <div class="p-col">
+                      <span *ngIf="registrationData?.registration_profile?.discount_on_full_rate === 100 && !registrationFee && !registrationData?.billing_id?.deposit">
+                        {{ 'None' | translate }}
+                      </span>
+                      <span *ngIf="registrationData?.registration_profile?.discount_on_full_rate === 100 && (registrationFee || (!registrationFee && registrationData?.billing_id?.deposit))">
+                        {{ registrationData?.payment_method | translate }}
+                      </span>
+                      <span *ngIf="registrationData?.registration_profile?.discount_on_full_rate !== 100">
+                        <span *ngIf="registrationData?.registration_profile?.is_down_payment === 'no'">
+                          {{ 'None' | translate }}
+                        </span>
+                        <span *ngIf="registrationData?.registration_profile?.is_down_payment !== 'no'">
+                          {{ (registrationData?.payment_method && registrationData?.payment_method !== 'avoir') ? (registrationData?.payment_method | translate) : registrationData?.payment_method === 'avoir' ? ('None' | translate) : '-' }}
+                        </span>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <ng-container *ngIf="isCheckOrTransfer">
+              <div class="p-col-12 no-padding">
+                <div class="p-grid">
+                  <div class="p-col-6 no-padding">
+                    <div class="p-grid">
+                      <div class="1st-email-registration p-col-4">
+                        <span> {{ '1st Email Admission' | translate }} </span>
+                      </div>
+                      <span style="padding: 0.5em">:</span>
+                      <div class="p-col">
+                        <span>
+                          {{ registrationData?.announcement_email ? registrationData?.announcement_email : '-' }}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="p-col-6 no-padding">
+                    <div class="p-grid">
+                      <div class="registration-profile p-col-5">
+                        <span> {{ 'AdmissionFollowUp.Down payment' | translate }} </span>
+                      </div>
+                      <span style="padding: 0.5em">:</span>
+                      <div class="p-col">
+                        <span *ngIf="registrationData?.registration_profile?.discount_on_full_rate === 100 && !registrationFee && !registrationData?.billing_id?.deposit">
+                          {{ 'None' | translate }}
+                        </span>
+                        <span *ngIf="registrationData?.registration_profile?.discount_on_full_rate === 100 && !registrationFee && registrationData?.billing_id?.deposit">
+                          {{ registrationData?.billing_id?.deposit }}
+                              EUR - {{ renderTooltipStatusDP(registrationData) | translate }}
+                        </span>
+                        <span *ngIf="registrationData?.registration_profile?.discount_on_full_rate !== 100 || registrationFee">
+                          <span *ngIf="registrationData?.registration_profile?.is_down_payment === 'no'">
+                            {{ 'None' | translate }}
+                          </span>
+                          <span *ngIf="registrationData?.registration_profile?.is_down_payment !== 'no'">
+                            <ng-container *ngIf="registrationData?.billing_id?.deposit >= 0 && registrationData?.method_of_payment !== 'avoir' && registrationData?.payment_method !== 'avoir'">
+                              {{ registrationData?.billing_id?.deposit }}
+                              EUR - {{ renderTooltipStatusDP(registrationData) | translate }}
+                            </ng-container>
+                            <ng-container *ngIf="registrationData?.billing_id?.deposit === 0 && registrationData?.method_of_payment === 'avoir' && registrationData?.payment_method === 'avoir'">
+                              {{ 'None' | translate }}
+                            </ng-container>
+                          </span>
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="p-col-12 no-padding">
+                <div class="p-grid">
+                  <div class="p-col-6 no-padding">
+                    <div class="p-grid">
+                      <div class="registration-status p-col-4">
+                        <span>
+                          {{
+                            registrationData?.readmission_status !== null
+                              ? ('Readmission status' | translate)
+                              : ('Registration status' | translate)
+                          }}
+                        </span>
+                      </div>
+                      <span style="padding: 0.5em">:</span>
+                      <div class="p-col">
+                        <span>
+                          {{ registrationData?.candidate_admission_status | translate }}
+                          {{
+                            getRegistrationDate(registrationData) !== '-'
+                              ? ('056_ES.FAILURE_TITLE.AT' | translate) + ' ' + getRegistrationDate(registrationData)
+                              : ''
+                          }}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="p-col-6 no-padding">
+                    <div class="p-grid">
+                      <div class="p-col-5">{{ 'AdmissionFollowUp.Proof of payment' | translate }}</div>
+                      <span style="padding: 0.5em">:</span>
+                      <ng-container *ngIf="registrationData?.payment_transfer_check_data?.s3_document_name">
+                        <div class="p-col">
+                          <button
+                            mat-icon-button
+                            [matTooltipDisabled]="false"
+                            class="margin-right-button"
+                            matTooltip="{{ 'AdmissionFollowUp.Proof of payment' | translate }}"
+                            (click)="openDocTransferOrCheck(registrationData?.payment_transfer_check_data?.s3_document_name)"
+                          >
+                            <mat-icon class="mat-icon-status">description</mat-icon>
+                          </button>
+                        </div>
+                      </ng-container>
+                      <ng-container *ngIf="!registrationData?.payment_transfer_check_data?.s3_document_name">
+                        <div class="p-col">-</div>
+                      </ng-container>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="p-col-12 no-padding">
+                <div class="p-grid">
+                  <div class="p-col-6 no-padding">
+                    <div class="p-grid">
+                      <div class="registration-form p-col-4">
+                        <span>
+                          {{ registrationData?.readmission_status ? ('Readmission form' | translate) : ('Registration form' | translate) }}
+                        </span>
+                      </div>
+                      <span style="padding: 0.5em">:</span>
+                      <div class="p-col">
+                        <ng-container *ngIf="hideRegistrationForm">
+                          <span>-</span>
+                        </ng-container>
+                        <ng-container *ngIf="!hideRegistrationForm">
+                          <button
+                            mat-icon-button
+                            [matTooltipDisabled]="false"
+                            class="margin-right-button"
+                            matTooltip="{{
+                              registrationData?.readmission_status ? ('Readmission form' | translate) : ('Registration form' | translate)
+                            }}"
+                            (click)="viewAdmissionFile(registrationData?._id)"
+                          >
+                            <mat-icon class="mat-icon-status">description</mat-icon>
+                          </button>
+                        </ng-container>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="p-col-6 no-padding">
+                    <div class="p-grid">
+                      <div class="registration-profile p-col-5">
+                        <span> {{ 'School Contract' | translate }} </span>
+                      </div>
+                      <span style="padding: 0.5em">:</span>
+                      <div class="p-col">
+                        <!-- <ng-container *ngIf="registrationData?.school_contract_pdf_link">
+                          <button
+                            mat-icon-button
+                            [matTooltipDisabled]="false"
+                            class="margin-right-button"
+                            matTooltip="{{ 'School Contract' | translate }}"
+                            (click)="viewPDF(registrationData?.school_contract_pdf_link)"
+                          >
+                            <mat-icon class="mat-icon-status">description</mat-icon>
+                          </button>
+                        </ng-container>
+                        <ng-container *ngIf="!registrationData?.school_contract_pdf_link">
+                          <span>-</span>
+                        </ng-container> -->
+                        <ng-container
+                          *ngIf="
+                            !isCandidateFC &&
+                            registrationData?.candidate_admission_status !== 'admitted' &&
+                            registrationData?.candidate_admission_status !== 'admission_in_progress' &&
+                            registrationData?.signature !== 'not_done'
+                          "
+                        >
+                          <button
+                            mat-icon-button
+                            [matTooltipDisabled]="false"
+                            class="margin-right-button"
+                            matTooltip="{{ 'School Contract' | translate }}"
+                            (click)="exportPDF()"
+                          >
+                            <mat-icon class="mat-icon-status">description</mat-icon>
+                          </button>
+                        </ng-container>
+                        <ng-container
+                          *ngIf="
+                            (!isCandidateFC &&
+                              (registrationData?.candidate_admission_status === 'admitted' ||
+                                registrationData?.candidate_admission_status === 'admission_in_progress')) ||
+                            registrationData?.signature === 'not_done' ||
+                            (isCandidateFC && registrationData?.signature === 'not_done')
+                          "
+                        >
+                          <span>-</span>
+                        </ng-container>
+                        <ng-container *ngIf="isCandidateFC && registrationData?.signature !== 'not_done'">
+                          <button
+                            mat-icon-button
+                            [matTooltipDisabled]="false"
+                            class="margin-right-button"
+                            matTooltip="{{ 'School Contract' | translate }}"
+                            (click)="exportPDF()"
+                          >
+                            <mat-icon class="mat-icon-status">description</mat-icon>
+                          </button>
+                        </ng-container>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="p-col-12 no-padding">
+                <div class="p-grid">
+                  <div class="p-col-6 no-padding">
+                    <div class="p-grid">
+                      <div class="registration-form p-col-4">
+                        <span>
+                          {{
+                            registrationData?.readmission_status !== null
+                              ? ('Readmission Certificate' | translate)
+                              : ('Registration Certificate' | translate)
+                          }}
+                        </span>
+                      </div>
+                      <span style="padding: 0.5em">:</span>
+                      <div class="p-col">
+                        <ng-container *ngIf="!registrationData?.registration_certificate">
+                          <span>-</span>
+                        </ng-container>
+                        <ng-container *ngIf="registrationData?.registration_certificate">
+                          <button
+                            mat-icon-button
+                            [matTooltipDisabled]="false"
+                            class="margin-right-button"
+                            matTooltip="{{
+                              registrationData?.readmission_status !== null
+                                ? ('Readmission Certificate' | translate)
+                                : ('Registration Certificate' | translate)
+                            }}"
+                            (click)="viewPDF(registrationData?.registration_certificate)"
+                          >
+                            <mat-icon class="mat-icon-status">description</mat-icon>
+                          </button>
+                        </ng-container>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="p-col-6 no-padding">
+                    <div class="p-grid">
+                      <div class="registration-profile p-col-5">
+                        <span> {{ 'jury_decision' | translate }} </span>
+                      </div>
+                      <span style="padding: 0.5em">:</span>
+                      <div class="p-col">{{ registrationData?.jury_decision ? (registrationData?.jury_decision | translate) : '-' }}</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="p-col-12 no-padding">
+                <div class="p-grid">
+                  <div class="p-col-6 no-padding">
+                    <div class="p-grid">
+                      <div class="registration-profile p-col-4">
+                        <span> {{ 'Reinscription Yes / No' | translate }} </span>
+                      </div>
+                      <span style="padding: 0.5em">:</span>
+                      <div class="p-col">
+                        <ng-container *ngIf="registrationData?.reinscription_yes_no?.answer_label">
+                          {{registrationData?.reinscription_yes_no?.answer_label}}
+                        </ng-container>
+
+                        <ng-container *ngIf="!registrationData?.reinscription_yes_no?.answer_label">
+                          <span>-</span>
+                        </ng-container>
+                      </div>
+                    </div>
+                  </div>         
+                  <div class="p-col-6 no-padding">
+                    <div class="p-grid">
+                      <div class="registration-profile p-col-5">
+                        <span> {{ 'School contract amendment student card' | translate }} </span>
+                      </div>
+                      <span style="padding: 0.5em">:</span>
+                      <div class="p-col">
+                        <ng-container *ngIf="registrationData?.current_school_contract_amendment_form?.form_status === 'done'">
+                          <button
+                            mat-icon-button
+                            [matTooltipDisabled]="false"
+                            class="margin-right-button"
+                            matTooltip="{{ registrationData?.current_school_contract_amendment_form?.school_amendment_pdf_name }}"
+                            (click)="exportPDFAmendement()"
+                          >
+                            <mat-icon class="mat-icon-status">description</mat-icon>
+                          </button>
+                        </ng-container>
+
+                        <ng-container *ngIf="registrationData?.current_school_contract_amendment_form?.form_status !== 'done'">
+                          <span>-</span>
+                        </ng-container>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="p-col-6 no-padding" *ngIf="registrationData?.reinscription_yes_no?.is_answer_yes === false">
+                    <div class="p-grid">
+                      <div class="registration-profile p-col-4">
+                        <span> {{ 'Reason no reinscription' | translate }} </span>
+                      </div>
+                      <span style="padding: 0.5em">:</span>
+                      <div class="p-col">
+                        <ng-container *ngIf="registrationData?.reason_no_reinscription">
+                          {{registrationData?.reason_no_reinscription}}
+                        </ng-container>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- *************** field for internship / exchange should be here -->
+                  <!-- *************** a line break so field Reason No Readmission always in the left side -->
+                  <div class="p-col-12 p-nogutter p-col-nogutter"></div>
+                  <!-- *************** remove the line break when you add field internship / exchange -->
+
+                  <div class="p-col-6 no-padding">
+                    <div class="p-grid p-align-baseline">
+                      <div class="p-col-4">
+                        <span> {{ 'CVEC Number' | translate }} </span>
+                      </div>
+                      <span style="padding: 0.5em">:</span>
+                      <div class="p-col">
+                        <mat-form-field class="w-80">
+                          <input matInput type="text" formControlName="cvec_number" />
+                        </mat-form-field>
+                      </div>
+                    </div>
+                  </div>                  
+
+                  <div class="p-col-6 no-padding">
+                    <div class="p-grid p-align-baseline">
+                      <div class="p-col-5">
+                        <span> {{ 'INE Number' | translate }} </span>
+                      </div>
+                      <span style="padding: 0.5em">:</span>
+                      <div class="p-col">
+                        <mat-form-field class="w-80">
+                          <input matInput type="text" formControlName="ine_number" />
+                        </mat-form-field>
+                      </div>
+                    </div>
+                  </div>                  
+                </div>
+              </div>
+            </ng-container>
+
+            <ng-container *ngIf="!isCheckOrTransfer">
+              <div class="p-col-12 no-padding">
+                <div class="p-grid">
+                  <div class="p-col-6 no-padding">
+                    <div class="p-grid">
+                      <div class="1st-email-registration p-col-4">
+                        <span> {{ '1st Email Admission' | translate }} </span>
+                      </div>
+                      <span style="padding: 0.5em">:</span>
+                      <div class="p-col">
+                        <span>
+                          {{ registrationData?.announcement_email ? registrationData?.announcement_email : '-' }}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="p-col-6 no-padding">
+                    <div class="p-grid">
+                      <div class="registration-profile p-col-5">
+                        <span> {{ 'AdmissionFollowUp.Down payment' | translate }} </span>
+                      </div>
+                      <span style="padding: 0.5em">:</span>
+                      <div class="p-col">
+                        <span *ngIf="registrationData?.registration_profile?.discount_on_full_rate === 100 && !registrationFee && !registrationData?.billing_id?.deposit">
+                          {{ 'None' | translate }}
+                        </span>
+                        <span *ngIf="registrationData?.registration_profile?.discount_on_full_rate === 100 && !registrationFee && registrationData?.billing_id?.deposit">
+                          {{ registrationData?.billing_id?.deposit }}
+                              EUR - {{ renderTooltipStatusDP(registrationData) | translate }}
+                        </span>
+                        <span *ngIf="registrationData?.registration_profile?.discount_on_full_rate !== 100 || registrationFee">
+                          <span *ngIf="registrationData?.registration_profile?.is_down_payment === 'no'">
+                            {{ 'None' | translate }}
+                          </span>
+                          <span *ngIf="registrationData?.registration_profile?.is_down_payment !== 'no'">
+                            <ng-container *ngIf="registrationData?.billing_id?.deposit >= 0 && registrationData?.method_of_payment !== 'avoir' && registrationData?.payment_method !== 'avoir'">
+                              {{ registrationData?.billing_id?.deposit }}
+                              EUR - {{ renderTooltipStatusDP(registrationData) | translate }}
+                            </ng-container>
+                            <ng-container *ngIf="registrationData?.billing_id?.deposit === 0 && registrationData?.method_of_payment === 'avoir' && registrationData?.payment_method === 'avoir'">
+                              {{ 'None' | translate }}
+                            </ng-container>
+                          </span>
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="p-col-12 no-padding">
+                <div class="p-grid">
+                  <div class="p-col-6 no-padding">
+                    <div class="p-grid">
+                      <div class="registration-status p-col-4">
+                        <span>
+                          {{
+                            registrationData?.readmission_status !== null
+                              ? ('Readmission status' | translate)
+                              : ('Registration status' | translate)
+                          }}
+                        </span>
+                      </div>
+                      <span style="padding: 0.5em">:</span>
+                      <div class="p-col">
+                        <span>
+                          {{ registrationData?.candidate_admission_status | translate }}
+                          {{
+                            getRegistrationDate(registrationData) !== '-'
+                              ? ('056_ES.FAILURE_TITLE.AT' | translate) + ' ' + getRegistrationDate(registrationData)
+                              : ''
+                          }}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="p-col-6 no-padding">
+                    <div class="p-grid">
+                      <div class="registration-profile p-col-5">
+                        <span> {{ 'School Contract' | translate }} </span>
+                      </div>
+                      <span style="padding: 0.5em">:</span>
+                      <div class="p-col">
+                        <!-- <ng-container *ngIf="registrationData?.school_contract_pdf_link">
+                          <button
+                            mat-icon-button
+                            [matTooltipDisabled]="false"
+                            class="margin-right-button"
+                            matTooltip="{{ 'School Contract' | translate }}"
+                            (click)="viewPDF(registrationData?.school_contract_pdf_link)"
+                          >
+                            <mat-icon class="mat-icon-status">description</mat-icon>
+                          </button>
+                        </ng-container>
+                        <ng-container *ngIf="!registrationData?.school_contract_pdf_link">
+                          <span>-</span>
+                        </ng-container> -->
+                        <ng-container
+                          *ngIf="
+                            !isCandidateFC &&
+                            registrationData?.candidate_admission_status !== 'admitted' &&
+                            registrationData?.candidate_admission_status !== 'admission_in_progress' &&
+                            registrationData?.signature !== 'not_done'
+                          "
+                        >
+                          <button
+                            mat-icon-button
+                            [matTooltipDisabled]="false"
+                            class="margin-right-button"
+                            matTooltip="{{ 'School Contract' | translate }}"
+                            (click)="exportPDF()"
+                          >
+                            <mat-icon class="mat-icon-status">description</mat-icon>
+                          </button>
+                        </ng-container>
+                        <ng-container
+                          *ngIf="
+                            (!isCandidateFC &&
+                              (registrationData?.candidate_admission_status === 'admitted' ||
+                                registrationData?.candidate_admission_status === 'admission_in_progress')) ||
+                            registrationData?.signature === 'not_done' ||
+                            (isCandidateFC && registrationData?.signature === 'not_done')
+                          "
+                        >
+                          <span>-</span>
+                        </ng-container>
+                        <ng-container *ngIf="isCandidateFC && registrationData?.signature !== 'not_done'">
+                          <button
+                            mat-icon-button
+                            [matTooltipDisabled]="false"
+                            class="margin-right-button"
+                            matTooltip="{{ 'School Contract' | translate }}"
+                            (click)="exportPDF()"
+                          >
+                            <mat-icon class="mat-icon-status">description</mat-icon>
+                          </button>
+                        </ng-container>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="p-col-12 no-padding">
+                <div class="p-grid">
+                  <div class="p-col-6 no-padding">
+                    <div class="p-grid">
+                      <div class="registration-form p-col-4">
+                        <span>
+                          {{ registrationData?.readmission_status ? ('Readmission form' | translate) : ('Registration form' | translate) }}
+                        </span>
+                      </div>
+                      <span style="padding: 0.5em">:</span>
+                      <div class="p-col">
+                        <ng-container *ngIf="hideRegistrationForm">
+                          <span>-</span>
+                        </ng-container>
+                        <ng-container *ngIf="!hideRegistrationForm">
+                          <button
+                            mat-icon-button
+                            [matTooltipDisabled]="false"
+                            class="margin-right-button"
+                            matTooltip="{{
+                              registrationData?.readmission_status ? ('Readmission form' | translate) : ('Registration form' | translate)
+                            }}"
+                            (click)="viewAdmissionFile(registrationData?._id)"
+                          >
+                            <mat-icon class="mat-icon-status">description</mat-icon>
+                          </button>
+                        </ng-container>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="p-col-6 no-padding">
+                    <div class="p-grid">
+                      <div class="registration-profile p-col-5">
+                        <span> {{ 'jury_decision' | translate }} </span>
+                      </div>
+                      <span style="padding: 0.5em">:</span>
+                      <div class="p-col">{{ registrationData?.jury_decision ? (registrationData?.jury_decision | translate) : '-' }}</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="p-col-12 no-padding">
+                <div class="p-grid">
+                  <div class="p-col-6 no-padding">
+                    <div class="p-grid">
+                      <div class="registration-form p-col-4">
+                        <span>
+                          {{
+                            registrationData?.readmission_status !== null
+                              ? ('Readmission Certificate' | translate)
+                              : ('Registration Certificate' | translate)
+                          }}
+                        </span>
+                      </div>
+                      <span style="padding: 0.5em">:</span>
+                      <div class="p-col">
+                        <ng-container *ngIf="!registrationData?.registration_certificate">
+                          <span>-</span>
+                        </ng-container>
+                        <ng-container *ngIf="registrationData?.registration_certificate">
+                          <button
+                            mat-icon-button
+                            [matTooltipDisabled]="false"
+                            class="margin-right-button"
+                            matTooltip="{{
+                              registrationData?.readmission_status !== null
+                                ? ('Readmission Certificate' | translate)
+                                : ('Registration Certificate' | translate)
+                            }}"
+                            (click)="viewPDF(registrationData?.registration_certificate)"
+                          >
+                            <mat-icon class="mat-icon-status">description</mat-icon>
+                          </button>
+                        </ng-container>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="p-col-6 no-padding">
+                    <div class="p-grid">
+                      <div class="registration-profile p-col-5">
+                        <span> {{ 'School contract amendment student card' | translate }} </span>
+                      </div>
+                      <span style="padding: 0.5em">:</span>
+                      <div class="p-col">
+                        <ng-container *ngIf="registrationData?.current_school_contract_amendment_form?.form_status === 'done'">
+                          <button
+                            mat-icon-button
+                            [matTooltipDisabled]="false"
+                            class="margin-right-button"
+                            matTooltip="{{ registrationData?.current_school_contract_amendment_form?.school_amendment_pdf_name }}"
+                            (click)="exportPDFAmendement()"
+                          >
+                            <mat-icon class="mat-icon-status">description</mat-icon>
+                          </button>
+                        </ng-container>
+
+                        <ng-container *ngIf="registrationData?.current_school_contract_amendment_form?.form_status !== 'done'">
+                          <span>-</span>
+                        </ng-container>
+                      </div>
+                    </div>
+                  </div> 
+
+                  <div class="p-col-6 no-padding">
+                    <div class="p-grid">
+                      <div class="registration-profile p-col-4">
+                        <span> {{ 'Reinscription Yes / No' | translate }} </span>
+                      </div>
+                      <span style="padding: 0.5em">:</span>
+                      <div class="p-col">
+                        <ng-container *ngIf="registrationData?.reinscription_yes_no?.answer_label">
+                          {{registrationData?.reinscription_yes_no?.answer_label}}
+                        </ng-container>
+
+                        <ng-container *ngIf="!registrationData?.reinscription_yes_no?.answer_label">
+                          <span>-</span>
+                        </ng-container>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- *************** field for internship / exchange should be here -->
+                  <!-- *************** a line break so field Reason No Readmission always in the left side -->
+                  <div class="p-col-12 p-nogutter p-col-nogutter"></div>
+                  <!-- *************** remove the line break when you add field internship / exchange -->
+
+                  <div class="p-col-6 no-padding" *ngIf="registrationData?.reinscription_yes_no?.is_answer_yes === false">
+                    <div class="p-grid">
+                      <div class="registration-profile p-col-4">
+                        <span> {{ 'Reason no reinscription' | translate }} </span>
+                      </div>
+                      <span style="padding: 0.5em">:</span>
+                      <div class="p-col">
+                        <ng-container *ngIf="registrationData?.reason_no_reinscription">
+                          {{registrationData?.reason_no_reinscription}}
+                        </ng-container>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- *************** a line break so field CVEC always in the left side -->
+                  <div class="p-col-12 p-nogutter p-col-nogutter"></div>
+
+                  <div class="p-col-6 no-padding">
+                    <div class="p-grid p-align-baseline">
+                      <div class="registration-profile p-col-4">
+                        <span> {{ 'CVEC Number' | translate }} </span>
+                      </div>
+                      <span style="padding: 0.5em">:</span>
+                      <div class="p-col">
+                        <mat-form-field class="w-80">
+                          <input matInput type="text" formControlName="cvec_number" />
+                        </mat-form-field>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="p-col-6 no-padding">
+                    <div class="p-grid p-align-baseline">
+                      <div class="registration-profile p-col-5">
+                        <span> {{ 'INE Number' | translate }} </span>
+                      </div>
+                      <span style="padding: 0.5em">:</span>
+                      <div class="p-col">
+                        <mat-form-field class="w-80">
+                          <input matInput type="text" formControlName="ine_number" />
+                        </mat-form-field>
+                      </div>
+                    </div>
+                  </div> 
+                </div>
+              </div>
+            </ng-container>
+          </div>
+        </div>
+      </mat-expansion-panel>
+    </mat-accordion>
+  </div>
+  <div class="mrgn-t-sm" *ngFor="let sequence of scholarSeasonData?.student_id?.program_sequence_ids">
+    <ng-container *ngIf="sequence?.program_id?._id === scholarSeasonData?.intake_channel?._id">
+      <mat-accordion>
+        <mat-expansion-panel>
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              <h4 style="color: white; align-self: center; margin: 0px">
+                {{ composeSequencePanelTitle(sequence) }}
+              </h4>
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+          <div class="p-grid panel-divider pad-y-md">
+            <ng-container>
+              <div class="p-col-12 mat-text-accent font-bold">
+                {{ 'Class' | translate }}: {{ getAssignedClassFromSequence(sequence)?.name || '-' }}
+              </div>
+              <div class="p-col-12">
+                <div class="p-grid p-dir-col pad-x-none" style="max-height: 360px">
+                  <ng-container *ngFor="let module of getAssignedClassFromSequence(sequence)?.program_sequence_id?.program_modules_id">
+                    <div class="pad-all-xs" style="max-width: 20%" *ngFor="let subject of module?.program_subjects_id">
+                      {{ subject?.name }}
+                    </div>
+                  </ng-container>
+                </div>
+              </div>
+            </ng-container>
+          </div>
+        </mat-expansion-panel>
+      </mat-accordion>
+    </ng-container>
+  </div>
+</div>

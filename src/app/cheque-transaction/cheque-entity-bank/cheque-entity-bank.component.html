@@ -1,0 +1,140 @@
+<div class="p-grid" style="margin-bottom: 5px; border-bottom: 1px solid #4e4e4e">
+  <div class="p-col-12" style="padding-left: 10px">
+    <div style="width: 20px; float: left; padding: 4px 0px 0px 0px; margin-right: 10px">
+      <span><mat-icon style="font-size: 16px">account_balance</mat-icon></span>
+    </div>
+    <div>
+      <span class="titleImport">{{ 'Entity & Bank' | translate }}</span>
+      <button
+        mat-button
+        style="
+          margin-left: 10px !important;
+          line-height: 16px;
+          margin: 0px;
+          padding: 0px !important;
+        "
+        [matTooltip]="'Tutorial for this module' | translate"
+        (click)="toggleSidebar()"
+      >
+      <img style="font-size: 16px; width: 65px; position: relative" [src]="tutorialIcon" />
+        <!-- <mat-icon style="font-size: 16px; width: 16px">help</mat-icon> -->
+      </button>
+    </div>
+  </div>
+</div>
+<div class="p-grid">
+  <div class="p-col-12" style="padding-left: 0px; padding-right: 0px">
+    <!-- <ng-container *ngIf="isWaitingForResponse"> -->
+    <div *ngIf="isWaitingForResponse" class="p-col-12" style="text-align: center !important; display: contents">
+      <div class="center-spinner spinner-wrapper">
+        <mat-spinner color="accent"></mat-spinner>
+      </div>
+    </div>
+    <!-- </ng-container> -->
+
+    <mat-card>
+      <form [formGroup]="importForm">
+        <div class="p-grid">
+          <div class="p-col-7">
+            <div class="p-grid baseline">
+              <mat-label style="width: 33%">{{ 'Scholar Season' | translate }}*</mat-label>
+              <ng-select
+                style="width: 67%"
+                class="mrgn-btn"
+                [items]="scholars"
+                bindLabel="scholar_season"
+                bindValue="_id"
+                placeholder="{{ 'Scholar Season' | translate }}*"
+                formControlName="scholar_season_id"
+                (change)="getBillingEntities()"
+                (clear)="onScholarClear()"
+              >
+              </ng-select>
+            </div>
+          </div>
+        </div>
+
+        <div class="p-grid">
+          <div class="p-col-7">
+            <div class="p-grid baseline">
+              <mat-label style="width: 33%">{{ 'Entity of Billing' | translate }}*</mat-label>
+              <ng-select
+                style="width: 67%"
+                class="mrgn-btn"
+                [items]="billingEntities"
+                bindLabel="legal_entity_name"
+                bindValue="legal_entity_name"
+                placeholder="{{ 'Entity of Billing' | translate }}*"
+                formControlName="billing_entity"
+                [disabled]="!importForm?.get('scholar_season_id')?.value || !billingEntities.length"
+                (change)="getDataBank($event)"
+              >
+              </ng-select>
+            </div>
+          </div>
+        </div>
+
+        <div class="p-grid">
+          <div class="p-col-7">
+            <div class="p-grid baseline">
+              <mat-label style="width: 33%">{{ 'Bank' | translate }}*</mat-label>
+              <ng-select
+                style="width: 67%"
+                class="mrgn-btn"
+                [items]="bank"
+                placeholder="{{ 'Bank' | translate }}*"
+                formControlName="bank_name"
+                [disabled]="!importForm?.get('scholar_season_id')?.value || isSchoolOn"
+              >
+              </ng-select>
+            </div>
+          </div>
+        </div>
+
+        <div class="p-grid">
+          <div class="p-col-7">
+            <div class="p-grid baseline">
+              <mat-label style="width: 33%">{{ 'Date of Banking' | translate }}</mat-label>
+              <mat-form-field style="width: 67%" floatLabel="never">
+                <input
+                  matInput
+                  (click)="myDatepickers.open()"
+                  readonly
+                  placeholder="{{ 'Date of Banking' | translate }}"
+                  formControlName="date"
+                  [matDatepicker]="myDatepickers"
+                />
+                <mat-datepicker-toggle matSuffix [for]="myDatepickers"></mat-datepicker-toggle>
+                <mat-datepicker #myDatepickers></mat-datepicker>
+                <mat-error>{{ 'This field is required' | translate }}</mat-error>
+              </mat-form-field>
+            </div>
+          </div>
+        </div>
+
+        <div class="p-grid">
+          <div class="p-col-7">
+            <div class="p-grid baseline">
+              <mat-label style="width: 33%">{{ 'Slip Number' | translate }}</mat-label>
+              <mat-form-field style="width: 67%" floatLabel="never">
+                <input matInput placeholder="{{ 'Slip Number' | translate }}" formControlName="bordereau_number" />
+              </mat-form-field>
+            </div>
+          </div>
+        </div>
+      </form>
+    </mat-card>
+  </div>
+</div>
+<div class="p-grid mrgn-t-sm">
+  <div class="p-col-12" style="text-align: right; padding: 0px">
+    <button mat-raised-button color="warn" (click)="resetImport()">
+      <mat-icon class="mat-icon-default">cancel</mat-icon>
+      {{ 'CANCEL' | translate }}
+    </button>
+    <button mat-raised-button color="accent" (click)="submitImport()" [disabled]="importForm.invalid" class="margin-right-0">
+      <!-- <mat-icon class="mat-icon-default">cloud_upload</mat-icon> -->
+      {{ 'Next' | translate }}
+    </button>
+  </div>
+</div>

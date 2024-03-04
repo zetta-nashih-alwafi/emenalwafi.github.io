@@ -1,0 +1,31 @@
+@import '~assets/scss/theme/admtc.variables';
+@import '~assets/scss/theme/admtc';
+
+h3 {
+  margin: 0px !important;
+}
+
+.dialogTitle {
+  display: inline-block;
+}
+
+.dialogTitleWrapper {
+  color: black;
+  margin-bottom: 5px;
+}
+
+.dialog-border {
+  border-bottom: 1px solid black;
+  margin-bottom: 15px;
+}
+
+.acad-title {
+  padding: 0px;
+  margin-right: 25px;
+}
+
+.w-65 {
+  float: right;
+  position: relative;
+  right: -15px;
+}

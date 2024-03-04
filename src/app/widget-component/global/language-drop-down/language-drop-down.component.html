@@ -1,0 +1,16 @@
+<div class="language-dropdown-wrap">
+	<button class="tw-transition-colors hover:tw-bg-app-tertiary/10 tw-p-2 tw-rounded-full" [matMenuTriggerFor]="menu_activator">
+	  <img class="my-2" width="26" height="26" [src]="selectImage">
+	</button>
+   <mat-menu #menu_activator>
+         	<div *ngFor="let lang of translate.getLangs()">
+               <div *ngFor="let language of langArray">
+                  <div *ngIf="language.value == lang">
+                     <a class="tw-flex tw-items-center tw-gap-4 tw-px-4 tw-py-2" href="javascript:void(0);" (click)="setLang(lang)">
+                        <img width="25" height="25" src="{{language.img}}">{{language.name | translate}}
+                     </a>
+                  </div>
+               </div>
+            </div>
+   </mat-menu>
+</div>

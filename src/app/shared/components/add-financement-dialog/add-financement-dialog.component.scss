@@ -1,0 +1,98 @@
+.form-upload {
+  display: flex;
+  align-items: center;
+  p {
+    margin: 0;
+  }
+  button {
+    margin-left: 1rem;
+  }
+}
+
+.header-text {
+  margin-left: 5px;
+}
+
+p {
+  margin: 0;
+}
+
+section {
+  padding: 1rem;
+}
+
+:host ::ng-deep .mat-form-field {
+  top: -15px;
+}
+
+.head {
+  margin-top: 1rem;
+}
+
+.row {
+  margin-top: -32px;
+}
+
+div.input-siret {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+div.verify-siret {
+  padding-top: 0;
+  padding-bottom: 0px;
+}
+
+.display-none {
+  display: none;
+}
+
+.ng-select {
+  margin-bottom: 30px;
+  margin-left: 5px;
+  margin-top: 0;
+}
+
+.error {
+  color: red;
+}
+.valid {
+  color: black !important;
+}
+.mat-dialog-actions {
+  padding: 1rem;
+  border-top: 0.1px solid rgba($color: #000000, $alpha: 0.1);
+}
+
+.document-info {
+  .mat-icon {
+    display: inline-block;
+  }
+  .document-name {
+    font-size: 0.9rem;
+    color: rgba($color: #000000, $alpha: 0.8);
+  }
+}
+
+:host ::ng-deep {
+  .mat-dialog-content {
+    margin: 0px !important;
+    padding: 0px !important;
+    max-height: 78vh;
+  }
+}
+
+::ng-deep.filterPanel {
+  margin: 28px 0 22px 0 !important;
+}
+
+::ng-deep.custom-matselect-dropdown.mat-select-panel {
+  max-width: fit-content !important;
+}
+
+::ng-deep.custom-ngselect-content {
+  .ng-dropdown-panel{
+    max-width: fit-content !important;
+    width: auto !important;
+  }
+}

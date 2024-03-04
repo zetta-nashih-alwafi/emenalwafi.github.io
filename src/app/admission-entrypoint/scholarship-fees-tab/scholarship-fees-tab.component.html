@@ -1,0 +1,134 @@
+<div class="top-space">
+  <table mat-table matSort [dataSource]="dataSource" (matSortChange)="sortData($event)" class="mat-elevation-z8">
+    <!-- ROW RESET START -->
+    <ng-container matColumnDef="reset">
+      <th mat-header-cell *matHeaderCellDef colspan="7" class="action-header-column text-right">
+        <div class="p-grid">
+          <div class="p-col-12 text-right">
+            <button mat-raised-button color="primary" matTooltip="{{ 'EXPORT' | translate }}">
+              <mat-icon svgIcon="file-excel" class="mat-icon-svgIcon"></mat-icon>
+              {{ 'Export' | translate }}
+            </button>
+            <button mat-raised-button color="primary" (click)="resetTable()" matTooltip="{{ 'Reset Filter' | translate }}">
+              <mat-icon svgIcon="loop" class="mat-icon-svgIcon"></mat-icon>
+              {{ 'RESET' | translate }}
+            </button>
+            <button
+              mat-raised-button
+              (click)="addProfileRateDialog()"
+              matTooltip="{{ 'ADMISSION.TABLE_SCHOLARSHIP_FEES.Add a School Fees' | translate }}"
+              color="accent"
+            >
+              <mat-icon class="mat-icon-svgIcon" svgIcon="plus">plus</mat-icon>
+              {{ 'ADMISSION.TABLE_SCHOLARSHIP_FEES.Add a School Fees' | translate }}
+            </button>
+          </div>
+        </div>
+      </th>
+    </ng-container>
+    <!-- ROW RESET END -->
+    <!---ROW FILTER START-->
+    <ng-container matColumnDef="scholarshipFeesFilter">
+      <th mat-header-cell *matHeaderCellDef>
+        <mat-form-field>
+          <input matInput class="form-field" [formControl]="scholarshipFeesFilter" placeholder="{{ 'search' | translate }}" />
+        </mat-form-field>
+      </th>
+    </ng-container>
+    <ng-container matColumnDef="descriptionFilter">
+      <th mat-header-cell *matHeaderCellDef>
+        <mat-form-field>
+          <input matInput class="form-field" [formControl]="descriptionFilter" placeholder="{{ 'search' | translate }}" />
+        </mat-form-field>
+      </th>
+    </ng-container>
+    <ng-container matColumnDef="availablePaymentModesFilter">
+      <th mat-header-cell *matHeaderCellDef>
+        <mat-form-field>
+          <input matInput class="form-field" [formControl]="availablePaymentModesFilter" placeholder="{{ 'search' | translate }}" />
+        </mat-form-field>
+      </th>
+    </ng-container>
+    <ng-container matColumnDef="actionFilter">
+      <th mat-header-cell *matHeaderCellDef></th>
+    </ng-container>
+    <!--ROW FILTER END-->
+    <!-- ROW HEADER AND CONTENT START -->
+    <ng-container matColumnDef="scholarshipFees">
+      <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'ADMISSION.TABLE_SCHOLARSHIP_FEES.Scholarship Fees' | translate }}">
+        <h5 mat-sort-header="name">{{ 'ADMISSION.TABLE_SCHOLARSHIP_FEES.Scholarship Fees' | translate }}</h5>
+      </th>
+      <td mat-cell *matCellDef="let element">
+        {{ element.name }}
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="description">
+      <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'Description' | translate }}">
+        <h5 mat-sort-header="description">{{ 'Description' | translate }}</h5>
+      </th>
+      <td mat-cell *matCellDef="let element">
+        {{ element.description }}
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="availablePaymentModes">
+      <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'ADMISSION.TABLE_SCHOLARSHIP_FEES.Possible Payment modes' | translate }}">
+        <h5 mat-sort-header="payment_mode">{{ 'ADMISSION.TABLE_SCHOLARSHIP_FEES.Possible Payment modes' | translate }}</h5>
+      </th>
+      <td mat-cell *matCellDef="let element" [matTooltip]="renderTooltipEntity(element.payment_modes)">
+        <ng-container *ngFor="let el of element.payment_modes">
+          <span class="tags">{{ el.name }}</span>
+        </ng-container>
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="action">
+      <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'Action' | translate }}">
+        <h5>{{ 'Action' | translate }}</h5>
+      </th>
+      <td mat-cell *matCellDef="let element">
+        <button
+          (click)="editProfileRateDialog(element)"
+          mat-icon-button
+          class="margin-right-button"
+          matTooltip="{{ 'Edit' | translate }}"
+          matTooltipPosition="above"
+        >
+          <mat-icon>edit</mat-icon>
+        </button>
+        <button
+          mat-icon-button
+          (click)="deleteProfileRate(element)"
+          class="margin-right-button"
+          matTooltip="{{ 'Delete' | translate }}"
+          matTooltipPosition="above"
+        >
+          <mat-icon>close</mat-icon>
+        </button>
+      </td>
+    </ng-container>
+    <!-- ROW HEADER AND CONTENT END -->
+    <ng-container matColumnDef="loading">
+      <th mat-header-cell *matHeaderCellDef colspan="7" class="text-center">
+        <div class="center-spinner">
+          <mat-spinner color="accent"></mat-spinner>
+        </div>
+      </th>
+    </ng-container>
+    <tr mat-header-row *matHeaderRowDef="['reset']"></tr>
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-header-row *matHeaderRowDef="filterColumns"></tr>
+    <tr mat-header-row *matHeaderRowDef="['loading']" [hidden]="!isWaitingForResponse"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns" [hidden]="isWaitingForResponse"></tr>
+  </table>
+  <div *ngIf="noData | async" class="no-records">
+    {{ 'ADMISSION.TABLE_SCHOLARSHIP_FEES.No record of Scholarship Fees' | translate }}
+  </div>
+  <div [ngClass]="{ hide: noData | async }">
+    <mat-paginator
+      [ngClass]="{ 'hide-pagination-buttons': intakeChannelCount <= 10 }"
+      [length]="scholarshipFeesCount"
+      [hidePageSize]="true"
+      [pageSize]="[10]"
+      showFirstLastButtons
+    ></mat-paginator>
+  </div>
+</div>

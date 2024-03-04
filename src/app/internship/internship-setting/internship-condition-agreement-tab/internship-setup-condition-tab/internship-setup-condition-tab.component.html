@@ -1,0 +1,147 @@
+<div class="p-grid">
+  <div class="p-col-12">
+    <div class="p-grid">
+      <div class="p-col-6 no-padding">
+        <p>{{ 'Conditions Agreement for school' | translate }} {{ schoolSelected }}</p>
+      </div>
+      <div class="button-action p-col-6">
+        <button mat-raised-button color="warn" (click)="goToCancleConditionAgreement()" matTooltip="{{ 'Cancel' | translate }}">
+          {{ 'Cancel' | translate }}
+        </button>
+        <button mat-raised-button color="accent" (click)="saveConditionAgreement()" matTooltip="{{ 'Save' | translate }}" [disabled]="conditionForm?.invalid">
+          {{ 'Save' | translate }}
+        </button>
+      </div>
+    </div>
+    <div class="p-grid">
+      <div class="p-col-12 no-padding dblock">
+        <div class="p-col-fixed dblock" style="width: 215px">
+          <p>{{ 'Select for which campus' | translate }} :</p>
+        </div>
+        <div class="p-col-8 dblock">
+          <div class="class-scholar">
+            <ng-select
+              [appendTo]="'body'"
+              class="mrgn-btn"
+              [items]="campusList"
+              [multiple]="false"
+              placeholder="{{ 'Campus' | translate }}"
+              [formControl]="formCampus"
+              (change)="selectCampus($event)"
+            >
+            </ng-select>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="p-grid">
+      <div class="p-col-12">
+        <span class="section-campus" *ngFor="let campuses of selectedCampusList; index as i">
+          <span class="text-title">{{ campuses }}</span>
+          <span class="delete-icon" (click)="deleteCampus(i)"><mat-icon class="delete">close</mat-icon></span>
+        </span>
+      </div>
+    </div>
+    <div class="p-grid">
+      <div class="p-col-12 no-padding dblock">
+        <div class="p-col-fixed dblock" style="width: 215px">
+          <p>{{ 'Select for which level' | translate }} :</p>
+        </div>
+        <div class="p-col-8 dblock">
+          <div class="class-scholar">
+            <ng-container *ngIf="campusSelected">
+              <!-- <input readonly placeholder="{{ 'Level' | translate }}"> -->
+              <ng-select
+                [appendTo]="'body'"
+                class="mrgn-btn"
+                [multiple]="false"
+                placeholder="{{ 'Level' | translate }}"
+                [formControl]="formLevel"
+                (change)="selectLevel($event)"
+                [disabled]="true"
+              >
+              </ng-select>
+            </ng-container>
+            <ng-container *ngIf="!campusSelected">
+              <ng-select
+                [appendTo]="'body'"
+                class="mrgn-btn"
+                [items]="levelList"
+                [multiple]="false"
+                placeholder="{{ 'Level' | translate }}"
+                [formControl]="formLevel"
+                (change)="selectLevel($event)"
+              >
+              </ng-select>
+            </ng-container>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="p-grid">
+      <div class="p-col-12">
+        <span class="section-level" *ngFor="let levels of selectedLevelList; index as i">
+          <span class="text-title">{{ levels }}</span>
+          <span class="delete-icon" (click)="deleteLevel(i)"><mat-icon class="delete">close</mat-icon></span>
+        </span>
+      </div>
+    </div>
+    <div class="p-grid">
+      <div class="p-col-12 no-padding">
+        <div class="p-col-12">
+          <p>{{ 'Conditions Agreement' | translate }} :</p>
+        </div>
+        <div class="p-grid" *ngIf="conditionForm && conditionForm?.controls">
+          <div class="p-col-12 no-padding">
+            <div class="ckeditor" [formGroup]="conditionForm">
+              <button mat-icon-button (click)="recordNote()" class="margin-right-button btn-mic">
+                <mat-icon class="mic-style">keyboard_voice</mat-icon>
+              </button>
+              <ckeditor
+                #editor
+                [editor]="Editor"
+                [formControl]="conditionForm?.controls['condition_agreement']"
+                (ready)="onReady($event)"
+                [config]="{
+                  toolbar: [
+                    'heading',
+                    '|',
+                    'fontSize',
+                    'fontFamily',
+                    'fontColor',
+                    'fontBackgroundColor',
+                    '|',
+                    'bold',
+                    'italic',
+                    'underline',
+                    'strikethrough',
+                    '|',
+                    'alignment',
+                    '|',
+                    'numberedList',
+                    'bulletedList',
+                    '|',
+                    'indent',
+                    'outdent',
+                    '|',
+                    'link',
+                    'blockQuote',
+                    'imageUpload',
+                    'insertTable',
+                    'pageBreak',
+                    '|',
+                    'undo',
+                    'redo'
+                  ],
+                  link: {
+                    addTargetToExternalLinks: true
+                  }
+                }"
+              ></ckeditor>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

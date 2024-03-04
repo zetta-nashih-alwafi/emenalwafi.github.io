@@ -1,0 +1,805 @@
+<form [formGroup]="contractForm">
+  <div class="p-grid header-form">
+    <div class="p-col-6">
+      {{ 'CONTRACT_MANAGEMENT.Contract Process' | translate }}
+    </div>
+    <div class="p-col-6" align="end">
+      <button
+        mat-raised-button
+        color="warn"
+        type="button"
+        [routerLink]="fromFollowUp ? ['/teacher-management/follow-up'] : ['/teacher-contract']"
+        matTooltip="{{ 'CANCEL' | translate }}"
+      >
+        {{ 'CANCEL' | translate }}
+      </button>
+      <button
+        mat-raised-button
+        matTooltip="{{ 'SAVE' | translate }}"
+        [disabled]="
+          (!dataContractProcess && !this.newContract && contractForm.invalid) ||
+          (contractForm.invalid && this.newContract) ||
+          (dataContractProcess && !this.newContract && contractForm.invalid)
+        "
+        color="accent"
+        type="submit"
+        (click)="onSave()"
+      >
+        {{ 'SAVE' | translate }}
+      </button>
+      <button
+        matTooltip="{{ 'CONTRACT_MANAGEMENT.Send the Form' | translate }} "
+        style="padding: 0px 7px !important"
+        mat-raised-button
+        color="accent"
+        (click)="onSendingPreContract()"
+      >
+        <mat-icon>forward_to_inbox</mat-icon>
+        {{ 'CONTRACT_MANAGEMENT.Send the Form' | translate }}
+      </button>
+    </div>
+  </div>
+  <div class="p-grid">
+    <div class="p-col-6">
+      <label *ngIf="contractForm.get('civility').disable && !newContract" class="read" style="margin-right: 1em">
+        {{ 'Civility' | translate }} *
+      </label>
+      <label
+        *ngIf="newContract"
+        [ngStyle]="{ color: contractForm.get('civility').hasError('required') && contractForm.get('civility').touched ? 'red' : 'white' }"
+        style="margin-right: 1em"
+      >
+        {{ 'Civility' | translate }} *
+      </label>
+      <div fxFlex="65">
+        <mat-radio-group value="MR" formControlName="civility">
+          <mat-radio-button value="MR" style="padding-right: 1rem">{{ 'Mr' | translate }}</mat-radio-button>
+          <mat-radio-button value="MRS" style="padding-right: 1rem">{{ 'Mrs' | translate }}</mat-radio-button>
+          <mat-radio-button value="neutral">{{ 'Neutral' | translate }}</mat-radio-button>
+        </mat-radio-group>
+        <mat-error *ngIf="contractForm.get('civility').hasError('required') && contractForm.get('civility').touched">{{
+          'This field is required' | translate
+        }}</mat-error>
+      </div>
+    </div>
+  </div>
+  <div class="p-grid">
+    <div class="p-col-3">
+      <mat-form-field>
+        <input matInput formControlName="first_name" placeholder="{{ 'First Name' | translate }}" />
+        <mat-error *ngIf="contractForm.get('first_name').hasError('required')">{{ 'This field is required' | translate }}</mat-error>
+      </mat-form-field>
+    </div>
+    <div class="p-col-3">
+      <mat-form-field>
+        <input matInput formControlName="last_name" placeholder="{{ 'Last Name' | translate }}" />
+        <mat-error *ngIf="contractForm.get('last_name').hasError('required')">{{ 'This field is required' | translate }}</mat-error>
+      </mat-form-field>
+    </div>
+    <div class="p-col-3">
+      <mat-form-field>
+        <input matInput formControlName="email" placeholder="{{ 'e-mail' | translate }}" />
+        <mat-error *ngIf="contractForm.get('email').hasError('email')">
+          {{ 'Invalid email format' | translate }}
+        </mat-error>
+        <mat-error *ngIf="contractForm.get('email').hasError('required')">{{ 'This field is required' | translate }}</mat-error>
+      </mat-form-field>
+    </div>
+    <div class="p-col-3">
+      <div class="p-grid">
+        <div class="phone-number p-col-12 no-padding-y p-grid" style="position: relative">
+          <mat-label class="label-for-phone">{{ 'ADD_CONTRACT_DIALOG.Phone Number' | translate }} <span *ngIf="contractForm.get('portable_phone').value || contractForm.get('phone_number_indicative').value">*</span></mat-label>
+          <div class="phone-number p-col-4">
+            <ng-select
+              [formControl]="dialCodeControl"
+              (change)="selectionDialCode($event)"
+              [clearable]="false"
+              bindLabel="name"
+              [required]="phoneNumberControl?.value"
+              [appendTo]="'body'"
+              class="custom-dropdownpanel-dialcode custom-panel-right"
+            >
+              <ng-template ng-label-tmp let-item="item">
+                <img class="flag-icon-trigger" [src]="flagsIconPath + item?.flagIcon + '.svg'"/>
+                <span *ngIf="item?.flagIcon" class="ml-4">+{{ item?.dialCode }}</span>
+              </ng-template>
+              <ng-option *ngFor="let country of countryCodeList" [value]="country">
+                <ng-container *ngIf="country?.name">
+                  <img class="flag-icon" [src]="flagsIconPath + country?.flagIcon + '.svg'" /> {{ country?.name | translate }} +{{ country?.dialCode }}
+                </ng-container>
+              </ng-option>
+            </ng-select>
+          </div>
+          <div class="phone-number p-col-8">
+            <mat-form-field>
+              <input
+                matInput
+                [formControl]="phoneNumberControl"
+                type="text"
+                [required]="dialCodeControl?.value"
+                pattern="^[0-9]+$"
+                maxlength="13"
+              />
+              <mat-error *ngIf="contractForm.get('portable_phone').hasError('pattern') || phoneNumberControl.hasError('pattern')">{{ 'must contain number only' | translate }}</mat-error>
+            </mat-form-field>
+          </div>
+          <mat-error
+            class="invalid-feedback"
+            *ngIf="
+              (phoneNumberControl.errors &&
+              (phoneNumberControl.dirty || phoneNumberControl.touched)) ||
+              (dialCodeControl.errors &&
+              (dialCodeControl.dirty || dialCodeControl.touched))
+            "
+          >
+            <ng-container *ngIf="phoneNumberControl.hasError('required') || dialCodeControl.hasError('required')">
+              {{ 'This field is required' | translate }}
+            </ng-container>
+          </mat-error>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="p-grid">
+    <div class="p-col-3">
+      <mat-form-field style="padding-top: 6px">
+        <mat-select
+          formControlName="contract_type"
+          placeholder="{{ 'ADD_CONTRACT_DIALOG.Type of Contract' | translate }}"
+          (selectionChange)="typeChange($event.value)"
+          [disableOptionCentering]="true"
+          panelClass="filterPanel"
+        >
+          <mat-option *ngFor="let type of contract_type" value="{{ type }}">{{
+            'ERP_009_TEACHER_CONTRACT.TYPE_OF_CONTRACT.' + type | translate
+          }}</mat-option>
+        </mat-select>
+        <mat-error *ngIf="contractForm.get('contract_type').hasError('required')">{{ 'This field is required' | translate }}</mat-error>
+      </mat-form-field>
+    </div>
+
+    <div class="p-col-3">
+      <mat-form-field class="example-full-width" style="margin-top: 5px">
+        <input
+          readonly
+          matInput
+          formControlName="start_date"
+          (click)="startDatePicker.open()"
+          [matDatepicker]="startDatePicker"
+          placeholder="{{ 'ADD_CONTRACT_DIALOG.Start Date' | translate }}"
+        />
+        <mat-datepicker-toggle matSuffix [for]="startDatePicker" style="margin-right: 5px"></mat-datepicker-toggle>
+        <mat-datepicker #startDatePicker></mat-datepicker>
+        <mat-error *ngIf="contractForm.get('start_date').hasError('required')">{{ 'This field is required' | translate }}</mat-error>
+      </mat-form-field>
+    </div>
+
+    <div class="p-col-3">
+      <mat-form-field class="example-full-width" style="margin-top: 5px">
+        <input
+          readonly
+          matInput
+          formControlName="end_date"
+          (click)="endDatePicker.open()"
+          [matDatepicker]="endDatePicker"
+          placeholder="{{ 'End Date' | translate }}"
+          [min]="contractForm.get('start_date').value"
+          [disabled]="!contractForm.get('start_date').value || isReadOnly"
+        />
+
+        <mat-datepicker-toggle matSuffix [for]="endDatePicker" style="margin-right: 5px"></mat-datepicker-toggle>
+        <mat-datepicker #endDatePicker></mat-datepicker>
+        <mat-error *ngIf="contractForm.get('end_date').hasError('required')">{{ 'This field is required' | translate }}</mat-error>
+      </mat-form-field>
+    </div>
+    <div class="p-col-3 legal-entity" style="margin-bottom: 10px; margin-top: 8px">
+      <label *ngIf="contractForm.get('legal_entity')?.value">{{ 'Legal entity' | translate }}</label>
+      <mat-form-field *ngIf="contractForm.get('legal_entity')?.disable && !newContract">
+        <input matInput [value]="getDataLegal()" disabled />
+      </mat-form-field>
+      <ng-select
+        *ngIf="newContract"
+        aria-required="true"
+        class="mrgn-btn custom-style-ngselect"
+        [items]="legalEntities"
+        bindLabel="legal_entity_name"
+        bindValue="_id"
+        [hideSelected]="true"
+        clearAllText="Clear"
+        [appendTo]="'body'"
+        placeholder="{{ 'Legal Entity' | translate }} *"
+        formControlName="legal_entity"
+        (change)="typeChange(contractForm?.get('contract_type')?.value)"
+      >
+      </ng-select>
+      <mat-error
+        class="err"
+        *ngIf="
+          contractForm.get('legal_entity')?.hasError('required') &&
+          contractForm.get('legal_entity')?.invalid &&
+          contractForm.get('legal_entity')?.touched
+        "
+        >{{ 'This field is required' | translate }}</mat-error
+      >
+    </div>
+  </div>
+
+  <div class="p-grid">
+    <div class="p-col-3">
+      <mat-form-field>
+        <mat-select formControlName="contract_manager" placeholder="{{ 'Contract manager' | translate }}" [disableOptionCentering]="true" panelClass="filterPanel">
+          <mat-option *ngFor="let manager of contract_manage" value="{{ manager?._id }}"
+            >{{ manager?.last_name | uppercase }} {{ manager?.first_name }}
+            {{ manager?.civility && manager?.civility === 'neutral' ? '' : (manager?.civility | translate) }}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="contractForm.get('contract_manager').hasError('required')">{{ 'This field is required' | translate }}</mat-error>
+      </mat-form-field>
+    </div>
+    <div class="p-col-3">
+      <mat-form-field>
+        <mat-select formControlName="schools_id" placeholder="{{ 'Signalement Email' | translate }}" [disableOptionCentering]="true" panelClass="filterPanel" multiple>
+          <mat-option *ngFor="let email of email_sign" value="{{ email?._id }}">{{ email?.signalement_email }}</mat-option>
+        </mat-select>
+        <mat-error *ngIf="contractForm.get('schools_id').hasError('required')">{{ 'This field is required' | translate }}</mat-error>
+      </mat-form-field>
+    </div>
+    <div class="p-col-3">
+      <mat-form-field>
+        <input
+          matInput
+          class="read"
+          formControlName="total_amount"
+          placeholder="{{ 'CONTRACT_PROCESS_FORM.Total Amount' | translate }}"
+          readonly
+        />
+        <mat-error *ngIf="contractForm.get('total_amount').hasError('required')">{{ 'This field is required' | translate }}</mat-error>
+      </mat-form-field>
+    </div>
+    <div class="p-col-3 scholar-season" style="margin-bottom: 10px; margin-top: 4px">
+      <label *ngIf="contractForm.get('scholar_season')?.value">{{ 'Scholar Season' | translate }}</label>
+      <mat-form-field *ngIf="contractForm.get('scholar_season')?.disable && !newContract">
+        <input matInput [value]="getDataScholar()" disabled />
+      </mat-form-field>
+      <ng-select
+        *ngIf="newContract"
+        aria-required="true"
+        class="mrgn-btn custom-style-ngselect"
+        [items]="scholars"
+        bindLabel="scholar_season"
+        bindValue="_id"
+        [hideSelected]="true"
+        clearAllText="Clear"
+        [appendTo]="'body'"
+        placeholder="{{ 'CARDDETAIL.Scholar Season' | translate }} *"
+        formControlName="scholar_season"
+        (change)="filterProgram()"
+      >
+      </ng-select>
+      <mat-error
+        class="err"
+        *ngIf="
+          contractForm?.get('scholar_season')?.hasError('required') &&
+          contractForm?.get('scholar_season')?.invalid &&
+          contractForm?.get('scholar_season')?.touched
+        "
+        >{{ 'This field is required' | translate }}</mat-error
+      >
+    </div>
+  </div>
+
+  <div class="p-grid">
+    <div class="p-col-3" style="padding-bottom: 20px">
+      <label class="float-label label-legal"
+        [style.display]="contractForm.get('legal_representative').value ? 'block' : 'none'">
+        {{ 'Legal Representative' | translate }}*
+      </label>
+      <ng-select
+        #legalSelect
+        aria-required="true"
+        class="mrgn-btn custom-style-ngselect"
+        [hideSelected]="true"
+        clearAllText="Clear"
+        [appendTo]="'body'"
+        [loading]="isLoadingFilter"
+        loadingText="{{ 'Loading' | translate }}"
+        placeholder="{{ 'Legal Representative' | translate }}*"
+        formControlName="legal_representative"
+        [typeahead]="inputLegalRepresent$"
+        [clearable]="false"
+        notFoundText="{{ 'NOT RECORD FOUND' | translate }}"
+      >
+        <!-- <ng-container *ngIf="!isLoadingFilter">
+        </ng-container> -->
+        <ng-option *ngFor="let user of filteredLegalRepresentative | async" [value]="user._id">
+          {{ user?.last_name | uppercase }} {{ user?.first_name }}
+          {{ user?.civility && user?.civility === 'neutral' ? '' : (user?.civility | translate) }}
+        </ng-option>
+      </ng-select>
+      <mat-error
+        style="font-size: 12px"
+        *ngIf="contractForm.get('legal_representative').hasError('required') && contractForm.get('legal_representative').touched"
+        >{{ 'This field is required' | translate }}</mat-error
+      >
+    </div>
+    <div class="p-col-3 padding-field">
+      <mat-form-field>
+        <input
+          matInput
+          [matAutocomplete]="auto"
+          required
+          placeholder="{{ 'Campus' | translate }}"
+          [formControl]="filterCampus"
+          (keyup)="filterDropdown()"
+          [disabled]="contractForm.get('campus_id')?.disable"
+        />
+        <mat-autocomplete #auto="matAutocomplete" [panelWidth]="'fit'">
+          <mat-option *ngFor="let campus of campusDropdown" [value]="campus?.name" (click)="selectCampus(campus?._id)">
+            {{ campus?.name }}
+          </mat-option>
+        </mat-autocomplete>
+        <mat-error *ngIf="filterCampus?.hasError('required') && filterCampus?.touched">{{
+          'This field is required' | translate
+        }}</mat-error>
+      </mat-form-field>
+    </div>
+    <div class="p-col-3 padding-field">
+      <mat-form-field>
+        <input matInput placeholder="{{ 'Level' | translate }}" required formControlName="level_name" />
+        <mat-error
+        *ngIf="contractForm?.get('level_name')?.hasError('required') && contractForm?.get('level_name')?.touched"
+        >{{ 'This field is required' | translate }}</mat-error>  
+      </mat-form-field>
+    </div>
+    <div class="p-col-3 padding-field">
+      <mat-form-field>
+        <input matInput placeholder="{{ 'Echelon' | translate }}" required formControlName="echelon" />
+        <mat-error *ngIf="contractForm?.get('echelon')?.hasError('required') && contractForm?.get('echelon')?.touched">{{
+          'This field is required' | translate
+        }}</mat-error>
+      </mat-form-field>
+    </div>
+  </div>
+
+  <div *ngIf="t != ''" style="margin-top: 10px">
+    <!-- convention form -->
+    <div *ngIf="t == 'convention'" formArrayName="interventions">
+      <div class="p-grid" *ngFor="let intervention of interventionsArray().controls; let index = index">
+        <div class="p-col-6 yellow-border card-row" [formGroupName]="index">
+          <div class="p-grid">
+            <div class="p-col-12" align="end">
+              <button *ngIf="index != 0 && newContract" mat-mini-fab type="button" color="warn" (click)="removeIntervention(index)">
+                <mat-icon>remove</mat-icon>
+              </button>
+            </div>
+          </div>
+          <div class="p-grid">
+            <div class="p-col-6">
+              <mat-form-field>
+                <mat-select
+                  formControlName="type_intervention"
+                  placeholder="{{ 'ADD_CONTRACT_DIALOG.Type of Intervention' | translate }} {{ index + 1 }}*"
+                  [disableOptionCentering]="true" panelClass="filterPanel"
+                >
+                  <mat-option *ngFor="let inter of interventionType" value="{{ inter.value }}">{{
+                    'CONTRACT_PROCESS_FORM.' + inter.name | translate
+                  }}</mat-option>
+                </mat-select>
+                <mat-error *ngIf="interventionsArray().controls[index].get('type_intervention').hasError('required')">{{
+                  'This field is required' | translate
+                }}</mat-error>
+              </mat-form-field>
+            </div>
+          </div>
+
+          <div class="p-grid">
+            <div class="p-col-6" style="margin-bottom: 10px">
+              <mat-form-field *ngIf="interventionsArray().controls[index].get('program')?.disable && !newContract">
+                <input
+                  matInput
+                  placeholder="{{ 'CONTRACT_PROCESS_FORM.Program' | translate }} *"
+                  [value]="getDataPrograms(index)"
+                  disabled
+                />
+              </mat-form-field>
+              <ng-select
+                *ngIf="newContract"
+                aria-required="true"
+                class="mrgn-btn custom-style-ngselect"
+                [items]="programs"
+                bindLabel="program"
+                bindValue="_id"
+                [hideSelected]="true"
+                clearAllText="Clear"
+                [appendTo]="'body'"
+                placeholder="{{ 'CONTRACT_PROCESS_FORM.Program' | translate }} *"
+                formControlName="program"
+                (change)="getSubjectFromProgram($event)"
+              >
+              </ng-select>
+              <mat-error
+                class="err"
+                *ngIf="
+                  interventionsArray()?.controls[index]?.get('program')?.hasError('required') &&
+                  interventionsArray()?.controls[index]?.get('program')?.invalid &&
+                  interventionsArray()?.controls[index]?.get('program')?.touched
+                "
+                >{{ 'This field is required' | translate }}</mat-error
+              >
+            </div>
+            <div class="p-col-6" style="margin-bottom: 10px">
+              <mat-form-field *ngIf="interventionsArray().controls[index].get('subject_id')?.disable && !newContract">
+                <input
+                  matInput
+                  placeholder="{{ 'CONTRACT_PROCESS_FORM.Subject' | translate }} *"
+                  [value]="getDataSubjects(index)"
+                  disabled
+                />
+              </mat-form-field>
+              <ng-select
+                *ngIf="newContract"
+                aria-required="true"
+                class="mrgn-btn custom-style-ngselect"
+                [items]="subjects"
+                bindLabel="name"
+                bindValue="_id"
+                [hideSelected]="true"
+                clearAllText="Clear"
+                [appendTo]="'body'"
+                placeholder="{{ 'CONTRACT_PROCESS_FORM.Subject' | translate }} *"
+                formControlName="subject_id"
+              >
+              </ng-select>
+              <mat-error
+                class="err"
+                *ngIf="
+                  interventionsArray()?.controls[index]?.get('subject_id')?.hasError('required') &&
+                  interventionsArray()?.controls[index]?.get('subject_id')?.invalid &&
+                  interventionsArray()?.controls[index]?.get('subject_id')?.touched
+                "
+                >{{ 'This field is required' | translate }}</mat-error
+              >
+            </div>
+          </div>
+
+          <div class="p-grid">
+            <div class="p-col-6">
+              <mat-form-field>
+                <input
+                  matInput
+                  type="number"
+                  (wheel)="onWheel($event)"
+                  (keypress)="decimalFilter($event)"
+                  (keyup)="getTotalHoursValue($event.target.value, index)"
+                  formControlName="total_hours"
+                  placeholder="{{ 'ADD_CONTRACT_DIALOG.Total Hours' | translate }}"
+                />
+                <mat-error *ngIf="interventionsArray().controls[index].get('total_hours').hasError('required')">{{
+                  'This field is required' | translate
+                }}</mat-error>
+                <mat-error *ngIf="interventionsArray().controls[index].get('total_hours').hasError('pattern')">{{
+                  'must contain number only' | translate
+                }}</mat-error>
+              </mat-form-field>
+            </div>
+            <div class="p-col-6">
+              <mat-form-field>
+                <input
+                  matInput
+                  type="number"
+                  (wheel)="onWheel($event)"
+                  (keypress)="decimalFilter($event)"
+                  (keyup)="getTotalHoursValue($event.target.value, index)"
+                  formControlName="hourly_rate"
+                  placeholder="{{ 'ADD_CONTRACT_DIALOG.Hourly Rate' | translate }}"
+                  [readonly]="fromFollowUp"
+                />
+                <mat-icon
+                  matSuffix
+                  svgIcon="currency-eur"
+                  class="read"
+                  *ngIf="interventionsArray().controls[index].get('hourly_rate')?.disable && !newContract"
+                ></mat-icon>
+                <mat-icon matSuffix svgIcon="currency-eur" *ngIf="newContract"></mat-icon>
+                <mat-error *ngIf="interventionsArray().controls[index].get('hourly_rate').hasError('required')">{{
+                  'This field is required' | translate
+                }}</mat-error>
+                <mat-error *ngIf="interventionsArray().controls[index].get('hourly_rate').hasError('pattern')">{{
+                  'must contain number only' | translate
+                }}</mat-error>
+              </mat-form-field>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- end of convention form -->
+    <!-- cddu form -->
+
+    <div *ngIf="t == 'cddu'" formArrayName="interventions">
+      <div class="p-grid" *ngFor="let intervention of interventionsArray().controls; let index = index">
+        <div class="p-col-6 yellow-border card-row" [formGroupName]="index">
+          <div class="p-grid">
+            <div class="p-col-12" align="end">
+              <button *ngIf="index != 0 && newContract" mat-mini-fab type="button" color="warn" (click)="removeIntervention(index)">
+                <mat-icon>remove</mat-icon>
+              </button>
+            </div>
+          </div>
+          <div class="p-grid">
+            <div class="p-col-6">
+              <mat-form-field>
+                <mat-select
+                  formControlName="type_intervention"
+                  placeholder="{{ 'ADD_CONTRACT_DIALOG.Type of Intervention' | translate }} {{ index + 1 }}*"
+                  [disableOptionCentering]="true" 
+                  panelClass="filterPanel"
+                >
+                  <mat-option *ngFor="let inter of interventionType" value="{{ inter.value }}">{{
+                    'CONTRACT_PROCESS_FORM.' + inter.name | translate
+                  }}</mat-option>
+                </mat-select>
+                <mat-error *ngIf="interventionsArray().controls[index].get('type_intervention').hasError('required')">{{
+                  'This field is required' | translate
+                }}</mat-error>
+              </mat-form-field>
+            </div>
+          </div>
+
+          <div class="p-grid">
+            <div class="p-col-6 program" style="margin-bottom: 10px">
+              <label *ngIf="interventionsArray()?.controls[index]?.get('program').value">{{
+                'CONTRACT_PROCESS_FORM.Program' | translate
+              }}</label>
+              <mat-form-field *ngIf="interventionsArray().controls[index].get('program')?.disable && !newContract">
+                <input matInput [value]="getDataPrograms(index)" disabled />
+              </mat-form-field>
+              <ng-select
+                *ngIf="newContract"
+                aria-required="true"
+                class="mrgn-btn custom-style-ngselect"
+                [items]="programs"
+                bindLabel="program"
+                bindValue="_id"
+                [hideSelected]="true"
+                clearAllText="Clear"
+                [appendTo]="'body'"
+                placeholder="{{ 'CONTRACT_PROCESS_FORM.Program' | translate }} *"
+                formControlName="program"
+                (change)="programSelected($event, index)"
+              >
+              </ng-select>
+              <mat-error
+                class="err"
+                *ngIf="
+                  interventionsArray()?.controls[index]?.get('program')?.hasError('required') &&
+                  interventionsArray()?.controls[index]?.get('program')?.invalid &&
+                  interventionsArray()?.controls[index]?.get('program')?.touched
+                "
+                >{{ 'This field is required' | translate }}</mat-error
+              >
+            </div>
+            <div class="p-col-6 subject" style="margin-bottom: 10px">
+              <label *ngIf="interventionsArray()?.controls[index]?.get('subject_id').value">{{
+                'CONTRACT_PROCESS_FORM.Subject' | translate
+              }}</label>
+              <mat-form-field *ngIf="interventionsArray().controls[index].get('subject_id')?.disable && !newContract">
+                <input matInput [value]="getDataSubjects(index)" disabled />
+              </mat-form-field>
+              <ng-select
+                *ngIf="newContract"
+                aria-required="true"
+                class="mrgn-btn custom-style-ngselect"
+                [items]="subjects"
+                bindLabel="name"
+                bindValue="_id"
+                [hideSelected]="true"
+                clearAllText="Clear"
+                [appendTo]="'body'"
+                placeholder="{{ 'CONTRACT_PROCESS_FORM.Subject' | translate }} *"
+                formControlName="subject_id"
+              >
+              </ng-select>
+              <mat-error
+                class="err"
+                *ngIf="
+                  interventionsArray()?.controls[index]?.get('subject_id')?.hasError('required') &&
+                  interventionsArray()?.controls[index]?.get('subject_id')?.invalid &&
+                  interventionsArray()?.controls[index]?.get('subject_id')?.touched
+                "
+                >{{ 'This field is required' | translate }}</mat-error
+              >
+            </div>
+          </div>
+
+          <div class="p-grid">
+            <div class="p-col-6">
+              <mat-form-field>
+                <input
+                  matInput
+                  (wheel)="onWheel($event)"
+                  formControlName="total_hours"
+                  placeholder="{{ 'ADD_CONTRACT_DIALOG.Total Hours' | translate }} "
+                  (keyup)="getTotalHoursValue($event.target.value, index)"
+                  type="number"
+                  (keypress)="decimalFilter($event)"
+                />
+                <mat-error *ngIf="interventionsArray().controls[index].get('total_hours').hasError('required')">{{
+                  'This field is required' | translate
+                }}</mat-error>
+                <mat-error *ngIf="interventionsArray().controls[index].get('total_hours').hasError('pattern')">{{
+                  'must contain number only' | translate
+                }}</mat-error>
+              </mat-form-field>
+            </div>
+            <div class="p-col-6">
+              <mat-form-field>
+                <input
+                  matInput
+                  formControlName="hourly_rate"
+                  (wheel)="onWheel($event)"
+                  placeholder="{{ 'ADD_CONTRACT_DIALOG.Hourly Rate' | translate }}"
+                  (keyup)="getHourlyRateValue($event.target.value, index)"
+                  type="number"
+                  (keypress)="decimalFilter($event)"
+                  [readonly]="fromFollowUp"
+                />
+                <mat-icon
+                  matSuffix
+                  svgIcon="currency-eur"
+                  class="read"
+                  *ngIf="interventionsArray().controls[index].get('hourly_rate')?.disable && !newContract"
+                ></mat-icon>
+                <mat-icon matSuffix svgIcon="currency-eur" *ngIf="newContract"></mat-icon>
+                <mat-error *ngIf="interventionsArray().controls[index].get('hourly_rate').hasError('required')">{{
+                  'This field is required' | translate
+                }}</mat-error>
+                <mat-error *ngIf="interventionsArray().controls[index].get('hourly_rate').hasError('pattern')">{{
+                  'must contain number only' | translate
+                }}</mat-error>
+              </mat-form-field>
+            </div>
+          </div>
+
+          <div class="p-grid">
+            <div class="p-col-6">
+              <mat-form-field>
+                <input
+                  matInput
+                  class="read"
+                  formControlName="paid_leave_allowance_rate"
+                  placeholder="{{ 'Paid leave allowance rate' | translate }}"
+                  readonly
+                />
+                <mat-error *ngIf="interventionsArray().controls[index].get('paid_leave_allowance_rate').hasError('required')">{{
+                  'This field is required' | translate
+                }}</mat-error>
+              </mat-form-field>
+            </div>
+            <div class="p-col-6">
+              <mat-form-field>
+                <input
+                  matInput
+                  class="read"
+                  formControlName="rate_excluding_paid_leave_allowance"
+                  placeholder="{{ 'Rate excluding paid leave allowance' | translate }}"
+                  readonly
+                />
+                <mat-error *ngIf="interventionsArray().controls[index].get('rate_excluding_paid_leave_allowance').hasError('required')">{{
+                  'This field is required' | translate
+                }}</mat-error>
+              </mat-form-field>
+            </div>
+          </div>
+
+          <div class="p-grid">
+            <div class="p-col-6">
+              <mat-form-field>
+                <input
+                  matInput
+                  class="read"
+                  formControlName="compensation_paid_vacation"
+                  placeholder="{{ 'Compensation paid vocation' | translate }}"
+                  readonly
+                />
+                <mat-error *ngIf="interventionsArray().controls[index].get('compensation_paid_vacation').hasError('required')">{{
+                  'This field is required' | translate
+                }}</mat-error>
+              </mat-form-field>
+            </div>
+          </div>
+
+          <div class="p-grid">
+            <div class="p-col-6">
+              <mat-form-field>
+                <input
+                  matInput
+                  class="read"
+                  formControlName="total_period"
+                  placeholder="{{ 'Total period (week)' | translate }}"
+                  readonly
+                />
+                <mat-error *ngIf="interventionsArray().controls[index].get('total_period').hasError('required')">{{
+                  'This field is required' | translate
+                }}</mat-error>
+              </mat-form-field>
+            </div>
+            <div class="p-col-6">
+              <mat-form-field>
+                <input matInput formControlName="trial_period" readonly placeholder="{{ 'Trial period (Days)' | translate }}" />
+                <mat-error *ngIf="interventionsArray().controls[index].get('trial_period').hasError('required')">{{
+                  'This field is required' | translate
+                }}</mat-error>
+              </mat-form-field>
+            </div>
+          </div>
+
+          <div class="p-grid">
+            <div class="p-col-6">
+              <mat-form-field>
+                <input
+                  matInput
+                  class="read"
+                  formControlName="induced_hours_coefficient"
+                  placeholder="{{ 'Induced hours coefficient' | translate }}"
+                  readonly
+                />
+                <mat-error *ngIf="interventionsArray().controls[index].get('induced_hours_coefficient').hasError('required')">{{
+                  'This field is required' | translate
+                }}</mat-error>
+              </mat-form-field>
+            </div>
+            <div class="p-col-6">
+              <mat-form-field>
+                <input
+                  matInput
+                  class="read"
+                  formControlName="volume_hours_induced"
+                  placeholder="{{ 'Volume hour induced' | translate }}"
+                  readonly
+                />
+                <mat-error *ngIf="interventionsArray().controls[index].get('volume_hours_induced').hasError('required')">{{
+                  'This field is required' | translate
+                }}</mat-error>
+              </mat-form-field>
+            </div>
+          </div>
+
+          <div class="p-grid">
+            <div class="p-col-6">
+              <mat-form-field>
+                <input
+                  matInput
+                  class="read"
+                  formControlName="total_hours_volume_hours_induced"
+                  placeholder="{{ 'Total hours + Volume hour induced' | translate }}"
+                  readonly
+                />
+                <mat-error *ngIf="interventionsArray().controls[index].get('total_hours_volume_hours_induced').hasError('required')">{{
+                  'This field is required' | translate
+                }}</mat-error>
+              </mat-form-field>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- end of cddu form -->
+    <div class="p-grid" *ngIf="interventionsArray().controls?.length <= 5">
+      <div class="p-col-6" align="end" *ngIf="!_id">
+        <button *ngIf="!fromFollowUp" mat-button type="button" (click)="addIntervention()">
+          <mat-icon class="add-icon">add</mat-icon> {{ 'Add type of intervention' | translate }}
+        </button>
+      </div>
+    </div>
+    <br />
+    <br />
+  </div>
+</form>
+<div *ngIf="isWaitingForResponse || isWaitingForProgramResponse" class="loading-indicator">
+  <mat-progress-spinner mode="indeterminate" color="accent"></mat-progress-spinner>
+</div>
+<!-- <div *ngIf="isLoadingFilter" class="loading-indicator">
+  <mat-progress-spinner mode="indeterminate" color="accent"></mat-progress-spinner>
+</div> -->

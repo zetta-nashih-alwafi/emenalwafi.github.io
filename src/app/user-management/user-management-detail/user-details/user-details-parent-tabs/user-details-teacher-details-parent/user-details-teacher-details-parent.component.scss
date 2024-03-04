@@ -1,0 +1,30 @@
+:host::ng-deep {
+  .mat-tab-label {
+    min-width: 25px !important;
+    padding: 0.7rem !important;
+    opacity: 1 !important;
+  }
+
+  .mat-tab-list .mat-tab-labels {
+    border: 0px !important;
+    background-color: transparent !important;
+  }
+
+  .mat-tab-label {
+    background-color: transparent !important;
+  }
+
+  .mat-tab-label.mat-tab-label-active {
+    background-color: transparent !important;
+    color: #ffd740 !important;
+    font-weight: 900 !important;
+    box-shadow: -0.8px 0px 0px 0px #607d8b, 0.8px 0px 0px 0px #607d8b !important;
+    border: 2px solid #607d8b !important;
+    border-top: 0px !important;
+  }
+
+  .app-dark .mat-tab-group.mat-primary .mat-ink-bar,
+  .app-dark .mat-tab-nav-bar.mat-primary .mat-ink-bar {
+    background-color: #506169 !important;
+  }
+}

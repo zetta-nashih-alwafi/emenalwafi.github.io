@@ -1,0 +1,146 @@
+<div class="row padl-13 hd-legend web-card">
+  <label>{{ 'School Mentor' | translate }}</label>
+</div>
+<div class="card web-card">
+  <div class="card-body card-segment detail-intership">
+    <div class="row back-card">
+      <div class="candidate-detail" fxLayout="row wrap">
+        <div class="candidate-profile" fxFlex="15">
+          <img [src]="serverimgPath + 'Velazquez.jpg'" class="candidate-photo" />
+        </div>
+        <div class="candidate-information" fxFlex="85" fxLayout="row wrap">
+          <div class="first-row" fxFlex="100" fxLayout="row" fxLayoutAlign="start end">
+            <div class="name" fxFlex="25">
+              <span class="label">ANDRE Orabelle {{ 'MR' | translate }}</span>
+            </div>
+            <div class="program" fxFlex="10" fxLayout="row">
+              <span class="icon">
+                <mat-icon
+                  [matTooltip]="'medium' | translate"
+                  class="mat-icon-status orange"
+                  style="font-size: 2rem; margin-top: 3px"
+                  aria-hidden="true"
+                  >lens
+                </mat-icon>
+              </span>
+              <span class="tag yellow">EFAP</span>
+            </div>
+          </div>
+          <div class="second-row" fxFlex="100" fxLayout="row" fxLayoutAlign="start start">
+            <div class="" fxLayout="row">
+              <span class="icon"><mat-icon class="primary-icon icons-style">perm_contact_calendar</mat-icon></span>
+              <span class="label"> 28/12/1998 a Fontainbleau </span>
+            </div>
+            <div class="" fxLayout="row">
+              <span class="icon"><mat-icon class="primary-icon icons-style">place</mat-icon></span>
+              <span class="label"> Nanterre </span>
+            </div>
+            <div class="" fxLayout="row">
+              <span class="icon"><mat-icon class="primary-icon icons-style">school</mat-icon></span>
+              <span class="label"> BAC S 1ere Anne de Medecine </span>
+            </div>
+          </div>
+          <div class="third-row" fxFlex="100" fxLayout="row wrap" fxLayoutAlign="center">
+            <div class="" fxLayout="row">
+              <span class="icon"><mat-icon class="primary-icon icons-style">call</mat-icon></span>
+              <span class="label"> +6285737304396 </span>
+            </div>
+            <div class="" fxLayout="row">
+              <span class="icon"><mat-icon class="primary-icon icons-style">mail</mat-icon></span>
+              <span class="label"> orabelle.andre@yopmail.com </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row padl-13 hd-legend mobile-card">
+  <label>{{ 'School Mentor' | translate }}</label>
+</div>
+<div class="card mobile-card">
+  <div class="card-body card-segment detail-intership">
+    <div class="row back-card">
+      <div class="candidate-detail" fxLayout="row wrap">
+        <div class="candidate-profile" fxFlex="100" style="text-align: center; margin-bottom: 25px">
+          <img [src]="serverimgPath + 'Velazquez.jpg'" class="candidate-photo" />
+        </div>
+        <div class="candidate-information" fxFlex="100" fxLayout="row wrap" style="padding: 0px 50px">
+          <div class="first-row" fxFlex="100" fxLayout="row" fxLayoutAlign="start end" style="text-align: center">
+            <div class="info" style="text-align: center">
+              <span class="label">ANDRE Orabelle {{ 'MR' | translate }}</span>
+              <span class="infos">EFAP</span>
+            </div>
+          </div>
+          <div class="third-row" fxFlex="100" fxLayout="row wrap" fxLayoutAlign="center">
+            <div class="" fxLayout="row" style="width: 100%">
+              <span class="icon"><mat-icon class="primary-icon icons-style">perm_contact_calendar</mat-icon></span>
+              <span class="label"> 28/12/1998 a Fontainbleau </span>
+            </div>
+            <div class="" fxLayout="row" style="width: 100%">
+              <span class="icon"><mat-icon class="primary-icon icons-style">place</mat-icon></span>
+              <span class="label"> Nanterre </span>
+            </div>
+            <div class="" fxLayout="row" style="width: 100%">
+              <span class="icon"><mat-icon class="primary-icon icons-style">school</mat-icon></span>
+              <span class="label"> BAC S 1ere Anne de Medecine </span>
+            </div>
+          </div>
+          <div class="third-row" fxFlex="100" fxLayout="row wrap" fxLayoutAlign="center">
+            <div class="" fxLayout="row" style="width: 100%">
+              <span class="icon"><mat-icon class="primary-icon icons-style">call</mat-icon></span>
+              <span class="label"> +6285737304396 </span>
+            </div>
+            <div class="" fxLayout="row" style="width: 100%">
+              <span class="icon"><mat-icon class="primary-icon icons-style">mail</mat-icon></span>
+              <span class="label"> orabelle.andre@yopmail.com </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="btn-conditions">
+  <!-- <button
+    color="primary"
+    class="btn-first"
+    mat-raised-button
+    (click)="identityUpdated()"
+    matTooltip="{{ 'Skip this Step' | translate }} "
+  >
+  <mat-icon style="font-size: 24px">skip_next</mat-icon>
+    {{ 'Skip this Step' | translate }}
+  </button> -->
+  <button
+    color="accent"
+    class="btn-first"
+    mat-raised-button
+    matTooltip="{{ 'Assign a School Mentor' | translate }} "
+  >
+    <i class="fa fa-pencil" aria-hidden="true"></i>
+    {{ 'Assign a School Mentor' | translate }}
+  </button>
+  <button
+    color="accent"
+    class="btn-first"
+    mat-raised-button
+    (click)="editIdentity()"
+    matTooltip="{{ 'I want to correct some data' | translate }} "
+  >
+    <i class="fa fa-pencil" aria-hidden="true"></i>
+    {{ 'I want to correct some data' | translate }}
+  </button>
+  <button
+    color="accent"
+    mat-raised-button
+    (click)="identityUpdated()"
+    matTooltip="{{ 'I confirm my data' | translate }} "
+    class="btn-first"
+  >
+    <mat-icon class="mat-icon-default">save</mat-icon>
+    {{ 'I confirm my data' | translate }}
+  </button>
+</div>

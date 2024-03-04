@@ -1,0 +1,229 @@
+<div class="p-grid">
+  <div class="p-col no-padding">
+    <div class="p-grid" style="margin-right: 15px !important">
+      <div class="p-col-12 no-padding">
+        <ms-chart-daily
+          #chartDaily
+          [schoolData]="schoolData"
+          [filterValue]="filterForDisplay"
+          [dataMapping]="dataDaily"
+          [shortName]="shortName"
+          (reloadDaily)="reloadDaily($event)"
+        ></ms-chart-daily>
+      </div>
+    </div>
+    <div class="p-grid" style="margin-right: 15px !important">
+      <div class="p-col-12 no-padding">
+        <ms-chart-bar
+          [schoolData]="schoolData"
+          [filterValue]="filterForDisplay"
+          [dataMapping]="dataObjective"
+          [shortName]="shortName"
+        ></ms-chart-bar>
+      </div>
+    </div>
+    <div class="p-grid" [ngStyle]="{ height: dataWeekly && dataWeekly.length ? '335px' : '' }" style="margin-right: 15px !important">
+      <div class="p-col-12 no-padding">
+        <ms-chart-weekly
+          [schoolData]="schoolData"
+          [filterValue]="filterForDisplay"
+          [dataMapping]="dataWeekly"
+          [shortName]="shortName"
+        ></ms-chart-weekly>
+      </div>
+    </div>
+    <div class="p-grid" [ngStyle]="{ height: dataLevel && dataLevel.length ? '320px' : '' }" style="margin-right: 15px !important">
+      <div class="p-col-12 no-padding">
+        <ms-chart-level
+          [schoolData]="schoolData"
+          [filterValue]="filterForDisplay"
+          [dataMapping]="dataLevel"
+          [shortName]="shortName"
+          [dataObjective]="dataObjectiv"
+        ></ms-chart-level>
+      </div>
+    </div>
+    <div class="p-grid" style="height: 540px; margin-right: 15px !important">
+      <div class="p-col-12 no-padding">
+        <ms-chart-nationality
+          [schoolData]="schoolData"
+          [filterValue]="filterForDisplay"
+          [dataMapping]="dataNationality"
+          [shortName]="shortName"
+        ></ms-chart-nationality>
+      </div>
+    </div>
+  </div>
+  <div class="p-col-fixed no-padding" style="width: 260px !important">
+    <div [ngClass]="floatingActif ? 'mrgn-90' : 'mrgn'">
+      <div style="vertical-align: middle; margin-top: 20px; text-align: right">
+        <button
+          style="padding: 0px 7px !important"
+          [matTooltipDisabled]="false"
+          [disabled]="isLoading"
+          (click)="resetFilter()"
+          color="primary"
+          mat-raised-button
+          matTooltip="{{ 'Reset Filter' | translate }} "
+        >
+          <mat-icon svgIcon="loop" class="mat-icon-svgIcon"></mat-icon>
+          {{ 'Reset' | translate }}
+        </button>
+      </div>
+      <mat-card style="margin-top: 5px">
+        <div class="p-grid no-margin" style="margin-bottom: 10px !important">
+          <h5 style="font-size: 15px !important">{{ 'filter' | translate }}</h5>
+          <hr />
+        </div>
+        <div class="p-grid no-margin" *ngIf="isLoading">
+          <!-- <div class="p-col-12 no-padding" style="float: left; padding-right: 25px !important; margin-bottom: 10px">
+            <mat-form-field>
+              <mat-label>{{ 'CARDDETAIL.Scholar Season' | translate }}</mat-label>
+              <input matInput disabled="true" type="text" />
+            </mat-form-field>
+          </div> -->
+          <div class="p-col-12 no-padding" style="float: left; padding-right: 25px !important; margin-bottom: 10px">
+            <mat-form-field>
+              <mat-label>{{ 'School' | translate }}</mat-label>
+              <input matInput disabled="true" type="text" />
+            </mat-form-field>
+          </div>
+          <div class="p-col-12 no-padding" style="float: left; padding-right: 25px !important; margin-bottom: 10px">
+            <mat-form-field>
+              <mat-label>{{ 'Campus' | translate }}</mat-label>
+              <input matInput disabled="true" type="text" />
+            </mat-form-field>
+          </div>
+          <div class="p-col-12 no-padding" style="float: left; padding-right: 25px !important; margin-bottom: 10px">
+            <mat-form-field>
+              <mat-label>{{ 'Level' | translate }}</mat-label>
+              <input matInput disabled="true" type="text" />
+            </mat-form-field>
+          </div>
+          <div class="p-col-12 no-padding" style="float: left; padding-right: 25px !important; margin-bottom: 10px">
+            <mat-form-field>
+              <mat-label>{{ 'Sector' | translate }}</mat-label>
+              <input matInput disabled="true" type="text" />
+            </mat-form-field>
+          </div>
+          <div class="p-col-12 no-padding" style="float: left; padding-right: 25px !important; margin-bottom: 10px">
+            <mat-form-field>
+              <mat-label>{{ 'Speciality' | translate }}</mat-label>
+              <input matInput disabled="true" type="text" />
+            </mat-form-field>
+          </div>
+        </div>
+
+        <div class="p-grid no-margin" *ngIf="!isLoading">
+          <!-- <div class="p-col-12 no-padding" style="float: left; padding-right: 25px !important; margin-bottom: 10px">
+            <ng-select
+              class="mrgn-btn"
+              [items]="scholars"
+              bindLabel="scholar_season"
+              bindValue="scholar_season"
+              [multiple]="false"
+              placeholder="{{ 'CARDDETAIL.Scholar Season' | translate }}"
+              [formControl]="scholarFilter"
+              (clear)="onClearScholar()"
+              (change)="scholarSelected()"
+            >
+            </ng-select>
+          </div> -->
+          <div class="p-col-12 no-padding" style="float: left; padding-right: 25px !important; margin-bottom: 10px">
+            <ng-select
+              class="mrgn-btn"
+              bindLabel="short_name"
+              bindValue="_id"
+              [multiple]="false"
+              [clearable]="false"
+              placeholder="{{ 'School' | translate }}"
+              [formControl]="schoolsFilter"
+              (change)="getDataCampus()"
+              (clear)="onClearSchool()"
+            >
+              <ng-option [value]="''">{{ 'All schools' | translate }}</ng-option>
+              <ng-option *ngFor="let sch of school" [value]="sch._id">{{ sch.short_name }}</ng-option>
+            </ng-select>
+          </div>
+          <div class="p-col-12 no-padding" style="float: left; padding-right: 25px !important; margin-bottom: 10px">
+            <ng-select
+              class="mrgn-btn"
+              bindLabel="name"
+              bindValue="_id"
+              [multiple]="false"
+              [clearable]="false"
+              placeholder="{{ 'Campus' | translate }}"
+              [formControl]="campusFilter"
+              (change)="getDataLevel()"
+              (clear)="onClearCampus()"
+            >
+              <ng-option [value]="''">{{ 'All campus' | translate }}</ng-option>
+              <ng-option *ngFor="let cam of campusList" [value]="cam._id">{{ cam.name }}</ng-option>
+            </ng-select>
+          </div>
+          <div class="p-col-12 no-padding" style="float: left; padding-right: 25px !important; margin-bottom: 10px">
+            <ng-select
+              class="mrgn-btn"
+              bindLabel="name"
+              bindValue="_id"
+              [multiple]="false"
+              [clearable]="false"
+              placeholder="{{ 'Level' | translate }}"
+              [formControl]="levelFilter"
+              (change)="getDataByLevel($event)"
+              (clear)="onClearLevel()"
+            >
+              <ng-option [value]="''">{{ 'All levels' | translate }}</ng-option>
+              <ng-option *ngFor="let lvl of levels" [value]="lvl._id">{{ lvl.name }}</ng-option>
+            </ng-select>
+          </div>
+          <div class="p-col-12 no-padding" style="float: left; padding-right: 25px !important; margin-bottom: 10px">
+            <ng-select
+              class="mrgn-btn"
+              bindLabel="name"
+              bindValue="_id"
+              [multiple]="false"
+              [clearable]="false"
+              placeholder="{{ 'Sector' | translate }}"
+              [formControl]="sectorFilter"
+              (change)="getDataSpeciality()"
+              (clear)="onClearSector()"
+            >
+              <ng-option [value]="''">{{ 'All sectors' | translate }}</ng-option>
+              <ng-option *ngFor="let sec of sector" [value]="sec._id">{{ sec.name }}</ng-option>
+            </ng-select>
+          </div>
+          <div class="p-col-12 no-padding" style="float: left; padding-right: 25px !important; margin-bottom: 10px">
+            <ng-select
+              class="mrgn-btn"
+              bindLabel="sigli"
+              bindValue="_id"
+              [multiple]="false"
+              [clearable]="false"
+              placeholder="{{ 'Speciality' | translate }}"
+              [formControl]="specialityFilter"
+              (change)="getSpecialitys($event)"
+            >
+              <ng-option [value]="''">{{ 'All speciality' | translate }}</ng-option>
+              <ng-option [value]="'None'">{{ 'None' | translate }}</ng-option>
+              <ng-option *ngFor="let spec of speciality" [value]="spec._id">{{ spec.sigli }}</ng-option>
+            </ng-select>
+          </div>
+        </div>
+      </mat-card>
+    </div>
+  </div>
+</div>
+
+<!-- <div
+  *ngIf="
+    isWaitingForResponse ||
+    isLoading ||
+    isGetDataLevelEngagementLoading ||
+    isLoadingNationalityChart ||
+    isLoadingAllGeneral
+  "
+  class="loading-indicator"
+>
+  <mat-progress-spinner mode="indeterminate" color="accent"></mat-progress-spinner>
+</div> -->

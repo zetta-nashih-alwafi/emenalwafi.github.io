@@ -1,0 +1,271 @@
+<div class="p-grid" *ngIf="isWaitingForResponse" class="p-col-12" style="text-align: center !important; display: contents">
+  <div class="center-spinner spinner-wrapper">
+    <mat-spinner color="accent"></mat-spinner>
+  </div>
+</div>
+<div *ngIf="!isWaitingForResponse" class="detail-school">
+  <div class="p-grid no-margin no-padding">
+    <div class="button-action p-col">
+      <!-- Start Action Button Above table -->
+      <button
+        *ngIf="!editMode"
+        matTooltip="{{ 'Action' | translate }} "
+        style="padding: 0px 7px !important"
+        mat-raised-button
+        color="accent"
+        [disabled]="isWaitingForResponse"
+        [matMenuTriggerFor]="action"
+      >
+        {{ 'Action' | translate }}
+        <mat-icon>expand_more</mat-icon>
+      </button>
+      <mat-menu #action="matMenu">
+        <button class="custom-border-bottom" *ngIf="!editMode && permission?.editPermIntakeChannelSchoolDownPaymentTabPerm()" mat-menu-item matTooltip="{{ 'Go to Edit Mode' | translate }}" (click)="editModeOn()">
+          {{ 'Go to Edit Mode' | translate }}
+        </button>
+        <button mat-menu-item matTooltip="{{ 'Import' | translate }}" (click)="csvTypeSelection()" *ngIf="!editMode && permission?.importIntakeChannelSchoolDownPaymentTabPerm()">
+          {{ 'Import' | translate }}
+        </button>
+      </mat-menu>
+      <!--End Action Button Above table -->
+      <button
+        mat-raised-button
+        color="primary"
+        (click)="downloadCSV()"
+        [disabled]="dataMapping && dataMapping?.length < 1"
+        *ngIf="!editMode && permission?.exportCsvIntakeChannelSchoolDownPaymentTabPerm()"
+        matTooltip="{{ 'Export' | translate }}"
+      >
+        <mat-icon svgIcon="file-excel" class="mat-icon-svgIcon"></mat-icon>
+        {{ 'Export' | translate }}
+      </button>
+      <button
+        [disabled]="loadingAfterValidate"
+        mat-raised-button
+        color="accent"
+        (click)="validateDownPayment()"
+        *ngIf="editMode"
+        matTooltip="{{ 'Validate' | translate }}"
+      >
+        <mat-icon style="font-size: 16px; line-height: 15px">save</mat-icon>
+        {{ 'Validate' | translate }}
+      </button>
+    </div>
+  </div>
+  <div class="table-school" *ngIf="dataSchoolOriginal && dataSchoolOriginal.length" (scroll)="dashboardScroll($event)">
+    <div class="detail-table" [formGroup]="formAmountTemp">
+      <div class="list-headers">
+        <div class="label-array" style="padding: 0px !important">
+          <div class="label-level-first">{{ 'Level' | translate }}</div>
+          <div class="label-school-first">Campus</div>
+        </div>
+      </div>
+      <div class="list-body">
+        <div class="list-level fixed-header">
+          <div class="label-array"></div>
+          <div class="array-data" style="padding: 0px !important" *ngFor="let school of schoolData?.campuses">
+            <div class="label-list-schools">{{ school?.name }}</div>
+            <div class="label-sub-school">
+              <div class="label-sub" style="font-weight: 600">{{ 'Internal' | translate }}</div>
+              <div class="label-sub" style="color: #dcdcdc">{{ 'External' | translate }}</div>
+            </div>
+          </div>
+        </div>
+        <div class="list-level" *ngFor="let level of formGenerated; let nex = index">
+          <div class="label-array" style="height: 45px !important; padding: 0px 5px !important">
+            <div class="label-level">
+              {{ level?.name }}
+            </div>
+          </div>
+          <div *ngIf="dataMapping && dataMapping?.length && dataMapping[nex] && dataMapping[nex].length && !editMode">
+            <div class="array-data" *ngFor="let school of schoolData?.campuses; let n = index" style="vertical-align: middle">
+              <div *ngFor="let data of dataMapping[nex]">
+                <div
+                  *ngIf="
+                    (data?.name | lowercase) === (school?.name | lowercase) &&
+                    data?.internal >= 0 &&
+                    data?.external >= 0 &&
+                    data?.is_from_deposit
+                  "
+                >
+                  <div class="list-data">
+                    <div *ngIf="!editMode || !data?.is_internal_editable">
+                      <div class="registereds">{{ data?.internal ? data?.internal : '-' }}</div>
+                    </div>
+                    <div *ngIf="editMode && data?.is_internal_editable" class="registereds form-amount">
+                      <mat-form-field>
+                        <input
+                          matInput
+                          name="amount"
+                          type="number"
+                          (wheel)="onWheel($event)"
+                          [value]="data?.internal"
+                          (keypress)="decimalFilter($event)"
+                          class="form-field"
+                        />
+                      </mat-form-field>
+                    </div>
+                    <div *ngIf="!editMode || !data?.is_internal_editable">
+                      <div class="status bkgrey"></div>
+                    </div>
+                    <div *ngIf="editMode && data?.is_internal_editable">
+                      <div class="status bkgrey" style="height: 55px !important"></div>
+                    </div>
+                    <div *ngIf="!editMode || !data?.is_external_editable">
+                      <div class="objectives">{{ data?.external ? data?.external : '-' }}</div>
+                    </div>
+                    <div *ngIf="editMode && data?.is_external_editable" class="objectives form-amount">
+                      <mat-form-field>
+                        <input
+                          matInput
+                          name="amount"
+                          (wheel)="onWheel($event)"
+                          type="number"
+                          [value]="data?.external"
+                          (keypress)="decimalFilter($event)"
+                          class="form-field"
+                        />
+                      </mat-form-field>
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class="list-data"
+                  *ngIf="(data?.name | lowercase) === (school?.name | lowercase) && !data?.is_from_deposit"
+                  style="text-align: center !important"
+                >
+                  -
+                </div>
+              </div>
+            </div>
+          </div>
+          <div *ngIf="dataMapping && dataMapping?.length && dataMapping[nex] && dataMapping[nex].length && editMode">
+            <div class="array-data" *ngFor="let school of schoolData?.campuses; let n = index" style="vertical-align: middle">
+              <div *ngFor="let data of dataMapping[nex]; let inn = index">
+                <div
+                  *ngIf="
+                    (data?.name | lowercase) === (school?.name | lowercase) &&
+                    data?.internal >= 0 &&
+                    data?.external >= 0 &&
+                    data?.is_from_deposit
+                  "
+                >
+                  <div class="list-data">
+                    <div *ngIf="!editMode || !data?.is_internal_editable">
+                      <div class="registereds" style="padding-top: 15px">{{ data?.internal }}</div>
+                    </div>
+                    <div *ngIf="editMode && data?.is_internal_editable" class="registereds form-amount">
+                      <mat-form-field floatLabel="never">
+                        <input
+                          matInput
+                          name="amount"
+                          (wheel)="onWheel($event)"
+                          type="number"
+                          placeholder="0"
+                          [value]="dataAmount(nex, n, inn, data, school)"
+                          (keyup)="keyupAmount(data, $event)"
+                          (keypress)="decimalFilter($event)"
+                          class="form-field"
+                        />
+                      </mat-form-field>
+                    </div>
+                    <div *ngIf="!editMode || !data?.is_internal_editable">
+                      <div class="status bkgrey" style="height: 55px !important"></div>
+                    </div>
+                    <div *ngIf="editMode && data?.is_internal_editable">
+                      <div class="status bkgrey" style="height: 55px !important"></div>
+                    </div>
+                    <div *ngIf="!editMode || !data?.is_external_editable">
+                      <div class="objectives" style="padding-top: 15px">{{ data?.external }}</div>
+                    </div>
+                    <div *ngIf="editMode && data?.is_external_editable" class="objectives form-amount">
+                      <mat-form-field floatLabel="never">
+                        <input
+                          matInput
+                          name="amount"
+                          (wheel)="onWheel($event)"
+                          type="number"
+                          placeholder="0"
+                          [value]="dataAmountExternal(nex, n, inn, data, school)"
+                          (keyup)="keyupAmountExternal(data, $event)"
+                          (keypress)="decimalFilter($event)"
+                          class="form-field"
+                        />
+                      </mat-form-field>
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class="list-data"
+                  *ngIf="
+                    (data?.name | lowercase) === (school?.name | lowercase) &&
+                    !data?.internal &&
+                    !data?.external &&
+                    data?.internal <= 0 &&
+                    data?.external <= 0 &&
+                    !data?.is_from_deposit
+                  "
+                  style="text-align: center !important"
+                >
+                  -
+                </div>
+              </div>
+            </div>
+          </div>
+          <div *ngIf="(!(dataMapping && dataMapping?.length) || !dataMapping[nex]) && !editMode">
+            <div class="array-data" *ngFor="let data of schoolData?.campuses">
+              <div class="label-list-school"></div>
+              <div class="list-data">
+                <!-- <div *ngIf="editMode" class="form-amount">
+                    <mat-form-field>
+                      <input matInput type="number" class="form-field"/>
+                    </mat-form-field>
+                  </div> -->
+              </div>
+            </div>
+          </div>
+          <div *ngIf="(!(dataMapping && dataMapping?.length) || !dataMapping[nex]) && !editMode">
+            <div class="array-data" *ngFor="let data of schoolData?.campuses">
+              <div class="label-list-school"></div>
+              <div class="list-data">
+                <!-- <div *ngIf="editMode" class="form-amount">
+                    <mat-form-field>
+                      <input matInput type="number" class="form-field"/>
+                    </mat-form-field>
+                  </div> -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<swal #exportSwal title="{{ 'Export Title' | translate }}" [showConfirmButton]="false">
+  <div *swalPartial class="">
+    <div class="">
+      {{ 'Export Text1' | translate }}
+    </div>
+    <div class="">
+      {{ 'Export Text2' | translate }}
+    </div>
+    <div class="">
+      {{ 'Export Text3' | translate }}
+    </div>
+    <div class="">
+      {{ 'Export Text4' | translate }}
+    </div>
+    <div class="">
+      <mat-form-field color="accent" class="full-wid">
+        <input matInput [(ngModel)]="exportName" type="text" placeholder="{{ 'ExportName' | translate }}" />
+      </mat-form-field>
+    </div>
+    <button mat-raised-button color="primary" (click)="exportData()">
+      {{ 'OK' | translate }}
+    </button>
+  </div>
+</swal>
+
+<div *ngIf="loadingAfterValidate" class="loading-indicator">
+  <mat-progress-spinner mode="indeterminate" color="accent"></mat-progress-spinner>
+</div>

@@ -1,0 +1,210 @@
+<div class="row padl-13 hd-legend web-card">
+  <label>{{ 'Mentor' | translate }}</label>
+</div>
+<form class="row" style="padding-left: 6px; padding-right: 6px" [formGroup]="detailForm">
+  <div class="fontColor">
+    <div class="row">
+      <div class="col-lg-6">
+        <p>{{ 'Select your mentor from the list of mentor available for your company' | translate }} :</p>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-lg-6">
+        <div class="form-group">
+          <input
+            type="text"
+            required
+            class="form-control"
+            formControlName="mentor_selected"
+            [matAutocomplete]="autoCountry"
+            placeholder="{{ 'Select your Mentor' | translate }}"
+            (keyup)="filterMentor($event)"
+          />
+          <mat-autocomplete #autoCountry="matAutocomplete" [displayWith]="displayMentor.bind(this)">
+            <mat-option *ngFor="let option of mentors" (click)="selectUser(option?._id)" [value]="option?._id">
+              {{ option?.name }}
+            </mat-option>
+          </mat-autocomplete>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-lg-6">
+        <p>{{ 'If your mentor is not in the list, you can click on the button below to add his informations' | translate }} :</p>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-lg-12" style="margin-bottom: 10px; margin-top: 10px">
+        <span
+          *ngIf="currSelectedCompanyId"
+          class="float-left"
+          (click)="addMentor()"
+          style="cursor: pointer; color: rgb(36, 112, 227)"
+          matTooltip="{{ 'Add new Mentor' | translate }}"
+        >
+          <mat-icon class="mat-icon-default" style="font-size: 34px !important; vertical-align: middle">person_add_alt_1</mat-icon>
+          <span>
+            {{ 'Add new Mentor' | translate }}
+          </span>
+        </span>
+        <span
+          *ngIf="!currSelectedCompanyId"
+          class="float-left"
+          style="cursor: pointer; color: rgb(179, 179, 179)"
+          matTooltip="{{ 'Add new Mentor' | translate }}"
+        >
+          <mat-icon class="mat-icon-default" style="font-size: 34px !important; vertical-align: middle">person_add_alt_1</mat-icon>
+          <span>
+            {{ 'Add new Mentor' | translate }}
+          </span>
+        </span>
+      </div>
+    </div>
+
+    <ng-container *ngIf="isAddMentor">
+      <div class="row card-border responsives" formGroupName="mentor">
+        <div class="col-lg-12">
+          <div class="row padl-13 title-legend web-card" style="width: auto; display: inline-block">
+            <label>{{ 'Add new mentor' | translate }}</label>
+          </div>
+          <div class="row">
+            <div class="col-lg-6">
+              <div class="row">
+                <div class="col-lg-3">
+                  <label>{{ 'Civility' | translate }}*</label>
+                </div>
+                <div class="col-lg-8">
+                  <div class="form-group">
+                    <mat-radio-group formControlName="civility" style="font-size: 12px">
+                      <mat-radio-button style="margin-right: 1rem" value="MR">{{ 'CARDDETAIL.MR' | translate }}</mat-radio-button>
+                      <mat-radio-button value="MRS">{{ 'CARDDETAIL.MRS' | translate }}</mat-radio-button>
+                      <ng-container *ngIf="coreService?.neutralCivility">
+                        <mat-radio-button style="margin-left: 8px" value="neutral">{{ 'Neutral' | translate }}</mat-radio-button>
+                      </ng-container>
+                    </mat-radio-group>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-lg-3">
+                  <label>{{ 'First Name' | translate }}*</label>
+                </div>
+                <div class="col-lg-8">
+                  <div class="form-group">
+                    <input class="form-control" formControlName="first_name" />
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-lg-3">
+                  <label>{{ 'CARDDETAIL.Email' | translate }}*</label>
+                </div>
+                <div class="col-lg-8">
+                  <div class="form-group">
+                    <input class="form-control" required formControlName="email" />
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-6">
+              <div class="row" style="height: 30px">
+                <div class="col-lg-4"></div>
+                <div class="col-lg-8"></div>
+              </div>
+              <div class="row">
+                <div class="col-lg-3">
+                  <label>{{ 'Last Name' | translate }}*</label>
+                </div>
+                <div class="col-lg-8">
+                  <div class="form-group">
+                    <input class="form-control" required formControlName="last_name" />
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-lg-3">
+                  <label>{{ 'Position' | translate }}*</label>
+                </div>
+                <div class="col-lg-8">
+                  <div class="form-group">
+                    <input class="form-control" required formControlName="position" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-lg-6">
+              <div class="row">
+                <div class="col-lg-3">
+                  <label>{{ 'Telephone' | translate }}*</label>
+                </div>
+                <div class="col-lg-8">
+                  <div class="form-group">
+                    <input class="form-control" formControlName="portable_phone" maxlength="10" />
+                  </div>
+                  <mat-error
+                    *ngIf="
+                      detailForm.get('mentor').get('portable_phone').hasError('pattern') &&
+                      (detailForm.get('mentor').get('portable_phone').dirty ||
+                        (detailForm.get('mentor').get('portable_phone').touched && isAddMentor))
+                    "
+                  >
+                    {{ 'Please Input Number Only' | translate }}
+                  </mat-error>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-lg-12" style="text-align: end">
+              <button color="warn" (click)="cancelAddMentor()" mat-raised-button matTooltip="{{ 'Cancel' | translate }} " class="btn-first">
+                {{ 'Cancel' | translate }}
+              </button>
+              <button
+                [disabled]="!mentorValidation()"
+                color="accent"
+                (click)="saveMentor()"
+                mat-raised-button
+                matTooltip="{{ 'Validate' | translate }} "
+                class="btn-first"
+              >
+                <mat-icon class="mat-icon-default">save</mat-icon>
+                {{ 'Validate' | translate }}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+  </div>
+</form>
+
+<div class="btn-conditions web-card" *ngIf="!isAddMentor">
+  <button
+    color="accent"
+    [disabled]="!detailForm.get('mentor_selected').value"
+    mat-raised-button
+    matTooltip="{{ 'Validate' | translate }} "
+    (click)="identityUpdated()"
+    class="btn-first"
+  >
+    <mat-icon class="mat-icon-default">save</mat-icon>
+    {{ 'Validate' | translate }}
+  </button>
+</div>
+
+<div class="mobile-card" *ngIf="!isAddMentor">
+  <button
+    color="accent"
+    [disabled]="!detailForm.get('mentor_selected').value"
+    mat-raised-button
+    matTooltip="{{ 'Validate' | translate }} "
+    (click)="identityUpdated()"
+    class="btn-first"
+  >
+    <mat-icon class="mat-icon-default">save</mat-icon>
+    {{ 'Validate' | translate }}
+  </button>
+</div>

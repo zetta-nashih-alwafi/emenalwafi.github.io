@@ -1,0 +1,111 @@
+<mat-card class="job-card">
+  <div class="p-grid">
+    <div class="p-col-2 pad-t-none pad-b-none pad-l-none">
+      <img class="brand-logo" [src]="jobData?.is_photo_in_s3 ? serverimgPath + jobData?.photo_s3_path : jobData?.photo"/>
+    </div>
+    <div class="p-col-5 padding-none">
+      <div class="p-grid mrgn-b-sm">
+        <div class="p-col-6 padding-none pad-r-sm justify-content-start">
+          <mat-icon
+            class="small-dot"
+            [ngClass]="{
+              red: jobData?.school_validation === 'rejected',
+              orange: jobData?.school_validation === 'not_checked',
+              green: jobData?.school_validation === 'validated'
+            }"
+            aria-hidden="true"
+          >lens</mat-icon>
+          <span class="job-label">{{ jobData?.job_title }}</span>
+        </div>
+        <div class="p-col-6 padding-none justify-content-start">
+          <mat-icon svgIcon="companies" class="job-icon mrgn-t-none"></mat-icon>
+          <span class="job-label">{{ jobData?.brand }}</span>
+        </div>
+      </div>
+      <div class="p-grid mrgn-b-sm">
+        <div class="p-col-12 padding-none">
+          <mat-icon svgIcon="map-marker-radius" class="job-icon"></mat-icon>
+          <span class="job-label">{{ jobData?.city_of_internship }} - {{ jobData?.country }}</span>
+        </div>
+      </div>
+      <div class="p-grid">
+        <div class="p-col-12 padding-none">
+          <img class="small-pp" [src]="serverimgPath + 'Boyle.jpg'"/>
+          <span>Lucille Adam {{ 'MRS' | translate }}</span>
+        </div>
+      </div>
+    </div>
+    <div class="p-col-5 padding-none">
+      <div class="p-grid mrgn-b-sm">
+        <div class="p-col-12 padding-none justify-content-start">
+          <mat-icon class="job-icon job-icon-font">all_inclusive</mat-icon>
+          <mat-icon class="job-icon job-icon-font">date_range</mat-icon>
+          <span class="job-label">{{ jobData?.start_date | date: 'dd/MM/yyyy' }}</span>
+          <span class="job-label">{{ jobData?.end_date | date: 'dd/MM/yyyy' }}</span>
+        </div>
+      </div>
+      <div class="p-grid mrgn-b-sm">
+        <div class="p-col-12 padding-none justify-content-start">
+          <mat-icon class="job-icon job-icon-font">account_balance</mat-icon>
+          <span class="job-pill">{{ jobData?.school }}</span>
+        </div>
+      </div>
+      <div class="p-grid mrgn-b-sm">
+        <div class="p-col-4 padding-none justify-content-start">
+          <mat-icon class="job-icon job-icon-font">school</mat-icon>
+          <span class="job-label">{{ jobData?.level }}</span>
+        </div>
+        <div class="p-col-8 padding-none justify-content-start">
+          <div class="vertical-view-section">
+            <mat-icon svgIcon="eye-plus" class="job-icon job-icon-font"></mat-icon>
+            <span class="smal-text-margin">{{ jobData?.views }}</span>
+          </div>
+          <div class="vertical-view-section">
+            <mat-icon svgIcon="emoticon-excited-outline" class="job-icon job-icon-font"></mat-icon>
+            <span class="smal-text-margin">{{ jobData?.applications }}</span>
+          </div>
+          <div class="vertical-view-section">
+            <mat-icon svgIcon="account-question-outline" class="job-icon job-icon-font"></mat-icon>
+            <span class="smal-text-margin">{{ jobData?.interviews }}</span>
+          </div>
+          <div class="vertical-view-section">
+            <mat-icon svgIcon="text-account" class="job-icon job-icon-font"></mat-icon>
+            <span class="smal-text-margin">{{ jobData?.agreement_request }}</span>
+          </div>
+          <div class="vertical-view-section">
+            <mat-icon svgIcon="signature-freehand" class="job-icon job-icon-font"></mat-icon>
+            <span class="smal-text-margin">{{ jobData?.agreement_signed }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</mat-card>
+<mat-tab-group class="mrgn-t-md">
+  <mat-tab label="HistoryNote">
+    <ng-template mat-tab-label>
+      <h5>{{ 'History, Notes and Tasks' | translate }}</h5>
+    </ng-template>
+    <ng-template matTabContent>
+      <ms-job-offer-history-tab></ms-job-offer-history-tab>
+    </ng-template>
+  </mat-tab>
+
+  <mat-tab label="AddNote">
+    <ng-template mat-tab-label>
+      <h4>{{ 'Add a note' | translate }}</h4>
+    </ng-template>
+    <ng-template matTabContent>
+      <ms-job-offer-note-tab [candidate]="candidate"></ms-job-offer-note-tab>
+    </ng-template>
+  </mat-tab>
+  
+  <mat-tab label="Candidature Profile">
+    <ng-template mat-tab-label>
+      <h4>{{ 'Candidature Profile' | translate }}</h4>
+    </ng-template>
+    <ng-template matTabContent>
+      <ms-job-offer-profile-tab [candidate]="candidate"></ms-job-offer-profile-tab>
+    </ng-template>
+  </mat-tab>
+</mat-tab-group>

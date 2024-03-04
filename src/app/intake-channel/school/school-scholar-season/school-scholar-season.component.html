@@ -1,0 +1,97 @@
+<mat-tab-group #templateMatGroup [(selectedIndex)]="selectedIndex" (selectedTabChange)="selectTab($event.tab.textLabel)">
+  <mat-tab label="schoolDetail">
+    <ng-template mat-tab-label>
+      <h5>{{ 'INTAKE_CHANNEL.School details' | translate }}</h5>
+    </ng-template>
+    <ng-template matTabContent>
+      <ng-container *ngIf="!isWaitingForResponse">
+        <ms-school-detail [schoolId]="schoolId"></ms-school-detail>
+      </ng-container>
+    </ng-template>
+  </mat-tab>
+
+  <ng-container *ngIf="schoolId && scholarSeasonData && scholarSeasonData.length > 0">
+    <ng-container *ngFor="let scholarSeason of scholarSeasonData; let i = index">
+      <mat-tab class="white-tabs" label="{{ scholarSeason?._id }}">
+        <ng-template mat-tab-label>
+          <h5>
+            {{ scholarSeason?.scholar_season }}
+          </h5>
+        </ng-template>
+        <ng-template matTabContent>
+          <div *ngIf="!programsData" class="loading-indicator">
+            <mat-progress-spinner mode="indeterminate" color="accent"></mat-progress-spinner>
+          </div>
+          <ng-container *ngIf="(programsData && programsData.length > 0) || checkDataCreateFromZero(scholarSeason)">
+            <mat-tab-group
+              animationDuration="200ms"
+              [(selectedIndex)]="tabIndex"
+              (selectedTabChange)="selectedTabIndex($event.tab.textLabel, $event.index)"
+            >
+              <mat-tab label="{{ 'School-Tab.Programs' | translate }}" *ngIf="permissionService.showProgramIntakeChanelSchool()">
+                <ng-template matTabContent>
+                  <ng-container *ngIf="!isWaitingForResponse && !isLoading">
+                    <ms-program
+                      [schoolData]="schoolData"
+                      [schoolId]="schoolId"
+                      [scholarSeasonId]="scholarSeason?._id"
+                      [scholarSeason]="scholarSeason"
+                    ></ms-program>
+                  </ng-container>
+                </ng-template>
+              </mat-tab>
+              <mat-tab label="{{ 'School-Tab.Down payment' | translate }}" *ngIf="permissionService.showDownPaymentIntakeChanelSchool()">
+                <ng-template matTabContent>
+                  <ms-down-payment [scholarSeason]="scholarSeason"></ms-down-payment>
+                </ng-template>
+              </mat-tab>
+              <mat-tab label="{{ 'School-Tab.Full rate' | translate }}" *ngIf="permissionService.showFullRateIntakeChanelSchool()">
+                <ng-template matTabContent>
+                  <ms-full-rate [scholarSeason]="scholarSeason"></ms-full-rate>
+                </ng-template>
+              </mat-tab>
+              <mat-tab label="{{ 'School-Tab.Legal' | translate }}" *ngIf="permissionService.showLegalIntakeChanelSchool()">
+                <ng-template matTabContent>
+                  <ms-legal [scholarSeason]="scholarSeason"></ms-legal>
+                </ng-template>
+              </mat-tab>
+              <mat-tab label="{{ 'School-Tab.Admission' | translate }}" *ngIf="permissionService.showAdmissionIntakeChanelSchool()">
+                <ng-template matTabContent>
+                  <ms-admission [scholarSeason]="scholarSeason" [school]="schoolData" [tabIndex]="tabIndex"></ms-admission>
+                </ng-template>
+              </mat-tab>
+              <mat-tab label="{{ 'course_sequence.Courses & Sequences' | translate }}" *ngIf="permissionService.showCourseSequenceIntakeChanelSchool()">
+                <ng-template matTabContent>
+                  <ms-courses-sequences-program [schoolId]="schoolId" [scholarSeasonId]="scholarSeason?._id"></ms-courses-sequences-program>
+                </ng-template>
+              </mat-tab>
+            </mat-tab-group>
+          </ng-container>
+          <ng-container *ngIf="programsData && programsData.length === 0 && !checkDataCreateFromZero(scholarSeason)">
+            <div class="top-space">
+              <div class="p-grid">
+                <div class="p-col-5 text-right">
+                  <button (click)="openForm()" mat-raised-button color="accent" (click)="createFromZero(scholarSeason)">
+                    {{ 'INTAKE_CHANNEL.Create starting from zero' | translate }}
+                  </button>
+                </div>
+                <div class="p-col-2 text-center">
+                  {{ 'OR' | translate }}
+                </div>
+                <div class="p-col-5">
+                  <button (click)="openSelectExisting()" mat-raised-button color="accent">
+                    {{ 'INTAKE_CHANNEL.Duplicate from another scholar season' | translate }}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </ng-container>
+        </ng-template>
+      </mat-tab>
+    </ng-container>
+  </ng-container>
+</mat-tab-group>
+
+<div *ngIf="isWaitingForResponse || isLoading" class="loading-indicator">
+  <mat-progress-spinner mode="indeterminate" color="accent"></mat-progress-spinner>
+</div>

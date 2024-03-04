@@ -1,0 +1,152 @@
+<div class="p-col-12 np-padding">
+  <form [formGroup]="form">
+    <div class="p-col-7 no-padding" style="float: left">
+      <div class="dialogTitleWrapper dialog-border">
+        <div class="p-grid">
+          <div class="w-30 no-padding">
+            <mat-icon style="vertical-align: middle" svgIcon="check-underline-circle">check_underline_circle</mat-icon>
+          </div>
+          <div class="p-col-10 acad-title">
+            <h3 class="dialogTitle">
+              <div>
+                {{ 'REG_STEP_VAL.Duplicate a registration step message' | translate }}
+              </div>
+            </h3>
+          </div>
+          <div class="w-65 no-padding">
+            <button mat-icon-button class="close-icon float-right" mat-dialog-close tabindex="-1">
+              <mat-icon>close</mat-icon>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="fontColor">
+        <mat-dialog-content>
+          <mat-form-field>
+            <mat-select
+              [matTooltip]="'REG_STEP_VAL.Validation step' | translate"
+              formControlName="validation_step"
+              [placeholder]="'REG_STEP_VAL.Validation step' | translate"
+            >
+              <mat-option [value]="step" *ngFor="let step of validationSteps">
+                {{ step }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          <ckeditor [editor]="Editor" formControlName="first_title" (ready)="onReady($event)" [config]="config"></ckeditor>
+          <br />
+          <ckeditor [editor]="Editor" formControlName="second_title" (ready)="onReady($event)" [config]="config1"></ckeditor>
+          <br />
+          <mat-form-field>
+            <mat-label>{{ 'REG_STEP_VAL.Select a school' | translate }}</mat-label>
+            <mat-select formControlName="school" [matTooltip]="'REG_STEP_VAL.Select a school' | translate">
+              <mat-option [value]="school.short_name" *ngFor="let school of schoolList">
+                {{ school.short_name }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>{{ 'REG_STEP_VAL.Select campus' | translate }}</mat-label>
+            <mat-select formControlName="campus" [matTooltip]="'REG_STEP_VAL.Select campus' | translate">
+              <mat-option value="">{{ 'AllM' | translate }}</mat-option>
+              <mat-option [value]="campus.name" *ngFor="let campus of campusList">
+                {{ campus.name }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field>
+            <input matInput placeholder="{{ 'REG_STEP_VAL.Button 1' | translate }}" formControlName="first_button" />
+          </mat-form-field>
+          <mat-form-field>
+            <input matInput placeholder="{{ 'REG_STEP_VAL.Button 2' | translate }}" formControlName="second_button" />
+          </mat-form-field>
+          <div class="p-grid">
+            <mat-radio-group aria-label="Select an option" #mediaOption fxLayout="row wrap">
+              <mat-radio-button
+                fxFlex="100"
+                [value]="'video'"
+                [checked]="!disableVideo"
+                (change)="radioChangeHandler('video')"
+                [ngClass]="{ disable: !disableVideo }"
+              >
+                {{ 'REG_STEP_VAL.Video Link' | translate }}
+                <mat-form-field [ngClass]="{ hidden: disableVideo }">
+                  <input type="text" name="video_link" [formControl]="form.controls.video_link" matInput />
+                </mat-form-field>
+              </mat-radio-button>
+              <mat-radio-button
+                fxFlex="100"
+                [value]="'image'"
+                [checked]="!disableImage"
+                (change)="radioChangeHandler('image')"
+                [ngClass]="{ disable: !disableImage }"
+              >
+                {{ 'REG_STEP_VAL.Image Upload' | translate }}
+                <button mat-raised-button color="accent" [disabled]="disableImage" (click)="chooseFile()">
+                  <mat-icon class="mat-icon-svgIcon" svgIcon="cloud-upload">cloud_upload</mat-icon>
+                  {{ 'REG_STEP_VAL.Upload' | translate }}
+                </button>
+              </mat-radio-button>
+            </mat-radio-group>
+          </div>
+        </mat-dialog-content>
+        <mat-dialog-actions align="center">
+          <button mat-raised-button type="button" color="warn" mat-dialog-close>
+            <mat-icon class="mat-icon-svgIcon" svgIcon="loop">loop</mat-icon>{{ 'REG_STEP_VAL.Cancel' | translate }}
+          </button>
+          <button mat-raised-button class="button-grey" (click)="saveValidationStep()">
+            <mat-icon class="mat-icon-svgIcon">save</mat-icon>&nbsp;&nbsp;&nbsp;{{ 'REG_STEP_VAL.Save Only' | translate }}
+          </button>
+          <button mat-raised-button type="button" color="accent" (click)="saveAndPublishValidationStep()">
+            <mat-icon class="mat-icon-svgIcon align-bullhorn" svgIcon="bullhorn">bullhorn</mat-icon
+            >{{ 'REG_STEP_VAL.Save & Publish' | translate }}
+          </button>
+        </mat-dialog-actions>
+      </div>
+    </div>
+    <div class="p-col-5 no-padding preview">
+      <div class="congratulations-container">
+        <div class="title1">
+          <h5 class="text-inverse" innerHTML="{{ form.get('first_title').value }}"></h5>
+        </div>
+        <div class="media-container">
+          <div [ngClass]="{ hidden: disableImage }" style="margin: auto; text-align: center">
+            <img class="photo" [src]="sanitizeImageUrl(image_upload)" style="max-height: 305px" *ngIf="form.controls.image_upload.value" />
+            <div class="no-content" *ngIf="!form.controls.image_upload.value">
+              <p>{{ 'REG_STEP_VAL.Add an Image' | translate }}</p>
+            </div>
+          </div>
+          <div [ngClass]="{ hidden: disableVideo }">
+            <div class="no-content" *ngIf="!form.controls.video_link.value">
+              <p>{{ 'REG_STEP_VAL.Add a Video' | translate }}</p>
+            </div>
+            <iframe
+              style="height: 290px; width: 400px; margin: 150px auto"
+              width="300"
+              height="290"
+              [src]="sanitizeVideoUrl(video_link)"
+              frameborder="0"
+              allow="autoplay; encrypted-media"
+              allowfullscreen
+              *ngIf="form.controls.video_link.value"
+            >
+            </iframe>
+          </div>
+        </div>
+        <div class="title2">
+          <h5 class="text-inverse" innerHTML="{{ form.get('second_title').value }}"></h5>
+        </div>
+        <div class="actions">
+          <mat-dialog-actions align="center">
+            <button mat-raised-button type="button" class="grey" mat-dialog-close>
+              <mat-icon svgIcon="backup-restore"></mat-icon>{{ form.get('first_button').value }}
+            </button>
+            <button mat-raised-button color="accent">
+              {{ form.get('second_button').value }} {{ popUp.step }} <mat-icon class="mat-icon-default">touch_app</mat-icon>
+            </button>
+          </mat-dialog-actions>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>

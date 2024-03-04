@@ -1,0 +1,225 @@
+<ng-container>
+  <div class="p-grid" *ngIf="isWaitingForResponse" class="p-col-12" style="text-align: center !important; display: contents">
+    <div class="center-spinner spinner-wrapper">
+      <mat-spinner color="accent"></mat-spinner>
+    </div>
+  </div>
+  <mat-card *ngIf="!isWaitingForResponse">
+    <div class="candidate-detail" fxLayout="row wrap" *ngIf="candidate">
+      <div class="candidate-profile" fxFlex="10">
+        <img
+          [src]="
+            candidate?.is_photo_in_s3
+              ? serverimgPath + candidate?.photo_s3_path
+              : candidate?.photo
+              ? serverimgPath + candidate?.photo
+              : candidate?.civility === 'MR'
+              ? maleCandidateIcon
+              : candidate?.civility === 'neutral'
+              ? neutralStudentIcon
+              : femaleStudentIcon
+          "
+          class="candidate-photo"
+        />
+      </div>
+      <div class="candidate-information" fxFlex="90" fxLayout="row wrap">
+        <div class="first-row" fxFlex="100" fxLayout="row" fxLayoutAlign="start end">
+          <div class="name" fxFlex="20">
+            <span class="label">{{ candidate?.last_name | uppercase }} {{ candidate?.first_name }}
+              {{ candidate?.civility && candidate?.civility ==='neutral' ? '' : (candidate?.civility | translate) }}
+            </span>
+          </div>
+          <div class="program" fxFlex="55" fxLayout="row">
+            <span class="icon">
+              <mat-icon
+                [matTooltip]="candidate?.engagement_level | translate"
+                [ngClass]="{
+                  black: candidate?.engagement_level === 'lost',
+                  red: candidate?.engagement_level === 'low',
+                  orange: candidate?.engagement_level === 'medium',
+                  green: candidate?.engagement_level === 'high',
+                  grey: candidate?.engagement_level === 'registered'
+                }"
+                class="mat-icon-status"
+                aria-hidden="true"
+                >lens
+              </mat-icon>
+            </span>
+            <span class="tag yellow" style="margin-left: 10px">{{ candidate?.intake_channel?.program }}</span>
+          </div>
+          <div class="actions" fxFlex="25" fxLayout="row wrap" fxLayoutAlign="end">
+            <button
+              mat-icon-button
+              class="margin-right-button"
+              (click)="internshipMailDialog()"
+              matTooltip="{{ 'Send an email' | translate }}"
+            >
+              <mat-icon class="icon-style"> send </mat-icon>
+            </button>
+            <button
+              mat-icon-button
+              class="margin-right-button"
+              (click)="internshipWhatsappDialog()"
+              matTooltip="{{ 'Contact on WA or SMS' | translate }}"
+            >
+              <mat-icon svgIcon="whatsapp"> </mat-icon>
+            </button>
+            <button mat-icon-button class="margin-right-button" (click)="internshipCallDialog()" matTooltip="{{ 'Call' | translate }}">
+              <mat-icon svgIcon="phone-forward"> </mat-icon>
+            </button>
+            <button mat-icon-button class="margin-right-button" (click)="addPaymentDialog()" matTooltip="{{ 'Add payment' | translate }}">
+              <mat-icon class="icon-style"> edit </mat-icon>
+            </button>
+            <button
+              mat-icon-button
+              class="margin-right-button"
+              (click)="termAmountDialog()"
+              matTooltip="{{ 'Changer echeances/montant' | translate }}"
+            >
+              <mat-icon svgIcon="archive-edit-outline"> </mat-icon>
+            </button>
+            <button
+              mat-icon-button
+              class="margin-right-button"
+              (click)="sendUrgentMessage()"
+              matTooltip="{{ 'NAV.MESSAGES.URGENT_MESSAGE' | translate }}"
+            >
+              <mat-icon class="icon-style"> flash_on </mat-icon>
+            </button>
+            <button
+              mat-icon-button
+              (click)="blockStudentsDialog()"
+              class="margin-right-button"
+              matTooltip="{{ 'Block student' | translate }}"
+            >
+              <mat-icon *ngIf="candidate?.billing_id?.is_student_blocked" svgIcon="thumb-up-outline" style="color: #ff4040"> </mat-icon>
+              <mat-icon *ngIf="!candidate?.billing_id?.is_student_blocked" svgIcon="thumb-up-outline" style="color: #adff2f"> </mat-icon>
+            </button>
+            <button mat-icon-button class="margin-right-button" matTooltip="{{ 'See candidate infos' | translate }}">
+              <mat-icon svgIcon="incognito"> </mat-icon>
+            </button>
+          </div>
+        </div>
+        <div class="second-row" fxFlex="100" fxLayout="row" fxLayoutAlign="start start">
+          <div class="" fxLayout="row">
+            <span class="icon"><mat-icon class="primary-icon icons-style">perm_contact_calendar</mat-icon></span>
+            <span class="label"> 28/12/1998 a Fontainbleau </span>
+          </div>
+          <div class="" fxLayout="row">
+            <span class="icon"><mat-icon class="primary-icon icons-style">place</mat-icon></span>
+            <span class="label"> Nanterre </span>
+          </div>
+          <div class="" fxLayout="row">
+            <span class="icon"><mat-icon class="primary-icon icons-style">school</mat-icon></span>
+            <span class="label"> BAC S 1ere Anne de Medecine </span>
+          </div>
+          <div class="" fxLayout="row">
+            <span class="tag yellow" style="padding: 0px 6px !important">{{ candidate?.billing_id?.account_number }}</span>
+          </div>
+        </div>
+        <div class="third-row" fxFlex="100" fxLayout="row wrap" fxLayoutAlign="center">
+          <div class="" fxLayout="row">
+            <span class="icon"><mat-icon class="primary-icon icons-style">call</mat-icon></span>
+            <span class="label">
+              {{ candidate?.telephone }}
+            </span>
+          </div>
+          <div class="" fxLayout="row">
+            <span class="icon"><mat-icon class="primary-icon icons-style">mail</mat-icon></span>
+            <span class="label">
+              {{ candidate?.email }}
+            </span>
+          </div>
+          <div class="" fxLayout="row">
+            <span class="icon">
+              <img
+                matPrefix
+                [src]="
+                  candidate?.admission_member_id?.profile_picture
+                    ? serverimgPath + candidate?.admission_member_id?.profile_picture
+                    : candidate?.admission_member_id?.profile_picture
+                    ? serverimgPath + candidate?.admission_member_id?.profile_picture
+                    : candidate?.admission_member_id?.civility === 'MR'
+                    ? maleCandidateIcon
+                    : candidate?.admission_member_id?.civility === 'neutral'
+                    ? neutralStudentIcon
+                    : femaleCandidateIcon
+                "
+                class="devMemberImage"
+                style="border-radius: 50%; width: 25px"
+              />
+            </span>
+            <span class="label">
+              {{ candidate?.admission_member_id?.last_name | uppercase }}
+              {{ candidate?.admission_member_id?.first_name }}
+            </span>
+          </div>
+          <div class="" fxLayout="row">
+            <span class="icon">
+              <img
+                matPrefix
+                [src]="
+                  candidate?.student_mentor_id?.is_photo_in_s3
+                    ? serverimgPath + candidate?.student_mentor_id?.photo_s3_path
+                    : candidate?.student_mentor_id?.photo
+                    ? serverimgPath + candidate?.student_mentor_id?.photo
+                    : candidate?.student_mentor_id?.civility === 'MR'
+                    ? maleCandidateIcon
+                    : candidate?.student_mentor_id?.civility === 'neutral'
+                    ? neutralStudentIcon
+                    : femaleStudentIcon
+                "
+                class="devMemberImage"
+                style="border-radius: 50%; width: 25px"
+              />
+            </span>
+            <span class="label">
+              {{ candidate?.student_mentor_id?.last_name | uppercase }}
+              {{ candidate?.student_mentor_id?.first_name }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </mat-card>
+  <ng-container>
+    <mat-tab-group [selectedIndex]="selectedIndex" #candidateMatGroup>
+      <!-- First tab always shown -->
+      <mat-tab label="HistoryNote">
+        <ng-template mat-tab-label>
+          <h5>{{ 'History, Notes and Tasks' | translate }}</h5>
+        </ng-template>
+        <ng-template matTabContent>
+          <ms-internship-history-tab></ms-internship-history-tab>
+        </ng-template>
+      </mat-tab>
+      <!-- First tab always shown -->
+      <mat-tab label="AddNote">
+        <ng-template mat-tab-label>
+          <h4>{{ 'Add a note' | translate }}</h4>
+        </ng-template>
+        <ng-template matTabContent>
+          <ms-internship-note-tab [candidate]="candidate"></ms-internship-note-tab>
+        </ng-template>
+      </mat-tab>
+      <!-- First tab always shown -->
+      <mat-tab label="Candidature Profile">
+        <ng-template mat-tab-label>
+          <h4>{{ 'Candidature Profile' | translate }}</h4>
+        </ng-template>
+        <ng-template matTabContent>
+          <ms-internship-profile-tab [candidate]="candidate"></ms-internship-profile-tab>
+        </ng-template>
+      </mat-tab>
+      <!-- First tab always shown -->
+      <mat-tab label="Frais de scolarite">
+        <ng-template mat-tab-label>
+          <h4>{{ 'Frais de scolarité' | translate }}</h4>
+        </ng-template>
+        <ng-template matTabContent>
+          <ms-frais-de-scolarite-tab [candidate]="candidate" [candidateId]="candidateId"></ms-frais-de-scolarite-tab>
+        </ng-template>
+      </mat-tab>
+    </mat-tab-group>
+  </ng-container>
+</ng-container>

@@ -1,0 +1,62 @@
+<div class="dialog-border" cdkDrag cdkDragRootElement=".cdk-overlay-pane" cdkDragHandle>
+  <div class="dialogTitleWrapper header-dialog">
+    <div class="p-grid">
+      <div class="w-30 no-padding">
+        <mat-icon mat-icon-button svgIcon="clipboard-check" class="mt-5px"></mat-icon>
+      </div>
+      <div class="p-col-10 no-padding">
+        <h3 class="dialogTitle">{{ 'Export Payout' | translate }}</h3>
+      </div>
+      <div class="w-65 no-padding">
+        <button mat-icon-button class="close-icon float-right" tabindex="-1" mat-dialog-close>
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div mat-dialog-content class="mat-dialog-content dialog-body" [formGroup]="exportPayoutForm">
+  <div class="p-grid">
+    <div class="p-col-6 no-padding-y">
+      <mat-form-field class="example-full-width" style="margin-top: 5px">
+        <mat-label>{{ 'Legal Entity' | translate }}</mat-label>
+        <input matInput formControlName="legal_entity" [matAutocomplete]="legalEntity"/>
+        <mat-autocomplete #legalEntity="matAutocomplete">
+          <mat-option *ngFor="let legalEntity of filteredLegalEntityList | async" [value]="legalEntity?.legal_entity_name" (click)="selectLegalEntity(legalEntity?._id)">
+            {{ legalEntity?.legal_entity_name }}
+          </mat-option>
+        </mat-autocomplete>
+      </mat-form-field>
+    </div>
+    <div class="p-col-6 no-padding-y">
+    </div>
+    <div class="p-col-6 no-padding-y">
+      <mat-form-field class="example-full-width" style="margin-top: 5px">
+        <mat-label>{{ 'DASHBOARD.FROM' | translate }}</mat-label>
+        <input matInput (click)="fromDatePicker.open()" [matDatepicker]="fromDatePicker" formControlName="from_date" [max]="exportPayoutForm?.get('to_date')?.value" />
+        <mat-datepicker-toggle matSuffix [for]="fromDatePicker" style="margin-right: 5px"></mat-datepicker-toggle>
+        <mat-datepicker #fromDatePicker></mat-datepicker>
+      </mat-form-field>
+    </div>
+    <div class="p-col-6 no-padding-y">
+      <mat-form-field class="example-full-width" style="margin-top: 5px">
+        <mat-label>{{ 'DASHBOARD.TO' | translate }}</mat-label>
+        <input matInput (click)="toDatePicker.open()" [matDatepicker]="toDatePicker" formControlName="to_date" [min]="exportPayoutForm?.get('from_date')?.value"/>
+        <mat-datepicker-toggle matSuffix [for]="toDatePicker" style="margin-right: 5px"></mat-datepicker-toggle>
+        <mat-datepicker #toDatePicker></mat-datepicker>
+      </mat-form-field>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="isWaitingForResponse" class="inner-loading-indicator">
+  <mat-spinner color="accent" [diameter]="100"></mat-spinner>
+</div>
+
+<div mat-dialog-actions class="justify-content-end mr-10">
+  <button mat-button mat-raised-button mat-dialog-close color="warn">{{ 'CANCEL' | translate }}</button>
+  <button mat-button mat-raised-button color="primary" class="mr-0" (click)="downloadCSV()">
+    {{ 'Validate' | translate }}
+  </button>
+</div>

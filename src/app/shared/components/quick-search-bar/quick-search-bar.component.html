@@ -1,0 +1,89 @@
+<div class="search-container tw-flex tw-items-center tw-justify-end" [ngClass]="themeClass$ | async">
+  <div [ngClass]="{
+    'tw-w-0 tw-opacity-0': !isSearchContainerOpen, 
+    'tw-w-full tw-opacity-100': isSearchContainerOpen
+  }" class="tw-ease-in-out tw-transition-opacity tw-duration-300 tw-overflow-hidden">
+    <div class="tw-flex tw-justify-between tw-items-center tw-bg-app-secondary tw-rounded-full tw-px-2">
+      <div class="tw-flex tw-items-center tw-w-full tw-gap-1 tw-h-10">
+        <div class="tw-h-10 tw-flex tw-items-center tw-justify-center">
+          <mat-icon>search</mat-icon>
+        </div>
+        <input 
+          (paste)="onPaste($event)" 
+          [formControl]="userSearch" 
+          placeholder="{{'search' | translate}}" 
+          type="text"
+          class="tw-px-1 tw-flex-grow tw-text-app-tertiary tw-text-base tw-bg-transparent tw-placeholder-app-tertiary tw-placeholder-opacity-50 focus:tw-outline-none">
+        <button *ngIf="permissionService.allPermisionSearchUser()"
+          class="tw-p-1.5 tw-rounded-full tw-bg-app-primary tw-text-app-tertiary tw-flex"
+          [ngClass]="{'tw-opacity-50 tw-cursor-default': !userSearch.value}"
+          (click)="quickSearch('user')"
+          [disabled]="!userSearch.value" 
+          matTooltip="{{ 'Search User' | translate }}">
+          <mat-icon svgIcon="account-search" class="mat-icon-section-svgIcon align-icon">account-search</mat-icon>
+        </button>
+        <button *ngIf="permissionService.allPermisionSearchTeacher()"
+          class="tw-p-1.5 tw-rounded-full tw-bg-app-primary tw-text-app-tertiary tw-flex"
+          [ngClass]="{'tw-opacity-50 tw-cursor-default': !userSearch.value}" 
+          (click)="quickSearch('teacher')"
+          [disabled]="!userSearch.value" 
+          matTooltip="{{ 'Search Teacher' | translate }}">
+          <mat-icon svgIcon="account-tie" class="mat-icon-section-svgIcon align-icon">account-tie</mat-icon>
+        </button>
+        <button *ngIf="permissionService?.allPermisionSearchMentor() && permissionService?.showMenu('companies.show_perm') && permissionService?.showsCompanyStaffTabPerm()"
+          class="tw-p-1.5 tw-rounded-full tw-bg-app-primary tw-text-app-tertiary tw-flex" 
+          [ngClass]="{'tw-opacity-50 tw-cursor-default': !userSearch.value}"
+          (click)="quickSearch('mentor')"
+          [disabled]="!userSearch.value" 
+          matTooltip="{{ 'Search Mentor' | translate }}">
+          <mat-icon svgIcon="account-hard-hat-outline"
+            class="mat-icon-section-svgIcon align-icon">account-hard-hat-outline</mat-icon>
+        </button>
+        <button *ngIf="permissionService.allPermisionSearchStudent()"
+          class="tw-p-1.5 tw-rounded-full tw-bg-app-primary tw-text-app-tertiary tw-flex"
+          [ngClass]="{'tw-opacity-50 tw-cursor-default': !userSearch.value}"
+          (click)="quickSearch('student')"
+          [disabled]="!userSearch.value" 
+          matTooltip="{{ 'Search Student' | translate }}">
+          <mat-icon svgIcon="school" class="mat-icon-section-svgIcon align-icon">school</mat-icon>
+        </button>
+        <button *ngIf="permissionService.allPermisionSearchSchool()"
+          class="tw-p-1.5 tw-rounded-full tw-bg-app-primary tw-text-app-tertiary tw-flex"
+          [ngClass]="{'tw-opacity-50 tw-cursor-default': !userSearch.value}"
+          (click)="quickSearch('school')"
+          [disabled]="!userSearch.value" 
+          matTooltip="{{ 'Search School' | translate }}">
+          <mat-icon svgIcon="bank" class="mat-icon-section-svgIcon align-icon">bank</mat-icon>
+        </button>
+        <button *ngIf="permissionService.allPermisionSearchStudent()"
+          class="tw-p-1.5 tw-rounded-full tw-bg-app-primary tw-text-app-tertiary tw-flex"
+          [ngClass]="{'tw-opacity-50 tw-cursor-default': !userSearch.value}"
+          (click)="quickSearch('email')"
+          [disabled]="!userSearch.value" 
+          matTooltip="{{ 'Search User/Student by Email' | translate }}">
+          <mat-icon svgIcon="email-search.svg" class="mat-icon-section-svgIcon align-icon"></mat-icon>
+        </button>
+        <button *ngIf="permissionService.allPermisionSearchTag()"
+          class="tw-p-1.5 tw-rounded-full tw-bg-app-primary tw-text-app-tertiary tw-flex" 
+          [ngClass]="{'tw-opacity-50 tw-cursor-default': !userSearch.value}"
+          (click)="quickSearch('tag')"
+          [disabled]="!userSearch.value" 
+          matTooltip="{{ 'Search Tag' | translate }}">
+          <mat-icon svgIcon="pound" class="mat-icon-section-svgIcon align-icon">pound</mat-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+  <div class="button-close" *ngIf="isSearchContainerOpen">
+    <button 
+      class="tw-rounded-full tw-flex tw-mx-2 tw-p-2 hover:tw-bg-rose-500/30 tw-text-rose-600" 
+      [matTooltip]="'ERP_072.Close' | translate" 
+      (click)="onOpenSearchContainer()">
+      <mat-icon class="tw-relative tw-left-[0.5px]">close</mat-icon>
+    </button>
+  </div>
+</div>
+
+<div *ngIf="isWaitingForResponse" class="loading-indicator">
+  <mat-progress-spinner mode="indeterminate" color="accent"></mat-progress-spinner>
+</div>

@@ -1,0 +1,50 @@
+<ms-filter-breadcrumb [filterBreadcrumbData]="filterBreadcrumbData" (removeFilterTrigger)="removeFilterBreadcrumb($event)"></ms-filter-breadcrumb>
+
+<div class="p-col-12">
+  <mat-card class="mat-card-adjust">
+    <div class="p-grid">
+      <div class="p-col-4 float-left">
+        <mat-form-field class="pad-top-2">
+          <input matInput class="form-field" [formControl]="search" placeholder="{{ 'COMPANY.SearchBy' | translate }}" />
+        </mat-form-field>
+      </div>
+      <div class="p-col-4 float-right">
+        <div class="p-grid">
+          <div class="btn-placement">
+            <button mat-raised-button color="accent" class="float-right" matTooltip="{{ 'COMPANY.ADD_COMPANY' | translate }}" (click)="addCompany()" *ngIf="permission.addCompanyInCompany()">
+              <mat-icon class="mat-icon-default">business</mat-icon>
+              {{ 'COMPANY.ADD_COMPANY' | translate }}
+            </button>
+            <button mat-raised-button color="primary" matTooltip="{{ 'COMPANY.RESET' | translate }}" (click)="reset()">
+              <mat-icon svgIcon="loop" class="mat-icon-svgIcon"></mat-icon>
+              {{ 'COMPANY.RESET' | translate }}
+            </button>
+            <button mat-raised-button color="accent" matTooltip="{{ 'Import' | translate }}" [matMenuTriggerFor]="action">
+              <mat-icon svgIcon="file-excel" class="mat-icon-svgIcon"></mat-icon>
+              {{ 'Import' | translate }}
+              <mat-icon>expand_more</mat-icon>
+            </button>
+            <mat-menu #action="matMenu">
+              <button
+                mat-menu-item
+                matTooltip="{{ 'Template for Import' | translate }}"
+                (click)="templateForImport()"
+                class="border-button"
+              >
+                {{ 'Template for Import' | translate }}
+              </button>
+              <button
+                mat-menu-item
+                matTooltip="{{ 'Import companies' | translate }}"
+                (click)="csvTypeSelectionUpload()"
+                class="border-button"
+              >
+                {{ 'Import companies' | translate }}
+              </button>
+            </mat-menu>
+          </div>
+        </div>
+      </div>
+    </div>
+  </mat-card>
+</div>

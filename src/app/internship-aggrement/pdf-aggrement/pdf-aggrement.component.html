@@ -1,0 +1,252 @@
+<div class="responsives">
+  <!-- Card Intern Detail -->
+  <div class="row padl-13 hd-legend web-card">
+    <label>{{ 'PDF' | translate }}</label>
+  </div>
+  <div class="btn-conditions web-card">
+    <button mat-button mat-raised-button color="accent" class="btn-first" (click)="downloadPDF()">
+      <mat-icon style="font-size: 24px">download</mat-icon> {{ 'Download' | translate }}
+    </button>
+    <button mat-button mat-raised-button color="primary" class="btn-first" (click)="viewPDF()">
+      <mat-icon style="font-size: 24px; width: 20px; height: 32px" svgIcon="eye"></mat-icon> {{ 'View' | translate }}
+    </button>
+  </div>
+  <div class="row web-card">
+    <div class="col-lg-12" style="margin-bottom: 10px; margin-top: 10px">
+      <mat-card class="doc-view">
+        <mat-card-content>
+          <div class="background-primary pa-1" style="border-bottom: 2px solid #424242">
+            <div class="p-grid">
+              <div class="p-col-12">
+                <h4 class="title-center">{{ 'Preview of PDF Agreement' | translate }}</h4>
+              </div>
+            </div>
+            <div class="p-grid">
+              <div class="p-col-12 bg-white">
+                <div style="min-height: 242px">
+                  <ng-container *ngIf="parcheminUrl && !isWaitingForResponse">
+                    <div class="img-preview container-view">
+                      <iframe [src]="parcheminUrl" frameBorder="0" width="100%" style="height: 860px"></iframe>
+                    </div>
+                  </ng-container>
+                  <ng-container *ngIf="!parcheminUrl && !isWaitingForResponse">
+                    <mat-icon class="content-empty">article</mat-icon>
+                    <span class="text-empty">{{ 'No PDF Generated Yet' | translate }}</span>
+                  </ng-container>
+                </div>
+              </div>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+
+  <div class="p-grid web-card" [formGroup]="detailForm">
+    <mat-checkbox style="margin-left: 8px" *ngIf="isUserStudent || isUserCRM" formControlName="is_student_already_sign">{{
+      'Signs (Student)' | translate
+    }}</mat-checkbox>
+    <mat-checkbox style="margin-left: 8px" *ngIf="isUserMentor || isUserCRM" formControlName="is_mentor_already_sign">{{
+      'Sign (Mentor)' | translate
+    }}</mat-checkbox>
+    <mat-checkbox style="margin-left: 8px" *ngIf="isUserMember || isUserCRM" formControlName="is_company_manager_already_sign">{{
+      'Sign (Company Manager)' | translate
+    }}</mat-checkbox>
+    <mat-checkbox style="margin-left: 8px" *ngIf="isUserCRM" formControlName="is_company_relation_member_already_sign">{{
+      'Sign (CRM)' | translate
+    }}</mat-checkbox>
+  </div>
+
+  <div class="btn-conditions web-card">
+    <button
+      mat-button
+      mat-raised-button
+      color="warn"
+      class="btn-first"
+      (click)="onOpenRevisionDialog()"
+      *ngIf="isUserStudent || isUserMentor || isUserMember"
+    >
+      {{ 'Ask for revision' | translate }}
+    </button>
+    <button mat-button mat-raised-button *ngIf="isUserCRM" color="accent" class="btn-first" (click)="submitAgreement()">
+      <mat-icon style="font-size: 24px">send</mat-icon> {{ 'Submit for signature' | translate }}
+    </button>
+    <button
+      mat-button
+      mat-raised-button
+      *ngIf="isUserCRM"
+      color="accent"
+      [disabled]="
+        !detailForm.get('is_company_relation_member_already_sign').value ||
+        !detailForm.get('is_company_manager_already_sign').value ||
+        !detailForm.get('is_mentor_already_sign').value ||
+        !detailForm.get('is_student_already_sign').value
+      "
+      class="btn-first"
+      (click)="publishAgreement()"
+    >
+      <mat-icon style="font-size: 24px">send</mat-icon> {{ 'Validate' | translate }}
+    </button>
+    <button
+      mat-button
+      mat-raised-button
+      *ngIf="isUserMentor"
+      color="accent"
+      [disabled]="!detailForm.get('is_mentor_already_sign').value"
+      class="btn-first"
+      (click)="submitSign('mentor')"
+    >
+      <mat-icon style="font-size: 24px">send</mat-icon> {{ 'Submit' | translate }}
+    </button>
+    <button
+      mat-button
+      mat-raised-button
+      *ngIf="isUserStudent"
+      color="accent"
+      [disabled]="!detailForm.get('is_student_already_sign').value"
+      class="btn-first"
+      (click)="submitSign('student')"
+    >
+      <mat-icon style="font-size: 24px">send</mat-icon> {{ 'Submit' | translate }}
+    </button>
+    <button
+      mat-button
+      mat-raised-button
+      *ngIf="isUserMember"
+      color="accent"
+      [disabled]="!detailForm.get('is_company_manager_already_sign').value"
+      class="btn-first"
+      (click)="submitSign('manager')"
+    >
+      <mat-icon style="font-size: 24px">send</mat-icon> {{ 'Submit' | translate }}
+    </button>
+  </div>
+
+  <!-- Card Intern Detail -->
+  <div class="row padl-13 hd-legend mobile-card">
+    <label>{{ 'PDF' | translate }}</label>
+  </div>
+  <div class="mobile-card">
+    <button mat-button mat-raised-button color="accent" class="btn-first m-1rem" (click)="downloadPDF()">
+      <mat-icon style="font-size: 24px">download</mat-icon> {{ 'Download' | translate }}
+    </button>
+    <button mat-button mat-raised-button color="primary" class="btn-first" (click)="viewPDF()">
+      <mat-icon style="font-size: 24px; width: 20px; height: 32px" svgIcon="eye"></mat-icon> {{ 'View' | translate }}
+    </button>
+  </div>
+  <div class="row mobile-card">
+    <div class="col-lg-12" style="margin-bottom: 10px; margin-top: 10px">
+      <mat-card class="doc-view">
+        <mat-card-content>
+          <div class="background-primary pa-1" style="border-bottom: 2px solid #424242">
+            <div class="p-grid">
+              <div class="p-col-12">
+                <h4 class="title-center">{{ 'Preview of PDF Agreement' | translate }}</h4>
+              </div>
+            </div>
+            <div class="p-grid">
+              <div class="p-col-12 bg-white">
+                <div style="min-height: 242px">
+                  <ng-container *ngIf="parcheminUrl && !isWaitingForResponse">
+                    <div class="img-preview container-view">
+                      <iframe [src]="parcheminUrl" frameBorder="0" width="100%" style="height: 860px"></iframe>
+                    </div>
+                  </ng-container>
+                  <ng-container *ngIf="(!parcheminUrl && !isWaitingForResponse) || pdfIsLoading">
+                    <mat-icon class="content-empty">article</mat-icon>
+                    <span class="text-empty">{{ 'No PDF Generated Yet' | translate }}</span>
+                  </ng-container>
+                </div>
+              </div>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+
+  <div class="p-grid mobile-card" [formGroup]="detailForm">
+    <mat-checkbox style="margin-left: 8px" *ngIf="isUserStudent || isUserCRM" formControlName="is_student_already_sign">{{
+      'Signs (Student)' | translate
+    }}</mat-checkbox>
+    <mat-checkbox style="margin-left: 8px" *ngIf="isUserMentor || isUserCRM" formControlName="is_mentor_already_sign">{{
+      'Sign (Mentor)' | translate
+    }}</mat-checkbox>
+    <mat-checkbox style="margin-left: 8px" *ngIf="isUserMember || isUserCRM" formControlName="is_company_manager_already_sign">{{
+      'Sign (Company Manager)' | translate
+    }}</mat-checkbox>
+    <mat-checkbox style="margin-left: 8px" *ngIf="isUserCRM" formControlName="is_company_relation_member_already_sign">{{
+      'Sign (CRM)' | translate
+    }}</mat-checkbox>
+  </div>
+
+  <div class="mobile-card">
+    <button
+      mat-button
+      mat-raised-button
+      color="warn"
+      class="btn-first m-1rem"
+      style="margin: 1.4rem 0 !important"
+      (click)="onOpenRevisionDialog()"
+      *ngIf="isUserStudent || isUserMentor || isUserMember"
+    >
+      {{ 'Ask for revision' | translate }}
+    </button>
+    <button mat-button mat-raised-button *ngIf="isUserCRM" color="accent" class="btn-first" (click)="submitAgreement()">
+      <mat-icon style="font-size: 24px">send</mat-icon> {{ 'Submit for signature' | translate }}
+    </button>
+    <button
+      mat-button
+      mat-raised-button
+      *ngIf="isUserCRM"
+      color="accent"
+      [disabled]="
+        !detailForm.get('is_company_relation_member_already_sign').value ||
+        !detailForm.get('is_company_manager_already_sign').value ||
+        !detailForm.get('is_mentor_already_sign').value ||
+        !detailForm.get('is_student_already_sign').value
+      "
+      class="btn-first m-1rem"
+      style="margin: 1.4rem 0"
+      (click)="publishAgreement()"
+    >
+      <mat-icon style="font-size: 24px">send</mat-icon> {{ 'Validate' | translate }}
+    </button>
+    <button
+      mat-button
+      mat-raised-button
+      *ngIf="isUserMentor"
+      color="accent"
+      [disabled]="!detailForm.get('is_mentor_already_sign').value"
+      class="btn-first m-1rem"
+      style="margin: 1.4rem 0"
+      (click)="submitSign('mentor')"
+    >
+      <mat-icon style="font-size: 24px">send</mat-icon> {{ 'Submit' | translate }}
+    </button>
+    <button
+      mat-button
+      mat-raised-button
+      *ngIf="isUserStudent"
+      color="accent"
+      [disabled]="!detailForm.get('is_student_already_sign').value"
+      class="btn-first m-1rem"
+      style="margin: 1.4rem 0"
+      (click)="submitSign('student')"
+    >
+      <mat-icon style="font-size: 24px">send</mat-icon> {{ 'Submit' | translate }}
+    </button>
+    <button
+      mat-button
+      mat-raised-button
+      *ngIf="isUserMember"
+      color="accent"
+      [disabled]="!detailForm.get('is_company_manager_already_sign').value"
+      class="btn-first m-1rem"
+      style="margin: 1.4rem 0"
+      (click)="submitSign('manager')"
+    >
+      <mat-icon style="font-size: 24px">send</mat-icon> {{ 'Submit' | translate }}
+    </button>
+  </div>
+</div>

@@ -1,0 +1,274 @@
+<div class="p-grid" style="margin-bottom: 5px; border-bottom: 1px solid #4e4e4e">
+  <div class="p-col-12" style="padding-left: 10px">
+    <div style="width: 20px; float: left; padding: 4px 0px 0px 0px; margin-right: 10px">
+      <span><mat-icon style="font-size: 16px">account_balance</mat-icon></span>
+    </div>
+    <div>
+      <span class="titleImport">{{ 'Cheque Deposit Slip' | translate }}</span>
+      <button mat-button style="margin-left: 10px !important;line-height: 16px;margin: 0px;padding: 0px !important;width: 16px !important;min-width: 16px;" [matTooltip]="'Tutorial for this module' | translate" (click)="toggleSidebar()">
+        <mat-icon style="font-size: 16px;width: 16px;">help</mat-icon>
+      </button>
+    </div>
+  </div>
+</div>
+<mat-card class="pdf-card">
+  <mat-card-title>
+    <div class="p-grid">
+      <div class="p-col-12 text-right no-padding">
+        <button color="accent" (click)="exportPdf()" mat-raised-button matTooltip="{{ 'PDF' | translate }}">
+          {{ 'PDF' | translate }}
+        </button>
+      </div>
+    </div>
+  </mat-card-title>
+  <div class="pdf-container">
+    <div class="p-grid">
+      <div class="p-col-12">
+        <div class="p-grid">
+          <div class="p-col-6 no-padding">
+            <h5 class="text-left">{{ dataEntityCheque?.billing_entity }}</h5>
+          </div>
+          <div class="p-col-6 no-padding">
+            <h5 class="text-left">{{ dataEntityCheque?.bank_name }}</h5>
+          </div>
+        </div>
+
+        <div class="p-grid">
+          <div class="p-col-6 no-padding">
+            <h5 class="text-left">6 avenue de Provence</h5>
+          </div>
+          <div class="p-col-6 no-padding">
+            <h5 class="text-left">6 avenue de Provence</h5>
+          </div>
+        </div>
+
+        <div class="p-grid">
+          <div class="p-col-6 no-padding">
+            <h5 class="text-left">75452 Paris 9, France</h5>
+          </div>
+          <div class="p-col-6 no-padding">
+            <h5 class="text-left">75452 Paris 9, France</h5>
+          </div>
+        </div>
+      </div>
+      <div class="p-col-12">
+        <div class="p-grid">
+          <div class="p-col-12 no-padding">
+            <h5 class="text-left">Compte : {{ dataEntityCheque?.accounting_account }}</h5>
+          </div>
+        </div>
+      </div>
+
+      <div class="p-col-12">
+        <div class="p-grid">
+          <div class="p-col-12 no-padding">
+            <h3 class="text-center">Bordereau No : {{ dataEntityCheque?.bordereau_number }}</h3>
+          </div>
+          <div class="p-col-12 no-padding">
+            <h5 class="text-right">Date : {{ today }}</h5>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="p-grid doc-table-wrapper">
+      <table width="100%" border="1">
+        <ng-container>
+          <tr class="bg-gray">
+            <td width="10%" class="font-weight-bold pad-l-sm">{{ 'Ref' | translate }}</td>
+            <td width="25%" class="font-weight-bold pad-l-sm">{{ 'Payor' | translate }}</td>
+            <td width="25%" class="font-weight-bold pad-l-sm">{{ 'Bank' | translate }}</td>
+            <td width="25%" class="font-weight-bold pad-l-sm">{{ 'Chq. Nber' | translate }}</td>
+            <td width="15%" class="font-weight-bold pad-l-sm">{{ 'Amount' | translate }} (€)</td>
+          </tr>
+          <tr *ngFor="let element of dummyData; index as i">
+            <td width="10%" style="text-align: center !important">{{ generateRef(i + 1) }}</td>
+            <td width="25%" style="text-align: center !important">{{ element?.payor }}</td>
+            <td width="25%" style="text-align: center !important">{{ element?.bank_name }}</td>
+            <td width="25%" style="text-align: center !important">{{ element?.cheque_number }}</td>
+            <td width="15%" style="text-align: center !important">{{ element?.amount | currency: 'EURO':'':'0.2' }}</td>
+          </tr>
+        </ng-container>
+      </table>
+    </div>
+
+    <div class="p-grid doc-table-wrapper">
+      <table width="100%" border="0">
+        <ng-container>
+          <tr>
+            <td width="10%" class="font-weight-bold pad-l-sm"></td>
+            <td width="25%" class="font-weight-bold pad-l-sm"></td>
+            <td width="25%" class="font-weight-bold pad-l-sm"></td>
+            <td width="25%" class="font-weight-bold pad-l-sm" style="text-align: right; padding: 0px; right: -35px; position: relative">
+              {{ 'Total Amount' | translate }} :
+            </td>
+            <td width="15%" class="font-weight-bold pad-l-sm">{{ totalAmount | currency: 'EURO':'':'0.2' }}</td>
+          </tr>
+          <tr>
+            <td width="10%" class="font-weight-bold pad-l-sm" style="padding: 0px"></td>
+            <td width="25%" class="font-weight-bold pad-l-sm" style="padding: 0px"></td>
+            <td width="25%" class="font-weight-bold pad-l-sm" style="padding: 0px"></td>
+            <td width="25%" class="font-weight-bold pad-l-sm" style="text-align: right; padding: 0px; right: -35px; position: relative">
+              {{ 'Nber of Cheques' | translate }} :
+            </td>
+            <td width="15%" class="font-weight-bold pad-l-sm" style="padding: 0px">
+              {{ dummyData && dummyData.length ? dummyData.length : '-' }}
+            </td>
+          </tr>
+        </ng-container>
+      </table>
+    </div>
+    
+    <div class="p-col-12">
+      <div class="p-grid">
+        <div class="p-col-6 no-padding" style="text-align: center;padding-top: 25px !important;">
+          <h5 class="text-center">{{ 'Signature' | translate }}</h5>
+          <span class="text-center name">(..................................)</span>
+        </div>
+        <div class="p-col-6 no-padding" style="text-align: center;">
+          <img [src]="stamp" style="height: 135px;" class="student-details-img" />
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="p-grid mrgn-t-sm" style="margin-bottom: 20px !important; margin-top: 10px !important">
+    <div class="p-col-12" style="text-align: right; padding: 0px">
+      <button mat-raised-button color="accent" (click)="validateData()" class="margin-right-0">
+        <mat-icon class="mat-icon-default">euro</mat-icon>
+        {{ 'Retour Tableau de suivi des paiement' | translate }}
+      </button>
+    </div>
+  </div>
+</mat-card>
+
+<div style="display: none" id="pdf-cheque">
+  <div class="p-grid">
+    <div class="p-col-12">
+      <div class="p-grid">
+        <div class="p-col-9 no-padding">
+          <span class="text-left">{{ dataEntityCheque?.billing_entity }}</span>
+        </div>
+        <div class="p-col-3 no-padding">
+          <span class="text-left">{{ dataEntityCheque?.bank_name }}</span>
+        </div>
+      </div>
+
+      <div class="p-grid">
+        <div class="p-col-9 no-padding">
+          <span class="text-left">6 avenue de Provence</span>
+        </div>
+        <div class="p-col-3 no-padding">
+          <span class="text-left">6 avenue de Provence</span>
+        </div>
+      </div>
+
+      <div class="p-grid">
+        <div class="p-col-9 no-padding">
+          <span class="text-left">75452 Paris 9, France</span>
+        </div>
+        <div class="p-col-3 no-padding">
+          <span class="text-left">75452 Paris 9, France</span>
+        </div>
+      </div>
+    </div>
+    <div class="p-col-12">
+      <div class="p-grid">
+        <div class="p-col-12 no-padding">
+          <span class="text-left">Compte : {{ dataEntityCheque?.accounting_account }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="p-col-12 no-padding">
+      <div class="p-grid">
+        <div class="p-col-12 no-padding">
+          <h3 class="text-center">Bordereau No : {{ dataEntityCheque?.bordereau_number }}</h3>
+        </div>
+      </div>
+      <div class="p-col-12 no-padding">
+        <span style="width: 100%; text-align: right !important; float: right; margin-bottom: 10px !important">Date : {{ today }}</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="p-grid">
+    <table width="100%" border="1">
+      <ng-container>
+        <tr class="bg-gray">
+          <td width="10%" class="font-weight-bold pad-l-sm" style="font-size: 12px !important; text-align: center !important">
+            {{ 'Ref' | translate }}
+          </td>
+          <td width="25%" class="font-weight-bold pad-l-sm" style="font-size: 12px !important; text-align: center !important">
+            {{ 'Payor' | translate }}
+          </td>
+          <td width="25%" class="font-weight-bold pad-l-sm" style="font-size: 12px !important; text-align: center !important">
+            {{ 'Bank' | translate }}
+          </td>
+          <td width="25%" class="font-weight-bold pad-l-sm" style="font-size: 12px !important; text-align: center !important">
+            {{ 'Chq. Nber' | translate }}
+          </td>
+          <td width="15%" class="font-weight-bold pad-l-sm" style="font-size: 12px !important; text-align: center !important">
+            {{ 'Amount' | translate }} (€)
+          </td>
+        </tr>
+        <tr *ngFor="let element of dummyData; index as i">
+          <td width="10%" style="font-size: 12px !important; text-align: center !important">{{ generateRef(i + 1) }}</td>
+          <td width="25%" style="font-size: 12px !important; text-align: center !important">{{ element?.payor }}</td>
+          <td width="25%" style="font-size: 12px !important; text-align: center !important">{{ element?.bank_name }}</td>
+          <td width="25%" style="font-size: 12px !important; text-align: center !important">{{ element?.cheque_number }}</td>
+          <td width="15%" style="font-size: 12px !important; text-align: center !important">
+            {{ element?.amount | currency: 'EURO':'':'0.2' }}
+          </td>
+        </tr>
+      </ng-container>
+    </table>
+  </div>
+
+  <div class="p-grid">
+    <table width="100%" border="0">
+      <ng-container>
+        <tr>
+          <td width="10%" class="font-weight-bold pad-l-sm"></td>
+          <td width="25%" class="font-weight-bold pad-l-sm"></td>
+          <td width="25%" class="font-weight-bold pad-l-sm"></td>
+          <td
+            width="25%"
+            class="font-weight-bold pad-l-sm"
+            style="text-align: right; padding: 0px; right: -15px; position: relative; font-size: 12px"
+          >
+            {{ 'Total Amount' | translate }} :
+          </td>
+          <td width="15%" style="font-size: 12px !important; text-align: center !important">
+            {{ totalAmount | currency: 'EURO':'':'0.2' }}
+          </td>
+        </tr>
+        <tr>
+          <td width="10%" class="font-weight-bold pad-l-sm"></td>
+          <td width="25%" class="font-weight-bold pad-l-sm"></td>
+          <td width="25%" class="font-weight-bold pad-l-sm"></td>
+          <td
+            width="25%"
+            class="font-weight-bold pad-l-sm"
+            style="text-align: right; padding: 0px; right: -15px; position: relative; font-size: 12px"
+          >
+            {{ 'Nber of Cheques' | translate }} :
+          </td>
+          <td width="15%" style="font-size: 12px !important; text-align: center !important">
+            {{ dummyData && dummyData.length ? dummyData.length : '-' }}
+          </td>
+        </tr>
+      </ng-container>
+    </table>
+  </div>
+  <div class="p-col-12" style="position:fixed; bottom:150px;">
+    <div class="p-grid">
+      <div class="p-col-6 no-padding" style="text-align: center;padding-top: 25px !important;">
+        <h5 class="text-center">{{ 'Signature' | translate }}</h5>
+        <span class="text-center" style="  padding-top: 50px !important; display: block;">(..................................)</span>
+      </div>
+      <div class="p-col-6 no-padding" style="text-align: center;">
+        <img [src]="stamps" style="height: 135px;" class="student-details-img" />
+      </div>
+    </div>
+  </div>
+</div>

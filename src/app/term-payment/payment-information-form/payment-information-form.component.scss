@@ -1,0 +1,30 @@
+@import '~assets/scss/bootstrap';
+@import '~assets/scss/utilities/space';
+
+.justify-end {
+  display: flex;
+  width: 100%;
+  justify-content: flex-end;
+}
+
+.invalid-feedback {
+  color: red;
+}
+
+input.ng-invalid.ng-touched {
+  border: 1px solid red;
+}
+
+.msg-pay {
+  margin-top: 15px !important;
+  font-weight: 600;
+  font-size: 22px;
+}
+
+@media screen and (max-width: 500px) {
+  .msg-pay {
+    margin-top: 20px !important;
+    font-weight: 600;
+    font-size: 16px;
+  }
+}

@@ -1,0 +1,336 @@
+<div class="gene-registerV2" style="padding-top: 3.8rem !important; background-image: none !important" *ngIf="!isFormClosed">
+  <div fxLayout="row" fxLayoutAlign="center start">
+    <div
+      fxLayout="column"
+      fxFlex="100"
+      fxFlex.xs="97"
+      fxFlex.sm="80"
+      fxFlex.md="95"
+      fxFlex.lg="97"
+      fxFlex.xl="100"
+      class="slider-responsive"
+    >
+      <div
+        fxLayout="row wrap"
+        fxLayoutAlign="center stretch"
+        class="height-full pad-t-xl pad-b-xl form-wrap-row set-resp-space"
+        fxLayoutGap.gt-md="15px"
+      >
+        <div
+          *ngIf="showSessionSlider"
+          fxLayout="column"
+          fxFlex="100"
+          fxFlex.xs="100"
+          fxFlex.sm="100"
+          fxFlex.md="21"
+          fxFlex.lg="21"
+          fxFlex.xl="21"
+          fxHide.lt-md
+          class="slider-responsive-test"
+        >
+          <div class="height-full full-wid">
+            <div fxLayout="column" class="height-full full-wid" style="place-content: normal !important">
+              <ngx-slick-carousel
+                [config]="slideConfig"
+                class="carousel full-wid"
+                [style.height.px]="getAutomaticHeight()"
+                #slickModal="slick-carousel"
+              >
+                <div ngxSlickItem *ngFor="let slide of sessionSlider">
+                  <div class="session-slider overlay-wrap full-wid" [style.height.px]="getAutomaticHeight()">
+                    <div
+                      class="slider-bg-img full-wid"
+                      [ngStyle]="{
+                        'background-image': 'url(' + serverimgPath + slide?.image_upload + ')'
+                      }"
+                    ></div>
+                    <div class="overlay-content" fxLayoutAlign="start end">
+                      <div class="content-wrap">
+                        <div class="sec-title">
+                          <h5 class="text-inverse" innerHTML="{{ slide?.title }}"></h5>
+                          <span class="text-inverse" innerHTML="{{ slide?.sub_title }}"></span>
+                        </div>
+                        <div class="sec-content">
+                          <p class="text-inverse" innerHTML="{{ slide?.story }}"></p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </ngx-slick-carousel>
+            </div>
+          </div>
+        </div>
+        <div
+          fxLayout="column"
+          fxFlex="100"
+          fxFlex.xs="100"
+          fxFlex.sm="100"
+          fxFlex.md="77"
+          fxFlex.lg="77"
+          fxFlex.xl="77"
+          class="slider-responsive-form"
+        >
+          <mat-card
+            class="gene-registerV2-wrap"
+            [style.min-height.px]="getAutomaticHeight()"
+            style="border: 1px solid #eeeeee; padding: 20px 0px"
+          >
+            <img class="logo display-mobile position-unset" *ngIf="logoSchool" [src]="serverimgPath + logoSchool" />
+            <div class="row language-drop-down display-mobile padding-r-0"><ms-language-drop-down></ms-language-drop-down></div>
+            <div class="row title-registration mobile-title">
+              {{ 'Registration Title' | translate }}
+              {{ candidateData?.school?.short_name }}
+              {{ getLevelSchool(candidateData?.level?.name) }}
+              {{ candidateData?.campus?.name ? ('Registration Title1' | translate) : '' }}
+              {{ candidateData?.campus?.name }}
+            </div>
+            <div class="row mobile-title sub-title-registration">
+              {{ 'Student' | translate }}: {{ candidateData?.last_name | uppercase }} {{ candidateData?.first_name | titlecase }}
+            </div>
+            <img class="logo display-web" *ngIf="logoSchool" [src]="serverimgPath + logoSchool" />
+            <div class="row language-drop-down display-web">
+              <ms-language-drop-down></ms-language-drop-down>
+            </div>
+            <mat-horizontal-stepper
+              [linear]="isLinear"
+              #stepperForm
+              [selectedIndex]="selectedIndex"
+              (selectionChange)="selectionChange($event)"
+            >
+              <mat-step
+                *ngIf="!campusStepDone"
+                disableRipple="true"
+                [completed]="campusStepDone"
+                [label]="'Campus' | translate"
+                [stepControl]="campusFormGroup"
+              >
+                <fieldset style="margin-top: 20px !important">
+                  <ms-campus-form
+                    [candidateId]="candidateId"
+                    (moveToTab)="moveToTab($event)"
+                    [selectedIndex]="selectedIndex"
+                  ></ms-campus-form>
+                </fieldset>
+              </mat-step>
+
+              <mat-step
+                *ngIf="campusStepDone"
+                state="done"
+                disableRipple="true"
+                [completed]="campusStepDone"
+                [label]="'Campus' | translate"
+              >
+                <fieldset style="margin-top: 20px !important">
+                  <ms-campus-form
+                    [candidateId]="candidateId"
+                    (moveToTab)="moveToTab($event)"
+                    [selectedIndex]="selectedIndex"
+                  ></ms-campus-form>
+                </fieldset>
+              </mat-step>
+
+              <mat-step
+                *ngIf="!firstStepDone"
+                disableRipple="true"
+                [completed]="firstStepDone"
+                [label]="'My Identity' | translate"
+                [stepControl]="firstFormGroup"
+              >
+                <fieldset style="margin-top: 20px !important">
+                  <div *ngIf="!identityEditMode">
+                    <ms-information-card
+                      [candidateId]="candidateId"
+                      [identityEditMode]="identityEditMode"
+                      [selectedIndex]="selectedIndex"
+                      (moveToTab)="moveToTab($event)"
+                    ></ms-information-card>
+                  </div>
+                  <div *ngIf="identityEditMode">
+                    <ms-information-form
+                      [candidateId]="candidateId"
+                      [identityEditMode]="identityEditMode"
+                      [selectedIndex]="selectedIndex"
+                      (moveToTab)="moveToTab($event)"
+                      [countryCodeList]="countryCodeList"
+                    ></ms-information-form>
+                  </div>
+                </fieldset>
+              </mat-step>
+
+              <mat-step
+                *ngIf="firstStepDone"
+                state="done"
+                disableRipple="true"
+                [completed]="firstStepDone"
+                [label]="'My Identity' | translate"
+              >
+                <fieldset style="margin-top: 20px !important">
+                  <div *ngIf="!identityEditMode">
+                    <ms-information-card
+                      [candidateId]="candidateId"
+                      (moveToTab)="moveToTab($event)"
+                      [selectedIndex]="selectedIndex"
+                    ></ms-information-card>
+                  </div>
+                  <div *ngIf="identityEditMode">
+                    <ms-information-form
+                      [candidateId]="candidateId"
+                      (moveToTab)="moveToTab($event)"
+                      [selectedIndex]="selectedIndex"
+                      [countryCodeList]="countryCodeList"
+                    ></ms-information-form>
+                  </div>
+                </fieldset>
+              </mat-step>
+
+              <mat-step
+                *ngIf="!secondStepDone"
+                disableRipple="true"
+                [completed]="secondStepDone"
+                [label]="'Payment terms' | translate"
+                [stepControl]="secondFormGroup"
+              >
+                <fieldset style="margin-top: 20px !important">
+                  <ms-payment-form
+                    [candidateId]="candidateId"
+                    (moveToTab)="moveToTab($event)"
+                    [selectedIndex]="selectedIndex"
+                    [countryCodeList]="countryCodeList"
+                  ></ms-payment-form>
+                </fieldset>
+              </mat-step>
+
+              <mat-step
+                *ngIf="secondStepDone"
+                state="done"
+                disableRipple="true"
+                [completed]="secondStepDone"
+                [label]="'Payment terms' | translate"
+              >
+                <fieldset style="margin-top: 20px !important">
+                  <ms-payment-form
+                    [candidateId]="candidateId"
+                    (moveToTab)="moveToTab($event)"
+                    [selectedIndex]="selectedIndex"
+                    [countryCodeList]="countryCodeList"
+                  ></ms-payment-form>
+                </fieldset>
+              </mat-step>
+
+              <mat-step
+                *ngIf="!thirdStepDone"
+                disableRipple="true"
+                [completed]="thirdStepDone"
+                [label]="'Conditions' | translate"
+                [stepControl]="thirdFormGroup"
+              >
+                <fieldset style="margin-top: 20px !important">
+                  <ms-condition-form
+                    [candidateId]="candidateId"
+                    (moveToTab)="moveToTab($event)"
+                    [selectedIndex]="selectedIndex"
+                  ></ms-condition-form>
+                </fieldset>
+              </mat-step>
+
+              <mat-step
+                *ngIf="thirdStepDone"
+                state="done"
+                disableRipple="true"
+                [completed]="thirdStepDone"
+                [label]="'Conditions' | translate"
+              >
+                <fieldset style="margin-top: 20px !important">
+                  <ms-condition-form
+                    [candidateId]="candidateId"
+                    (moveToTab)="moveToTab($event)"
+                    [selectedIndex]="selectedIndex"
+                  ></ms-condition-form>
+                </fieldset>
+              </mat-step>
+
+              <mat-step
+                *ngIf="!fourthStepDone"
+                disableRipple="true"
+                [completed]="fourthStepDone"
+                [label]="'School contract' | translate"
+                [stepControl]="fourthFormGroup"
+              >
+                <fieldset style="margin-top: 20px !important">
+                  <ms-summary-form
+                    [candidateId]="candidateId"
+                    (moveToTab)="moveToTab($event)"
+                    [selectedIndex]="selectedIndex"
+                  ></ms-summary-form>
+                </fieldset>
+              </mat-step>
+
+              <mat-step
+                *ngIf="fourthStepDone"
+                state="done"
+                disableRipple="true"
+                [completed]="fourthStepDone"
+                [label]="'School contract' | translate"
+              >
+                <fieldset style="margin-top: 20px !important">
+                  <ms-summary-form
+                    [candidateId]="candidateId"
+                    (moveToTab)="moveToTab($event)"
+                    [selectedIndex]="selectedIndex"
+                  ></ms-summary-form>
+                </fieldset>
+              </mat-step>
+
+              <mat-step
+                *ngIf="!fifthStepDone"
+                disableRipple="true"
+                [completed]="fifthStepDone"
+                [label]="'Down Payment' | translate"
+                [stepControl]="fifthFormGroup"
+              >
+                <fieldset style="margin-top: 20px !important">
+                  <ms-down-payment-form
+                    [candidateId]="candidateId"
+                    (moveToTab)="moveToTab($event)"
+                    [selectedIndex]="selectedIndex"
+                  ></ms-down-payment-form>
+                </fieldset>
+              </mat-step>
+
+              <mat-step
+                *ngIf="fifthStepDone"
+                state="done"
+                disableRipple="true"
+                [completed]="fifthStepDone"
+                [label]="'Down Payment' | translate"
+              >
+                <fieldset style="margin-top: 20px !important">
+                  <ms-down-payment-form
+                    [candidateId]="candidateId"
+                    (moveToTab)="moveToTab($event)"
+                    [selectedIndex]="selectedIndex"
+                  ></ms-down-payment-form>
+                </fieldset>
+              </mat-step>
+
+              <ng-template matStepperIcon="done">
+                <mat-icon>done</mat-icon>
+              </ng-template>
+              <ng-template matStepperIcon="1">1 </ng-template>
+              <ng-template matStepperIcon="2">2 </ng-template>
+              <ng-template matStepperIcon="3">3 </ng-template>
+              <ng-template matStepperIcon="4">4 </ng-template>
+              <ng-template matStepperIcon="5">5 </ng-template>
+              <ng-template matStepperIcon="6">6 </ng-template>
+              <ng-template matStepperIcon="7">7 </ng-template>
+              <ng-template matStepperIcon="8">8 </ng-template>
+              <ng-template matStepperIcon="9">9 </ng-template>
+              <ng-template matStepperIcon="10">10 </ng-template>
+            </mat-horizontal-stepper>
+          </mat-card>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

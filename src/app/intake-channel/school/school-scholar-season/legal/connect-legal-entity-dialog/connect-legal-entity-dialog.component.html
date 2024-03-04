@@ -1,0 +1,59 @@
+<div class="dialog-border">
+  <div class="dialogTitleWrapper" cdkDrag cdkDragRootElement=".cdk-overlay-pane" cdkDragHandle>
+    <div class="p-grid">
+      <div class="w-30 no-padding">
+        <mat-icon style="vertical-align: middle">add</mat-icon>
+      </div>
+      <div class="p-col-10 acad-title">
+        <h3 class="dialogTitle">
+          {{ 'Connect Legal Entity' | translate }}
+        </h3>
+      </div>
+      <div class="w-65 no-padding">
+        <button mat-icon-button class="close-icon float-right" mat-dialog-close tabindex="-1">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<form [formGroup]="volumeHoursForm">
+  <div class="fontColor">
+    <mat-dialog-content>
+      <div class="p-grid">
+        <div class="p-col-12 no-padding">
+          <div class="p-grid">
+            <div class="p-col-fixed center-label no-padding-left label-align" style="width: 225px">
+              <mat-label>{{ 'Select Legal Entity' | translate }}*</mat-label>
+            </div>
+            <div class="p-col no-padding custom-ng-select mrgn-btn">
+              <ng-select
+                [items]="listOfLegalEntity"
+                bindLabel="legal_entity_name"
+                bindValue="_id"
+                formControlName="legal_entity_ids"
+                [multiple]="true"
+                [hideSelected]="true"
+                clearAllText="Clear"
+                [appendTo]="'body'"
+              >
+              </ng-select>
+              <p
+                *ngIf="volumeHoursForm.get('legal_entity_ids').hasError('required') && volumeHoursForm.get('legal_entity_ids').touched"
+                style="color: #f44336; font-size: 75%; margin: 0"
+              >
+                {{ 'This field is required' | translate }}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </mat-dialog-content>
+    <mat-dialog-actions align="right">
+      <button mat-raised-button type="button" color="warn" mat-dialog-close>{{ 'CANCEL' | translate }}</button>
+      <button mat-raised-button color="primary" (click)="onValidate()">
+        {{ 'Validate' | translate }}
+      </button>
+    </mat-dialog-actions>
+  </div>
+</form>

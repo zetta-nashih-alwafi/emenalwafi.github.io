@@ -1,0 +1,612 @@
+<div class="row padl-13 hd-legend" *ngIf="!isWaitingForResponse">
+  <label>{{ 'Company' | translate }}</label>
+</div>
+<div class="row responsives-card" *ngIf="isWaitingForResponse">
+  <div class="col-lg-12 padl-13 hd-legend">
+    <label class="skeleton skeleton-text"></label>
+  </div>
+  <div class="col-lg-12">
+    <div class="col-lg-6">
+      <div class="row">
+        <div class="skeleton skeleton-text"></div>
+      </div>
+      <div class="row">
+        <div class="skeleton skeleton-text"></div>
+      </div>
+      <div class="row">
+        <div class="skeleton skeleton-text"></div>
+      </div>
+      <div class="row">
+        <div class="skeleton skeleton-text"></div>
+      </div>
+      <div class="row">
+        <div class="skeleton skeleton-text"></div>
+      </div>
+      <div class="row">
+        <div class="skeleton skeleton-text"></div>
+      </div>
+    </div>
+    <div class="col-lg-6">
+      <div class="row">
+        <div class="skeleton skeleton-text"></div>
+      </div>
+      <div class="row">
+        <div class="skeleton skeleton-text"></div>
+      </div>
+      <div class="row">
+        <div class="skeleton skeleton-text"></div>
+      </div>
+      <div class="row">
+        <div class="skeleton skeleton-text"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="responsives-card" *ngIf="!isWaitingForResponse">
+  <section *ngIf="!isHaveCompany && !isModifyCompanyMode">
+    <button mat-raised-button color="accent" class="mrgn-top-7" (click)="openDialogAddCompanyCountry()">
+      <mat-icon class="mat-icon-default">school</mat-icon> {{ 'COMPANY.ADD_COMPANY' | translate }}
+    </button>
+  </section>
+
+  <section *ngIf="!isModifyCompanyMode && isHaveCompany" class="web-card">
+    <ng-container *ngIf="isHaveCompany">
+      <div
+        [ngStyle]="
+          currSelectedCompanyData?.banner
+            ? {
+                'background-image':
+                  'linear-gradient(to top, rgba(0, 0, 0, 0.925), transparent), url(' + imgURL(currSelectedCompanyData?.banner) + ')'
+              }
+            : { 'background-image': 'linear-gradient(to top, rgba(0, 0, 0, 0.925), transparent), url(' + companyBannerDefault + ')' }
+        "
+        class="header-filter list-horizontal detail-company"
+        fxLayout="row wrap"
+        fxLayoutAlign="start start"
+      >
+        <input
+          type="file"
+          #bannerUpload
+          name="file"
+          style="display: none"
+          (change)="onFileSelected($event, 'banner')"
+          accept="image/png, image/jpeg, image/jpg"
+        />
+        <div style="cursor: pointer">
+          <mat-icon style="font-size: 35px; cursor: pointer !important; z-index: 9999" class="texts" (click)="bannerUpload.click()"
+            >photo_camera</mat-icon
+          >
+        </div>
+        <div class="p-col-12 no-padding" style="position: relative; top: -75px">
+          <div class="p-col-1 display-inline"></div>
+        </div>
+        <div class="p-col-12 no-padding company-name" style="position: relative; top: -75px">
+          <span class="font-name">{{ currSelectedCompanyData?.company_name }}</span>
+        </div>
+        <div class="p-col-12 no-padding" style="position: relative; top: -30px">
+          <div class="p-col-7 display-inline no-padding" style="padding-left: 155px !important">
+            <span class="icon"><mat-icon class="primary-icon icons-style">branding_watermark</mat-icon></span>
+            <span class="label" style="font-weight: 600"> {{ currSelectedCompanyData?.company_name }} </span>
+          </div>
+          <div
+            class="p-col-5 display-inline no-padding"
+            [style.visibility]="currSelectedCompanyData?.type_of_industry ? 'visible' : 'hidden'"
+          >
+            <span class="icon"><mat-icon class="primary-icon icons-style">business</mat-icon></span>
+            <span class="label" style="font-weight: 600"> {{ currSelectedCompanyData?.type_of_industry }} </span>
+          </div>
+        </div>
+        <div class="p-col-12 no-padding" style="position: relative; top: -30px">
+          <div
+            class="p-col-7 display-inline no-padding"
+            [style.visibility]="currSelectedCompanyData?.company_addresses[0]?.country ? 'visible' : 'hidden'"
+            style="padding-left: 155px !important"
+          >
+            <span class="icon"><mat-icon class="primary-icon icons-style">place</mat-icon></span>
+            <span class="label" style="padding-right: 0px"
+              >{{ currSelectedCompanyData?.company_addresses[0]?.city ? currSelectedCompanyData?.company_addresses[0]?.city + ',' : '' }}
+              {{ currSelectedCompanyData?.company_addresses[0]?.country | titlecase }}
+            </span>
+          </div>
+          <div class="p-col-5 display-inline no-padding">
+            <span
+              class="icon"
+              matTooltip="Website"
+              (click)="currSelectedCompanyData?.website_link ? goToSocialMedia(currSelectedCompanyData?.website_link, 'Website') : false"
+              ><mat-icon
+                [ngClass]="currSelectedCompanyData?.video_link ? 'primary-icon icons-style cursor' : 'primary-icon icons-style'"
+                style="color: white"
+                >public</mat-icon
+              ></span
+            >
+            <span
+              class="icon"
+              matTooltip="Twitter"
+              (click)="currSelectedCompanyData?.twitter_link ? goToSocialMedia(currSelectedCompanyData?.twitter_link, 'Twitter') : false"
+              ><mat-icon
+                [ngClass]="currSelectedCompanyData?.twitter_link ? 'primary-icon icons-style cursor' : 'primary-icon icons-style'"
+                style="color: white"
+                svgIcon="twitter"
+              ></mat-icon
+            ></span>
+            <span
+              class="icon"
+              matTooltip="Youtube"
+              (click)="currSelectedCompanyData?.youtube_link ? goToSocialMedia(currSelectedCompanyData?.youtube_link, 'Youtube') : false"
+              ><mat-icon
+                [ngClass]="currSelectedCompanyData?.youtube_link ? 'primary-icon icons-style cursor' : 'primary-icon icons-style'"
+                style="color: white"
+                svgIcon="youtube"
+              ></mat-icon
+            ></span>
+            <span
+              class="icon"
+              matTooltip="Facebook"
+              (click)="currSelectedCompanyData?.facebook_link ? goToSocialMedia(currSelectedCompanyData?.facebook_link, 'Facebook') : false"
+              ><mat-icon
+                [ngClass]="currSelectedCompanyData?.facebook_link ? 'primary-icon icons-style cursor' : 'primary-icon icons-style'"
+                style="color: white"
+                >facebook</mat-icon
+              ></span
+            >
+            <span
+              class="icon"
+              matTooltip="Instagram"
+              [ngClass]="currSelectedCompanyData?.instagram_link ? 'cursor' : ''"
+              (click)="
+                currSelectedCompanyData?.instagram_link ? goToSocialMedia(currSelectedCompanyData?.instagram_link, 'Instagram') : false
+              "
+            >
+              <mat-icon class="icons-style primary-icon" svgIcon="instagram" style="color: white; height: 28px; width: 22px"> </mat-icon>
+            </span>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+    <ng-container *ngIf="isHaveCompany">
+      <div class="logo-company p-col-5">
+        <img
+          *ngIf="currSelectedCompanyData?.company_logo && !isImageUploading"
+          [src]="serverimgPath + currSelectedCompanyData?.company_logo"
+          class="candidate-photo img-profile"
+        />
+        <div *ngIf="!currSelectedCompanyData?.company_logo && !isImageUploading" class="candidate-photo img-profile"></div>
+        <mat-spinner
+          *ngIf="isImageUploading"
+          style="margin-left: 13px"
+          color="accent"
+          mode="indeterminate"
+          class="img-profile"
+        ></mat-spinner>
+        <!-- <div class="logo-spinner-wrapper" style="position: relative; top: -97px; right: 0px">
+        <mat-progress-spinner style="margin: 0 auto" mode="indeterminate" color="accent"></mat-progress-spinner>
+      </div> -->
+        <input
+          type="file"
+          #logoUpload
+          name="file"
+          style="display: none"
+          (change)="onFileSelected($event, 'logo')"
+          accept="image/png, image/jpeg, image/jpg"
+        />
+        <div class="upload-logo">
+          <mat-icon style="font-size: 50px" class="text-logo" (click)="logoUpload.click()">photo_camera</mat-icon>
+        </div>
+      </div>
+    </ng-container>
+
+    <div class="btn-conditions web-card">
+      <button
+        color="accent"
+        style="margin: 5px 10px 0px 10px"
+        class="btn-first"
+        (click)="continueButton()"
+        mat-raised-button
+        matTooltip="{{ 'Next' | translate }} "
+        *ngIf="checkIfUserStudent()"
+      >
+        {{ 'Next' | translate }}
+      </button>
+      <button
+        color="accent"
+        style="margin: 5px 10px 0px 10px"
+        class="btn-first"
+        mat-raised-button
+        (click)="toggleEditMode()"
+        matTooltip="{{ 'I want to correct some data' | translate }} "
+        *ngIf="!checkIfUserStudent() && isHaveCompany"
+      >
+        <i class="fa fa-pencil" aria-hidden="true"></i>
+        {{ 'I want to correct some data' | translate }}
+      </button>
+      <button
+        color="accent"
+        mat-raised-button
+        (click)="identityUpdated()"
+        matTooltip="{{ 'I confirm my data' | translate }} "
+        class="btn-first"
+        style="margin: 10px"
+        *ngIf="!checkIfUserStudent() && isHaveCompany"
+      >
+        <mat-icon class="mat-icon-default">save</mat-icon>
+        {{ 'I confirm my data' | translate }}
+      </button>
+    </div>
+  </section>
+  <section *ngIf="!isModifyCompanyMode && isHaveCompany" class="tab-card">
+    <ng-container *ngIf="isHaveCompany">
+      <div
+        [ngStyle]="
+          currSelectedCompanyData?.banner
+            ? {
+                'background-image':
+                  'linear-gradient(to top, rgba(0, 0, 0, 0.925), transparent), url(' + imgURL(currSelectedCompanyData?.banner) + ')'
+              }
+            : { 'background-image': 'linear-gradient(to top, rgba(0, 0, 0, 0.925), transparent), url(' + companyBannerDefault + ')' }
+        "
+        class="header-filter list-horizontal detail-company"
+        fxLayout="row wrap"
+        fxLayoutAlign="start start"
+      >
+        <mat-icon style="font-size: 35px" class="texts">photo_camera</mat-icon>
+        <input
+          type="file"
+          #bannerUpload
+          name="file"
+          style="display: none"
+          (change)="onFileSelected($event, 'banner')"
+          accept="image/png, image/jpeg, image/jpg"
+        />
+        <div class="p-col-12 no-padding" style="position: relative; top: -75px">
+          <div class="p-col-1 display-inline" style="cursor: pointer" (click)="bannerUpload.click()"></div>
+        </div>
+        <div class="p-col-12 no-padding company-name" style="position: relative; top: -75px">
+          <span class="font-name">{{ currSelectedCompanyData?.company_name }}</span>
+        </div>
+        <div class="p-col-12 no-padding" style="position: relative; top: -30px">
+          <div class="p-col-12 display-inline no-padding" style="padding-left: 155px !important">
+            <span class="icon"><mat-icon class="primary-icon icons-style">branding_watermark</mat-icon></span>
+            <span class="label" style="font-weight: 600"> {{ currSelectedCompanyData?.company_name }} </span>
+          </div>
+          <div
+            class="p-col-12 display-inline no-padding"
+            style="padding-left: 155px !important"
+            [style.visibility]="currSelectedCompanyData?.type_of_industry ? 'visible' : 'hidden'"
+          >
+            <span class="icon"><mat-icon class="primary-icon icons-style">business</mat-icon></span>
+            <span class="label" style="font-weight: 600"> {{ currSelectedCompanyData?.type_of_industry }} </span>
+          </div>
+        </div>
+        <div class="p-col-12 no-padding" style="position: relative; top: -30px">
+          <div
+            class="p-col-12 display-inline no-padding"
+            [style.visibility]="currSelectedCompanyData?.company_addresses[0]?.country ? 'visible' : 'hidden'"
+            style="padding-left: 155px !important"
+          >
+            <span class="icon"><mat-icon class="primary-icon icons-style">place</mat-icon></span>
+            <span class="label" style="padding-right: 0px"
+              >{{ currSelectedCompanyData?.company_addresses[0]?.city ? currSelectedCompanyData?.company_addresses[0]?.city + ',' : '' }}
+              {{ currSelectedCompanyData?.company_addresses[0]?.country | titlecase }}
+            </span>
+          </div>
+          <div class="p-col-12 display-inline no-padding" style="padding-left: 155px !important">
+            <span
+              class="icon"
+              matTooltip="Website"
+              (click)="currSelectedCompanyData?.website_link ? goToSocialMedia(currSelectedCompanyData?.website_link, 'Website') : false"
+              ><mat-icon
+                [ngClass]="currSelectedCompanyData?.video_link ? 'primary-icon icons-style cursor' : 'primary-icon icons-style'"
+                style="color: white"
+                >public</mat-icon
+              ></span
+            >
+            <span
+              class="icon"
+              matTooltip="Twitter"
+              (click)="currSelectedCompanyData?.twitter_link ? goToSocialMedia(currSelectedCompanyData?.twitter_link, 'Twitter') : false"
+              ><mat-icon
+                [ngClass]="currSelectedCompanyData?.twitter_link ? 'primary-icon icons-style cursor' : 'primary-icon icons-style'"
+                style="color: white"
+                svgIcon="twitter"
+              ></mat-icon
+            ></span>
+            <span
+              class="icon"
+              matTooltip="Youtube"
+              (click)="currSelectedCompanyData?.youtube_link ? goToSocialMedia(currSelectedCompanyData?.youtube_link, 'Youtube') : false"
+              ><mat-icon
+                [ngClass]="currSelectedCompanyData?.youtube_link ? 'primary-icon icons-style cursor' : 'primary-icon icons-style'"
+                style="color: white"
+                svgIcon="youtube"
+              ></mat-icon
+            ></span>
+            <span
+              class="icon"
+              matTooltip="Facebook"
+              (click)="currSelectedCompanyData?.facebook_link ? goToSocialMedia(currSelectedCompanyData?.facebook_link, 'Facebook') : false"
+              ><mat-icon
+                [ngClass]="currSelectedCompanyData?.facebook_link ? 'primary-icon icons-style cursor' : 'primary-icon icons-style'"
+                style="color: white"
+                >facebook</mat-icon
+              ></span
+            >
+            <span
+              class="icon"
+              matTooltip="Instagram"
+              [ngClass]="currSelectedCompanyData?.instagram_link ? 'cursor' : ''"
+              (click)="
+                currSelectedCompanyData?.instagram_link ? goToSocialMedia(currSelectedCompanyData?.instagram_link, 'Instagram') : false
+              "
+            >
+              <mat-icon class="icons-style primary-icon" svgIcon="instagram" style="color: white; height: 28px; width: 22px"> </mat-icon>
+            </span>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+    <ng-container *ngIf="isHaveCompany">
+      <div class="logo-company p-col-5">
+        <img
+          *ngIf="currSelectedCompanyData?.company_logo && !isImageUploading"
+          [src]="serverimgPath + currSelectedCompanyData?.company_logo"
+          class="candidate-photo img-profile"
+        />
+        <div *ngIf="!currSelectedCompanyData?.company_logo && !isImageUploading" class="candidate-photo img-profile"></div>
+        <mat-spinner
+          *ngIf="isImageUploading"
+          style="margin-left: 13px"
+          color="accent"
+          mode="indeterminate"
+          class="img-profile"
+        ></mat-spinner>
+        <!-- <div class="logo-spinner-wrapper" style="position: relative; top: -97px; right: 0px">
+        <mat-progress-spinner style="margin: 0 auto" mode="indeterminate" color="accent"></mat-progress-spinner>
+      </div> -->
+        <input
+          type="file"
+          #logoUpload
+          name="file"
+          style="display: none"
+          (change)="onFileSelected($event, 'logo')"
+          accept="image/png, image/jpeg, image/jpg"
+        />
+        <div class="upload-logo">
+          <mat-icon style="font-size: 50px" class="text-logo" (click)="logoUpload.click()">photo_camera</mat-icon>
+        </div>
+      </div>
+    </ng-container>
+
+    <div class="btn-conditions tab-card">
+      <button
+        color="accent"
+        style="margin: 5px 10px 0px 10px"
+        class="btn-first"
+        (click)="continueButton()"
+        mat-raised-button
+        matTooltip="{{ 'Next' | translate }} "
+        *ngIf="checkIfUserStudent()"
+      >
+        {{ 'Next' | translate }}
+      </button>
+      <button
+        color="accent"
+        style="margin: 5px 10px 0px 10px"
+        class="btn-first"
+        mat-raised-button
+        (click)="toggleEditMode()"
+        matTooltip="{{ 'I want to correct some data' | translate }} "
+        *ngIf="!checkIfUserStudent() && isHaveCompany"
+      >
+        <i class="fa fa-pencil" aria-hidden="true"></i>
+        {{ 'I want to correct some data' | translate }}
+      </button>
+      <button
+        color="accent"
+        mat-raised-button
+        (click)="identityUpdated()"
+        matTooltip="{{ 'I confirm my data' | translate }} "
+        class="btn-first"
+        style="margin: 10px"
+        *ngIf="!checkIfUserStudent() && isHaveCompany"
+      >
+        <mat-icon class="mat-icon-default">save</mat-icon>
+        {{ 'I confirm my data' | translate }}
+      </button>
+    </div>
+  </section>
+  <section *ngIf="!isModifyCompanyMode && isHaveCompany" class="mobile-card">
+    <div *ngIf="internshipData" style="min-height: 450px !important" class="card-body card-segment detail-intership">
+      <div
+        class="row back-card"
+        [ngStyle]="
+          currSelectedCompanyData?.banner
+            ? {
+                'background-image':
+                  'linear-gradient(to top, rgba(0, 0, 0, 0.925), transparent), url(' + imgURL(currSelectedCompanyData?.banner) + ')'
+              }
+            : { 'background-image': 'linear-gradient(to top, rgba(0, 0, 0, 0.925), transparent), url(' + companyBannerDefault + ')' }
+        "
+      >
+        <div class="candidate-detail" fxLayout="row wrap">
+          <div class="candidate-profile" fxFlex="100" style="text-align: center; margin-bottom: 25px">
+            <img
+              *ngIf="currSelectedCompanyData?.company_logo"
+              [src]="serverimgPath + currSelectedCompanyData?.company_logo"
+              class="candidate-photo"
+            />
+            <span
+              *ngIf="!currSelectedCompanyData?.company_logo"
+              class="candidate-photo"
+              style="font-size: 170px; display: inline-block; position: relative"
+            >
+              <mat-icon style="font-size: 50px" class="text-logo">photo_camera</mat-icon></span
+            >
+          </div>
+          <div
+            class="candidate-information"
+            fxFlex="100"
+            fxLayout="row wrap"
+            [ngStyle]="
+              !currSelectedCompanyData?.company_logo
+                ? {
+                    'margin-top': '100px'
+                  }
+                : ''
+            "
+            style="padding: 0px 0px"
+          >
+            <div class="first-row" fxFlex="100" fxLayout="row" fxLayoutAlign="start end" style="text-align: center">
+              <div class="info" style="text-align: center; width: 100%; font-size: 28px">
+                <p class="title">{{ currSelectedCompanyData?.company_name }}</p>
+              </div>
+            </div>
+            <div class="third-row" fxFlex="100" fxLayout="row wrap" fxLayoutAlign="center">
+              <div class="" fxLayout="row" style="width: 100%">
+                <span class="icon"><mat-icon class="primary-icon icons-style">branding_watermark</mat-icon></span>
+                <span class="label">
+                  {{ currSelectedCompanyData?.company_name ? currSelectedCompanyData?.company_name : '-' }}
+                </span>
+              </div>
+              <div class="" fxLayout="row" style="width: 100%">
+                <span class="icon"><mat-icon class="primary-icon icons-style">business</mat-icon></span>
+                <span class="label">
+                  {{ currSelectedCompanyData?.type_of_industry ? currSelectedCompanyData?.type_of_industry : '-' }}
+                </span>
+              </div>
+              <div class="" fxLayout="row" style="width: 100%">
+                <span class="icon"><mat-icon class="primary-icon icons-style">place</mat-icon></span>
+                <span class="label">
+                  {{ currSelectedCompanyData?.company_addresses[0]?.city ? currSelectedCompanyData?.company_addresses[0]?.city + ',' : '' }}
+                  {{ currSelectedCompanyData?.company_addresses[0]?.country | titlecase }}
+                </span>
+              </div>
+            </div>
+            <div class="third-row" fxFlex="100" fxLayout="row wrap" fxLayoutAlign="center">
+              <div class="" fxLayout="row" style="width: 100%">
+                <span class="icon"><mat-icon class="primary-icon icons-style">call</mat-icon></span>
+                <span class="label"> {{ internshipData?.student_id?.tele_phone ? internshipData?.student_id?.tele_phone : '-' }} </span>
+              </div>
+              <div class="" fxLayout="row" style="width: 100%">
+                <span class="icon"><mat-icon class="primary-icon icons-style">mail</mat-icon></span>
+                <span class="label"> {{ internshipData?.student_id?.email ? internshipData?.student_id?.email : '-' }} </span>
+              </div>
+            </div>
+
+            <div class="p-col-12 no-padding" style="position: relative; top: -30px">
+              <div class="p-col-12 display-inline no-padding" style="text-align: center; margin-top: 40px">
+                <span
+                  class="icon"
+                  matTooltip="Website"
+                  (click)="
+                    currSelectedCompanyData?.website_link ? goToSocialMedia(currSelectedCompanyData?.website_link, 'Website') : false
+                  "
+                  ><mat-icon
+                    [ngClass]="currSelectedCompanyData?.video_link ? 'primary-icon icons-style cursor' : 'primary-icon icons-style'"
+                    style="color: white"
+                    >public</mat-icon
+                  ></span
+                >
+                <span
+                  class="icon"
+                  matTooltip="Twitter"
+                  (click)="
+                    currSelectedCompanyData?.twitter_link ? goToSocialMedia(currSelectedCompanyData?.twitter_link, 'Twitter') : false
+                  "
+                  ><mat-icon
+                    [ngClass]="currSelectedCompanyData?.twitter_link ? 'primary-icon icons-style cursor' : 'primary-icon icons-style'"
+                    style="color: white"
+                    svgIcon="twitter"
+                  ></mat-icon
+                ></span>
+                <span
+                  class="icon"
+                  matTooltip="Youtube"
+                  (click)="
+                    currSelectedCompanyData?.youtube_link ? goToSocialMedia(currSelectedCompanyData?.youtube_link, 'Youtube') : false
+                  "
+                  ><mat-icon
+                    [ngClass]="currSelectedCompanyData?.youtube_link ? 'primary-icon icons-style cursor' : 'primary-icon icons-style'"
+                    style="color: white"
+                    svgIcon="youtube"
+                  ></mat-icon
+                ></span>
+                <span
+                  class="icon"
+                  matTooltip="Facebook"
+                  (click)="
+                    currSelectedCompanyData?.facebook_link ? goToSocialMedia(currSelectedCompanyData?.facebook_link, 'Facebook') : false
+                  "
+                  ><mat-icon
+                    [ngClass]="currSelectedCompanyData?.facebook_link ? 'primary-icon icons-style cursor' : 'primary-icon icons-style'"
+                    style="color: white"
+                    >facebook</mat-icon
+                  ></span
+                >
+                <span
+                  class="icon"
+                  matTooltip="Instagram"
+                  [ngClass]="currSelectedCompanyData?.instagram_link ? 'cursor' : ''"
+                  (click)="
+                    currSelectedCompanyData?.instagram_link ? goToSocialMedia(currSelectedCompanyData?.instagram_link, 'Instagram') : false
+                  "
+                >
+                  <mat-icon class="icons-style primary-icon" svgIcon="instagram" style="color: white; height: 28px; width: 22px">
+                  </mat-icon>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mobile-card">
+      <button
+        color="accent"
+        style="margin: 10px 0px 10px 0px"
+        class="btn-first"
+        (click)="continueButton()"
+        mat-raised-button
+        matTooltip="{{ 'Next' | translate }} "
+        *ngIf="checkIfUserStudent()"
+      >
+        {{ 'Next' | translate }}
+      </button>
+      <button
+        color="accent"
+        style="margin: 10px 0px 10px 0px"
+        class="btn-first"
+        mat-raised-button
+        (click)="toggleEditMode()"
+        matTooltip="{{ 'I want to correct some data' | translate }} "
+        *ngIf="!checkIfUserStudent() && isHaveCompany"
+      >
+        <i class="fa fa-pencil" aria-hidden="true"></i>
+        {{ 'I want to correct some data' | translate }}
+      </button>
+      <button
+        color="accent"
+        mat-raised-button
+        (click)="identityUpdated()"
+        matTooltip="{{ 'I confirm my data' | translate }} "
+        class="btn-first"
+        style="margin: 10px 0px 10px 0px"
+        *ngIf="!checkIfUserStudent() && isHaveCompany"
+      >
+        <mat-icon class="mat-icon-default">save</mat-icon>
+        {{ 'I confirm my data' | translate }}
+      </button>
+    </div>
+  </section>
+
+  <section *ngIf="isModifyCompanyMode">
+    <ms-fourth-aggrement-form
+      [internshipId]="internshipId"
+      [isCreateNew]="isCreateNew"
+      (onCancelEdit)="toggleEditMode($event)"
+      (onReload)="reloadPage($event)"
+      [selectedCountry]="selectedCountry"
+    ></ms-fourth-aggrement-form>
+  </section>
+</div>

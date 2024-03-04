@@ -1,0 +1,73 @@
+<mat-tab-group #templateTabGroup [(selectedIndex)]="selectedIndex">
+  <ng-container>
+    <mat-tab [label]="'Notification management.Content' | translate">
+      <ng-template matTabContent>
+        <div class="container">
+          <div class="title">
+            <div class="p-grid">
+              <div class="p-col-3">
+                <button mat-raised-button type="button" [color]="selectedLang === 'EN' ? 'accent' : 'primary'" (click)="selectLanguage('EN')">{{ 'English' | translate }}</button>
+                <button mat-raised-button type="button" [color]="selectedLang === 'FR' ? 'accent' : 'primary'" (click)="selectLanguage('FR')">{{ 'TEMPLATEBUTTON.French' | translate }}</button>
+              </div>
+              <div class="p-col-6 text-center">
+                <h3>
+                  {{ 'This Notification Template is' | translate }}:
+                  {{ published ? ('ALERT_FUNCTIONALITY.PUBLISHED' | translate) : ('ALERT_FUNCTIONALITY.NOT_PUBLISHED' | translate) }}
+                </h3>
+              </div>
+              <div class="p-col-3 text-right">
+                <button mat-raised-button type="button" color="accent" style="margin-right: 10px" (click)="onSave()">
+                  <mat-icon class="mat-icon-default">save</mat-icon>
+                  {{ 'Save' | translate }}
+                </button>
+                <ng-container *ngIf="!published">
+                  <button mat-raised-button type="button" color="accent" (click)="onPublish()">
+                    <mat-icon
+                      ><svg style="width: 24px; height: 24px" viewBox="0 0 24 24">
+                        <path
+                          fill="currentColor"
+                          d="M16,4L9,8.04V15.96L16,20L23,15.96V8.04M16,6.31L19.8,8.5L16,10.69L12.21,8.5M0,7V9H7V7M11,10.11L15,12.42V17.11L11,14.81M21,10.11V14.81L17,17.11V12.42M2,11V13H7V11M4,15V17H7V15"
+                        /></svg
+                    ></mat-icon>
+                    {{ 'PUBLISH' | translate }}
+                  </button>
+                </ng-container>
+                <ng-container *ngIf="published">
+                  <button mat-raised-button type="button" color="accent" (click)="onUnPublish()">
+                    <mat-icon
+                      ><svg style="width: 24px; height: 24px" viewBox="0 0 24 24">
+                        <path
+                          fill="currentColor"
+                          d="M16,4L9,8.04V15.96L16,20L23,15.96V8.04M16,6.31L19.8,8.5L16,10.69L12.21,8.5M0,7V9H7V7M11,10.11L15,12.42V17.11L11,14.81M21,10.11V14.81L17,17.11V12.42M2,11V13H7V11M4,15V17H7V15"
+                        /></svg
+                    ></mat-icon>
+                    {{ 'Unpublish' | translate }}
+                  </button>
+                </ng-container>
+              </div>
+            </div>
+          </div>
+          <ng-container class="content">
+            <ms-notification-template-details
+              #ChildCmp
+              [lang]="selectedLang"
+              [Id]="templateId"
+              [published]="published"
+            ></ms-notification-template-details>
+          </ng-container>
+        </div>
+      </ng-template>
+    </mat-tab>
+  </ng-container>
+  <ng-container>
+    <mat-tab [label]="'Notification management.Attachment' | translate">
+      <ng-template matTabContent>
+        <ms-notification-attachment [templateId]="templateId"></ms-notification-attachment>
+      </ng-template>
+    </mat-tab>
+  </ng-container>
+</mat-tab-group>
+
+<div *ngIf="isWaitingForResponse" class="loading-indicator">
+  <mat-progress-spinner mode="indeterminate" color="accent"></mat-progress-spinner>
+</div>

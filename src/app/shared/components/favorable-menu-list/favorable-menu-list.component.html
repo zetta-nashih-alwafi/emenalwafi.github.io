@@ -1,0 +1,63 @@
+<mat-toolbar class="sidebar-logo">
+  <strong>{{ currentUserName$ | async }}</strong>
+</mat-toolbar>
+<ng-container *ngIf="menu$ | async as menuList">
+  <ul class="menu" *ngIf="menuList.favorites?.length">
+    <li class="menu-item-wrapper" [class.expanded]="menu.expanded" *ngFor="let menu of menuList.favorites">
+      <a class="menu-item" [routerLinkActive]="!menu?.children?.length ? 'active': ''" [ngClass]="{ 'active': menu?.children?.length && menu?.localizationKey === activeMenu?.localizationKey }" [routerLink]="!menu?.children?.length ? menu.path : []" (click)="toggleMenuExpansion(menu)">
+        <mat-icon *ngIf="menu.iconType === 'mat'">{{ menu.icon }}</mat-icon>
+        <mat-icon *ngIf="menu.iconType === 'svg'" [svgIcon]="menu.icon"></mat-icon>
+        <span>{{ menu.localizationKey | translate }}</span>
+        <mat-icon class="chevron-icon" *ngIf="menu?.children?.length">chevron_right</mat-icon>
+        <button
+          mat-icon-button
+          class="button-favorite"
+          [matTooltip]="'Unfavorite' | translate"
+          [matTooltipPosition]="'right'"
+          (click)="$event.preventDefault(); $event.stopPropagation(); markMenuAsNotFavorite(menu.id, menuList.favorites)"
+        >
+          <mat-icon>star</mat-icon>
+        </button>
+      </a>
+      <ul class="menu" *ngIf="menu?.children?.length">
+        <li class="menu-item-wrapper" *ngFor="let subMenu of menu.children">
+          <a class="menu-item sub-menu-item" routerLinkActive="active" [routerLink]="subMenu.path">
+            <mat-icon *ngIf="subMenu.iconType === 'mat'">{{ subMenu.icon }}</mat-icon>
+            <mat-icon *ngIf="subMenu.iconType === 'svg'" [svgIcon]="subMenu.icon"></mat-icon>
+            <span>{{ subMenu.localizationKey | translate }}</span>
+          </a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+  <mat-divider *ngIf="menuList.favorites?.length"></mat-divider>
+  <ul class="menu" *ngIf="menuList.available?.length">
+    <li class="menu-item-wrapper" [class.expanded]="menu.expanded" *ngFor="let menu of menuList.available">
+      <a class="menu-item" [routerLinkActive]="!menu?.children?.length ? 'active': ''" [ngClass]="{ 'active': menu?.children?.length && menu?.localizationKey === activeMenu?.localizationKey }" [routerLink]="!menu?.children?.length ? menu.path : []" (click)="toggleMenuExpansion(menu)">
+        <mat-icon *ngIf="menu.iconType === 'mat'">{{ menu.icon }}</mat-icon>
+        <mat-icon *ngIf="menu.iconType === 'svg'" [svgIcon]="menu.icon"></mat-icon>
+        <span>{{ menu.localizationKey | translate }}</span>
+        <mat-icon class="chevron-icon" *ngIf="menu?.children?.length">chevron_right</mat-icon>
+        <button
+          mat-icon-button
+          class="button-favorite"
+          [matTooltip]="'Favorite' | translate"
+          [matTooltipPosition]="'right'"
+          (click)="$event.preventDefault(); $event.stopPropagation(); markMenuAsFavorite(menu.id, menuList.favorites)"
+          *ngIf="menu.favorable"
+        >
+          <mat-icon>star_outlined</mat-icon>
+        </button>
+      </a>
+      <ul class="menu" *ngIf="menu?.children?.length">
+        <li class="menu-item-wrapper" *ngFor="let subMenu of menu.children">
+          <a class="menu-item sub-menu-item" routerLinkActive="active" [routerLink]="subMenu.path">
+            <mat-icon *ngIf="subMenu.iconType === 'mat'">{{ subMenu.icon }}</mat-icon>
+            <mat-icon *ngIf="subMenu.iconType === 'svg'" [svgIcon]="subMenu.icon"></mat-icon>
+            <span>{{ subMenu.localizationKey | translate }}</span>
+          </a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</ng-container>

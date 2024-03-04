@@ -1,0 +1,661 @@
+<ms-filter-breadcrumb [filterBreadcrumbData]="filterBreadcrumbData" (removeFilterTrigger)="removeFilterBreadcrumb($event)"></ms-filter-breadcrumb>
+
+<div class="top-wraper">
+  <div class="p-grid" style="position: relative">
+    <div class="p-col-fixed no-padding super-filter-style">
+      <label class="float-label" *ngIf="scholarSeasonsAboveFilter?.value && scholarSeasonsAboveFilter?.value?.length !== 0">
+        {{ 'Scholar_Season' | translate }}
+      </label>
+      <ng-select
+        [items]="scholarSeasonList"
+        class="custom-dropdownpanel"
+        [appendTo]="'body'"
+        [multiple]="true"
+        notFoundText="{{ 'NOT RECORD FOUND' | translate }}"
+        placeholder="{{ 'Scholar_Season' | translate }}"
+        [formControl]="scholarSeasonsAboveFilter"
+        [clearable]="false"
+        [closeOnSelect]="false"
+        (close)="checkSuperFilterScholarSeason()"
+      >
+        <ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index">
+          <input id="item-{{ index }}" type="checkbox" [ngModel]="item$.selected" /> {{ item }}
+        </ng-template>
+        <ng-template ng-header-tmp *ngIf="scholarSeasonList?.length">
+          <mat-checkbox
+            class="all-input"
+            style="cursor: pointer"
+            [checked]="isAllDropdownSelected('scholarSeason')"
+            [indeterminate]="isSomeDropdownSelected('scholarSeason')"
+            (change)="selectAllData($event, 'scholarSeason')"
+          >
+            {{ 'AllM' | translate }}
+          </mat-checkbox>
+        </ng-template>
+      </ng-select>
+    </div>
+    <div class="p-col-fixed no-padding super-filter-style" >
+      <label class="float-label" *ngIf="schoolsAboveFilter?.value && schoolsAboveFilter?.value?.length !== 0">
+        {{ 'ADMISSION.TABLE_ADMISSION_CHANNEL.School' | translate }}
+      </label>
+      <ng-select
+        [items]="schoolList"
+        class="custom-dropdownpanel"
+        [appendTo]="'body'"
+        [multiple]="true"
+        notFoundText="{{ 'NOT RECORD FOUND' | translate }}"
+        placeholder="{{ 'ADMISSION.TABLE_ADMISSION_CHANNEL.School' | translate }}"
+        [formControl]="schoolsAboveFilter"
+        [clearable]="false"
+        [closeOnSelect]="false"
+        (close)="checkSuperFilterSchool()"
+      >
+        <ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index">
+          <input id="item-{{ index }}" type="checkbox" [ngModel]="item$.selected" /> {{ item }}
+        </ng-template>
+        <ng-template ng-header-tmp *ngIf="schoolList?.length">
+          <mat-checkbox
+            class="all-input"
+            style="cursor: pointer"
+            [checked]="isAllDropdownSelected('school')"
+            [indeterminate]="isSomeDropdownSelected('school')"
+            (change)="selectAllData($event, 'school')"
+          >
+            {{ 'AllM' | translate }}
+          </mat-checkbox>
+        </ng-template>
+      </ng-select>
+    </div>
+    <div class="p-col-fixed no-padding super-filter-style" >
+      <label class="float-label" *ngIf="campusAboveFilter?.value && campusAboveFilter?.value?.length !== 0">
+        {{ 'ADMISSION.TABLE_ADMISSION_CHANNEL.Campus' | translate }}
+      </label>
+      <ng-select
+        [items]="campusList"
+        class="custom-dropdownpanel"
+        [appendTo]="'body'"
+        [multiple]="true"
+        notFoundText="{{ 'NOT RECORD FOUND' | translate }}"
+        placeholder="{{ 'ADMISSION.TABLE_ADMISSION_CHANNEL.Campus' | translate }}"
+        [formControl]="campusAboveFilter"
+        [clearable]="false"
+        [closeOnSelect]="false"
+        (close)="checkSuperFilterCampus()"
+      >
+        <ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index">
+          <input id="item-{{ index }}" type="checkbox" [ngModel]="item$.selected" /> {{ item }}
+        </ng-template>
+        <ng-template ng-header-tmp *ngIf="campusList?.length">
+          <mat-checkbox
+            class="all-input"
+            style="cursor: pointer"
+            [checked]="isAllDropdownSelected('campus')"
+            [indeterminate]="isSomeDropdownSelected('campus')"
+            (change)="selectAllData($event, 'campus')"
+          >
+            {{ 'AllM' | translate }}
+          </mat-checkbox>
+        </ng-template>
+      </ng-select>
+    </div>
+    <div class="p-col-fixed no-padding super-filter-style" >
+      <label class="float-label" *ngIf="levelAboveFilter?.value && levelAboveFilter?.value?.length !== 0">
+        {{ 'ADMISSION.TABLE_ADMISSION_CHANNEL.Level' | translate }}
+      </label>
+      <ng-select
+        [items]="levelList"
+        class="custom-dropdownpanel"
+        [appendTo]="'body'"
+        [multiple]="true"
+        notFoundText="{{ 'NOT RECORD FOUND' | translate }}"
+        placeholder="{{ 'ADMISSION.TABLE_ADMISSION_CHANNEL.Level' | translate }}"
+        [formControl]="levelAboveFilter"
+        [clearable]="false"
+        [closeOnSelect]="false"
+        (close)="checkSuperFilterLevel()"
+      >
+        <ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index">
+          <input id="item-{{ index }}" type="checkbox" [ngModel]="item$.selected" /> {{ item }}
+        </ng-template>
+        <ng-template ng-header-tmp *ngIf="levelList?.length">
+          <mat-checkbox
+            class="all-input"
+            style="cursor: pointer"
+            [checked]="isAllDropdownSelected('level')"
+            [indeterminate]="isSomeDropdownSelected('level')"
+            (change)="selectAllData($event, 'level')"
+          >
+            {{ 'AllM' | translate }}
+          </mat-checkbox>
+        </ng-template>
+      </ng-select>
+    </div>
+    <div class="p-col-fixed" style="float: left; padding-right: 15px !important; margin-top: 2px !important">
+      <button
+        mat-button
+        mat-raised-button
+        color="accent"
+        [disabled]="
+          !( superFilter?.hubspot_scholar_seasons?.length 
+            || superFilter?.previous_school?.length 
+            || superFilter?.previous_campus?.length 
+            || superFilter?.previous_level?.length) 
+          || isLoading || isWaitingForResponse
+        "
+        (click)="applySuperFilter()"
+      >
+        {{ 'Apply Filter' | translate }}
+      </button>
+    </div>
+    <div class="text-info">
+      <span>{{ 'OCSCARCAMPUSINFO.Last update Hubspot' | translate }} </span>
+      <span>:</span>
+      <span
+        >{{ translateDate(tableUpdateInfo?.hubspot_last_import_date?.date, tableUpdateInfo?.hubspot_last_import_date?.time) }} -
+        {{ translateTime(tableUpdateInfo?.hubspot_last_import_date?.time) }}</span
+      >
+      <span class="status ml-2" [matTooltip]="'Updated' | translate" *ngIf="!tableUpdateInfo?.is_hubspot_running">{{
+        'Updated' | translate
+      }}</span>
+      <span class="status-re ml-2" [matTooltip]="'Update in progress' | translate" *ngIf="tableUpdateInfo?.is_hubspot_running">{{
+        'Update in progress' | translate
+      }}</span>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="isLoading" class="inner-loading-indicator">
+  <mat-spinner color="accent" [diameter]="100"></mat-spinner>
+</div>
+
+<div class="horizontal header-button header-action">
+  <div class="text-right" style="display: inline-block; float: right">
+    <button
+      matTooltip="{{ 'Action' | translate }} "
+      style="padding: 0px 7px !important"
+      mat-raised-button
+      color="accent"
+      [disabled]="isWaitingForResponse || isLoading"
+      [matMenuTriggerFor]="action"
+    >
+      {{ 'Action' | translate }}
+      <mat-icon>expand_more</mat-icon>
+    </button>
+    <mat-menu #action="matMenu">
+      <button
+        mat-menu-item
+        matTooltip="{{ 'Assign program' | translate }}"
+        aria-hidden="true"
+        (click)="getAllAssignForCheckbox(0)"
+        *ngIf="permission.assignProgramAdmissionHubspotPerm()"
+        class="border-button"
+      >
+        <!-- <mat-icon svgIcon="clipboard-check" class="mat-icon-svgIcon icon-svgIcon-menu"></mat-icon> -->
+        {{ 'Assign program' | translate }}
+      </button>
+
+      <button
+        mat-menu-item
+        matTooltip="{{ 'OSCARCAMPUSTABLE.Get latest student Hubspot' | translate }}"
+        aria-hidden="true"
+        (click)="refreshCandidateFromHubSpot()"
+        *ngIf="permission.getAdmissionHubspotStudentsPerm()"
+      >
+        <!-- <i class="fa fa-download" style="margin-right: 3px;margin-left: 2px;"></i> -->
+        {{ 'OSCARCAMPUSTABLE.Get latest student Hubspot' | translate }}
+      </button>
+    </mat-menu>
+    <!-- <button
+      mat-raised-button
+      color="accent"
+      matTooltip="{{ 'Import' | translate }}"
+      [disabled]="isWaitingForResponse || isLoading"
+      (click)="openImport()"
+    >
+      <mat-icon svgIcon="file-excel" class="mat-icon-svgIcon"></mat-icon>
+      {{ 'Import' | translate }}
+    </button> -->
+    <button
+      [disabled]="isWaitingForResponse"
+      matTooltip="{{ 'Export' | translate }}"
+      matTooltipPosition="above"
+      mat-raised-button
+      color="primary"
+      (click)="getAllIdForCheckbox(0)"
+      *ngIf="permission.exportAdmissionHubspotPerm()"
+    >
+      <mat-icon svgIcon="file-excel-outline" class="mat-icon-svgIcon"></mat-icon>
+      {{ 'Export' | translate }}
+    </button>
+
+    <button
+      (click)="resetFilter()"
+      mat-raised-button
+      color="primary"
+      matTooltip="{{ 'Reset Filter' | translate }}"
+      [disabled]="isWaitingForResponse"
+      *ngIf="permission.resetAdmissionHubspotPerm()"
+    >
+      <mat-icon svgIcon="loop" class="mat-icon-svgIcon"></mat-icon>
+      {{ 'RESET' | translate }}
+    </button>
+  </div>
+  <div class="text-right text-count">
+    <span style="font-family: 'firaSans' !important" *ngIf="dataSelected?.length || (isCheckedAll && dataCount)"
+      >{{ 'Selected Data' | translate }} : {{ isCheckedAll ? dataCount - dataUnselectUser?.length : dataSelected?.length }}</span
+    >
+  </div>
+</div>
+<div class="horizontal mat-elevation-z8 finance-table">
+  <table mat-table matSort [dataSource]="dataSource" matSort (matSortChange)="sortData($event)" class="mat-elevation-z8">
+    <!---ROW FILTER START-->
+    <ng-container matColumnDef="select">
+      <th mat-header-cell *matHeaderCellDef class="text-center">
+        <mat-checkbox
+          (change)="$event ? masterToggle($event) : null"
+          (change)="showOptions('all', '')"
+          [checked]="(selection.hasValue() && isAllSelected()) || (isCheckedAll && !dataUnselect.includes(element?._id))"
+          [indeterminate]="selection.hasValue() && (dataUnselectUser?.length > 0 || !isAllSelected())"
+          [aria-label]="checkboxLabel()"
+        >
+        </mat-checkbox>
+      </th>
+      <td mat-cell *matCellDef="let row" class="text-center">
+        <mat-checkbox
+          (click)="$event.stopPropagation()"
+          (change)="$event ? selection.toggle(row._id) : null"
+          [checked]="checkIsSelected(row)"
+          (change)="showOptions('one', row)"
+          [aria-label]="checkboxLabel(row)"
+        >
+        </mat-checkbox>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="selectFilter">
+      <th mat-header-cell *matHeaderCellDef></th>
+    </ng-container>
+
+    <ng-container matColumnDef="sourceFilter">
+      <th mat-header-cell *matHeaderCellDef></th>
+    </ng-container>
+
+    <ng-container matColumnDef="dateAddedFilter">
+      <th mat-header-cell *matHeaderCellDef>
+        <mat-form-field>
+          <input
+            matInput
+            (click)="datePicker.open()"
+            readonly
+            class="form-field"
+            [formControl]="dateFilter"
+            placeholder="{{ 'search' | translate }}"
+            [matDatepicker]="datePicker"
+          />
+          <mat-datepicker-toggle matSuffix [for]="datePicker"></mat-datepicker-toggle>
+          <mat-datepicker #datePicker></mat-datepicker>
+        </mat-form-field>
+      </th>
+    </ng-container>
+    <ng-container matColumnDef="identityFilter">
+      <th mat-header-cell *matHeaderCellDef>
+        <mat-form-field>
+          <input matInput class="form-field" [formControl]="nameFilter" placeholder="{{ 'search' | translate }}" />
+        </mat-form-field>
+      </th>
+    </ng-container>
+    <ng-container matColumnDef="telephoneFilter">
+      <th mat-header-cell *matHeaderCellDef>
+        <mat-form-field>
+          <input matInput class="form-field" [formControl]="telFilter" placeholder="{{ 'search' | translate }}" />
+        </mat-form-field>
+      </th>
+    </ng-container>
+
+    <ng-container matColumnDef="emailFilter">
+      <th mat-header-cell *matHeaderCellDef>
+        <mat-form-field>
+          <input matInput class="form-field" [formControl]="emailFilter" placeholder="{{ 'search' | translate }}" />
+        </mat-form-field>
+      </th>
+    </ng-container>
+
+    <ng-container matColumnDef="scholarSeasonsFilter">
+      <th mat-header-cell *matHeaderCellDef>
+        <div class="no-padding" style="width: 100%; float: left; padding-right: 15px !important">
+          <ng-select
+            [items]="scholarSeasonList"
+            class="custom-dropdownpanel-tablecrm"
+            [appendTo]="'body'"
+            [multiple]="true"
+            notFoundText="{{ 'NOT RECORD FOUND' | translate }}"
+            placeholder="{{ 'search' | translate }}"
+            [formControl]="scholarSeasonsFilter"
+            [clearable]="false"
+            [closeOnSelect]="false"
+            (close)="selectMultipleFilter('scholarSeasonTable')"
+          >
+            <ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index">
+              <input id="item-{{ index }}" type="checkbox" [ngModel]="item$.selected" /> {{ item | translate }}
+            </ng-template>
+            <ng-template ng-header-tmp *ngIf="schoolList?.length">
+              <mat-checkbox
+                class="all-input"
+                style="cursor: pointer"
+                [checked]="isAllDropdownSelected('scholarSeasonTable')"
+                [indeterminate]="isSomeDropdownSelected('scholarSeasonTable')"
+                (change)="selectAllData($event, 'scholarSeasonTable')"
+              >
+                {{ 'AllM' | translate }}
+              </mat-checkbox>
+            </ng-template>
+          </ng-select>
+        </div>
+      </th>
+    </ng-container>
+
+    <ng-container matColumnDef="schoolFilter">
+      <th mat-header-cell *matHeaderCellDef>
+        <div class="no-padding" style="width: 100%; float: left; padding-right: 15px !important">
+          <ng-select
+            [items]="schoolList"
+            class="custom-dropdownpanel-tablecrm"
+            [appendTo]="'body'"
+            [multiple]="true"
+            notFoundText="{{ 'NOT RECORD FOUND' | translate }}"
+            placeholder="{{ 'search' | translate }}"
+            [formControl]="schoolsFilter"
+            [clearable]="false"
+            [closeOnSelect]="false"
+            (close)="selectMultipleFilter('schoolTable')"
+          >
+            <ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index">
+              <input id="item-{{ index }}" type="checkbox" [ngModel]="item$.selected" /> {{ item | translate }}
+            </ng-template>
+            <ng-template ng-header-tmp *ngIf="schoolList?.length">
+              <mat-checkbox
+                class="all-input"
+                style="cursor: pointer"
+                [checked]="isAllDropdownSelected('schoolTable')"
+                [indeterminate]="isSomeDropdownSelected('schoolTable')"
+                (change)="selectAllData($event, 'schoolTable')"
+              >
+                {{ 'AllM' | translate }}
+              </mat-checkbox>
+            </ng-template>
+          </ng-select>
+        </div>
+      </th>
+    </ng-container>
+
+    <ng-container matColumnDef="campusFilter">
+      <th mat-header-cell *matHeaderCellDef>
+        <div class="no-padding" style="width: 100%; float: left; padding-right: 15px !important">
+          <ng-select
+          [items]="campusList"
+          class="custom-dropdownpanel-tablecrm"
+          [appendTo]="'body'"
+          [multiple]="true"
+          notFoundText="{{ 'NOT RECORD FOUND' | translate }}"
+          placeholder="{{ 'search' | translate }}"
+          [formControl]="campusFilter"
+          [clearable]="false"
+          [closeOnSelect]="false"
+          (close)="selectMultipleFilter('campusTable')"
+          dropdownPosition="bottom"
+        >
+          <ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index">
+            <input id="item-{{ index }}" type="checkbox" [ngModel]="item$.selected" /> {{ item | translate }}
+          </ng-template>
+          <ng-template ng-header-tmp *ngIf="campusList?.length">
+            <mat-checkbox
+              class="all-input"
+              style="cursor: pointer"
+              [checked]="isAllDropdownSelected('campusTable')"
+              [indeterminate]="isSomeDropdownSelected('campusTable')"
+              (change)="selectAllData($event, 'campusTable')"
+            >
+              {{ 'AllM' | translate }}
+            </mat-checkbox>
+          </ng-template>
+        </ng-select>
+        </div>
+      </th>
+    </ng-container>
+
+    <ng-container matColumnDef="levelFilter">
+      <th mat-header-cell *matHeaderCellDef>
+        <div class="no-padding" style="width: 100%; float: left; padding-right: 15px !important">
+          <ng-select
+          [items]="levelList"
+          class="custom-dropdownpanel-tablecrm"
+          [appendTo]="'body'"
+          [multiple]="true"
+          notFoundText="{{ 'NOT RECORD FOUND' | translate }}"
+          placeholder="{{ 'search' | translate }}"
+          [formControl]="levelFilter"
+          [clearable]="false"
+          [closeOnSelect]="false"
+          (close)="selectMultipleFilter('levelTable')"
+          dropdownPosition="bottom"
+        >
+          <ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index">
+            <input id="item-{{ index }}" type="checkbox" [ngModel]="item$.selected" /> {{ item | translate }}
+          </ng-template>
+          <ng-template ng-header-tmp *ngIf="levelList?.length">
+            <mat-checkbox
+              class="all-input"
+              style="cursor: pointer"
+              [checked]="isAllDropdownSelected('levelTable')"
+              [indeterminate]="isSomeDropdownSelected('levelTable')"
+              (change)="selectAllData($event, 'levelTable')"
+            >
+              {{ 'AllM' | translate }}
+            </mat-checkbox>
+          </ng-template>
+        </ng-select>
+        </div>
+      </th>
+    </ng-container>
+
+    <ng-container matColumnDef="programFilter">
+      <th mat-header-cell *matHeaderCellDef>
+        <mat-form-field>
+          <input matInput class="form-field" [formControl]="programsFilterCtrl" placeholder="{{ 'search' | translate }}" />
+        </mat-form-field>
+      </th>
+    </ng-container>
+
+    <ng-container matColumnDef="trialFilter">
+      <th mat-header-cell *matHeaderCellDef>
+        <mat-form-field>
+          <input matInput class="form-field" [formControl]="trialDateCtrl" placeholder="{{ 'search' | translate }}" />
+        </mat-form-field>
+      </th>
+    </ng-container>
+    <!---ROW FILTER END-->
+
+    <!--ROW CONTENT START -->
+    <ng-container matColumnDef="source">
+      <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'Source' | translate }}" matTooltipPosition="above">
+        <h5 mat-sort-header="source_oscar" style="text-align: center !important">
+          {{ 'Source' | translate }}
+        </h5>
+      </th>
+      <td mat-cell *matCellDef="let element" class="pad-l-xs" [matTooltip]="displayTooltipSource(element)">
+        <!-- {{ element?.oscar_campus_id | json }} -->
+        {{
+          element?.hubspot_contact_id && element?.hubspot_deal_id
+            ? ('Hubspot' | translate)
+            : element?.oscar_campus_id
+            ? ('Oscar' | translate)
+            : ('Manual' | translate)
+        }}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="dateAdded">
+      <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'Date added' | translate }}" matTooltipPosition="above">
+        <h5 mat-sort-header="date_added" style="text-align: center !important">
+          {{ 'Date added' | translate }}
+        </h5>
+      </th>
+      <td mat-cell *matCellDef="let element" class="pad-l-xs" [matTooltip]="transformDate(element?.date_added)">
+        {{ transformDate(element?.date_added) }}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="identity">
+      <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'Name' | translate }}" matTooltipPosition="above">
+        <h5 mat-sort-header="candidate" style="text-align: center !important">
+          {{ 'Student Name' | translate }}
+        </h5>
+      </th>
+      <td
+        matTooltip="{{ element?.civility && element?.civility === 'neutral' ? '' : (element?.civility | translate) }} {{
+          element?.last_name | uppercase
+        }} {{ element?.first_name }}"
+        mat-cell
+        *matCellDef="let element"
+        class="pad-l-xs"
+      >
+        {{
+          (element?.last_name | uppercase) +
+            ' ' +
+            element?.first_name +
+            ' ' +
+            (element?.civility && element?.civility === 'neutral' ? '' : (element?.civility | translate))
+        }}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="telephone">
+      <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'Telephone' | translate }}" matTooltipPosition="above">
+        <h5 mat-sort-header="telephone" style="text-align: center !important">
+          {{ 'Telephone' | translate }}
+        </h5>
+      </th>
+      <td mat-cell *matCellDef="let element" class="pad-l-xs" [matTooltip]="displayUserTelephone(element?.telephone)">
+        {{ displayUserTelephone(element?.telephone) }}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="email">
+      <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'email' | translate }}" matTooltipPosition="above">
+        <h5 mat-sort-header="email" style="text-align: center !important">
+          {{ 'email' | translate }}
+        </h5>
+      </th>
+      <td mat-cell *matCellDef="let element" class="pad-l-xs" [matTooltip]="element?.email">
+        {{ element?.email }}
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="scholarSeason">
+      <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'Scholar_Season' | translate }}" matTooltipPosition="above">
+        <h5 mat-sort-header="hubspot_scholar_season" style="text-align: center !important">
+          {{ 'Scholar_Season' | translate }}
+        </h5>
+      </th>
+      <td mat-cell *matCellDef="let element" class="pad-l-xs" [matTooltip]="element?.hubspot_scholar_season">
+        {{ element?.hubspot_scholar_season }}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="school">
+      <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'School' | translate }}" matTooltipPosition="above">
+        <h5 mat-sort-header="previous_school" style="text-align: center !important">
+          {{ 'School' | translate }}
+        </h5>
+      </th>
+      <td mat-cell *matCellDef="let element" class="pad-l-xs" [matTooltip]="element?.school">
+        {{ element?.previous_school }}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="campus">
+      <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'Campus' | translate }}" matTooltipPosition="above">
+        <h5 mat-sort-header="previous_campus" style="text-align: center !important">
+          {{ 'Campus' | translate }}
+        </h5>
+      </th>
+      <td mat-cell *matCellDef="let element" class="pad-l-xs" [matTooltip]="element?.campus">
+        {{ element?.previous_campus }}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="level">
+      <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'Level' | translate }}" matTooltipPosition="above">
+        <h5 mat-sort-header="previous_level" style="text-align: center !important">
+          {{ 'Level' | translate }}
+        </h5>
+      </th>
+      <td mat-cell *matCellDef="let element" class="pad-l-xs" [matTooltip]="element?.level">
+        {{ element?.previous_level }}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="program_desired">
+      <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'Program desired' | translate }}" matTooltipPosition="above">
+        <h5 mat-sort-header="program_desired" style="text-align: center !important">
+          {{ 'Program desired' | translate }}
+        </h5>
+      </th>
+      <td mat-cell *matCellDef="let element" class="pad-l-xs" [matTooltip]="element?.program_desired">
+        {{ element?.program_desired }}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="trial_date">
+      <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'Trial date' | translate }}" matTooltipPosition="above">
+        <h5 mat-sort-header="trial_date" style="text-align: center !important">
+          {{ 'Trial date' | translate }}
+        </h5>
+      </th>
+      <td mat-cell *matCellDef="let element" class="pad-l-xs" [matTooltip]="element?.trial_date">
+        {{ element?.trial_date }}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="loading">
+      <th mat-header-cell *matHeaderCellDef colspan="100%" style="text-align: center !important">
+        <div class="center-spinner">
+          <mat-spinner color="accent"></mat-spinner>
+        </div>
+      </th>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-header-row *matHeaderRowDef="filterColumns"></tr>
+    <tr mat-header-row *matHeaderRowDef="['loading']" [hidden]="!isWaitingForResponse"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns" [hidden]="isWaitingForResponse"></tr>
+  </table>
+</div>
+
+<div *ngIf="noData | async" class="no-records">
+  {{ 'NOT RECORD FOUND' | translate }}
+</div>
+<div [ngClass]="{ hide: noData | async }">
+  <mat-paginator
+    [ngClass]="{ 'hide-pagination-buttons': paginator.length <= 10 }"
+    [length]="dataCount"
+    [hidePageSize]="true"
+    [pageSize]="[10]"
+    showFirstLastButtons
+  ></mat-paginator>
+</div>
+<swal #exportConfirmSwal title="{{ 'Export Title' | translate }}" [showConfirmButton]="false">
+  <div *swalPartial class="">
+    <div class="">{{ 'Export Text1' | translate }}</div>
+    <div class="">{{ 'Export Text2' | translate }}</div>
+    <div class="">{{ 'Export Text3' | translate }}</div>
+    <div class="">{{ 'Export Text4' | translate }}</div>
+    <div class="">
+      <mat-form-field color="accent" class="full-wid">
+        <input matInput [(ngModel)]="exportName" placeholder="{{ 'ExportName' | translate }}" />
+      </mat-form-field>
+    </div>
+    <button mat-raised-button color="primary" (click)="onDataExport()">
+      {{ 'OK' | translate }}
+    </button>
+  </div>
+</swal>

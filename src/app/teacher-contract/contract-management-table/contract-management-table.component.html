@@ -1,0 +1,1030 @@
+<div class="top-space">
+  <ms-filter-breadcrumb [filterBreadcrumbData]="filterBreadcrumbData" (removeFilterTrigger)="removeFilterBreadcrumb($event)"></ms-filter-breadcrumb>
+
+  <div class="horizontal header-button header-action">
+    <div class="text-right" style="display: inline-block; float: right">
+      <div class="text-right text-count">
+        <span style="font-family: 'firaSans' !important" *ngIf="dataSelected?.length || (isCheckedAll && dataCount)"
+          >{{ 'Selected Data' | translate }} : {{ isCheckedAll ? dataCount - dataUnselectUser?.length : dataSelected?.length }}</span
+        >
+      </div>
+      <button
+        matTooltip="{{ 'Action' | translate }} "
+        style="padding: 0px 7px !important"
+        mat-raised-button
+        color="accent"
+        [disabled]="isLoading"
+        [matMenuTriggerFor]="action"
+      >
+        {{ 'Action' | translate }}
+        <mat-icon>expand_more</mat-icon>
+      </button>
+      <mat-menu #action="matMenu">
+        <button
+          mat-menu-item
+          matTooltip="{{ 'CONTRACT_MANAGEMENT.Template for Import' | translate }} "
+          (click)="templateForImport()"
+          *ngIf="permission.templateForImportContractManagementPerm()"
+          class="border-button"
+        >
+          <!-- <mat-icon class="icon-menu">description</mat-icon> -->
+          {{ 'CONTRACT_MANAGEMENT.Template for Import' | translate }}
+        </button>
+        <button
+          mat-menu-item
+          (click)="csvTypeSelectionUpload()"
+          matTooltip="{{ 'CONTRACT_MANAGEMENT.Import Contract' | translate }} "
+          *ngIf="permission.importContractManagementPerm()"
+        >
+          <!-- <mat-icon class="icon-menu-add">add</mat-icon> -->
+          {{ 'CONTRACT_MANAGEMENT.Import Contract' | translate }}
+        </button>
+      </mat-menu>
+      <button
+        style="padding: 0px 7px !important"
+        color="primary"
+        mat-raised-button
+        matTooltip="{{ 'Reset' | translate }}"
+        (click)="onReset()"
+        [disabled]="isLoading"
+        *ngIf="permission.resetContractManagementPerm()"
+      >
+        <mat-icon svgIcon="loop" class="mat-icon-svgIcon"></mat-icon>
+        {{ 'Reset' | translate }}
+      </button>
+    </div>
+  </div>
+
+  <div class="horizontal mat-elevation-z8 follow-up-table">
+    <table mat-table #matTable [dataSource]="dataSource" matSort class="mat-elevation-z8" (matSortChange)="sortData($event)">
+      <!-- =========================================================================================================================== -->
+
+      <!-- START ACTION BUTTON ROW BELOW -->
+
+      <!-- =========================================================================================================================== -->
+
+      <!-- <ng-container matColumnDef="reset">
+        <th mat-header-cell *matHeaderCellDef colspan="100%" class="action-header-column text-right">
+          <div class="text-right" style="display: inline-block; float: right">
+            <button
+              matTooltip="{{ 'Send agreement form' | translate }} "
+              style="padding: 0px 7px !important"
+              mat-raised-button
+              color="accent"
+              [disabled]="isLoading"
+              (click)="onSendingPreContract('multiple')"
+            >
+              <mat-icon>forward_to_inbox</mat-icon>
+              {{ 'CONTRACT_MANAGEMENT.Send the Form' | translate }}
+            </button>
+            <button
+              matTooltip="{{ 'Template For Import' | translate }} "
+              style="padding: 0px 7px !important"
+              mat-raised-button
+              color="accent"
+              (click)="templateForImport()"
+              [disabled]="isLoading"
+            >
+              <mat-icon>description</mat-icon>
+              {{ 'CONTRACT_MANAGEMENT.Template for Import' | translate }}
+            </button>
+            <button
+              (click)="onImportContract()"
+              matTooltip="{{ 'Import Contract' | translate }} "
+              style="padding: 0px 7px !important"
+              mat-raised-button
+              color="accent"
+              [disabled]="isLoading"
+            >
+              <mat-icon>add</mat-icon>
+              {{ 'CONTRACT_MANAGEMENT.Import Contract' | translate }}
+            </button>
+            <button
+              (click)="onAddContract()"
+              matTooltip="{{ 'Contract Process' | translate }} "
+              style="padding: 0px 7px !important"
+              mat-raised-button
+              color="accent"
+              [disabled]="isLoading"
+            >
+              <mat-icon>add</mat-icon>
+              {{ 'CONTRACT_MANAGEMENT.Contract Process' | translate }}
+            </button>
+            <button
+              style="padding: 0px 7px !important"
+              color="primary"
+              mat-raised-button
+              matTooltip="{{ 'Reset' | translate }}"
+              (click)="onReset()"
+              [disabled]="isLoading"
+            >
+              <mat-icon svgIcon="loop" class="mat-icon-svgIcon"></mat-icon>
+              {{ 'Reset' | translate }}
+            </button>
+          </div>
+        </th>
+      </ng-container> -->
+
+      <!-- =========================================================================================================================== -->
+
+      <!-- START FILTER ROWS BELOW -->
+
+      <!-- =========================================================================================================================== -->
+
+      <ng-container matColumnDef="selectFilter" class="mat-column-select" sticky>
+        <th mat-header-cell *matHeaderCellDef></th>
+      </ng-container>
+
+      <ng-container matColumnDef="teacherFilter" sticky>
+        <th mat-header-cell *matHeaderCellDef class="text-center">
+          <mat-form-field>
+            <input matInput class="form-field" placeholder="{{ 'search' | translate }}" [formControl]="teacherFilter" />
+          </mat-form-field>
+        </th>
+      </ng-container>
+
+      <ng-container matColumnDef="contractTypeFilter" sticky>
+        <th mat-header-cell *matHeaderCellDef class="text-center custom-filter-table" style="vertical-align: unset !important">
+          <ng-select
+          [items]="typeOfConracts"
+          bindValue="value"
+          bindLabel="label"
+          class="custom-dropdownpanel-contract"
+          [appendTo]="'body'"
+          [multiple]="true"
+          notFoundText="{{ 'NOT RECORD FOUND' | translate }}"
+          placeholder="{{ 'search' | translate }}"
+          [formControl]="contractTypeFilter"
+          [clearable]="false"
+          [closeOnSelect]="false"
+          (close)="selectedMultipleFilter('typeOfContract')"
+        >
+          <ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index">
+            <input id="item-{{ index }}" type="checkbox" [ngModel]="item$.selected" /> {{ 'ERP_009_TEACHER_CONTRACT.TYPE_OF_CONTRACT.' + item?.value | translate }}
+          </ng-template>
+          <ng-template ng-header-tmp *ngIf="typeOfConracts?.length">
+            <mat-checkbox
+              class="all-input"
+              style="cursor: pointer"
+              [checked]="isAllDropdownSelected('typeOfContract')"
+              [indeterminate]="isSomeDropdownSelected('typeOfContract')"
+              (change)="selectAllData($event, 'typeOfContract')"
+            >
+              {{ 'All' | translate }}
+            </mat-checkbox>
+          </ng-template>
+        </ng-select>
+        </th>
+      </ng-container>
+
+      <ng-container matColumnDef="numberOfInterventionFilter" sticky>
+        <th mat-header-cell *matHeaderCellDef class="text-center">
+          <ng-select
+          [items]="numberIntervention"
+          class="custom-dropdownpanel-contract"
+          [appendTo]="'body'"
+          [multiple]="true"
+          notFoundText="{{ 'NOT RECORD FOUND' | translate }}"
+          placeholder="{{ 'search' | translate }}"
+          [formControl]="numberInterventionFilter"
+          [clearable]="false"
+          [closeOnSelect]="false"
+          (close)="selectedMultipleFilter('numberIntervention')"
+        >
+          <ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index">
+            <input id="item-{{ index }}" type="checkbox" [ngModel]="item$.selected" /> {{item}}
+          </ng-template>
+          <ng-template ng-header-tmp *ngIf="numberIntervention?.length">
+            <mat-checkbox
+              class="all-input"
+              style="cursor: pointer"
+              [checked]="isAllDropdownSelected('numberIntervention')"
+              [indeterminate]="isSomeDropdownSelected('numberIntervention')"
+              (change)="selectAllData($event, 'numberIntervention')"
+            >
+              {{ 'All' | translate }}
+            </mat-checkbox>
+          </ng-template>
+        </ng-select>
+        </th>
+      </ng-container>
+
+      <ng-container matColumnDef="emailFilter" sticky>
+        <th mat-header-cell *matHeaderCellDef class="text-center">
+          <mat-form-field>
+            <input matInput class="form-field" placeholder="{{ 'search' | translate }}" [formControl]="emailFilter" />
+          </mat-form-field>
+        </th>
+      </ng-container>
+
+      <ng-container matColumnDef="phoneFilter" sticky>
+        <th mat-header-cell *matHeaderCellDef class="text-center">
+          <mat-form-field>
+            <input matInput class="form-field" placeholder="{{ 'search' | translate }}" [formControl]="phoneFilter" />
+          </mat-form-field>
+        </th>
+      </ng-container>
+
+      <!-- <ng-container matColumnDef="schoolFilter">
+          <th mat-header-cell *matHeaderCellDef class="text-center">
+            <mat-form-field>
+              <input
+                matInput
+                class="form-field"
+                [matAutocomplete]="schoolFilterAuto"
+                [formControl]="schoolFilter"
+                placeholder="{{ 'search' | translate }}"
+              />
+              <mat-autocomplete #schoolFilterAuto="matAutocomplete" [displayWith]="displaySchool.bind(this)">
+                <mat-option value="" >
+                  {{ 'AllS' | translate }}
+                </mat-option>
+                <mat-option *ngFor="let school of filteredSchool | async" [value]="school?._id" >
+                  {{ school?.short_name }}
+                </mat-option>
+              </mat-autocomplete>
+            </mat-form-field>
+          </th>
+        </ng-container> -->
+
+      <ng-container matColumnDef="programFilter" sticky>
+        <th mat-header-cell *matHeaderCellDef class="text-center" [hidden]="true">
+          <!-- <ng-select [appendTo]="'body'" [items]="programs" bindLabel="program" bindValue="_id" placeholder="{{ 'Filter' | translate }}" [formControl]="programFilter" [clearable]="true">
+          </ng-select> -->
+          <ng-select
+            class="program-dropdown auto-grow"
+            [appendTo]="'body'"
+            placeholder="{{ 'Filter' | translate }}"
+            [formControl]="programFilter"
+            [clearable]="false"
+          >
+            <ng-option value="">
+              {{ 'All' | translate }}
+            </ng-option>
+            <ng-option *ngFor="let program of programs" [value]="program?._id">
+              {{ program.program }}
+            </ng-option>
+          </ng-select>
+        </th>
+      </ng-container>
+
+      <ng-container matColumnDef="interventionFilter">
+        <th [hidden]="true" mat-header-cell *matHeaderCellDef class="text-center">
+          <ng-select
+            class="auto-grow program-dropdown"
+            [appendTo]="'body'"
+            placeholder="{{ 'Filter' | translate }}"
+            [formControl]="interventionFilter"
+            [clearable]="false"
+          >
+            <ng-option value="">
+              {{ 'All' | translate }}
+            </ng-option>
+            <ng-option *ngFor="let intervention of interventions" [value]="intervention">
+              {{ 'ERP_009_TEACHER_CONTRACT.INTERVETION_TYPE.' + intervention | translate }}
+            </ng-option>
+          </ng-select>
+        </th>
+      </ng-container>
+
+      <ng-container matColumnDef="subjectFilter">
+        <th [hidden]="true" mat-header-cell *matHeaderCellDef class="text-center">
+          <ng-select
+            class="auto-grow program-dropdown"
+            [appendTo]="'body'"
+            placeholder="{{ 'Filter' | translate }}"
+            [formControl]="subjectFilter"
+            [clearable]="false"
+          >
+            <ng-option value="">
+              {{ 'All' | translate }}
+            </ng-option>
+            <ng-option *ngFor="let subject of subjects" [value]="subject?._id">
+              {{ subject?.full_name }}
+            </ng-option>
+          </ng-select>
+        </th>
+      </ng-container>
+
+      <ng-container matColumnDef="startFilter">
+        <th mat-header-cell *matHeaderCellDef class="text-center">
+          <mat-form-field class="example-full-width">
+            <input
+              matInput
+              (click)="startDatePicker.open()"
+              readonly
+              [formControl]="startDateFilter"
+              [matDatepicker]="startDatePicker"
+              placeholder="Date"
+            />
+            <mat-datepicker-toggle matSuffix [for]="startDatePicker" style="margin-right: 5px"></mat-datepicker-toggle>
+            <mat-datepicker #startDatePicker></mat-datepicker>
+          </mat-form-field>
+        </th>
+      </ng-container>
+
+      <ng-container matColumnDef="endFilter">
+        <th mat-header-cell *matHeaderCellDef class="text-center">
+          <mat-form-field class="example-full-width">
+            <input
+              matInput
+              (click)="endDatePicker.open()"
+              readonly
+              [formControl]="endDateFilter"
+              [matDatepicker]="endDatePicker"
+              placeholder="Date"
+            />
+            <mat-datepicker-toggle matSuffix [for]="endDatePicker" style="margin-right: 5px"></mat-datepicker-toggle>
+            <mat-datepicker #endDatePicker></mat-datepicker>
+          </mat-form-field>
+        </th>
+      </ng-container>
+
+      <ng-container matColumnDef="intervenantFilter">
+        <th mat-header-cell *matHeaderCellDef class="text-center"></th>
+      </ng-container>
+
+      <ng-container matColumnDef="contractManagerFilter">
+        <th mat-header-cell *matHeaderCellDef class="text-center">
+          <mat-form-field *ngIf="isFilterManagerReady">
+            <input matInput class="form-field" placeholder="{{ 'search' | translate }}" [formControl]="contractManagerFilter" />
+          </mat-form-field>
+        </th>
+      </ng-container>
+
+      <!-- <ng-container matColumnDef="hoursFilter">
+        <th mat-header-cell *matHeaderCellDef class="text-center">
+          <mat-form-field>
+            <input matInput class="form-field" placeholder="{{ 'search' | translate }}" [formControl]="hoursFilter" />
+          </mat-form-field>
+        </th>
+      </ng-container> -->
+
+      <!-- <ng-container matColumnDef="rateFilter">
+        <th mat-header-cell *matHeaderCellDef class="text-center">
+          <mat-form-field>
+            <input matInput class="form-field" placeholder="{{ 'search' | translate }}" [formControl]="rateFilter" />
+          </mat-form-field>
+        </th>
+      </ng-container> -->
+
+      <div *ngIf="stepColumns && stepColumns.length && steps?.length">
+        <ng-container *ngFor="let step of stepColumns; let i = index" matColumnDef="S{{ i + 1 }}_filter">
+          <th
+            mat-header-cell
+            *matHeaderCellDef
+            class="text-center custom-panel-dropdown"
+            style="vertical-align: unset; padding-top: 5px !important"
+          >
+            <!-- <ng-select
+              class="auto-grow program-dropdown"
+              placeholder="{{ 'Filter' | translate }}"
+              [formControl]="steps.controls[i]"
+              [clearable]="false"
+              (change)="stepFiltered()"
+              appendTo="body"
+            >
+              <ng-option value="">
+                {{ 'All' | translate }}
+              </ng-option>
+              <ng-option *ngFor="let status of stepStatusList" [value]="status?.value">
+                {{ 'CONTRACT_MANAGEMENT.Step_Statuses.' + status.value | translate }}
+              </ng-option>
+            </ng-select> -->
+            <ng-select
+            [formControl]="steps.controls[i]"
+            [items]="stepStatusList"
+            bindLabel="label"
+            bindValue="value"
+            class="custom-dropdownpanel-contract"
+            [appendTo]="'body'"
+            [multiple]="true"
+            notFoundText="{{ 'NOT RECORD FOUND' | translate }}"
+            placeholder="{{ 'search' | translate }}"
+            [clearable]="false"
+            [closeOnSelect]="false"
+            (close)="stepFiltered()"
+          >
+            <ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index">
+              <input id="item-{{ index }}" type="checkbox" [ngModel]="item$.selected" /> {{'CONTRACT_MANAGEMENT.Step_Statuses.' + item?.value | translate}}
+            </ng-template>
+            <ng-template ng-header-tmp *ngIf="stepStatusList?.length">
+              <mat-checkbox
+                class="all-input"
+                style="cursor: pointer"
+                [checked]="isAllDropdownSelected('steps',i)"
+                [indeterminate]="isSomeDropdownSelected('steps',i)"
+                (change)="selectAllData($event, 'steps',i)"
+              >
+                {{ 'All' | translate }}
+              </mat-checkbox>
+            </ng-template>
+          </ng-select>
+          </th>
+        </ng-container>
+      </div>
+
+      <div *ngIf="optionalStepColumns && optionalStepColumns.length && optionalSteps?.length">
+        <ng-container *ngFor="let step of optionalStepColumns; let i = index" matColumnDef="O{{ i + 1 }}_filter">
+          <th
+            mat-header-cell
+            *matHeaderCellDef
+            class="text-center custom-panel-dropdown"
+            style="vertical-align: unset; padding-top: 5px !important"
+          >
+            <!-- <ng-select
+              class="auto-grow program-dropdown"
+              placeholder="{{ 'Filter' | translate }}"
+              [formControl]="optionalSteps.controls[i]"
+              [clearable]="false"
+              (change)="stepFiltered()"
+              appendTo="body"
+            >
+              <ng-option value="">
+                {{ 'All' | translate }}
+              </ng-option>
+              <ng-option *ngFor="let status of stepStatusList" [value]="status?.value">
+                {{ 'CONTRACT_MANAGEMENT.Step_Statuses.' + status.value | translate }}
+              </ng-option>
+            </ng-select> -->
+            <ng-select
+            [formControl]="optionalSteps.controls[i]"
+            [items]="stepStatusList"
+            bindLabel="label"
+            bindValue="value"
+            class="custom-dropdownpanel-contract"
+            [appendTo]="'body'"
+            [multiple]="true"
+            notFoundText="{{ 'NOT RECORD FOUND' | translate }}"
+            placeholder="{{ 'search' | translate }}"
+            [clearable]="false"
+            [closeOnSelect]="false"
+            (close)="stepFiltered()"
+          >
+            <ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index">
+              <input id="item-{{ index }}" type="checkbox" [ngModel]="item$.selected" /> {{'CONTRACT_MANAGEMENT.Step_Statuses.' + item?.value | translate}}
+            </ng-template>
+            <ng-template ng-header-tmp *ngIf="stepStatusList?.length">
+              <mat-checkbox
+                class="all-input"
+                style="cursor: pointer"
+                [checked]="isAllDropdownSelected('optionalSteps',i)"
+                [indeterminate]="isSomeDropdownSelected('optionalSteps',i)"
+                (change)="selectAllData($event, 'optionalSteps',i)"
+              >
+                {{ 'All' | translate }}
+              </mat-checkbox>
+            </ng-template>
+          </ng-select>
+          </th>
+        </ng-container>
+      </div>
+
+      <ng-container matColumnDef="contract_process_status_filter" stickyEnd>
+        <th mat-header-cell *matHeaderCellDef class="text-center" style="vertical-align: unset; padding-top: 5px !important">
+          <ng-select
+          [items]="statusList"
+          bindLabel="label"
+          bindValue="value"
+          class="custom-dropdownpanel-contract"
+          [appendTo]="'body'"
+          [multiple]="true"
+          notFoundText="{{ 'NOT RECORD FOUND' | translate }}"
+          placeholder="{{ 'search' | translate }}"
+          [formControl]="statusFilter"
+          [clearable]="false"
+          [closeOnSelect]="false"
+          (close)="selectedMultipleFilter('status')"
+        >
+          <ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index">
+            <input id="item-{{ index }}" type="checkbox" [ngModel]="item$.selected" /> {{'CONTRACT_MANAGEMENT.Statuses.' + item?.value | translate}}
+          </ng-template>
+          <ng-template ng-header-tmp *ngIf="statusList?.length">
+            <mat-checkbox
+              class="all-input"
+              style="cursor: pointer"
+              [checked]="isAllDropdownSelected('status')"
+              [indeterminate]="isSomeDropdownSelected('status')"
+              (change)="selectAllData($event, 'status')"
+            >
+              {{ 'All' | translate }}
+            </mat-checkbox>
+          </ng-template>
+        </ng-select>
+        </th>
+      </ng-container>
+
+      <ng-container matColumnDef="actionFilter" stickyEnd>
+        <th mat-header-cell *matHeaderCellDef class="text-center"></th>
+      </ng-container>
+
+      <!-- =========================================================================================================================== -->
+
+      <!-- START DATA ROWS BELOW -->
+
+      <!-- =========================================================================================================================== -->
+
+      <ng-container matColumnDef="select" class="mat-column-select" sticky>
+        <th mat-header-cell *matHeaderCellDef class="text-center no-border">
+          <mat-checkbox
+            style="padding-top: 0.5rem;"
+            (change)="$event ? masterToggle() : null"
+            (change)="showOptions('all', '')"
+            [checked]="(selection.hasValue() && isAllSelected()) || isCheckedAll"
+            [indeterminate]="selection.hasValue() && (dataUnselectUser?.length > 0 || !isAllSelected())"
+            [aria-label]="checkboxLabel()"
+          >
+          </mat-checkbox>
+        </th>
+        <td mat-cell *matCellDef="let row">
+          <mat-checkbox
+            (click)="$event.stopPropagation()"
+            (change)="$event ? selection.toggle(row._id) : null"
+            [checked]="selection.isSelected(row?._id) || (isCheckedAll && !dataUnselectUser.includes(row?._id))"
+            (change)="showOptions('one', row)"
+            [aria-label]="checkboxLabel(row)"
+          >
+          </mat-checkbox>
+        </td>
+        <!-- <th mat-header-cell *matHeaderCellDef class="text-center no-border"></th>
+
+        <td mat-cell *matCellDef="let row" class="text-center" sticky>
+          <mat-checkbox
+            (click)="$event.stopPropagation()"
+            (change)="$event ? selection.toggle(row._id) : null"
+            [checked]="selection.isSelected(row._id)"
+            (change)="showOptions('one', row)"
+            [aria-label]="checkboxLabel(row)"
+          >
+          </mat-checkbox>
+        </td> -->
+      </ng-container>
+
+      <ng-container matColumnDef="teacher" sticky>
+        <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'CONTRACT_MANAGEMENT.teacher' | translate }}" matTooltipPosition="above">
+          <h5 mat-sort-header="teacher">{{ 'CONTRACT_MANAGEMENT.teacher' | translate }}</h5>
+        </th>
+        <td
+          mat-cell
+          *matCellDef="let element"
+          matTooltip="{{ element?.last_name | uppercase }} {{ element?.first_name }}
+        {{ element?.civility && element?.civility === 'neutral' ? '' : (element?.civility | translate) }}"
+        >
+          {{ element?.last_name | uppercase }} {{ element?.first_name }}
+          {{ element?.civility && element?.civility === 'neutral' ? '' : (element?.civility | translate) }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="contract_type" sticky>
+        <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'CONTRACT_MANAGEMENT.contract_type' | translate }}" matTooltipPosition="above">
+          <h5 mat-sort-header="contract_type">{{ 'CONTRACT_MANAGEMENT.contract_type' | translate }}</h5>
+        </th>
+        <td mat-cell *matCellDef="let element" matTooltip="{{ element?.contract_type | translate }}">
+          {{ element?.contract_type | translate }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="numberOfIntervention" sticky>
+        <th
+          mat-sort-header="intervention_number"
+          mat-header-cell
+          *matHeaderCellDef
+          matTooltip="{{ 'Number of intervention' | translate }}"
+          matTooltipPosition="above"
+        >
+          <h5>{{ 'Number of intervention' | translate }}</h5>
+        </th>
+        <td mat-cell *matCellDef="let element" matTooltip="{{ element?.interventions?.length }}">
+          {{ element?.interventions?.length }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="email" sticky>
+        <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'CONTRACT_MANAGEMENT.email' | translate }}" matTooltipPosition="above">
+          <h5 mat-sort-header="email">{{ 'CONTRACT_MANAGEMENT.email' | translate }}</h5>
+        </th>
+        <td mat-cell *matCellDef="let element" matTooltip="{{ element?.email }}">
+          {{ element?.email }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="phone" sticky>
+        <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'CONTRACT_MANAGEMENT.phone' | translate }}" matTooltipPosition="above">
+          <h5 mat-sort-header="phone">{{ 'CONTRACT_MANAGEMENT.phone' | translate }}</h5>
+        </th>
+        <td mat-cell *matCellDef="let element" matTooltip="{{ element?.portable_phone }}">
+          {{ element?.portable_phone }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="program" sticky>
+        <th
+          [hidden]="true"
+          mat-header-cell
+          *matHeaderCellDef
+          matTooltip="{{ 'CONTRACT_MANAGEMENT.program' | translate }}"
+          matTooltipPosition="above"
+        >
+          <h5 mat-sort-header="program">{{ 'CONTRACT_MANAGEMENT.program' | translate }}</h5>
+        </th>
+        <td [hidden]="true" mat-cell *matCellDef="let element" matTooltip="{{ element?.program?.program }}">
+          {{ element?.program?.program }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="intervention">
+        <th
+          [hidden]="true"
+          mat-header-cell
+          *matHeaderCellDef
+          matTooltip="{{ 'CONTRACT_MANAGEMENT.intervention' | translate }}"
+          matTooltipPosition="above"
+        >
+          <h5 mat-sort-header="intervention">{{ 'CONTRACT_MANAGEMENT.intervention' | translate }}</h5>
+        </th>
+        <td
+          [hidden]="true"
+          mat-cell
+          *matCellDef="let element"
+          matTooltip="{{ 'ERP_009_TEACHER_CONTRACT.INTERVETION_TYPE.' + element?.type_of_intervention | translate }}"
+        >
+          {{ 'ERP_009_TEACHER_CONTRACT.INTERVETION_TYPE.' + element?.type_of_intervention | translate }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="subject">
+        <th
+          [hidden]="true"
+          mat-header-cell
+          *matHeaderCellDef
+          matTooltip="{{ 'CONTRACT_MANAGEMENT.subject' | translate }}"
+          matTooltipPosition="above"
+        >
+          <h5>{{ 'CONTRACT_MANAGEMENT.subject' | translate }}</h5>
+        </th>
+        <td [hidden]="true" mat-cell *matCellDef="let element" [matTooltip]="renderTooltipEntity(element?.subject)">
+          <ng-container *ngFor="let sub of element?.subject">
+            <span class="tags">{{ sub?.full_name }}</span>
+          </ng-container>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="start">
+        <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'CONTRACT_MANAGEMENT.start' | translate }}" matTooltipPosition="above">
+          <h5 mat-sort-header="start_date">{{ 'CONTRACT_MANAGEMENT.start' | translate }}</h5>
+        </th>
+        <td mat-cell *matCellDef="let element" matTooltip="{{ translateDate(element?.start_date, element?.start_time) }}">
+          {{ translateDate(element?.start_date, element?.start_time) }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="end">
+        <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'CONTRACT_MANAGEMENT.end' | translate }}" matTooltipPosition="above">
+          <h5 mat-sort-header="end_date">{{ 'CONTRACT_MANAGEMENT.end' | translate }}</h5>
+        </th>
+        <td mat-cell *matCellDef="let element" matTooltip="{{ translateDate(element?.end_date, element?.end_time) }}">
+          {{ translateDate(element?.end_date, element?.end_time) }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="intervenant">
+        <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'Intervention' | translate }}" matTooltipPosition="above">
+          <h5>{{ 'Intervention' | translate }}</h5>
+        </th>
+        <td mat-cell *matCellDef="let element" [matTooltip]="renderTooltipIntervenant(element?.interventions)">
+          <ng-container *ngFor="let inter of element?.interventions; index as i">
+            <span class="tags">
+              {{ inter?.type_intervention | translate }}
+              {{
+                inter?.subject_id?.short_name
+                  ? inter?.type_intervention
+                    ? ' - ' + inter?.subject_id?.short_name
+                    : inter?.subject_id?.short_name
+                  : ''
+              }}
+              {{
+                inter?.program?.program
+                  ? inter?.type_intervention && inter?.subject_id?.short_name
+                    ? ' - ' + inter?.program?.program
+                    : inter?.program?.program
+                  : ''
+              }}
+            </span>
+          </ng-container>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="contractManager">
+        <th
+          mat-header-cell
+          *matHeaderCellDef
+          matTooltip="{{ 'Contract Manager' | translate }}"
+          matTooltipPosition="above"
+          style="text-align: center !important"
+        >
+          <h5 mat-sort-header="contract_manager">{{ 'Contract Manager' | translate }}</h5>
+        </th>
+        <td
+          mat-cell
+          *matCellDef="let element"
+          matTooltip="{{ element?.contract_manager?.last_name | uppercase }} {{ element?.contract_manager?.first_name }}
+        {{
+            element?.contract_manager?.civility && element?.contract_manager?.civility === 'neutral'
+              ? ''
+              : (element?.contract_manager?.civility | translate)
+          }}"
+        >
+          {{ element?.contract_manager?.last_name | uppercase }} {{ element?.contract_manager?.first_name }}
+          {{
+            element?.contract_manager?.civility && element?.contract_manager?.civility === 'neutral'
+              ? ''
+              : (element?.contract_manager?.civility | translate)
+          }}
+        </td>
+      </ng-container>
+
+      <!-- <ng-container matColumnDef="hours">
+        <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'CONTRACT_MANAGEMENT.hours' | translate }}" matTooltipPosition="above">
+          <h5>{{ 'CONTRACT_MANAGEMENT.hours' | translate }}</h5>
+        </th>
+        <td mat-cell *matCellDef="let element" matTooltip="{{ element?.total_hours }}">
+          {{ countHour(element) }}
+        </td>
+      </ng-container> -->
+
+      <!-- <ng-container matColumnDef="rate">
+        <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'CONTRACT_MANAGEMENT.rate' | translate }}" matTooltipPosition="above">
+          <h5>{{ 'CONTRACT_MANAGEMENT.rate' | translate }}</h5>
+        </th>
+        <td mat-cell *matCellDef="let element" matTooltip="{{ element?.hourly_rate }}">
+          {{ countHourRate(element) }}
+        </td>
+      </ng-container> -->
+
+      <div *ngIf="stepColumns && stepColumns?.length" class="scroll-eval">
+        <ng-container *ngFor="let step of stepColumns; let i = index" [matColumnDef]="step">
+          <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'TEST.STEP' | translate }} {{ i + 1 }}" matTooltipPosition="above">
+            <h5>S{{ i + 1 }}</h5>
+          </th>
+          <td mat-cell *matCellDef="let element; let rowIndex = index">
+            <ng-container *ngIf="dataWithFilteredSteps[rowIndex]?.steps[i]?.step_status; else otherCondition">
+              <mat-icon
+              *ngIf="dataWithFilteredSteps[rowIndex]?.steps[i]?.step_status !== 'pending'"
+              matTooltip="{{ dataWithFilteredSteps[rowIndex]?.steps[i]?.step_title }}: {{
+                'CONTRACT_MANAGEMENT.Step_Statuses.' + dataWithFilteredSteps[rowIndex]?.steps[i]?.step_status | translate
+              }}"
+              [ngClass]="{
+                black: dataWithFilteredSteps[rowIndex]?.steps[i]?.step_status === 'not_started',
+                green: dataWithFilteredSteps[rowIndex]?.steps[i]?.step_status === 'accept',
+                orange: dataWithFilteredSteps[rowIndex]?.steps[i]?.step_status === 'need_validation' || dataWithFilteredSteps[rowIndex]?.steps[i]?.step_status === 'revision_completed',
+                yellow: dataWithFilteredSteps[rowIndex]?.steps[i]?.step_status === 'ask_for_revision'
+              }"
+              class="mat-icon-status"
+              aria-hidden="true"
+              >lens
+            </mat-icon>
+            </ng-container>
+            <ng-template #otherCondition>
+              <ng-container *ngIf="!dataWithFilteredSteps[rowIndex]?.steps[i]?.step_status">
+                <span style="color: #b7b7b7">x</span>
+              </ng-container>
+            </ng-template >
+          </td>
+        </ng-container>
+      </div>
+
+      <div *ngIf="optionalStepColumns && optionalStepColumns?.length" class="scroll-eval">
+        <ng-container *ngFor="let step of optionalStepColumns; let i = index" [matColumnDef]="step">
+          <th mat-header-cell *matHeaderCellDef matTooltip="O {{ i + 1 }}" matTooltipPosition="above">
+            <h5>O{{ i + 1 }}</h5>
+          </th>
+          <td mat-cell *matCellDef="let element; let rowIndex = index">
+            <ng-container *ngIf="dataWithFilteredOptionalSteps[rowIndex]?.steps[i]?.step_status; else otherCondition">
+              <mat-icon
+                *ngIf="dataWithFilteredOptionalSteps[rowIndex]?.steps[i]?.step_status !== 'pending'"
+                matTooltip="{{ dataWithFilteredOptionalSteps[rowIndex]?.steps[i]?.step_title }}: {{
+                  'CONTRACT_MANAGEMENT.Step_Statuses.' + dataWithFilteredOptionalSteps[rowIndex]?.steps[i]?.step_status | translate
+                }}"
+                [ngClass]="{
+                  black: dataWithFilteredOptionalSteps[rowIndex]?.steps[i]?.step_status === 'not_started',
+                  green: dataWithFilteredOptionalSteps[rowIndex]?.steps[i]?.step_status === 'accept',
+                  orange: dataWithFilteredOptionalSteps[rowIndex]?.steps[i]?.step_status === 'need_validation' || dataWithFilteredOptionalSteps[rowIndex]?.steps[i]?.step_status === 'revision_completed',
+                  yellow: dataWithFilteredOptionalSteps[rowIndex]?.steps[i]?.step_status === 'ask_for_revision'
+                }"
+                class="mat-icon-status"
+                aria-hidden="true"
+                >lens
+              </mat-icon>
+            </ng-container>
+            <ng-template #otherCondition>
+              <ng-container *ngIf="!dataWithFilteredOptionalSteps[rowIndex]?.steps[i]?.step_status">
+                <span style="color: #b7b7b7">x</span>
+              </ng-container>
+            </ng-template >
+          </td>
+        </ng-container>
+      </div>
+
+      <ng-container matColumnDef="contract_process_status" stickyEnd>
+        <th
+          mat-header-cell
+          *matHeaderCellDef
+          matTooltip="{{ 'CONTRACT_MANAGEMENT.Contract Process Status' | translate }}"
+          matTooltipPosition="above"
+        >
+          <h5>
+            <mat-icon>
+              <svg style="width: 24px; height: 24px" viewBox="0 0 24 24">
+                <path
+                  fill="currentColor"
+                  d="M9.75 20.85C11.53 20.15 11.14 18.22 10.24 17C9.35 15.75 8.12 14.89 6.88 14.06C6 13.5 5.19 12.8 4.54 12C4.26 11.67 3.69 11.06 4.27 10.94C4.86 10.82 5.88 11.4 6.4 11.62C7.31 12 8.21 12.44 9.05 12.96L10.06 11.26C8.5 10.23 6.5 9.32 4.64 9.05C3.58 8.89 2.46 9.11 2.1 10.26C1.78 11.25 2.29 12.25 2.87 13.03C4.24 14.86 6.37 15.74 7.96 17.32C8.3 17.65 8.71 18.04 8.91 18.5C9.12 18.94 9.07 18.97 8.6 18.97C7.36 18.97 5.81 18 4.8 17.36L3.79 19.06C5.32 20 7.88 21.47 9.75 20.85M20.84 5.25C21.06 5.03 21.06 4.67 20.84 4.46L19.54 3.16C19.33 2.95 18.97 2.95 18.76 3.16L17.74 4.18L19.82 6.26M11 10.92V13H13.08L19.23 6.85L17.15 4.77L11 10.92Z"
+                />
+              </svg>
+            </mat-icon>
+          </h5>
+        </th>
+        <td mat-cell *matCellDef="let element">
+          <ng-container *ngIf="element?.contract_status !== 'signing_process'">
+            <mat-icon
+              *ngIf="element?.contract_status"
+              [matTooltip]="'CONTRACT_MANAGEMENT.Statuses.' + element?.contract_status | translate"
+              [ngClass]="{
+                black: element?.contract_status === 'not_published',
+                yellow: element?.contract_status === 'ask_for_revision',
+                red: element?.contract_process_status === 'reject_and_stop' || element?.contract_status === 'reject_and_stop',
+                green: element?.contract_status === 'submitted' || element?.contract_status === 'signed',
+                orange: element?.contract_status === 'in_progress_of_signing'
+              }"
+              class="mat-icon-status"
+              aria-hidden="true"
+              >lens
+            </mat-icon>
+          </ng-container>
+
+          <ng-container *ngIf="element?.contract_status === 'signing_process'">
+            <mat-icon
+              [matTooltip]="getTextForSigningProgressStatus(element?.contract_validator_signatory_status)"
+              class="orange mat-icon-status"
+              aria-hidden="true"
+            >
+              lens
+            </mat-icon>
+          </ng-container>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="action" stickyEnd>
+        <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'Action' | translate }}" matTooltipPosition="above">
+          <h5>{{ 'Action' | translate }}</h5>
+        </th>
+        <td mat-cell *matCellDef="let element" class="action-buttons">
+          <button
+            mat-icon-button
+            *ngIf="
+              !element?.contract_status &&
+              !element?.steps?.length &&
+              element?.interventions?.length > 0 &&
+              permission.sendTheFormContractManagementPerm()
+            "
+            [disabled]="(dataSelected && dataSelected.length > 0) || isCheckedAll"
+            (click)="onSendingPreContract('single', element)"
+            class="margin-right-button"
+            matTooltip="{{ 'Send the Form' | translate }}"
+          >
+            <mat-icon>forward_to_inbox</mat-icon>
+          </button>
+          <button
+            *ngIf="element?.steps?.length && permission.goToFormContractManagementPerm()"
+            mat-icon-button
+            [disabled]="(dataSelected && dataSelected.length > 0) || isCheckedAll"
+            (click)="onGoToForm(element)"
+            class="margin-right-button"
+            matTooltip="{{ 'Go to Form' | translate }}"
+          >
+            <mat-icon svgIcon="eye"></mat-icon>
+          </button>
+          <button
+            *ngIf="!element?.form_builder_id && permission.editContractManagementPerm()"
+            [disabled]="(dataSelected && dataSelected.length > 0) || isCheckedAll"
+            (click)="openNewTab('/teacher-contract/contract-process', element?._id)"
+            matTooltip="{{ 'Edit Contract Info' | translate }}"
+            mat-icon-button
+            class="margin-right-button"
+          >
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button
+            *ngIf="element?.steps?.length && element?.contract_status !== 'signed' && permission.sendReminderContractManagementPerm()"
+            mat-icon-button
+            class="margin-right-button"
+            matTooltip="{{ 'ERP_009_TEACHER_CONTRACT.Send Reminder' | translate }}"
+            [disabled]="(dataSelected && dataSelected.length > 0) || isCheckedAll"
+            (click)="sendReminder(element?._id)"
+          >
+            <mat-icon>notifications</mat-icon>
+          </button>
+          <button
+            mat-icon-button
+            class="margin-right-button"
+            matTooltip="{{ 'Send Email' | translate }}"
+            [disabled]="(dataSelected && dataSelected.length > 0) || isCheckedAll"
+            (click)="onSendMail(element)"
+            *ngIf="permission.sendEmailContractManagementPerm()"
+          >
+            <mat-icon>email</mat-icon>
+          </button>
+          <button
+            *ngIf="element?.contract_status !== 'signed' && permission.additionalDocumentContractManagementPerm()"
+            mat-icon-button
+            class="margin-right-button"
+            [disabled]="(dataSelected && dataSelected.length > 0) || isCheckedAll"
+            (click)="onUploadDocument(element)"
+            matTooltip="{{ 'Additional Document' | translate }}"
+            matTooltipPosition="above"
+          >
+            <mat-icon>file_upload</mat-icon>
+          </button>
+          <!--  <button
+            mat-icon-button
+            class="margin-right-button"
+            matTooltip="{{ 'Whatsapp' | translate }}"
+            [disabled]="selected"
+            (click)="onWhatsappContact(element)"
+          >
+            <mat-icon>whatsapp</mat-icon>
+          </button> -->
+          <button
+            mat-icon-button
+            *ngIf="element?.contract_status !== 'signed' && permission.removeContractManagementPerm()"
+            class="margin-right-button"
+            matTooltip="{{ 'Remove the Contract' | translate }}"
+            [disabled]="(dataSelected && dataSelected.length > 0) || isCheckedAll"
+            (click)="onDeleteProcess(element)"
+          >
+            <mat-icon>delete</mat-icon>
+          </button>
+
+          <button
+            mat-icon-button
+            *ngIf="element?.contract_status === 'signed'"
+            class="margin-right-button"
+            matTooltip="{{ 'CONTRACT_MANAGEMENT.View contract' | translate }}"
+            [disabled]="(dataSelected && dataSelected.length > 0) || isCheckedAll"
+            (click)="getTemplatePDF(element)"
+          >
+            <mat-icon>description</mat-icon>
+          </button>
+
+          <!-- <button
+            *ngIf="element?.contract_status !== 'signed'"
+            mat-icon-button
+            class="margin-right-button"
+            matTooltip="{{ 'Add Amendment' | translate }}"
+            [disabled]="selected"
+            (click)="triggerAddAmendmentDialog($event)"
+          >
+            <mat-icon>post_add</mat-icon>
+          </button> -->
+        </td>
+      </ng-container>
+
+      <!-- ===================================================================================================================== -->
+
+      <!-- END TABLE DATA ROWS -->
+
+      <!-- ====================================================================================================================== -->
+
+      <ng-container matColumnDef="loading">
+        <th mat-header-cell *matHeaderCellDef colspan="23" class="text-center">
+          <div class="center-spinner">
+            <mat-spinner color="accent"></mat-spinner>
+          </div>
+        </th>
+      </ng-container>
+
+      <!-- <tr mat-header-row *matHeaderRowDef="['reset']"></tr> -->
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-header-row *matHeaderRowDef="filterColumns"></tr>
+      <tr mat-header-row *matHeaderRowDef="['loading']" [hidden]="!isLoading"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns" [hidden]="isLoading"></tr>
+    </table>
+  </div>
+  <div *ngIf="noData | async" class="no-records" [ngClass]="{ hide: isLoading }">
+    {{ 'NOT RECORD FOUND' | translate }}
+  </div>
+  <div class="horizontal" style="margin-bottom: 40px">
+    <div [ngClass]="{ hide: noData | async }">
+      <mat-paginator
+        [ngClass]="{ 'hide-pagination-buttons': dataCount <= 10 }"
+        [length]="dataCount"
+        [hidePageSize]="true"
+        [pageSize]="[10]"
+        showFirstLastButtons
+      ></mat-paginator>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="isTopWaitingForResponse" class="loading-indicator">
+  <mat-progress-spinner mode="indeterminate" color="accent"></mat-progress-spinner>
+</div>

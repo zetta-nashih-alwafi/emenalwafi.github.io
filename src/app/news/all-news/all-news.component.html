@@ -1,0 +1,39 @@
+<div class="news-container p-grid" [class.hide]="!dataAllNews?.length">
+        <div class="news-list p-col-fixed">
+            <div class="header">
+                <h5>{{ "NEWS.List of News" | translate }}</h5>
+            </div>
+            <div class="content">
+              <div class="content-wrapper">
+                <p *ngFor="let news of dataAllNews; let i = index"
+                 (click)="onNewsClick(i)"
+                 [class.active]="_id === news._id"
+                class="card-list-news cursor-pointer">{{ news?.published_date?.date }} <span>{{news?.published_date?.time}}</span></p>
+            </div>
+            <div class="paginator-container" [ngClass]="{ hide: noData | async }">
+                <mat-paginator
+                class="paginator"
+                [ngClass]="{ 'hide-pagination-buttons': dataAllNews <= 10 }"
+                [length]="dataCount"
+                [hidePageSize]="true"
+                [pageSize]="10"
+                showFirstLastButtons
+                ></mat-paginator>
+              </div>
+          </div>
+        </div>
+        <div class="news-detail tw-pt-4 p-col">
+            <ms-all-news-detail *ngIf="_id" [_id]="_id"></ms-all-news-detail>
+        </div>
+</div>
+
+<ng-container *ngIf="isWaitingForResponse">
+      <div class="center-spinner inner-loading-indicator tw-w-full tw-h-full tw-flex tw-justify-center tw-items-center">
+        <mat-spinner color="accent"></mat-spinner>
+      </div>
+  </ng-container>
+
+<!-- no data to display -->
+<div *ngIf="!dataAllNews?.length && !isWaitingForResponse" class="no-records tw-w-full tw-h-full tw-flex tw-justify-center tw-items-center tw-text-2xl">
+    {{ 'NEWS.no news' | translate }}
+</div>

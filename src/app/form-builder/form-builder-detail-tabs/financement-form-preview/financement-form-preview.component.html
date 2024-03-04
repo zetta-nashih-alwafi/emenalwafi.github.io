@@ -1,0 +1,151 @@
+<div class="container">
+  <div class="header" [innerHTML]="sanitizer.bypassSecurityTrustHtml(stepData?.direction)"></div>
+
+  <hr style="color: white" />
+
+  <div class="p-grid">
+    <div class="p-col-12">
+      <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+        <ng-container matColumnDef="reset">
+          <th mat-header-cell *matHeaderCellDef colspan="100%" class="action-header-column text-right">
+            <div class="p-grid">
+              <div class="p-col-9 info">
+                <p>
+                  <span>{{ 'ADMISIONSTEPFINANCEMENT.Volume of Hours' | translate }}</span>
+                  <span>:</span><span>600</span>
+                </p>
+                <p>
+                  <span>{{ 'FinancementContinous.Full rate' | translate }}</span>
+                  <span>:</span><span>8900 €</span>
+                </p>
+                <p>
+                  <span>{{ 'FinancementContinous.Remaining due' | translate }}</span>
+                  <span>:</span><span>6100 €</span>
+                </p>
+              </div>
+              <div class="p-col-3 header-action">
+                <button mat-raised-button class="add_button" color="accent">
+                  {{ 'ADMISIONSTEPFINANCEMENT.Add financement' | translate }}
+                </button>
+              </div>
+            </div>
+          </th>
+        </ng-container>
+
+        <ng-container matColumnDef="type">
+          <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'ADMISIONSTEPFINANCEMENT.Type of organization' | translate }}">
+            <h5>{{ 'ADMISIONSTEPFINANCEMENT.Type of organization' | translate }}</h5>
+          </th>
+          <td mat-cell *matCellDef="let element" [matTooltip]="element?.type">{{ element?.type }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="organization">
+          <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'ADMISIONSTEPFINANCEMENT.Organization' | translate }}">
+            <h5>{{ 'ADMISIONSTEPFINANCEMENT.Organization' | translate }}</h5>
+          </th>
+          <td mat-cell *matCellDef="let element" [matTooltip]="element?.organization_name">{{ element?.organization_name }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="rate_hour">
+          <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'ADMISIONSTEPFINANCEMENT.Rate/Hour' | translate }}">
+            <h5>{{ 'ADMISIONSTEPFINANCEMENT.Rate/Hour' | translate }}</h5>
+          </th>
+          <td mat-cell *matCellDef="let element" [matTooltip]="formatDecimal(element?.rate_per_hours)">
+            {{ formatDecimal(element?.rate_per_hours) }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="hours">
+          <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'ADMISIONSTEPFINANCEMENT.Hours' | translate }}">
+            <h5>{{ 'ADMISIONSTEPFINANCEMENT.Hours' | translate }}</h5>
+          </th>
+          <td mat-cell *matCellDef="let element" [matTooltip]="formatDecimal(element?.hours)">{{ formatDecimal(element?.hours) }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="total">
+          <th mat-header-cell *matHeaderCellDef matTooltip=">{{ 'ADMISIONSTEPFINANCEMENT.Total' | translate }}">
+            <h5>{{ 'ADMISIONSTEPFINANCEMENT.Total' | translate }}</h5>
+          </th>
+          <td mat-cell *matCellDef="let element" [matTooltip]="formatDecimal(element?.total)">{{ formatDecimal(element?.total) }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="document">
+          <th mat-header-cell *matHeaderCellDef>
+            <h5>{{ 'ADMISIONSTEPFINANCEMENT.Document' | translate }}</h5>
+          </th>
+          <td mat-cell *matCellDef="let element">
+            <button mat-icon-button>
+              <mat-icon>description</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef>
+            <h5>{{ 'ADMISIONSTEPFINANCEMENT.Status' | translate }}</h5>
+          </th>
+          <td mat-cell *matCellDef="let element">
+            <mat-icon
+              [matTooltip]="element?.status | translate"
+              [ngClass]="{
+                black: element?.status === 'added_by_student',
+                green: element?.status === 'accepted',
+                blue: element?.status === 'submitted_for_validation',
+                red: element?.status === 'rejected',
+                orange: element?.status === 'in_progress_by_fc_in_charge'
+              }"
+              aria-hidden="true"
+              class="mat-icon-status"
+              >lens
+            </mat-icon>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="action">
+          <th mat-header-cell *matHeaderCellDef>
+            <h5>{{ 'ADMISIONSTEPFINANCEMENT.Action' | translate }}</h5>
+          </th>
+          <td mat-cell *matCellDef="let element">
+            <button mat-icon-button>
+              <mat-icon>edit</mat-icon>
+            </button>
+            <!-- <button style="margin-left: 10px" mat-icon-button>
+              <mat-icon [ngStyle]="{ color: element?.is_financement_validated ? 'green' : 'red' }">thumb_up</mat-icon>
+            </button> -->
+            <button style="margin-left: 10px" mat-icon-button>
+              <mat-icon>delete</mat-icon>
+            </button>
+            <button style="margin-left: 10px" mat-icon-button>
+              <i style="font-size: 16px; margin: 4px" class="fa fa-sticky-note"></i>
+            </button>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="loading">
+          <th mat-header-cell *matHeaderCellDef colspan="100%" style="text-align: center !important">
+            <div class="center-spinner">
+              <mat-spinner color="accent"></mat-spinner>
+            </div>
+          </th>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="['reset']"></tr>
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matHeaderRowDef="['loading']" [hidden]="!isLoading"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns" [hidden]="isLoading"></tr>
+      </table>
+      <div [ngClass]="{ hide: noData | async }">
+        <mat-paginator
+          [ngClass]="{ 'hide-pagination-buttons': dataCount <= 10 }"
+          [length]="dataCount"
+          [hidePageSize]="true"
+          [pageSize]="[10]"
+          showFirstLastButtons
+        ></mat-paginator>
+      </div>
+      <div *ngIf="noData | async" class="no-records">
+        {{ 'No record' | translate }}
+      </div>
+    </div>
+  </div>
+</div>

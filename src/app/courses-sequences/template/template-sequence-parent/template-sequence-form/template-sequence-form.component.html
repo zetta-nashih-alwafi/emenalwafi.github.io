@@ -1,0 +1,1061 @@
+<div class="p-grid mt-1rem" [formGroup]="templateForm" style="margin-bottom: 20px">
+  <div class="p-col-6" style="padding: 0; display: inline-flex">
+    <div class="p-col-6 text-left" style="padding: 0; padding-left: 8px; padding-top: 8px">
+      <button
+        [disabled]="isWaitingForResponse"
+        (click)="leaveForm()"
+        mat-raised-button
+        matTooltip="{{ 'course_sequence.Leave' | translate }}"
+        class="margin-right-0"
+        color="warn"
+      >
+        {{ 'course_sequence.Leave' | translate }}
+      </button>
+    </div>
+    <div class="p-col-6 text-right" style="padding-bottom: 0">
+      <mat-slide-toggle
+        color="accent"
+        formControlName="is_published"
+        style="margin-right: 10px; vertical-align: middle; text-align: left"
+        (change)="publishFormBuilderTemplate($event)"
+        *ngIf="isTemplateBuilder"
+      >
+        <span [ngStyle]="{ color: templateForm?.get('is_published')?.value ? '#fdd835' : 'white' }">
+          {{ (templateForm?.get('is_published')?.value ? 'course_sequence.Published' : 'course_sequence.Not published') | translate }}
+        </span>
+      </mat-slide-toggle>
+      <button
+        (click)="saveForm()"
+        [disabled]="isWaitingForResponse || templateForm?.get('is_published')?.value"
+        matTooltip="{{ 'Save' | translate }}"
+        mat-raised-button
+        class="margin-right-0"
+        color="accent"
+      >
+        <mat-icon class="mat-icon-default">save</mat-icon> {{ 'Save' | translate }}
+      </button>
+    </div>
+  </div>
+</div>
+<div class="p-grid" [formGroup]="templateForm">
+  <div class="p-col-6 template-detail" [style.height.px]="getAutomaticHeight()" [style.max-height.px]="getAutomaticHeight()">
+    <fieldset [disabled]="templateForm?.get('is_published')?.value">
+      <!-- <div class="p-col-6"> -->
+      <div class="p-grid">
+        <div class="p-col-12 yellow-border mt-1rem">
+          <fieldset class="small-text-fieldset block-fieldset-spacing" *ngIf="isTemplateBuilder">
+            <div class="p-grid">
+              <div class="p-col-12">
+                <mat-form-field class="full-width">
+                  <input
+                    matInput
+                    placeholder="{{ 'course_sequence.Template Name' | translate }}"
+                    formControlName="name"
+                    [required]="isTemplateBuilder"
+                  />
+                  <mat-error>{{'This field is required' | translate}}</mat-error>
+                </mat-form-field>
+              </div>
+            </div>
+            <div class="p-grid">
+              <div class="p-col-12">
+                <mat-form-field class="full-width">
+                  <input matInput placeholder="{{ 'course_sequence.Description' | translate }}" formControlName="description" />
+                </mat-form-field>
+              </div>
+            </div>
+          </fieldset>
+          <!-- Button -->
+          <div class="p-grid" style="margin-top: 0.1rem">
+            <div class="p-col-12 align-right-button">
+              <button
+                mat-raised-button
+                class="margin-none"
+                matTooltip="{{ 'course_sequence.Sequence' | translate }}"
+                (click)="addSequenceFormTemplate()"
+                color="accent"
+              >
+                <mat-icon class="mat-icon-default">add</mat-icon>
+                {{ 'course_sequence.Sequence' | translate }}
+              </button>
+            </div>
+          </div>
+          <!-- HTML for Template Sequence -->
+          <ng-container *ngIf="isTemplateBuilder">
+            <ng-container formArrayName="sequences">
+              <mat-accordion
+                [multi]="true"
+              >
+                <mat-expansion-panel
+                  *ngFor="
+                    let sequence of templateForm?.get('sequences')?.controls;
+                    let seqIndex = index;
+                    let isFirst = first;
+                    let isLast = last
+                  "
+                  class="panel-spacing"
+                  [formGroupName]="seqIndex"
+                  (closed)="closeSequencePanel(seqIndex)"
+                  (opened)="openSequencePanel(seqIndex)"
+                  [expanded]="sequencesDisabled[seqIndex]"
+                >
+                  <mat-expansion-panel-header class="panel-header-Sequence panel-header-calculated-final">
+                    <mat-panel-title>
+                      <h3 #sequencePanel style="color: whitesmoke">
+                        {{
+                          sequenceFormArray?.at(seqIndex)?.get('name')?.value
+                            ? sequenceFormArray?.at(seqIndex)?.get('name')?.value
+                            : ('course_sequence.Sequence' | translate)
+                        }}
+                        {{
+                          sequenceFormArray?.at(seqIndex)?.get('type_of_sequence')?.value
+                            ? ' - ' + ('course_sequence.' + sequenceFormArray?.at(seqIndex)?.get('type_of_sequence')?.value | translate)
+                            : ''
+                        }}
+                      </h3>
+                    </mat-panel-title>
+                  </mat-expansion-panel-header>
+
+                  <!-- Sequence form section -->
+                  <ng-container>
+                    <fieldset class="small-text-fieldset block-fieldset-spacing">
+                      <div class="p-grid">
+                        <div class="p-col-11"></div>
+                        <!-- padder -->
+                        <div class="p-col-1 text-right" style="padding: 0px">
+                          <button
+                            mat-icon-button
+                            (click)="removeSequenceFormArray(seqIndex)"
+                            matTooltip="{{ 'course_sequence.Remove' | translate }}"
+                            class="small-icon"
+                            color="red"
+                          >
+                            <mat-icon>remove</mat-icon>
+                          </button>
+                        </div>
+                      </div>
+                      <div class="p-grid">
+                        <div class="p-col-12">
+                          <mat-form-field class="full-width">
+                            <input matInput placeholder="{{ 'course_sequence.Sequences' | translate }}" formControlName="name" />
+                          </mat-form-field>
+                        </div>
+                      </div>
+
+                      <div class="p-grid">
+                        <div class="p-col-fixed center-label no-padding-left label-align padding-bottom" style="width: 125px">
+                          <label>{{ 'course_sequence.Type of sequence' | translate }}*</label>
+                        </div>
+                        <div class="p-col no-padding-left flex-center">
+                          <mat-radio-group formControlName="type_of_sequence" style="font-size: 12px">
+                            <mat-radio-button style="margin-right: 1rem" value="enseignement">{{
+                              'course_sequence.enseignement' | translate
+                            }}</mat-radio-button>
+                            <mat-radio-button style="margin-right: 1rem" value="period_in_company">{{
+                              'course_sequence.period_in_company' | translate
+                            }}</mat-radio-button>
+                            <mat-radio-button style="margin-right: 1rem" value="school_exchange">{{
+                              'course_sequence.school_exchange' | translate
+                            }}</mat-radio-button>
+                          </mat-radio-group>
+                        </div>
+                      </div>
+                      <div class="p-grid">
+                        <div class="p-col-6">
+                          <mat-form-field class="example-full-width" formGroupName="start_date">
+                            <input
+                              matInput
+                              (click)="startDate.open()"
+                              formControlName="date"
+                              [matDatepicker]="startDate"
+                              placeholder="{{ 'course_sequence.Start date' | translate }}"
+                              [max]="sequenceFormArray?.at(seqIndex)?.get('end_date')?.get('date')?.value"
+                              readonly
+                            />
+                            <mat-datepicker-toggle matSuffix [for]="startDate" style="margin-right: 5px"> </mat-datepicker-toggle>
+                            <mat-datepicker #startDate></mat-datepicker>
+                          </mat-form-field>
+                        </div>
+                        <div class="p-col-6">
+                          <mat-form-field class="example-full-width" formGroupName="end_date">
+                            <input
+                              matInput
+                              (click)="endDate.open()"
+                              formControlName="date"
+                              [matDatepicker]="endDate"
+                              placeholder="{{ 'course_sequence.End date' | translate }}"
+                              [min]="sequenceFormArray?.at(seqIndex)?.get('start_date')?.get('date')?.value"
+                              readonly
+                            />
+                            <mat-datepicker-toggle matSuffix [for]="endDate" style="margin-right: 5px"> </mat-datepicker-toggle>
+                            <mat-datepicker #endDate></mat-datepicker>
+                          </mat-form-field>
+                        </div>
+                      </div>
+                      <div class="p-grid">
+                        <div class="p-col-12">
+                          <mat-form-field class="full-width">
+                            <input matInput placeholder="{{ 'course_sequence.Description' | translate }}" formControlName="description" />
+                          </mat-form-field>
+                        </div>
+                      </div>
+                    </fieldset>
+
+                    <div class="p-grid mt-2rem">
+                      <div class="p-col-12 align-right-button">
+                        <button
+                          mat-raised-button
+                          class="margin-none"
+                          matTooltip="{{ 'course_sequence.Module' | translate }}"
+                          (click)="addModuleFormTemplate(seqIndex)"
+                          color="accent"
+                        >
+                          <mat-icon class="mat-icon-default">add</mat-icon>
+                          {{ 'course_sequence.Module' | translate }}
+                        </button>
+                      </div>
+                    </div>
+                    <ng-container formArrayName="modules">
+                      <mat-accordion
+                        [multi]="true"
+                      >
+                        <mat-expansion-panel
+                          *ngFor="
+                            let mod of sequenceFormArray?.at(seqIndex)?.get('modules')?.controls;
+                            let modIndex = index;
+                            let isFirst = first
+                          "
+                          [formGroupName]="modIndex"
+                          (closed)="closeModulePanel(modIndex,seqIndex)"
+                          (opened)="openModulePanel(modIndex)"
+                          style="background: #607d8b"
+                          class="panel-spacing"
+                          [expanded]="mnodulesDisabled[modIndex]"
+                        >
+                          <mat-expansion-panel-header class="panel-header-subj">
+                            <mat-panel-title>
+                              <h4 #modulePanel style="color: white; align-self: center">
+                                {{
+                                  sequenceFormArray?.at(seqIndex)?.get('modules')?.at(modIndex)?.get('name')?.value
+                                    ? sequenceFormArray?.at(seqIndex)?.get('modules')?.at(modIndex)?.get('name')?.value
+                                    : ('course_sequence.Module' | translate)
+                                }}
+                              </h4>
+                            </mat-panel-title>
+                          </mat-expansion-panel-header>
+
+                          <!-- module section -->
+                          <div class="p-grid">
+                            <div class="p-col-12 align-right-button panel-divider">
+                              <button
+                                mat-icon-button
+                                (click)="removeModuleFormArray(seqIndex, modIndex)"
+                                matTooltip="{{ 'course_sequence.Remove' | translate }}"
+                                class="small-icon"
+                                color="red"
+                              >
+                                <mat-icon>remove</mat-icon>
+                              </button>
+                            </div>
+                          </div>
+
+                          <div class="p-grid">
+                            <div class="p-col-6">
+                              <mat-form-field color="accent" class="full-width">
+                                <input matInput placeholder="{{ 'course_sequence.Module' | translate }}" formControlName="name" />
+                              </mat-form-field>
+                            </div>
+                            <div class="p-col-6">
+                              <mat-form-field color="accent" class="full-width">
+                                <input matInput placeholder="{{ 'ECTS' | translate }}" formControlName="ects" />
+                              </mat-form-field>
+                            </div>
+                          </div>
+                          <div class="p-grid mt-2rem">
+                            <div class="p-col-12 align-right-button">
+                              <button
+                                mat-raised-button
+                                class="margin-none"
+                                (click)="addSubjectFormTemplate(seqIndex, modIndex)"
+                                matTooltip="{{ 'course_sequence.Subject' | translate }}"
+                                color="accent"
+                              >
+                                <mat-icon class="mat-icon-default">add</mat-icon>
+                                {{ 'course_sequence.Subject' | translate }}
+                              </button>
+                            </div>
+                          </div>
+
+                          <!-- Subject form section -->
+                          <ng-container formArrayName="subjects">
+                            <mat-accordion
+                              [multi]="true"
+                            >
+                              <mat-expansion-panel
+                                *ngFor="
+                                  let subj of getModuleArray(seqIndex)?.get(modIndex?.toString())?.get('subjects')?.controls;
+                                  let subIndex = index;
+                                  let isFirst = first
+                                "
+                                [formGroupName]="subIndex"
+                                (closed)="closeSubjectPanel(subIndex)"
+                                (opened)="openSubjectPanel(subIndex)"
+                                style="background: #424242"
+                                class="panel-spacing"
+                                [expanded]="subjectsDisabled[subIndex]"
+                              >
+                                <mat-expansion-panel-header class="panel-header-subject">
+                                  <mat-panel-title>
+                                    <h4 #subjectPanel style="color: white; align-self: center">
+                                      {{
+                                        sequenceFormArray
+                                          ?.at(seqIndex)
+                                          ?.get('modules')
+                                          ?.at(modIndex)
+                                          ?.get('subjects')
+                                          ?.at(subIndex)
+                                          ?.get('name')?.value
+                                          ? sequenceFormArray
+                                              ?.at(seqIndex)
+                                              ?.get('modules')
+                                              ?.at(modIndex)
+                                              ?.get('subjects')
+                                              ?.at(subIndex)
+                                              ?.get('name')?.value
+                                          : ('course_sequence.Subject' | translate)
+                                      }}
+                                    </h4>
+                                  </mat-panel-title>
+                                </mat-expansion-panel-header>
+
+                                <!-- module section -->
+                                <div class="p-grid">
+                                  <div class="p-col-12 align-right-button panel-divider">
+                                    <button
+                                      mat-icon-button
+                                      (click)="removeSubjectFormArray(seqIndex, modIndex, subIndex)"
+                                      matTooltip="{{ 'course_sequence.Remove' | translate }}"
+                                      class="small-icon"
+                                      color="red"
+                                    >
+                                      <mat-icon>remove</mat-icon>
+                                    </button>
+                                  </div>
+                                </div>
+                                <!-- module section -->
+
+                                <div class="p-grid">
+                                  <div class="p-col-12">
+                                    <mat-form-field color="accent" class="full-width">
+                                      <input
+                                        matInput
+                                        placeholder="{{ 'course_sequence.Subject name' | translate }}"
+                                        formControlName="name"
+                                      />
+                                    </mat-form-field>
+                                  </div>
+                                </div>
+                                <div class="p-grid">
+                                  <div class="p-col-6">
+                                    <mat-form-field color="accent" class="full-width">
+                                      <input
+                                        matInput
+                                        (wheel)="onWheel($event)"
+                                        placeholder="{{ 'course_sequence.Volume/Student total' | translate }}"
+                                        formControlName="volume_student_total"
+                                        type="number"
+                                        readonly
+                                      />
+                                    </mat-form-field>
+                                  </div>
+                                  <div class="p-col-6" *ngIf="!isTemplateBuilder">
+                                    <mat-form-field color="accent" class="full-width">
+                                      <input
+                                        matInput
+                                        (wheel)="onWheel($event)"
+                                        placeholder="{{ 'course_sequence.Volume of hours total' | translate }}"
+                                        formControlName="volume_hours_total"
+                                        type="number"
+                                        readonly
+                                      />
+                                    </mat-form-field>
+                                  </div>
+                                </div>
+                                <div class="p-grid">
+                                  <div class="p-col-6">
+                                    <mat-form-field color="accent" class="full-width">
+                                      <input matInput placeholder="{{ 'ECTS' | translate }}" formControlName="ects" />
+                                    </mat-form-field>
+                                  </div>
+                                </div>
+                                <div class="p-grid mt-2rem">
+                                  <div class="p-col-12 align-right-button">
+                                    <button
+                                      matTooltip="{{ 'course_sequence.Session type' | translate }}"
+                                      mat-raised-button
+                                      class="margin-none"
+                                      (click)="addEmptySessionFormArray(seqIndex, modIndex, subIndex)"
+                                      color="accent"
+                                    >
+                                      <mat-icon class="mat-icon-default">add</mat-icon>
+                                      {{ 'course_sequence.Session type' | translate }}
+                                    </button>
+                                  </div>
+                                </div>
+                                <!-- Session  Type form section -->
+                                <ng-container formArrayName="session_types">
+                                  <ng-container
+                                    *ngFor="
+                                      let session of getSubjectArray(seqIndex, modIndex)?.get(subIndex?.toString())?.get('session_types')
+                                        ?.controls;
+                                      let sesIndex = index;
+                                      let isFirst = first
+                                    "
+                                    [formGroupName]="sesIndex"
+                                  >
+                                    <mat-card style="margin-top: 0 !important; background: #999999; margin-bottom: 8px">
+                                      <!-- module section -->
+                                      <div class="p-grid">
+                                        <div class="p-col-12 align-right-button" style="padding: 0px">
+                                          <button
+                                            matTooltip="{{ 'course_sequence.Remove' | translate }}"
+                                            mat-icon-button
+                                            (click)="removeSessionFormArray(seqIndex, modIndex, subIndex, sesIndex)"
+                                            class="small-icon"
+                                            color="red"
+                                          >
+                                            <mat-icon>remove</mat-icon>
+                                          </button>
+                                        </div>
+                                      </div>
+                                      <div class="p-grid">
+                                        <div class="p-col-6">
+                                          <mat-form-field color="accent" class="full-width">
+                                            <input
+                                              matInput
+                                              (wheel)="onWheel($event)"
+                                              placeholder="{{ 'course_sequence.Session' | translate }}"
+                                              formControlName="name"
+                                              (keyup)="calculateVolumeHoursStudent(seqIndex, modIndex, subIndex, sesIndex)"
+                                              type="number"
+                                            />
+                                          </mat-form-field>
+                                        </div>
+                                        <div class="p-col-6">
+                                          <mat-form-field color="accent" class="full-width">
+                                            <input
+                                              matInput
+                                              (wheel)="onWheel($event)"
+                                              placeholder="{{ 'course_sequence.Duration' | translate }} {{
+                                                'course_sequence.(in minutes)' | translate
+                                              }}"
+                                              (keyup)="calculateVolumeHoursStudent(seqIndex, modIndex, subIndex, sesIndex)"
+                                              formControlName="duration"
+                                              type="number"
+                                            />
+                                          </mat-form-field>
+                                        </div>
+                                      </div>
+                                      <div class="p-grid">
+                                        <div class="p-col-6">
+                                          <mat-form-field color="accent" class="full-width">
+                                            <input
+                                              matInput
+                                              (wheel)="onWheel($event)"
+                                              placeholder="{{ 'course_sequence.Volume of hours/student' | translate }}"
+                                              (keyup)="calculateVolumeHours(seqIndex, modIndex, subIndex, sesIndex)"
+                                              formControlName="volume_hours_student"
+                                              type="number"
+                                              readonly
+                                            />
+                                          </mat-form-field>
+                                        </div>
+                                      </div>
+                                      <div class="p-grid" *ngIf="!isTemplateBuilder">
+                                        <div class="p-col-6">
+                                          <mat-form-field color="accent" class="full-width">
+                                            <input
+                                              matInput
+                                              placeholder="{{ 'course_sequence.Class/Groups' | translate }}"
+                                              (keyup)="calculateVolumeHours(seqIndex, modIndex, subIndex, sesIndex)"
+                                              formControlName="class_group"
+                                            />
+                                          </mat-form-field>
+                                        </div>
+                                        <div class="p-col-6">
+                                          <mat-form-field color="accent" class="full-width">
+                                            <input
+                                              matInput
+                                              (wheel)="onWheel($event)"
+                                              placeholder="{{ 'course_sequence.Volume of hours' | translate }}"
+                                              formControlName="volume_hours"
+                                              type="number"
+                                              readonly
+                                            />
+                                          </mat-form-field>
+                                        </div>
+                                      </div>
+                                    </mat-card>
+                                  </ng-container>
+                                </ng-container>
+
+                                <div class="p-grid">
+                                  <div class="p-col-12">
+                                    <textarea
+                                      style="width: 100%; min-height: 150px"
+                                      placeholder="{{ 'course_sequence.Academic objectives' | translate }}"
+                                      formControlName="academic_objective"
+                                    ></textarea>
+                                    <!-- <div class="ckeditor">
+                                        <ckeditor
+                                          #editor
+                                          [editor]="Editor"
+                                          formControlName="academic_objective"
+                                          (ready)="onReady($event)"
+                                          [config]="config"
+                                        ></ckeditor>
+                                      </div> -->
+                                  </div>
+                                </div>
+                                <div class="p-grid">
+                                  <div class="p-col-12">
+                                    <textarea
+                                      style="width: 100%; min-height: 150px"
+                                      placeholder="{{ 'course_sequence.Notes' | translate }}"
+                                      formControlName="note"
+                                    ></textarea>
+                                    <!-- <div class="ckeditor">
+                                        <ckeditor
+                                          #editorNote
+                                          [editor]="Editor"
+                                          formControlName="note"
+                                          (ready)="onReadyNote($event)"
+                                          [config]="configNote"
+                                        ></ckeditor>
+                                      </div> -->
+                                  </div>
+                                </div>
+                              </mat-expansion-panel>
+                            </mat-accordion>
+                          </ng-container>
+                        </mat-expansion-panel>
+                      </mat-accordion>
+                    </ng-container>
+                  </ng-container>
+                </mat-expansion-panel>
+              </mat-accordion>
+            </ng-container>
+          </ng-container>
+          <!-- HTML for Program Sequence -->
+          <ng-container *ngIf="!isTemplateBuilder">
+            <ng-container formArrayName="program_sequences">
+              <mat-accordion
+                [multi]="true"
+              >
+                <mat-expansion-panel
+                  *ngFor="
+                    let sequence of templateForm?.get('program_sequences')?.controls;
+                    let seqIndex = index;
+                    let isFirst = first;
+                    let isLast = last
+                  "
+                  class="panel-spacing"
+                  [formGroupName]="seqIndex"
+                  (closed)="closeSequencePanel(seqIndex)"
+                  (opened)="openSequencePanel(seqIndex)"
+                  [expanded]="sequencesDisabled[seqIndex]"
+                >
+                  <mat-expansion-panel-header class="panel-header-Sequence panel-header-calculated-final">
+                    <mat-panel-title>
+                      <h3 #sequencePanel style="color: whitesmoke">
+                        {{
+                          sequenceFormArray?.at(seqIndex)?.get('name')?.value
+                            ? sequenceFormArray?.at(seqIndex)?.get('name')?.value
+                            : ('course_sequence.Sequence' | translate)
+                        }}
+                        {{
+                          sequenceFormArray?.at(seqIndex)?.get('type_of_sequence')?.value
+                            ? ' - ' + ('course_sequence.' + sequenceFormArray?.at(seqIndex)?.get('type_of_sequence')?.value | translate)
+                            : ''
+                        }}
+                      </h3>
+                    </mat-panel-title>
+                  </mat-expansion-panel-header>
+
+                  <!-- Sequence form section -->
+                  <ng-container *ngIf="sequencesDisabled[seqIndex]">
+                    <fieldset class="small-text-fieldset block-fieldset-spacing">
+                      <div class="p-grid">
+                        <div class="p-col-11"></div>
+                        <!-- padder -->
+                        <div class="p-col-1 text-right" style="padding: 0px">
+                          <button
+                            mat-icon-button
+                            *ngIf="sequenceDisable(sequence.getRawValue().program_sequence_id)"
+                            (click)="removeSequenceFormArray(seqIndex)"
+                            matTooltip="{{ 'course_sequence.Remove' | translate }}"
+                            class="small-icon"
+                            color="red"
+                          >
+                            <mat-icon>remove</mat-icon>
+                          </button>
+                        </div>
+                      </div>
+                      <div class="p-grid">
+                        <div class="p-col-12">
+                          <mat-form-field class="full-width">
+                            <input matInput placeholder="{{ 'course_sequence.Sequences' | translate }}" formControlName="name" />
+                          </mat-form-field>
+                        </div>
+                      </div>
+
+                      <div class="p-grid">
+                        <div class="p-col-fixed center-label no-padding-left label-align padding-bottom" style="width: 125px">
+                          <label [ngClass]="sequenceDisable(sequence.getRawValue().program_sequence_id) ? 'white' : 'grey'">{{ 'course_sequence.Type of sequence' | translate }}*</label>
+                        </div>
+                        <div class="p-col no-padding-left flex-center">
+                          <mat-radio-group formControlName="type_of_sequence" style="font-size: 12px">
+                            <mat-radio-button style="margin-right: 1rem" value="enseignement">{{
+                              'course_sequence.enseignement' | translate
+                            }}</mat-radio-button>
+                            <mat-radio-button style="margin-right: 1rem" value="period_in_company">{{
+                              'course_sequence.period_in_company' | translate
+                            }}</mat-radio-button>
+                            <mat-radio-button style="margin-right: 1rem" value="school_exchange">{{
+                              'course_sequence.school_exchange' | translate
+                            }}</mat-radio-button>
+                          </mat-radio-group>
+                        </div>
+                      </div>
+                      <div class="p-grid">
+                        <div class="p-col-6">
+                          <mat-form-field class="example-full-width" formGroupName="start_date">
+                            <input
+                              matInput
+                              (click)="startDate.open()"
+                              formControlName="date"
+                              [matDatepicker]="startDate"
+                              placeholder="{{ 'course_sequence.Start date' | translate }}"
+                              [max]="sequenceFormArray?.at(seqIndex)?.get('end_date')?.get('date')?.value"
+                              readonly
+                            />
+                            <mat-datepicker-toggle matSuffix [for]="startDate" style="margin-right: 5px"> </mat-datepicker-toggle>
+                            <mat-datepicker #startDate></mat-datepicker>
+                          </mat-form-field>
+                        </div>
+                        <div class="p-col-6">
+                          <mat-form-field class="example-full-width" formGroupName="end_date">
+                            <input
+                              matInput
+                              (click)="endDate.open()"
+                              formControlName="date"
+                              [matDatepicker]="endDate"
+                              placeholder="{{ 'course_sequence.End date' | translate }}"
+                              [min]="sequenceFormArray?.at(seqIndex)?.get('start_date')?.get('date')?.value"
+                              readonly
+                            />
+                            <mat-datepicker-toggle matSuffix [for]="endDate" style="margin-right: 5px"> </mat-datepicker-toggle>
+                            <mat-datepicker #endDate></mat-datepicker>
+                          </mat-form-field>
+                        </div>
+                      </div>
+                      <div class="p-grid">
+                        <div class="p-col-12">
+                          <mat-form-field class="full-width">
+                            <input matInput placeholder="{{ 'course_sequence.Description' | translate }}" formControlName="description" />
+                          </mat-form-field>
+                        </div>
+                      </div>
+                      <div class="p-grid">
+                        <div class="p-col-12">
+                          <button
+                            [disabled]="isWaitingForResponse"
+                            (click)="createGroupClass(sequenceFormArray?.at(seqIndex).value, seqIndex)"
+                            mat-raised-button
+                            matTooltip="{{ 'course_sequence.Create classes and groups' | translate }}"
+                            class="margin-right-0"
+                            color="accent"
+                          >
+                            {{ 'course_sequence.Create classes and groups' | translate }}
+                          </button>
+                        </div>
+                      </div>
+                    </fieldset>
+
+                    <div class="p-grid mt-2rem">
+                      <div class="p-col-12 align-right-button">
+                        <button
+                          mat-raised-button
+                          class="margin-none"
+                          matTooltip="{{ 'course_sequence.Module' | translate }}"
+                          (click)="addModuleFormTemplate(seqIndex)"
+                          color="accent"
+                        >
+                          <mat-icon class="mat-icon-default">add</mat-icon>
+                          {{ 'course_sequence.Module' | translate }}
+                        </button>
+                      </div>
+                    </div>
+                    <ng-container formArrayName="program_modules">
+                      <mat-accordion
+                        [multi]="true"
+                      >
+                        <mat-expansion-panel
+                          *ngFor="
+                            let mod of sequenceFormArray?.at(seqIndex)?.get('program_modules')?.controls;
+                            let modIndex = index;
+                            let isFirst = first
+                          "
+                          [formGroupName]="modIndex"
+                          (closed)="closeModulePanel(modIndex,seqIndex)"
+                          (opened)="openModulePanel(modIndex)"
+                          style="background: #607d8b"
+                          class="panel-spacing"
+                          [expanded]="mnodulesDisabled[modIndex]"
+                        >
+                          <mat-expansion-panel-header class="panel-header-subj">
+                            <mat-panel-title>
+                              <h4 #modulePanel style="color: white; align-self: center">
+                                {{
+                                  sequenceFormArray?.at(seqIndex)?.get('program_modules')?.at(modIndex)?.get('name')?.value
+                                    ? sequenceFormArray?.at(seqIndex)?.get('program_modules')?.at(modIndex)?.get('name')?.value
+                                    : ('course_sequence.Module' | translate)
+                                }}
+                              </h4>
+                            </mat-panel-title>
+                          </mat-expansion-panel-header>
+
+                          <!-- module section -->
+                          <div class="p-grid">
+                            <div class="p-col-12 align-right-button panel-divider">
+                              <button
+                                mat-icon-button
+                                *ngIf="moduleDisable(mod.getRawValue().program_module_id)"
+                                (click)="removeModuleFormArray(seqIndex, modIndex)"
+                                matTooltip="{{ 'course_sequence.Remove' | translate }}"
+                                class="small-icon"
+                                color="red"
+                              >
+                                <mat-icon>remove</mat-icon>
+                              </button>
+                            </div>
+                          </div>
+
+                          <div class="p-grid">
+                            <div class="p-col-6">
+                              <mat-form-field color="accent" class="full-width">
+                                <input matInput placeholder="{{ 'course_sequence.Module' | translate }}" formControlName="name" />
+                              </mat-form-field>
+                            </div>
+                            <div class="p-col-6">
+                              <mat-form-field color="accent" class="full-width">
+                                <input matInput placeholder="{{ 'ECTS' | translate }}" formControlName="ects" />
+                              </mat-form-field>
+                            </div>
+                          </div>
+                          <div class="p-grid mt-2rem">
+                            <div class="p-col-12 align-right-button">
+                              <button
+                                mat-raised-button
+                                class="margin-none"
+                                (click)="addSubjectFormTemplate(seqIndex, modIndex)"
+                                matTooltip="{{ 'course_sequence.Subject' | translate }}"
+                                color="accent"
+                              >
+                                <mat-icon class="mat-icon-default">add</mat-icon>
+                                {{ 'course_sequence.Subject' | translate }}
+                              </button>
+                            </div>
+                          </div>
+
+                          <!-- Subject form section -->
+                          <ng-container formArrayName="program_subjects">
+                            <mat-accordion
+                              [multi]="true"
+                            >
+                              <mat-expansion-panel
+                                *ngFor="
+                                  let subj of getModuleArray(seqIndex)?.get(modIndex?.toString())?.get('program_subjects')?.controls;
+                                  let subIndex = index;
+                                  let isFirst = first
+                                "
+                                [formGroupName]="subIndex"
+                                (closed)="closeSubjectPanel(subIndex)"
+                                (opened)="openSubjectPanel(subIndex)"
+                                style="background: #424242"
+                                class="panel-spacing"
+                                [expanded]="subjectsDisabled[subIndex]"
+                              >
+                                <mat-expansion-panel-header class="panel-header-subject">
+                                  <mat-panel-title>
+                                    <h4 #subjectPanel style="color: white; align-self: center">
+                                      {{
+                                        getModuleArray(seqIndex)
+                                          ?.get(modIndex?.toString())
+                                          ?.get('program_subjects')
+                                          ?.at(subIndex)
+                                          ?.get('name')?.value
+                                          ? getModuleArray(seqIndex)
+                                              ?.get(modIndex?.toString())
+                                              ?.get('program_subjects')
+                                              ?.at(subIndex)
+                                              ?.get('name')?.value
+                                          : ('course_sequence.Subject' | translate)
+                                      }}
+                                    </h4>
+                                  </mat-panel-title>
+                                </mat-expansion-panel-header>
+
+                                <!-- module section -->
+                                <div class="p-grid">
+                                  <div class="p-col-12 align-right-button panel-divider">
+                                    <button
+                                      mat-icon-button
+                                      *ngIf="subjectDisable(subj.getRawValue().program_subject_id)"
+                                      (click)="removeSubjectFormArray(seqIndex, modIndex, subIndex)"
+                                      matTooltip="{{ 'course_sequence.Remove' | translate }}"
+                                      class="small-icon"
+                                      color="red"
+                                    >
+                                      <mat-icon>remove</mat-icon>
+                                    </button>
+                                  </div>
+                                </div>
+                                <!-- module section -->
+
+                                <div class="p-grid">
+                                  <div class="p-col-12">
+                                    <mat-form-field color="accent" class="full-width">
+                                      <input
+                                        matInput
+                                        placeholder="{{ 'course_sequence.Subject name' | translate }}"
+                                        formControlName="name"
+                                      />
+                                    </mat-form-field>
+                                  </div>
+                                </div>
+                                <div class="p-grid">
+                                  <div class="p-col-6">
+                                    <mat-form-field color="accent" class="full-width">
+                                      <input
+                                        matInput
+                                        (wheel)="onWheel($event)"
+                                        placeholder="{{ 'course_sequence.Volume/Student total' | translate }}"
+                                        formControlName="volume_student_total"
+                                        type="number"
+                                        readonly
+                                      />
+                                    </mat-form-field>
+                                  </div>
+                                  <div class="p-col-6" *ngIf="!isTemplateBuilder">
+                                    <mat-form-field color="accent" class="full-width">
+                                      <input
+                                        matInput
+                                        (wheel)="onWheel($event)"
+                                        placeholder="{{ 'course_sequence.Volume of hours total' | translate }}"
+                                        formControlName="volume_hours_total"
+                                        type="number"
+                                        readonly
+                                      />
+                                    </mat-form-field>
+                                  </div>
+                                </div>
+                                <div class="p-grid">
+                                  <div class="p-col-6">
+                                    <mat-form-field color="accent" class="full-width">
+                                      <input matInput placeholder="{{ 'ECTS' | translate }}" formControlName="ects" />
+                                    </mat-form-field>
+                                  </div>
+                                </div>
+                                <div class="p-grid mt-2rem">
+                                  <div class="p-col-12 align-right-button">
+                                    <button
+                                      matTooltip="{{ 'course_sequence.Session type' | translate }}"
+                                      mat-raised-button
+                                      class="margin-none"
+                                      (click)="addEmptySessionFormArray(seqIndex, modIndex, subIndex)"
+                                      color="accent"
+                                    >
+                                      <mat-icon class="mat-icon-default">add</mat-icon>
+                                      {{ 'course_sequence.Session type' | translate }}
+                                    </button>
+                                  </div>
+                                </div>
+                                <!-- Session  Type form section -->
+                                <ng-container formArrayName="program_sessions_type">
+                                  <ng-container
+                                    *ngFor="
+                                      let session of getSubjectArray(seqIndex, modIndex)
+                                        ?.get(subIndex?.toString())
+                                        ?.get('program_sessions_type')?.controls;
+                                      let sesIndex = index;
+                                      let isFirst = first
+                                    "
+                                    [formGroupName]="sesIndex"
+                                  >
+                                    <mat-card style="margin-top: 0 !important; background: #999999; margin-bottom: 8px">
+                                      <!-- module section -->
+                                      <div class="p-grid">
+                                        <div class="p-col-12 align-right-button" style="padding: 0px">
+                                          <button
+                                            matTooltip="{{ 'course_sequence.Remove' | translate }}"
+                                            mat-icon-button
+                                            *ngIf="sessionDisable(session.getRawValue().program_session_type_id)"
+                                            (click)="removeSessionFormArray(seqIndex, modIndex, subIndex, sesIndex)"
+                                            class="small-icon"
+                                            color="red"
+                                          >
+                                            <mat-icon>remove</mat-icon>
+                                          </button>
+                                        </div>
+                                      </div>
+                                      <div class="p-grid">
+                                        <div class="p-col-6">
+                                          <mat-form-field color="accent" class="full-width">
+                                            <input
+                                              matInput
+                                              (wheel)="onWheel($event)"
+                                              placeholder="{{ 'course_sequence.Session' | translate }}"
+                                              formControlName="name"
+                                              (keyup)="calculateVolumeHoursStudent(seqIndex, modIndex, subIndex, sesIndex)"
+                                              type="number"
+                                            />
+                                          </mat-form-field>
+                                        </div>
+                                        <div class="p-col-6">
+                                          <mat-form-field color="accent" class="full-width">
+                                            <input
+                                              matInput
+                                              (wheel)="onWheel($event)"
+                                              placeholder="{{ 'course_sequence.Duration' | translate }} {{
+                                                'course_sequence.(in minutes)' | translate
+                                              }}"
+                                              (keyup)="calculateVolumeHoursStudent(seqIndex, modIndex, subIndex, sesIndex)"
+                                              formControlName="duration"
+                                              type="number"
+                                            />
+                                          </mat-form-field>
+                                        </div>
+                                      </div>
+                                      <div class="p-grid">
+                                        <div class="p-col-6">
+                                          <mat-form-field color="accent" class="full-width">
+                                            <input
+                                              matInput
+                                              (wheel)="onWheel($event)"
+                                              placeholder="{{ 'course_sequence.Volume of hours/student' | translate }}"
+                                              (keyup)="calculateVolumeHours(seqIndex, modIndex, subIndex, sesIndex)"
+                                              formControlName="volume_hours_student"
+                                              type="number"
+                                              readonly
+                                            />
+                                          </mat-form-field>
+                                        </div>
+                                      </div>
+                                      <div class="p-grid" *ngIf="!isTemplateBuilder">
+                                        <div class="p-col-6">
+                                          <mat-form-field color="accent" class="full-width">
+                                            <mat-select
+                                              formControlName="class_group"
+                                              placeholder="{{ 'Select type of group' | translate }}"
+                                              panelClass="custom-matselect"
+                                            >
+                                              <mat-option
+                                                *ngIf="!classGroupList?.length || !classGroupList[seqIndex]?.program_sequence_groups.length"
+                                                [disabled]="true"
+                                                >{{ 'NOT RECORD FOUND' | translate }}</mat-option
+                                              >
+                                              <mat-option
+                                                *ngFor="let option of classGroupList[seqIndex]?.program_sequence_groups"
+                                                [value]="option.name"
+                                                (click)="calculateVolumeHours(seqIndex, modIndex, subIndex, sesIndex)"
+                                                class="option-selected"
+                                                >{{ option?.name === 'Class' ? ('Class' | translate) : option?.name }}</mat-option
+                                              >
+                                            </mat-select>
+                                            <!-- <input
+                                                matInput
+                                                placeholder="{{ 'course_sequence.Class/Groups' | translate }}"
+                                                (keyup)="calculateVolumeHours(seqIndex, modIndex, subIndex, sesIndex)"
+                                                formControlName="class_group"
+                                              /> -->
+                                          </mat-form-field>
+                                        </div>
+                                        <div class="p-col-6">
+                                          <mat-form-field color="accent" class="full-width">
+                                            <input
+                                              matInput
+                                              (wheel)="onWheel($event)"
+                                              placeholder="{{ 'course_sequence.Volume of hours' | translate }}"
+                                              formControlName="volume_hours"
+                                              type="number"
+                                              readonly
+                                            />
+                                          </mat-form-field>
+                                        </div>
+                                      </div>
+                                    </mat-card>
+                                  </ng-container>
+                                </ng-container>
+
+                                <div class="p-grid">
+                                  <div class="p-col-12">
+                                    <textarea
+                                      style="width: 100%; min-height: 150px"
+                                      placeholder="{{ 'course_sequence.Academic objectives' | translate }}"
+                                      formControlName="academic_objective"
+                                    ></textarea>
+                                    <!-- <div class="ckeditor">
+                                        <ckeditor
+                                          #editor
+                                          [editor]="Editor"
+                                          formControlName="academic_objective"
+                                          (ready)="onReady($event)"
+                                          [config]="config"
+                                        ></ckeditor>
+                                      </div> -->
+                                  </div>
+                                </div>
+                                <div class="p-grid">
+                                  <div class="p-col-12">
+                                    <textarea
+                                      style="width: 100%; min-height: 150px"
+                                      placeholder="{{ 'course_sequence.Notes' | translate }}"
+                                      formControlName="note"
+                                    ></textarea>
+                                    <!-- <div class="ckeditor">
+                                        <ckeditor
+                                          #editorNote
+                                          [editor]="Editor"
+                                          formControlName="note"
+                                          (ready)="onReadyNote($event)"
+                                          [config]="configNote"
+                                        ></ckeditor>
+                                      </div> -->
+                                  </div>
+                                </div>
+                              </mat-expansion-panel>
+                            </mat-accordion>
+                          </ng-container>
+                        </mat-expansion-panel>
+                      </mat-accordion>
+                    </ng-container>
+                  </ng-container>
+                </mat-expansion-panel>
+              </mat-accordion>
+            </ng-container>
+          </ng-container>
+        </div>
+      </div>
+      <!-- </div> -->
+    </fieldset>
+  </div>
+
+  <div class="p-col-6 preview" [style.height.px]="getAutomaticHeight()" [style.max-height.px]="getAutomaticHeight()">
+    <ms-template-sequence-preview [data]="previewData"> </ms-template-sequence-preview>
+  </div>
+</div>
+
+<div *ngIf="isWaitingForResponse" class="loading-indicator">
+  <mat-progress-spinner mode="indeterminate" color="accent"></mat-progress-spinner>
+</div>

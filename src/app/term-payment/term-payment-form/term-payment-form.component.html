@@ -1,0 +1,324 @@
+<div class="p-grid p-align-center p-justify-center" [style.display]="isWaitingForResponse ? 'flex' : 'none'">
+  <mat-spinner color="accent" [diameter]="72"></mat-spinner>
+</div>
+<div class="p-grid" [style.display]="isWaitingForResponse ? 'none' : 'flex'" *ngIf="!processFinish">
+  <div class="p-col-12">
+    <p>{{ 'You can find the current status of your terms below' | translate }}</p>
+  </div>
+  <div class="p-col-fixed p-grid p-dir-col">
+    <div class="no-padding">
+      <div class="text">{{ 'Total amount' | translate }}</div>
+      <div class="text-value">{{ billing?.total_amount || 0 | currency : 'EURO' : '' : '0.2' }} €</div>
+    </div>
+    <div class="no-padding">
+      <div class="text">{{ 'Total Amount Paid' | translate }}</div>
+      <div class="text-value">{{ billing?.amount_paid || 0 | currency : 'EURO' : '' : '0.2' }} €</div>
+    </div>
+    <div class="no-padding">
+      <div class="text" style="border-bottom: 1px solid black !important">{{ 'Total Amount Remaining' | translate }}</div>
+      <div class="text-value" style="border-bottom: 1px solid black !important">
+        {{ max_amount | currency : 'EURO' : '' : '0.2' }}
+        €
+      </div>
+      <!-- <div class="text-value" style="border-bottom: 1px solid black !important">
+        {{
+          billing?.remaining_billed || billing?.remaining_billed === 0
+            ? (billing?.remaining_billed | currency : 'EURO' : '' : '0.2')
+            : (billing?.total_amount - billing?.amount_paid || billing?.total_amount || 0 | currency : 'EURO' : '' : '0.2')
+        }}
+        €
+      </div> -->
+    </div>
+  </div>
+  <div class="p-col-fixed">
+    <!-- <div class="term">
+      <div class="term-header">
+        <p>⠀</p>
+        <p>{{ 'Down Payment' | translate }}</p>
+      </div>
+      <div [class]="getTermClass(billing?.deposit_status, '', 0, '', billing?.candidate_id?.payment)" [ngSwitch]="billing?.deposit_status">
+        <p *ngSwitchCase="'partially_paid'">{{ billing?.deposit - billing?.depositPaid | currency : 'EURO' : '' : '0.2' }} €</p>
+        <p *ngSwitchDefault>{{ billing?.deposit | currency : 'EURO' : '' : '0.2' }} €</p>
+      </div>
+    </div>
+    <div class="term" *ngFor="let term of billing?.filtered_terms; let idx = index">
+      <div class="term-header">
+        <p>{{ 'Term' | translate }} {{ idx + 1 }}</p>
+        <p>{{ term?.term_payment_datetime_str || '⠀' }}</p>
+      </div>
+      <div
+        [class]="getTermClass(term?.term_status, term?.term_amount_not_authorised, term?.term_amount_chargeback, term?.term_amount_pending)"
+        [ngSwitch]="term?.term_status"
+      >
+        <p *ngSwitchCase="'paid'">{{ term?.term_amount || 0 | currency : 'EURO' : '' : '0.2' }} €</p>
+        <p *ngSwitchCase="'partially_paid'">{{ term?.term_amount - term?.term_pay_amount || 0 | currency : 'EURO' : '' : '0.2' }} €</p>
+        <p *ngSwitchCase="'pending'">{{ term?.term_amount || 0 | currency : 'EURO' : '' : '0.2' }} €</p>
+        <p *ngSwitchCase="'billed'">
+          {{
+            term?.term_amount === term?.term_amount_pending
+              ? term?.term_amount
+              : (term?.term_amount - term?.term_pay_amount || 0 | currency : 'EURO' : '' : '0.2')
+          }}
+          €
+        </p>
+        <p *ngSwitchCase="'not_billed'">{{ term?.term_amount - term?.term_pay_amount || 0 | currency : 'EURO' : '' : '0.2' }} €</p>
+      </div>
+    </div> -->
+
+    <ng-container *ngFor="let data of termsList; let in = index">
+      <ng-container *ngIf="data?.payment_type === 'DP' && data?.amount > 0 && data?.remaining_amount > 0">
+        <div class="term">
+          <div class="term-header">
+            <p>{{ 'Down Payment' | translate }}</p>
+          </div>
+          <div [ngClass]="getColorTermsDP(data)">
+            {{
+              (data?.status !== 'paid'
+                ? data?.remaining_amount === data?.amount
+                  ? data?.remaining_amount
+                  : data?.remaining_amount - data?.pay_amount
+                : data?.real_amount
+              ) | currency : 'EURO' : '' : '0.2'
+            }}
+            €
+          </div>
+        </div>
+      </ng-container>
+
+      <ng-container *ngIf="data?.payment_type === 'term'">
+        <div class="term" data-cy="label-terms">
+          <div class="term-header">
+            <p>
+              {{ translateDates(data?.term_payment?.date) }}
+            </p>
+          </div>
+          <div [ngClass]="getColorTerms(data)">
+            {{
+              (data?.status !== 'paid' && data?.status !== 'partially_paid' && data?.term_amount - data?.pay_amount !== 0
+                ? (data?.term_amount - data?.pay_amount | currency : 'EURO' : '' : '0.2')
+                : data?.term_amount_chargeback && !data?.pay_amount && !data?.is_partial && data?.term_amount_chargeback === data?.term_pay_amount? ('BALANCE_STATUS.Chargeback' | translate) : 
+                  (data?.term_amount_chargeback && (data?.pay_amount && data?.term_amount > data?.term_amount_chargeback ||  data?.term_amount > data?.term_amount_chargeback)) ? (data?.term_amount - data?.term_amount_chargeback | currency : 'EURO' : '' : '0.2') 
+                  : (data?.term_amount | currency : 'EURO' : '' : '0.2')
+              )
+            }}
+            {{data?.term_amount_chargeback && !data?.pay_amount && !data?.is_partial && data?.term_amount_chargeback === data?.term_pay_amount ? '' :'€'}}            
+          </div>
+        </div>
+      </ng-container>
+    </ng-container>
+  </div>
+  <div class="p-col-12">
+    <h2 class="asking-payment-steps">{{ 'Asking Payment Steps.Step 1' | translate }}</h2>
+    <p>
+      {{ 'Please input the amount' | translate }}*:
+      <mat-form-field color="accent" class="inline-form-field">
+        <mat-label>{{ 'Amount' | translate }}</mat-label>
+        <input matInput type="number" (wheel)="onWheel($event)" [formControl]="paymentAmount" [readonly]="isPreparingAdyen" (keypress)="decimalFilter($event)" />
+        <mat-error *ngIf="paymentAmount.hasError('required')">{{ 'This field is required' | translate }}</mat-error>
+        <mat-error *ngIf="paymentAmount.hasError('min')">{{ 'minimum value 1' | translate }}</mat-error>
+        <mat-error *ngIf="paymentAmount.hasError('pattern')">{{ 'Max 2 decimal' | translate }}</mat-error>
+        <!-- <mat-error *ngIf="paymentAmount.hasError('max')">{{ 'Cannot exceed the total price of the studies' | translate }}</mat-error> -->
+        <mat-error *ngIf="paymentAmount.hasError('max')">{{"The amount must not exceed the maximum amount available to be paid" | translate}}</mat-error>
+      </mat-form-field>
+      EUR
+    </p>
+  </div>
+  <div class="p-col-12">
+    <h2 class="asking-payment-steps">{{ 'Asking Payment Steps.Step 2' | translate }}</h2>
+  </div>
+  <div class="p-col-12 text-center">
+    <p>{{ 'How would you like to pay' | translate }}?</p>
+  </div>
+  <div class="p-col">
+    <mat-radio-group class="p-grid p-align-stretch p-justify-center" [formControl]="selectedPaymentMethod">
+      <mat-card class="payment-card mat-elevation-z4" *ngFor="let method of paymentMethod">
+        <div class="p-grid p-dir-col p-align-center">
+          <mat-icon class="help-info p-col-align-end" [matTooltip]="'info_' + method | translate" [matTooltipPosition]="'above'">
+            help
+          </mat-icon>
+          <div *ngIf="method === 'sepa'" class="method-icon p-grid p-align-center p-justify-center">
+            <img src="/assets/img/sepa-wt-logo.png" />
+          </div>
+          <svg *ngIf="method !== 'sepa'" class="method-icon" fill="currentColor" viewBox="0 0 24 24" [ngSwitch]="method">
+            <path
+              *ngSwitchCase="'credit_card'"
+              d="M20 4H4A2 2 0 0 0 2 6V18A2 2 0 0 0 4 20H20A2 2 0 0 0 22 18V6A2 2 0 0 0 20 4M20 11H4V8H20Z"
+            />
+            <path
+              *ngSwitchCase="'transfer'"
+              d="M3,6H21V18H3V6M12,9A3,3 0 0,1 15,12A3,3 0 0,1 12,15A3,3 0 0,1 9,12A3,3 0 0,1 12,9M7,8A2,2 0 0,1 5,10V14A2,2 0 0,1 7,16H17A2,2 0 0,1 19,14V10A2,2 0 0,1 17,8H7Z"
+            />
+            <path *ngSwitchCase="'check'" d="M5,14H19V15H5V14M21,17V8H3V17H21M1,5H23V19H1V5M5,10H12V12H5V10Z" />
+          </svg>
+        </div>
+        <mat-card-content>
+          <p>{{ paymentAmount.value || 0 | currency : 'EURO' : '' : '0.2' }} €</p>
+          <mat-radio-button [value]="method"></mat-radio-button>
+          <p class="method-name">{{ method | translate }}</p>
+        </mat-card-content>
+      </mat-card>
+    </mat-radio-group>
+  </div>
+  <div class="p-col-12 mrgn-t-md">
+    <div *ngIf="adyenPaymentMethods.includes(selectedPaymentMethod.value)">
+      <h2 class="asking-payment-steps">{{ 'Asking Payment Steps.Step 3 SEPA' | translate }}</h2>
+      <div class="p-col-12 p-grid p-align-center p-justify-center pad-all-xl" [style.display]="isPreparingAdyen ? 'flex' : 'none'">
+        <mat-spinner color="accent" [diameter]="36"></mat-spinner>
+      </div>
+      <div class="p-col-12 adyen-wrapper" #adyenDropInWrapper></div>
+    </div>
+    <div
+      *ngIf="(selectedPaymentMethod.value === 'transfer' || selectedPaymentMethod.value === 'check') && paymentAmount.valid"
+      class="p-grid"
+      [formGroup]="transfer"
+    >
+      <h2 class="asking-payment-steps">{{ 'Asking Payment Steps.Step 3 Transfer' | translate }}</h2>
+      <div class="p-col-12" *ngIf="selectedPaymentMethod.value === 'transfer'">
+        <span>
+          {{ 'Make the transfer from your bank account to the school\'s account. Use only the school\'s banking details' | translate }}
+        </span>
+      </div>
+      <ul>
+        <li>{{ 'Payment Reference' | translate }} : {{ candidateData?.candidate_unique_number }} - {{ candidateData?.last_name | uppercase }} {{ candidateData?.first_name }}</li>
+        <li>{{ 'IBAN' }} : {{ legalEntityData?.account_holder_details?.bank_account_details[0]?.iban }}</li>
+        <li>{{ 'BIC' | translate }} : {{ legalEntityData?.bic }}</li>
+      </ul>
+      <div class="p-col-12" *ngIf="selectedPaymentMethod.value === 'transfer'">
+        <mat-checkbox color="accent" [formControl]="confirmationForm">
+          <span>
+            {{ 'I made the transfer with my bank' | translate }}*
+          </span>
+        </mat-checkbox>
+        <mat-error *ngIf="!confirmationForm?.value && (confirmationForm?.touched || confirmationForm?.dirty)">{{ 'This field is required' | translate }}</mat-error>
+      </div>
+      <div class="p-col-12">
+        <h2 class="asking-payment-steps">{{ 'Asking Payment Steps.Step 4 Transfer' | translate }}</h2>
+      </div>
+      <div
+        [class]="
+          transfer.get('wording_used_in_payment').hasError('required') &&
+          (transfer.get('wording_used_in_payment').touched || transfer.get('wording_used_in_payment').dirty)
+            ? 'p-col-4 invalid-feedback'
+            : 'p-col-4'
+        "
+      >
+        {{ 'ATTENTION: If you used a different payment reference than the one requested above, please specify it' | translate }}*:
+      </div>
+      <div class="p-col-8">
+        <input matInput class="form-control" formControlName="wording_used_in_payment" />
+        <div
+          class="invalid-feedback"
+          *ngIf="
+            transfer.get('wording_used_in_payment').hasError('required') &&
+            (transfer.get('wording_used_in_payment').touched || transfer.get('wording_used_in_payment').dirty)
+          "
+        >
+          {{ 'This field is required' | translate }}
+        </div>
+      </div>
+      <div
+        [class]="
+          transfer.get('first_name_of_payer').hasError('required') &&
+          (transfer.get('first_name_of_payer').touched || transfer.get('first_name_of_payer').dirty)
+            ? 'p-col-4 invalid-feedback'
+            : 'p-col-4'
+        "
+      >
+        {{ 'Name of the payer' | translate }}*:
+      </div>
+      <div class="p-col-8">
+        <input matInput class="form-control" formControlName="first_name_of_payer" />
+        <div
+          class="invalid-feedback"
+          *ngIf="
+            transfer.get('first_name_of_payer').hasError('required') &&
+            (transfer.get('first_name_of_payer').touched || transfer.get('first_name_of_payer').dirty)
+          "
+        >
+          {{ 'This field is required' | translate }}
+        </div>
+      </div>
+      <div
+        [class]="
+          transfer.get('familiy_name_of_payer').hasError('required') &&
+          (transfer.get('familiy_name_of_payer').touched || transfer.get('familiy_name_of_payer').dirty)
+            ? 'p-col-4 invalid-feedback'
+            : 'p-col-4'
+        "
+      >
+        {{ 'Family name of the payer' | translate }}*:
+      </div>
+      <div class="p-col-8">
+        <input matInput class="form-control" formControlName="familiy_name_of_payer" />
+        <div
+          class="invalid-feedback"
+          *ngIf="
+            transfer.get('familiy_name_of_payer').hasError('required') &&
+            (transfer.get('familiy_name_of_payer').touched || transfer.get('familiy_name_of_payer').dirty)
+          "
+        >
+          {{ 'This field is required' | translate }}
+        </div>
+      </div>
+      <div
+        [class]="
+          transfer.get('s3_document_name').hasError('required') &&
+          (transfer.get('s3_document_name').touched || transfer.get('s3_document_name').dirty)
+            ? 'p-col-4 invalid-feedback'
+            : 'p-col-4'
+        "
+      >
+        {{ 'Upload proof of payment (screenshot of the payment done)' | translate }}*:
+      </div>
+      <div class="p-col-8">
+        <button
+          mat-raised-button
+          matTooltip="{{ 'Upload Image/PDF' | translate }}"
+          matTooltipPosition="above"
+          color="accent"
+          style="line-height: 25px !important"
+          (click)="openUploadWindow()"
+        >
+          {{ 'Upload Image/PDF' | translate }}
+        </button>
+        <input #fileUploadDoc type="file" accept=".pdf, image/png, image/jpeg, image/jpg" class="hidden" (change)="chooseFile($event)" />
+        <div
+          class="invalid-feedback"
+          *ngIf="
+            transfer.get('s3_document_name').hasError('required') &&
+            (transfer.get('s3_document_name').touched || transfer.get('s3_document_name').dirty)
+          "
+        >
+          {{ 'This field is required' | translate }}
+        </div>
+        <div class="p-col-12 document-info" *ngIf="documenPDFName">
+          <a (click)="downloadFile()" class="document-name" style="margin-right: 1rem">{{ transfer.get('s3_document_name').value }}</a>
+          <!-- <mat-icon (click)="removeFile()" style="color: red; cursor: pointer">close</mat-icon> -->
+        </div>
+      </div>
+      <div class="p-col-12 text-right">
+        <button mat-button mat-raised-button color="accent" (click)="submitForTransfer()">{{ 'Validate' | translate }}</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-container *ngIf="processFinish">
+  <div class="p-grid">
+    <div class="p-col-12" *ngIf="candidateData?.school?.school_logo" style="text-align: center">
+      <div class="row no-margin msg-pay">{{ 'Thank You For Submitting your Payment' | translate }}</div>
+      <div class="row no-margin">
+        <img class="payment-success" style="height: 385px" [src]="serverimgPath + candidateData?.school?.school_logo" />
+      </div>
+    </div>
+    <div class="p-col-12" *ngIf="!candidateData?.school?.school_logo" style="text-align: center">
+      <div class="row no-margin msg-pay" style="font-size: 25px">
+        {{ 'Thank You For Submitting your Payment' | translate }}
+      </div>
+    </div>
+  </div>
+</ng-container>
+
+<div *ngIf="isLoading" class="loading-indicator">
+  <mat-progress-spinner mode="indeterminate" color="accent"></mat-progress-spinner>
+</div>

@@ -1,0 +1,297 @@
+<div class="responsives">
+  <form class="row" style="padding-left: 6px; padding-right: 6px" [formGroup]="detailForm">
+    <div class="fontColor">
+      <div class="row card-border">
+        <div class="col-lg-12">
+          <div class="row padl-13 title-legend web-card" style="width: auto; display: inline-block">
+            <label>{{ 'Internship' | translate }}</label>
+          </div>
+          <div class="row">
+            <div class="col-lg-11">
+              <div class="row">
+                <div class="col-lg-5">
+                  <label>{{ 'Internship name' | translate }}*</label>
+                </div>
+                <div class="col-lg-7">
+                  <div class="form-group">
+                    <input class="form-control" formControlName="internship_name" />
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-lg-5">
+                  <label>{{ 'Department where the internship will be done' | translate }}*</label>
+                </div>
+                <div class="col-lg-7">
+                  <div class="form-group">
+                    <input class="form-control" formControlName="department" />
+                  </div>
+                </div>
+              </div>
+              <div class="row" formGroupName="internship_date">
+                <div class="col-lg-5">
+                  <label>{{ 'Dates of the internship' | translate }}*</label>
+                </div>
+                <div class="col-lg-7">
+                  <div class="row">
+                    <div class="col-lg-1">
+                      <label>{{ 'From' | translate }}</label>
+                    </div>
+                    <div class="col-lg-5">
+                      <div class="form-group">
+                        <input
+                          class="form-control ipen"
+                          [matDatepicker]="fromPicker"
+                          readonly
+                          (click)="fromPicker.open()"
+                          style="display: inline-block"
+                          formControlName="date_from"
+                          [disabled]="internshipData?.agreement_status === 'agreement_signed'"
+                          placeholder="{{ 'search' | translate }}"
+                        />
+                        <mat-datepicker-toggle matSuffix [for]="fromPicker"></mat-datepicker-toggle>
+                        <mat-datepicker #fromPicker></mat-datepicker>
+                        <!-- <input matInput type="date" required class="form-control ipen" formControlName="date_from" /> -->
+                      </div>
+                    </div>
+                    <div class="col-lg-1">
+                      <label>{{ 'To' | translate }}</label>
+                    </div>
+                    <div class="col-lg-5">
+                      <div class="form-group">
+                        <input
+                          class="form-control ipen"
+                          [matDatepicker]="toPicker"
+                          [min]="getStartDate()"
+                          readonly
+                          (click)="toPicker.open()"
+                          style="display: inline-block"
+                          formControlName="date_to"
+                          [disabled]="internshipData?.agreement_status === 'agreement_signed' || !getStartDate()"
+                          placeholder="{{ 'search' | translate }}"
+                        />
+                        <mat-datepicker-toggle matSuffix [for]="toPicker"></mat-datepicker-toggle>
+                        <mat-datepicker #toPicker></mat-datepicker>
+                        <!-- <input matInput type="date" [min]="getStartDate()" required class="form-control ipen" formControlName="date_to" /> -->
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row" formGroupName="internship_date">
+                <div class="col-lg-5">
+                  <label>{{ 'Duration in month' | translate }}*</label>
+                </div>
+                <div class="col-lg-7">
+                  <div class="form-group">
+                    <input class="form-control" type="number" required formControlName="duration_in_months" />
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-lg-5">
+                  <label>{{ 'Stipend' | translate }}</label>
+                </div>
+                <div class="col-lg-3">
+                  <div class="form-group">
+                    <input class="form-control" formControlName="salary" type="number" />
+                  </div>
+                </div>
+                <div class="col-lg-4">
+                  <div class="form-group" style="width: 225px; display: inline-block">
+                    <input
+                      type="text"
+                      style="border: 1px solid #cccccc !important; padding: 5px"
+                      matInput
+                      class="form-control"
+                      [formControl]="currencyFilter"
+                      [matAutocomplete]="autoCountrys"
+                      (keyup)="filterCurrency()"
+                    />
+                    <mat-autocomplete #autoCountrys="matAutocomplete">
+                      <mat-option *ngFor="let option of currencyList" (click)="currencySelected(option?.code)" [value]="option.code">
+                        {{ option.code }}
+                      </mat-option>
+                    </mat-autocomplete>
+                  </div>
+                  /hour
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-lg-5">
+                  <label>{{ 'Internship aboard' | translate }}*</label>
+                </div>
+                <div class="col-lg-7">
+                  <mat-radio-group formControlName="has_internship_aboard" style="font-size: 12px">
+                    <mat-radio-button style="margin-right: 1rem" [value]="true">{{ 'Yes' | translate }}</mat-radio-button>
+                    <mat-radio-button [value]="false">{{ 'No' | translate }}</mat-radio-button>
+                  </mat-radio-group>
+                </div>
+              </div>
+              <div [ngStyle]="{ display: detailForm.get('has_internship_aboard').value ? 'block' : 'none' }">
+                <div formGroupName="internship_aboard">
+                  <div class="row">
+                    <div class="col-lg-5">
+                      <label>{{ 'Address' | translate }}*</label>
+                    </div>
+                    <div class="col-lg-7">
+                      <div class="form-group">
+                        <input [required]="detailForm.get('has_internship_aboard').value" class="form-control" formControlName="address" />
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-lg-5">
+                      <label>{{ 'Postcode' | translate }}*</label>
+                    </div>
+                    <div class="col-lg-3">
+                      <div class="form-group">
+                        <input
+                          [required]="detailForm.get('has_internship_aboard').value"
+                          class="form-control"
+                          formControlName="postal_code"
+                          maxlength="5"
+                        />
+                      </div>
+                      <mat-error
+                        *ngIf="
+                          detailForm.get('internship_aboard').get('postal_code').hasError('pattern') &&
+                          (detailForm.get('internship_aboard').get('postal_code').dirty ||
+                            detailForm.get('internship_aboard').get('postal_code').touched) &&
+                          detailForm.get('has_internship_aboard').value
+                        "
+                      >
+                        {{ 'Please Input Number Only' | translate }}
+                      </mat-error>
+                    </div>
+                    <div class="col-lg-1">
+                      <label>{{ 'City' | translate }}*</label>
+                    </div>
+                    <div class="col-lg-3">
+                      <div class="form-group">
+                        <input [required]="detailForm.get('has_internship_aboard').value" class="form-control" formControlName="city" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-lg-5">
+                  <label>{{ 'Internship address is different from company address' | translate }}*</label>
+                </div>
+                <div class="col-lg-7">
+                  <div class="form-group">
+                    <mat-radio-group style="font-size: 12px" formControlName="has_internship_address">
+                      <mat-radio-button style="margin-right: 1rem" [value]="true">{{ 'Yes' | translate }}</mat-radio-button>
+                      <mat-radio-button [value]="false">{{ 'No' | translate }}</mat-radio-button>
+                    </mat-radio-group>
+                  </div>
+                </div>
+              </div>
+              <div [ngStyle]="{ display: detailForm.get('has_internship_address').value ? 'block' : 'none' }">
+                <div formGroupName="internship_address">
+                  <div class="row">
+                    <div class="col-lg-5">
+                      <label>{{ 'Address' | translate }}*</label>
+                    </div>
+                    <div class="col-lg-7">
+                      <div class="form-group">
+                        <input [required]="detailForm.get('has_internship_address').value" class="form-control" formControlName="address" />
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-lg-5">
+                      <label>{{ 'Postcode' | translate }}*</label>
+                    </div>
+                    <div class="col-lg-3">
+                      <div class="form-group">
+                        <input
+                          [required]="detailForm.get('has_internship_address').value"
+                          class="form-control"
+                          formControlName="postal_code"
+                          maxlength="5"
+                        />
+                      </div>
+                      <mat-error
+                        *ngIf="
+                          detailForm.get('internship_address').get('postal_code').hasError('pattern') &&
+                          (detailForm.get('internship_address').get('postal_code').dirty ||
+                            detailForm.get('internship_address').get('postal_code').touched) &&
+                          detailForm.get('has_internship_address').value
+                        "
+                      >
+                        {{ 'Please Input Number Only' | translate }}
+                      </mat-error>
+                    </div>
+                    <div class="col-lg-1">
+                      <label>{{ 'City' | translate }}*</label>
+                    </div>
+                    <div class="col-lg-3">
+                      <div class="form-group">
+                        <input [required]="detailForm.get('has_internship_address').value" class="form-control" formControlName="city" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-lg-5">
+                  <label>{{ 'Work from home' | translate }}*</label>
+                </div>
+                <div class="col-lg-7">
+                  <mat-radio-group style="font-size: 12px" formControlName="is_work_from_home">
+                    <mat-radio-button style="margin-right: 1rem" [value]="true">{{ 'Yes' | translate }}</mat-radio-button>
+                    <mat-radio-button [value]="false">{{ 'No' | translate }}</mat-radio-button>
+                  </mat-radio-group>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-lg-5">
+                  <label>{{ 'Volume of hours' | translate }}*</label>
+                </div>
+                <div class="col-lg-7">
+                  <div class="form-group">
+                    <input type="number" class="form-control" formControlName="volume_hours" />
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-lg-5">
+                  <label>{{ 'Commentaries' | translate }}*</label>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-lg-12">
+                  <div class="form-group">
+                    <textarea
+                      required
+                      style="height: 180px"
+                      formControlName="job_description"
+                      class="form-control"
+                      placeholder="{{ 'Commentaries' | translate }}*"
+                      rows="13"
+                    ></textarea>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+  <div class="btn-conditions">
+    <button
+      color="accent"
+      mat-raised-button
+      (click)="identityUpdated()"
+      matTooltip="{{ 'Validate' | translate }} "
+      class="btn-first"
+      [disabled]="formIsEmpty()"
+    >
+      <mat-icon class="mat-icon-default">save</mat-icon>
+      {{ 'Validate' | translate }}
+    </button>
+  </div>
+</div>

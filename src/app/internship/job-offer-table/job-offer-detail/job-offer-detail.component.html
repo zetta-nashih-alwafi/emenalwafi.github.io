@@ -1,0 +1,12 @@
+<div  class="p-grid pad-t-sm" [style.height.px]="getAutomaticHeight()" [style.max-height.px]="getAutomaticHeight()">
+  <div class="p-col-4">
+    <ms-job-offer-card-list
+      (selectedJobChange)="updatedSelectedJob($event)"
+      [jobOfferList]="jobOfferList"
+      [selectedJobId]="selectedJobId">
+    </ms-job-offer-card-list>
+  </div>
+  <div class="p-col-8">
+    <ms-job-offer-card-detail [selectedJobId]="selectedJobId"></ms-job-offer-card-detail>
+  </div>
+</div>

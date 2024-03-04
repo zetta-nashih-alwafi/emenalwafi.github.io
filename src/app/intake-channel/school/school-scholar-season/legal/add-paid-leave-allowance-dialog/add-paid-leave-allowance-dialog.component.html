@@ -1,0 +1,47 @@
+<div class="dialog-border">
+  <div class="dialogTitleWrapper" cdkDrag cdkDragRootElement=".cdk-overlay-pane" cdkDragHandle>
+    <div class="p-grid">
+      <div class="w-30 no-padding">
+        <mat-icon style="vertical-align: middle">add</mat-icon>
+      </div>
+      <div class="p-col-10 acad-title">
+        <h3 class="dialogTitle">
+          {{ 'Add Paid leave allowance rate' | translate }}
+        </h3>
+      </div>
+      <div class="w-65 no-padding">
+        <button mat-icon-button class="close-icon float-right" mat-dialog-close tabindex="-1">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<form [formGroup]="paidForm">
+  <div class="fontColor">
+    <mat-dialog-content>
+      <div class="p-grid">
+        <div class="p-col-12 no-padding">
+          <div class="p-grid">
+            <div class="p-col-fixed center-label no-padding-left label-align" style="width: 225px">
+              <label>{{ 'Paid leave allowance rate' | translate }}*</label>
+            </div>
+            <div class="p-col no-padding custom-input">
+              <mat-form-field floatLabel="never">
+                <input matInput type="number" (wheel)="onWheel($event)" (keypress)="decimalFilter($event)" formControlName="paid_leave" required />
+                <mat-error *ngIf="paidForm.get('paid_leave').hasError('pattern')">{{ 'must contain number only' | translate }}</mat-error>
+                <mat-error *ngIf="paidForm.get('paid_leave').hasError('required')">{{ 'This field is required' | translate }}</mat-error>
+              </mat-form-field>
+            </div>
+          </div>
+        </div>
+      </div>
+    </mat-dialog-content>
+    <mat-dialog-actions align="right">
+      <button mat-raised-button type="button" color="warn" mat-dialog-close>{{ 'CANCEL' | translate }}</button>
+      <button mat-raised-button color="primary" (click)="onSubmit()" [disabled]="!paidForm.valid">
+        {{ 'Submit' | translate }}
+      </button>
+    </mat-dialog-actions>
+  </div>
+</form>

@@ -1,0 +1,246 @@
+<div class="row padl-13 hd-legend web-card">
+  <label>{{ 'School' | translate }}</label>
+</div>
+<div class="card web-card">
+  <div class="card-body card-segment detail-intership">
+    <div class="row back-card">
+      <div class="candidate-detail" fxLayout="row wrap">
+        <div class="candidate-profile" fxFlex="15">
+          <img
+            [src]="internshipData?.student_id?.school?.logo ? serverimgPath + internshipData?.student_id?.school?.logo : schoolImage"
+            class="candidate-photo"
+          />
+        </div>
+        <div class="candidate-information" fxFlex="85" fxLayout="row wrap">
+          <div class="first-row" fxFlex="100" fxLayout="row" fxLayoutAlign="start end">
+            <div class="name" fxFlex="40">
+              <span class="label" style="margin: 0px !important"
+                >{{ internshipData?.student_id?.school?.short_name }} - {{ internshipData?.student_id?.school?.long_name }}</span
+              >
+            </div>
+          </div>
+          <div class="second-row" fxFlex="100" fxLayout="row" fxLayoutAlign="start start">
+            <div class="" fxLayout="row" *ngIf="internshipData?.student_id?.school?.school_address">
+              <span class="icon"><mat-icon class="primary-icon icons-style">place</mat-icon></span>
+              <span class="label">
+                {{
+                  internshipData?.student_id?.school?.school_address.address1 +
+                    ', ' +
+                    internshipData?.student_id?.school?.school_address.postal_code +
+                    ' ' +
+                    internshipData?.student_id?.school?.school_address.city
+                }}
+              </span>
+            </div>
+            <div class="" fxLayout="row">
+              <span class="icon"><mat-icon class="primary-icon icons-style">call</mat-icon></span>
+              <span class="label">
+                {{ internshipData?.student_id?.school?.tele_phone ? internshipData?.student_id?.school?.tele_phone : '-' }}</span
+              >
+            </div>
+            <!-- <div class="" fxLayout="row">
+              <span class="icon"><mat-icon class="primary-icon icons-style">place</mat-icon></span>
+              <span class="label">{{ internshipData?.student_id?.school?.school_address?.city }}</span>
+            </div> -->
+          </div>
+          <div class="third-row" fxFlex="100" fxLayout="row wrap" fxLayoutAlign="center">
+            <div class="" fxLayout="row">
+              <span class="icon">
+                <img
+                  matPrefix
+                  [src]="
+                    internshipData?.company_relation_member_id?.civility === 'MR'
+                      ? maleStudentIcon
+                      : internshipData?.company_relation_member_id?.civility === 'neutral'
+                      ? neutralStudentIcon
+                      : femaleStudentIcon
+                  "
+                  class="devMemberImage"
+                  style="border-radius: 50%; width: 25px"
+                />
+              </span>
+              <span class="label">Delphine CANTAT - Director of Corporate Relations</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row padl-13 hd-legend mobile-card">
+  <label>{{ 'School' | translate }}</label>
+</div>
+<div class="card mobile-card">
+  <div style="min-height: 400px !important" class="card-body card-segment detail-intership">
+    <div class="row back-card">
+      <div class="candidate-detail" fxLayout="row wrap">
+        <div class="candidate-profile" fxFlex="100" style="text-align: center; margin-bottom: 25px">
+          <img
+            [src]="internshipData?.student_id?.school?.logo ? serverimgPath + internshipData?.student_id?.school?.logo : schoolImage"
+            class="candidate-photo"
+          />
+        </div>
+        <div class="candidate-information" fxFlex="100" fxLayout="row wrap" style="padding: 0px 0px">
+          <div class="first-row" fxFlex="100" fxLayout="row" fxLayoutAlign="start end" style="text-align: center">
+            <div class="info" style="text-align: center">
+              <span class="infos">{{ internshipData?.student_id?.school?.short_name }}</span>
+            </div>
+          </div>
+          <div class="first-row" fxFlex="100" fxLayout="row" fxLayoutAlign="start end" style="text-align: center">
+            <div class="info" style="text-align: center">
+              <span class="infos"> {{ internshipData?.student_id?.school?.long_name }}</span>
+            </div>
+          </div>
+          <!-- <div class="third-row" fxFlex="100" fxLayout="row wrap" fxLayoutAlign="center"> -->
+          <div class="p-grid">
+            <!-- <div class="" fxLayout="row" style="width: 100%"> -->
+            <div class="p-col-12" style="padding: 0; margin-bottom: 4px">
+              <div class="p-grid">
+                <div class="p-col-fixed no-padding" style="width: 25px">
+                  <span class="icon"><mat-icon class="primary-icon icons-style">place</mat-icon></span>
+                </div>
+                <div class="p-col" style="padding: 3px 0 0 1.2rem">
+                  <p class="title">
+                    {{
+                      internshipData?.student_id?.school?.school_address.address1 +
+                        ', ' +
+                        internshipData?.student_id?.school?.school_address.postal_code +
+                        ' ' +
+                        internshipData?.student_id?.school?.school_address.city
+                    }}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- <div class="third-row" fxFlex="100" fxLayout="row wrap" fxLayoutAlign="center"> -->
+          <div class="p-grid">
+            <!-- <div class="" fxLayout="row" style="width: 100%"> -->
+            <div class="p-col-12" style="padding: 0; margin-bottom: 4px">
+              <div class="p-grid">
+                <div class="p-col-fixed no-padding" style="width: 25px">
+                  <span class="icon"><mat-icon class="primary-icon icons-style">call</mat-icon></span>
+                </div>
+                <div class="p-col" style="padding: 3px 0 0 1.2rem">
+                  <p class="title">
+                    {{ internshipData?.student_id?.school?.tele_phone ? internshipData?.student_id?.school?.tele_phone : '-' }}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- <div class="third-row" fxFlex="100" fxLayout="row wrap" fxLayoutAlign="center"> -->
+          <div class="p-grid">
+            <!-- <div class="" fxLayout="row" style="width: 100%"> -->
+            <div class="p-col-12" style="padding: 0; margin-bottom: 4px">
+              <div class="p-grid">
+                <div class="p-col-fixed no-padding" style="width: 25px">
+                  <span class="icon" style="padding-left: 7px; margin-right: 3px">
+                    <img
+                      matPrefix
+                      [src]="
+                        internshipData?.company_relation_member_id?.civility === 'MR'
+                          ? maleStudentIcon
+                          : internshipData?.company_relation_member_id?.civility === 'neutral'
+                          ? neutralStudentIcon
+                          : femaleStudentIcon
+                      "
+                      class="devMemberImage"
+                      style="border-radius: 50%; width: 16px"
+                    />
+                  </span>
+                </div>
+                <div class="p-col" style="padding: 3px 0 0 1.2rem">
+                  <p class="title">Delphine CANTAT</p>
+                </div>
+              </div>
+            </div>
+            <!-- <div class="" fxLayout="row" style="width: 100%; margin-bottom: 0px !important;"> -->
+            <div class="p-grid">
+              <div class="p-col-12" style="padding: 0; margin-bottom: 4px">
+                <span class="icon" style="padding-left: 7px; margin-right: 20px"> </span>
+                <span class="label">Director of Corporate Relations</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="btn-conditions web-card">
+  <button
+    color="accent"
+    style="margin: 5px 10px 0px 10px"
+    class="btn-first"
+    mat-raised-button
+    (click)="continueButton()"
+    matTooltip="{{ 'Next' | translate }} "
+    *ngIf="checkIfUserCRM()"
+  >
+    {{ 'Next' | translate }}
+  </button>
+  <button
+    color="accent"
+    style="margin: 5px 10px 0px 10px"
+    class="btn-first"
+    mat-raised-button
+    (click)="editIdentity()"
+    matTooltip="{{ 'I want to correct some data' | translate }} "
+    *ngIf="!checkIfUserCRM()"
+  >
+    <i class="fa fa-pencil" aria-hidden="true"></i>
+    {{ 'I want to correct some data' | translate }}
+  </button>
+  <button
+    color="accent"
+    mat-raised-button
+    (click)="identityUpdated()"
+    matTooltip="{{ 'I confirm my data' | translate }} "
+    class="btn-first"
+    style="margin: 10px"
+    *ngIf="!checkIfUserCRM()"
+  >
+    <mat-icon class="mat-icon-default">save</mat-icon>
+    {{ 'I confirm my data' | translate }}
+  </button>
+</div>
+<div class="mobile-card">
+  <button
+    color="accent"
+    style="margin: 10px 0px 10px 0px"
+    class="btn-first"
+    mat-raised-button
+    (click)="continueButton()"
+    matTooltip="{{ 'Next' | translate }} "
+    *ngIf="checkIfUserCRM()"
+  >
+    {{ 'Next' | translate }}
+  </button>
+  <button
+    color="accent"
+    style="margin: 10px 0px 10px 0px"
+    class="btn-first"
+    mat-raised-button
+    (click)="editIdentity()"
+    matTooltip="{{ 'I want to correct some data' | translate }} "
+    *ngIf="!checkIfUserCRM()"
+  >
+    <i class="fa fa-pencil" aria-hidden="true"></i>
+    {{ 'I want to correct some data' | translate }}
+  </button>
+  <button
+    color="accent"
+    mat-raised-button
+    (click)="identityUpdated()"
+    matTooltip="{{ 'I confirm my data' | translate }} "
+    class="btn-first"
+    style="margin: 10px 0px 10px 0px"
+    *ngIf="!checkIfUserCRM()"
+  >
+    <mat-icon class="mat-icon-default">save</mat-icon>
+    {{ 'I confirm my data' | translate }}
+  </button>
+</div>

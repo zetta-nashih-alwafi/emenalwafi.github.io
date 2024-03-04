@@ -1,0 +1,25 @@
+@import '~assets/scss/theme/admtc.variables';
+@import '~assets/scss/theme/admtc';
+:host {
+    h4 {
+        font-weight: 600 ;
+    }
+    .mat-tab-header{
+        font-weight: 400;
+        color: inherit;
+        margin-top: 1.2em;
+        align-items: center !important;
+    }
+    .mat-icon-svgIcon {
+        height: 20px !important;
+        width: 32px !important;
+    }
+    .mat-tab-label.mat-tab-label-active {
+        background-color: transparent;
+        color: #ffd740 !important;
+        font-weight: 900;
+        box-shadow: 0px 0px 0px 0px #607d8b, 0px 0px 0px 0px #607d8b !important;
+        border-right: none !important;
+        border-left: 0.5px solid #607d8b;
+    }
+}

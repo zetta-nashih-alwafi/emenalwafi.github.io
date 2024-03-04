@@ -1,0 +1,422 @@
+<div class="top-space">
+  <div class="horizontal header-button header-action">
+    <div class="p-grid p-justify-between">
+      <div class="p-col-7">
+        <div class="no-padding" style="width: 180px; float: left"></div>
+        <div class="no-padding" style="width: 180px; float: left">
+          <mat-form-field appearance="legacy">
+            <mat-label>{{ 'ADMISSION.TABLE_ADMISSION_CHANNEL.School' | translate }}</mat-label>
+            <mat-select (selectionChange)="getDataCampus()" [formControl]="schoolsFilter" multiple>
+              <mat-option *ngIf="schoolList && schoolList?.length >= 1" [value]="'All'" (click)="selectAll('school')">{{
+                'AllS' | translate
+              }}</mat-option>
+              <mat-option *ngFor="let school of schoolList" [value]="school.short_name">{{ school.short_name }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <div class="no-padding" style="width: 180px; float: left">
+          <mat-form-field appearance="legacy">
+            <mat-label>{{ 'ADMISSION.TABLE_ADMISSION_CHANNEL.Campus' | translate }}</mat-label>
+            <mat-select (selectionChange)="getDataLevel()" [formControl]="campusFilter" multiple>
+              <mat-option *ngIf="campusList && campusList?.length >= 1" [value]="'All'" (click)="selectAll('campus')">{{
+                'AllS' | translate
+              }}</mat-option>
+              <mat-option *ngFor="let campus of campusList" [value]="campus.name">{{ campus.name }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <div class="no-padding" style="width: 180px; float: left">
+          <mat-form-field appearance="legacy">
+            <mat-label>{{ 'ADMISSION.TABLE_ADMISSION_CHANNEL.Level' | translate }}</mat-label>
+            <mat-select [formControl]="levelFilter" multiple>
+              <mat-option *ngIf="levelList && levelList?.length >= 1" [value]="'All'" (click)="selectAll('level')">{{
+                'AllS' | translate
+              }}</mat-option>
+              <mat-option *ngFor="let level of levelList" [value]="level.name">{{ level.name }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <div class="p-col-4" style="display: flex; flex-direction: row-reverse">
+        <div class="text-right" style="align-self: center">
+          <button
+            class="text-right"
+            mat-raised-button
+            color="primary"
+            matTooltip="{{ 'Export' | translate }}"
+            (click)="downloadCSV()"
+            [disabled]="isWaitingForResponse"
+          >
+            <mat-icon svgIcon="file-excel-outline" class="mat-icon-svgIcon"></mat-icon>
+            {{ 'Export' | translate }}
+          </button>
+          <button
+            style="padding: 0px 7px !important"
+            color="primary"
+            mat-raised-button
+            matTooltip="{{ 'Reset Filter' | translate }}"
+            (click)="resetFilter()"
+            [disabled]="isWaitingForResponse"
+          >
+            <mat-icon svgIcon="loop" class="mat-icon-svgIcon"></mat-icon>
+            {{ 'Reset' | translate }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="horizontal mat-elevation-z8 finance-table" style="font-family: 'firaSans' !important">
+    <table mat-table matSort (matSortChange)="sortData($event)" [dataSource]="dataSource" class="mat-elevation-z8">
+      <!-- ROW RESET END -->
+      <!---ROW FILTER START-->
+      <ng-container matColumnDef="selectFilter" sticky>
+        <th mat-header-cell *matHeaderCellDef></th>
+      </ng-container>
+      <ng-container matColumnDef="intakeChannelFilter" sticky>
+        <th mat-header-cell *matHeaderCellDef>
+          <mat-form-field>
+            <input matInput class="form-field" [formControl]="intakeChannelFilter" placeholder="{{ 'search' | translate }}" />
+          </mat-form-field>
+        </th>
+      </ng-container>
+      <!-- <ng-container matColumnDef="periodCampusSpecialityFilter">
+      <th mat-header-cell *matHeaderCellDef>
+        <mat-form-field>
+          <input matInput class="form-field" [formControl]="specialityFilter" placeholder="{{ 'search' | translate }}" />
+        </mat-form-field>
+      </th>
+    </ng-container> -->
+      <ng-container matColumnDef="seasonFilter" sticky>
+        <th mat-header-cell *matHeaderCellDef></th>
+      </ng-container>
+      <ng-container matColumnDef="schoolFilter" sticky>
+        <th mat-header-cell *matHeaderCellDef></th>
+      </ng-container>
+      <ng-container matColumnDef="campusFilter" sticky>
+        <th mat-header-cell *matHeaderCellDef></th>
+      </ng-container>
+      <ng-container matColumnDef="levelFilter" sticky>
+        <th mat-header-cell *matHeaderCellDef></th>
+      </ng-container>
+      <ng-container matColumnDef="sectorFilter" sticky>
+        <th mat-header-cell *matHeaderCellDef></th>
+      </ng-container>
+      <ng-container matColumnDef="specialityFilter" sticky>
+        <th mat-header-cell *matHeaderCellDef></th>
+      </ng-container>
+      <ng-container matColumnDef="downPaymentInternalFilter">
+        <th mat-header-cell *matHeaderCellDef></th>
+      </ng-container>
+      <ng-container matColumnDef="downPaymentExternalFilter">
+        <th mat-header-cell *matHeaderCellDef></th>
+      </ng-container>
+      <ng-container matColumnDef="fullRateFilterFilter">
+        <th mat-header-cell *matHeaderCellDef></th>
+      </ng-container>
+      <ng-container matColumnDef="fullRateExternalFilter">
+        <th mat-header-cell *matHeaderCellDef></th>
+      </ng-container>
+      <ng-container matColumnDef="legalFilter">
+        <th mat-header-cell *matHeaderCellDef></th>
+      </ng-container>
+      <ng-container matColumnDef="flyersFilter" stickyEnd>
+        <th mat-header-cell *matHeaderCellDef></th>
+      </ng-container>
+      <ng-container matColumnDef="conditionFilter" stickyEnd>
+        <th mat-header-cell *matHeaderCellDef></th>
+      </ng-container>
+      <!--ROW FILTER END-->
+      <!-- ROW HEADER AND CONTENT START -->
+
+      <ng-container matColumnDef="select" sticky>
+        <th mat-header-cell *matHeaderCellDef class="text-center">
+          <mat-checkbox
+            (change)="$event ? masterToggle() : null"
+            (change)="showOptions('all', '')"
+            [checked]="(selection.hasValue() && isAllSelected()) || isCheckedAll"
+            [indeterminate]="selection.hasValue() && !isAllSelected()"
+            [aria-label]="checkboxLabel()"
+          >
+          </mat-checkbox>
+        </th>
+        <td mat-cell *matCellDef="let row" class="text-center">
+          <mat-checkbox
+            (click)="$event.stopPropagation()"
+            (change)="$event ? selection.toggle(row._id) : null"
+            [checked]="selection.isSelected(row._id)"
+            (change)="showOptions('one', row)"
+            [aria-label]="checkboxLabel(row)"
+          >
+          </mat-checkbox>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="intakeChannel" sticky>
+        <th
+          mat-header-cell
+          *matHeaderCellDef
+          matTooltip="{{ 'ADMISSION.TABLE_ADMISSION_CHANNEL.Admission Channel' | translate }}"
+          mat-sort-header="name"
+        >
+          <h5>
+            {{ 'ADMISSION.TABLE_ADMISSION_CHANNEL.Admission Channel' | translate }}
+          </h5>
+        </th>
+        <td mat-cell *matCellDef="let element" matTooltip="{{ element?.intake_channel }}">
+          {{ element?.intake_channel }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="scholarSeason" sticky>
+        <th
+          mat-header-cell
+          *matHeaderCellDef
+          matTooltip="{{ 'ADMISSION.TABLE_ADMISSION_CHANNEL.Scholar Season' | translate }}"
+          mat-sort-header="scholar_season"
+        >
+          <h5>
+            {{ 'ADMISSION.TABLE_ADMISSION_CHANNEL.Scholar Season' | translate }}
+          </h5>
+        </th>
+        <td mat-cell *matCellDef="let element" matTooltip="{{ element?.scholar_season }}">
+          {{ element?.scholar_season }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="schools" sticky>
+        <th
+          mat-header-cell
+          *matHeaderCellDef
+          matTooltip="{{ 'ADMISSION.TABLE_ADMISSION_CHANNEL.Schools' | translate }}"
+          mat-sort-header="school"
+        >
+          <h5>
+            {{ 'ADMISSION.TABLE_ADMISSION_CHANNEL.Schools' | translate }}
+          </h5>
+        </th>
+        <td mat-cell *matCellDef="let element" matTooltip="{{ element?.school }}">
+          {{ element?.school }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="campus" sticky>
+        <th
+          mat-header-cell
+          *matHeaderCellDef
+          matTooltip="{{ 'ADMISSION.TABLE_ADMISSION_CHANNEL.Campus' | translate }}"
+          mat-sort-header="campus"
+        >
+          <h5>
+            {{ 'ADMISSION.TABLE_ADMISSION_CHANNEL.Campus' | translate }}
+          </h5>
+        </th>
+        <td mat-cell *matCellDef="let element" matTooltip="{{ element?.campus }}">
+          {{ element?.campus }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="level" sticky>
+        <th
+          mat-header-cell
+          *matHeaderCellDef
+          matTooltip="{{ 'ADMISSION.TABLE_ADMISSION_CHANNEL.Level' | translate }}"
+          mat-sort-header="level"
+        >
+          <h5>
+            {{ 'ADMISSION.TABLE_ADMISSION_CHANNEL.Level' | translate }}
+          </h5>
+        </th>
+        <td mat-cell *matCellDef="let element" matTooltip="{{ element?.level }}">
+          {{ element?.level }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="sector" sticky>
+        <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'Sector' | translate }}">
+          <h5 style="text-align: center !important">
+            {{ 'Sector' | translate }}
+          </h5>
+        </th>
+        <td mat-cell *matCellDef="let element" [matTooltip]="element?.sector_id?.name">
+          {{ element?.sector_id?.name }}
+          <!-- <ng-container *ngFor="let sec of element?.sectors; let firstIndex = first">
+          <span *ngIf="sec !== null" [ngStyle]="{ 'margin-left': firstIndex ? '10px' : '0px' }" class="tags">
+            {{ sec }}
+          </span>
+        </ng-container> -->
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="speciality" sticky>
+        <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'Speciality' | translate }}">
+          <h5 style="text-align: center !important">
+            {{ 'Speciality' | translate }}
+          </h5>
+        </th>
+        <td mat-cell *matCellDef="let element" [matTooltip]="element?.speciality_id?.name">
+          {{ element?.speciality_id?.name }}
+          <!-- <ng-container *ngFor="let spec of element?.specialities; let firstIndex = first">
+          <span *ngIf="spec !== null" [ngStyle]="{ 'margin-left': firstIndex ? '10px' : '0px' }" class="tags">
+            {{ spec }}
+          </span>
+        </ng-container> -->
+        </td>
+      </ng-container>
+
+      <!-- TO DO: Change the downpayment value later as BE only provide one variable for dp now -->
+      <ng-container matColumnDef="downPaymentInternal">
+        <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'ADMISSION.TABLE_ADMISSION_CHANNEL.Down payment - Internal' | translate }}">
+          <h5>
+            {{ 'ADMISSION.TABLE_ADMISSION_CHANNEL.Down payment - Internal' | translate }}
+          </h5>
+        </th>
+        <td mat-cell *matCellDef="let element" matTooltip="{{ formatCurrency(element?.down_payment_id?.internal) }}">
+          {{ formatCurrency(element?.down_payment_id?.internal) }}
+        </td>
+      </ng-container>
+
+      <!-- TO DO: Change the downpayment value later as BE only provide one variable for dp now -->
+      <ng-container matColumnDef="downPaymentExternal">
+        <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'ADMISSION.TABLE_ADMISSION_CHANNEL.Down payment - External' | translate }}">
+          <h5>
+            {{ 'ADMISSION.TABLE_ADMISSION_CHANNEL.Down payment - External' | translate }}
+          </h5>
+        </th>
+        <td mat-cell *matCellDef="let element" matTooltip="{{ formatCurrency(element?.down_payment_id?.external) }}">
+          {{ formatCurrency(element?.down_payment_id?.external) }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="fullRate">
+        <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'Full rate - Internal' | translate }}">
+          <h5>
+            {{ 'Full rate - Internal' | translate }}
+          </h5>
+        </th>
+        <td mat-cell *matCellDef="let element" matTooltip="{{ formatCurrency(element?.full_rate_id?.amount_internal) }}">
+          {{ formatCurrency(element?.full_rate_id?.amount_internal) }}
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="fullRateExternal">
+        <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'Full rate - External' | translate }}">
+          <h5>
+            {{ 'Full rate - External' | translate }}
+          </h5>
+        </th>
+        <td mat-cell *matCellDef="let element" matTooltip="{{ formatCurrency(element?.full_rate_id?.amount_external) }}">
+          {{ formatCurrency(element?.full_rate_id?.amount_external) }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="legalEntities">
+        <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'ADMISSION.TITLE_LEGAL_ENTITIES' | translate }}">
+          <h5>{{ 'ADMISSION.TITLE_LEGAL_ENTITIES' | translate }}</h5>
+        </th>
+        <td mat-cell *matCellDef="let element" [matTooltip]="renderTooltipEntityLegal(element?.legal_entities_id)">
+          <ng-container *ngFor="let fee of element?.legal_entities_id">
+            <span style="margin-left: 5px" class="tags">{{ fee?.legal_entity_name }}</span>
+          </ng-container>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="flyers" stickyEnd>
+        <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'ADMISSION.TABLE_ADMISSION_CHANNEL.Flyers' | translate }}">
+          <h5>{{ 'ADMISSION.TABLE_ADMISSION_CHANNEL.Flyers' | translate }}</h5>
+        </th>
+        <td mat-cell *matCellDef="let element">
+          <button
+            mat-icon-button
+            class="margin-right-button"
+            (click)="onEditFlyer(element)"
+            matTooltip="{{ 'Edit' | translate }}"
+            matTooltipPosition="above"
+          >
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button
+            mat-icon-button
+            *ngIf="element?.admission_flyer?.s3_file_name"
+            class="margin-right-button"
+            (click)="onDownloadFlyer(element)"
+            matTooltip="{{ 'Download' | translate }}"
+            matTooltipPosition="above"
+          >
+            <mat-icon>download</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="condition" stickyEnd>
+        <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'Condition' | translate }}">
+          <h5>{{ 'Condition' | translate }}</h5>
+        </th>
+        <td mat-cell *matCellDef="let element">
+          <button
+            mat-icon-button
+            class="margin-right-button"
+            (click)="onEditCondition(element)"
+            matTooltip="{{ 'Edit' | translate }}"
+            matTooltipPosition="above"
+          >
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button
+            mat-icon-button
+            *ngIf="element?.admission_document?.s3_file_name"
+            class="margin-right-button"
+            (click)="onDownloadCondition(element)"
+            matTooltip="{{ 'Download' | translate }}"
+            matTooltipPosition="above"
+          >
+            <mat-icon>download</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <!-- ROW HEADER AND CONTENT END -->
+      <ng-container matColumnDef="loading">
+        <th mat-header-cell *matHeaderCellDef colspan="100%" class="text-center">
+          <div class="center-spinner">
+            <mat-spinner color="accent"></mat-spinner>
+          </div>
+        </th>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-header-row *matHeaderRowDef="filterColumns"></tr>
+      <tr mat-header-row *matHeaderRowDef="['loading']" [hidden]="!isWaitingForResponse"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns" [hidden]="isWaitingForResponse"></tr>
+    </table>
+  </div>
+  <div *ngIf="noData | async" class="no-records">
+    {{ 'ADMISSION.TABLE_ADMISSION_CHANNEL.No record for Admission Channel' | translate }}
+  </div>
+  <div class="horizontal" style="margin-bottom: 40px">
+    <div [ngClass]="{ hide: noData | async }">
+      <mat-paginator
+        [ngClass]="{ 'hide-pagination-buttons': dataCount <= 10 }"
+        [length]="dataCount"
+        [hidePageSize]="true"
+        [pageSize]="[10]"
+        showFirstLastButtons
+      ></mat-paginator>
+    </div>
+  </div>
+</div>
+
+<swal #exportSwal title="{{ 'Export Title' | translate }}" [showConfirmButton]="false">
+  <div *swalPartial class="">
+    <div class="">{{ 'Export Text1' | translate }}</div>
+    <div class="">{{ 'Export Text2' | translate }}</div>
+    <div class="">{{ 'Export Text3' | translate }}</div>
+    <div class="">{{ 'Export Text4' | translate }}</div>
+    <div class="">
+      <mat-form-field color="accent" class="full-wid">
+        <input matInput [(ngModel)]="exportName" placeholder="{{ 'ExportName' | translate }}" />
+      </mat-form-field>
+    </div>
+    <button mat-raised-button color="primary" (click)="onDataExport()">
+      {{ 'OK' | translate }}
+    </button>
+  </div>
+</swal>

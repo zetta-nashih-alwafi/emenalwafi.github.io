@@ -1,0 +1,51 @@
+@import '~assets/scss/theme/admtc.variables';
+@import '~assets/scss/theme/admtc';
+
+.dialog-border {
+  border-bottom: 1px solid black;
+  margin-bottom: 15px;
+}
+.dialogTitleWrapper {
+  color: black;
+  .acad-title {
+    padding: 0px;
+    margin-right: 25px;
+  }
+  .dialogTitle {
+    display: inline-block;
+  }
+}
+
+.margin-right-date {
+  margin-right: 6px;
+}
+
+.margin-right-date-remove {
+  margin-right: 16px;
+  width: 160px;
+}
+.remove-date {
+  width: 40px;
+  display: flex;
+  align-items: center;
+}
+.error-date-form-array {
+  font-size: 75%;
+  color: red;
+}
+
+:host::ng-deep.filterPanel {
+  margin-top: 25px !important;
+}
+
+.disable {
+  color: rgba(0, 0, 0, 0.38);
+}
+
+:host::ng-deep.form-disable .mat-form-field-underline {
+  border-bottom: 1px dashed rgba(0, 0, 0, 0.38);
+  background: transparent;
+}
+.label-align {
+  align-self: center;
+}

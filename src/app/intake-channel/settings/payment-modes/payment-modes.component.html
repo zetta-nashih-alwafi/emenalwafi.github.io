@@ -1,0 +1,205 @@
+<div>
+  <table mat-table [dataSource]="dataSource" matSort (matSortChange)="sortData($event)" class="mat-elevation-z8">
+    <!-- ROW RESET START -->
+    <ng-container matColumnDef="reset">
+      <th mat-header-cell *matHeaderCellDef colspan="100%" class="action-header-column text-right">
+        <div class="p-grid">
+          <div class="p-col-12 text-right">
+            <!-- Start Action Button Above table -->
+            <button
+              matTooltip="{{ 'Action' | translate }} "
+              style="padding: 0px 7px !important"
+              mat-raised-button
+              color="accent"
+              [disabled]="isWaitingForResponse"
+              [matMenuTriggerFor]="action"
+            >
+              {{ 'Action' | translate }}
+              <mat-icon>expand_more</mat-icon>
+            </button>
+            <mat-menu #action="matMenu">
+              <button
+                mat-menu-item
+                matTooltip="{{ 'ADMISSION.TABLE_PAYMENT_MODES.Add a Mode' | translate }} "
+                (click)="addPaymentModeDialog()"
+                *ngIf="permission.addPaymentMode()"
+              >
+                {{ 'ADMISSION.TABLE_PAYMENT_MODES.Add a Mode' | translate }}
+              </button>
+            </mat-menu>
+            <!--End Action Button Above table -->
+
+            <button
+              mat-raised-button
+              (click)="buttonClicked = 'export'; controllerButton('export')"
+              color="primary"
+              matTooltip="{{ 'Export' | translate }}"
+              [disabled]="isWaitingForResponse"
+              *ngIf="permission.exportCsvPaymentMode()"
+            >
+              <mat-icon svgIcon="file-excel" class="mat-icon-svgIcon"></mat-icon>
+              {{ 'Export' | translate }}
+            </button>
+            <button
+              mat-raised-button
+              color="primary"
+              [disabled]="isWaitingForResponse"
+              (click)="resetTable()"
+              matTooltip="{{ 'RESET' | translate }}"
+              *ngIf="permission.resetPaymentMode()"
+            >
+              <mat-icon svgIcon="loop" class="mat-icon-svgIcon"></mat-icon>
+              {{ 'RESET' | translate }}
+            </button>
+          </div>
+        </div>
+      </th>
+    </ng-container>
+    <!-- ROW RESET END -->
+    <!-- ROW HEADER AND CONTENT START -->
+    <ng-container matColumnDef="select">
+      <th mat-header-cell *matHeaderCellDef class="text-center">
+        <mat-checkbox
+          (change)="$event ? masterToggle() : null"
+          (change)="showOptions('all', '')"
+          [checked]="(selection.hasValue() && isAllSelected()) || isCheckedAll"
+          [indeterminate]="selection.hasValue() && !isAllSelected()"
+          [aria-label]="checkboxLabel()"
+        >
+        </mat-checkbox>
+      </th>
+      <td mat-cell *matCellDef="let row" class="text-center">
+        <mat-checkbox
+          (click)="$event.stopPropagation()"
+          (change)="$event ? selection.toggle(row._id) : null"
+          [checked]="selection.isSelected(row?._id) || (isCheckedAll && !dataUnselectUser.includes(row?._id))"
+          (change)="showOptions('one', row)"
+          [aria-label]="checkboxLabel(row)"
+        >
+        </mat-checkbox>
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="mode">
+      <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'ADMISSION.TABLE_PAYMENT_MODES.Mode' | translate }}">
+        <h5 mat-sort-header="name">{{ 'ADMISSION.TABLE_PAYMENT_MODES.Mode' | translate }}</h5>
+      </th>
+      <td mat-cell *matCellDef="let element" matTooltip="{{ element?.name }}">
+        <span class="tags">{{ element?.name }}</span>
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="description">
+      <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'Description' | translate }}">
+        <h5 mat-sort-header="description">{{ 'Description' | translate }}</h5>
+      </th>
+      <td mat-cell *matCellDef="let element" matTooltip="{{ element?.description }}">
+        {{ element?.description }}
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="terms">
+      <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'Terms' | translate }}">
+        <h5>{{ 'Terms' | translate }}</h5>
+      </th>
+      <td mat-cell *matCellDef="let element" matTooltip="{{ element?.term }}">
+        {{ element?.term }}
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="percentages">
+      <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'Percentage by terms' | translate }}">
+        <h5>{{ 'Percentage by terms' | translate }}</h5>
+      </th>
+      <td mat-cell *matCellDef="let element" [matTooltip]="renderTooltipEntity(element?.payment_date)">
+        <ng-container *ngFor="let el of element?.payment_date; let in = index">
+          <span
+            >{{ el.percentage }}%
+            {{ element?.payment_date && element?.payment_date.length && element?.payment_date.length - 1 !== in ? ' / ' : '' }}
+          </span>
+        </ng-container>
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="additional">
+      <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'Additional Costs' | translate }}">
+        <h5 mat-sort-header="additional_cost">{{ 'Additional Costs' | translate }}</h5>
+      </th>
+      <td
+        mat-cell
+        *matCellDef="let element"
+        matTooltip=" {{ element?.additional_cost }} {{ element?.additional_cost && element?.currency ? ' - ' : '' }} {{
+          element?.currency
+        }}"
+      >
+        {{ element?.additional_cost ? element?.additional_cost : 0 }} {{ element?.additional_cost && element?.currency ? ' - ' : '' }}
+        {{ element?.currency }}
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="action">
+      <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'Action' | translate }}">
+        <h5>{{ 'Action' | translate }}</h5>
+      </th>
+      <td mat-cell *matCellDef="let element">
+        <button
+          mat-icon-button
+          (click)="editPaymentModeDialog(element)"
+          class="margin-right-button"
+          matTooltip="{{ 'Edit' | translate }}"
+          matTooltipPosition="above"
+          *ngIf="permission.editPaymentMode()"
+          [disabled]="(dataSelected && dataSelected.length > 0) || isCheckedAll"
+        >
+          <mat-icon>edit</mat-icon>
+        </button>
+        <button
+          mat-icon-button
+          (click)="deletePayment(element)"
+          class="margin-right-button"
+          matTooltip="{{ 'Delete' | translate }}"
+          matTooltipPosition="above"
+          *ngIf="permission.deletePaymentMode()"
+          [disabled]="(dataSelected && dataSelected.length > 0) || isCheckedAll"
+        >
+          <mat-icon>delete</mat-icon>
+        </button>
+      </td>
+    </ng-container>
+    <!-- ROW HEADER AND CONTENT END -->
+    <ng-container matColumnDef="loading">
+      <th mat-header-cell *matHeaderCellDef colspan="7" class="text-center">
+        <div class="center-spinner">
+          <mat-spinner color="accent"></mat-spinner>
+        </div>
+      </th>
+    </ng-container>
+    <tr mat-header-row *matHeaderRowDef="['reset']"></tr>
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-header-row *matHeaderRowDef="['loading']" [hidden]="!isWaitingForResponse"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns" [hidden]="isWaitingForResponse"></tr>
+  </table>
+  <div *ngIf="noData | async" class="no-records">
+    {{ 'ADMISSION.TABLE_PAYMENT_MODES.No record of Payment Mode' | translate }}
+  </div>
+  <div [ngClass]="{ hide: noData | async }">
+    <mat-paginator
+      [ngClass]="{ 'hide-pagination-buttons': dataCount <= 10 }"
+      [length]="dataCount"
+      [hidePageSize]="true"
+      [pageSize]="[10]"
+      showFirstLastButtons
+    ></mat-paginator>
+  </div>
+</div>
+
+<!-- <swal #exportSwal title="{{ 'Export Title' | translate }}" [showConfirmButton]="false">
+    <div *swalPartial class="">
+      <div class="">{{ 'Export Text1' | translate }}</div>
+      <div class="">{{ 'Export Text2' | translate }}</div>
+      <div class="">{{ 'Export Text3' | translate }}</div>
+      <div class="">{{ 'Export Text4' | translate }}</div>
+      <div class="">
+        <mat-form-field color="accent" class="full-wid">
+          <input matInput [(ngModel)]="exportName" placeholder="{{ 'ExportName' | translate }}" />
+        </mat-form-field>
+      </div>
+      <button mat-raised-button color="primary" (click)="onDataExport()">
+        {{ 'OK' | translate }}
+      </button>
+    </div>
+  </swal> -->

@@ -1,0 +1,208 @@
+<div *ngIf="isWaitingForResponse" class="inner-loading-indicator">
+  <mat-spinner color="accent" [diameter]="100"></mat-spinner>
+</div>
+<div class="center-card mrgn-btn50 mrgn-t1">
+  <div>
+    <mat-accordion class="example-headers-align">
+      <mat-expansion-panel [expanded]="true" style="background: #424242" class="panel-spacing">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            <h4 style="color: white; align-self: center; margin: 0px">
+              {{ 'Registration' | translate }} {{ scholarSeasonData?.intake_channel?.program }}
+            </h4>
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+        <div class="p-grid panel-divider">
+          <div class="p-col-12">
+            <div class="p-grid">
+              <div class="p-col-9 info">
+                <p>
+                  <span>{{ 'ADMISIONSTEPFINANCEMENT.Volume of Hours' | translate }}</span>
+                  <span>:</span><span>{{ volumeOfHours }}</span>
+                </p>
+                <p>
+                  <span>{{ 'FinancementContinous.Full rate' | translate }}</span>
+                  <span>:</span><span>{{ fullRate }} €</span>
+                </p>
+                <p>
+                  <span>{{ 'FinancementContinous.Remaining due' | translate }}</span>
+                  <span>:</span><span>{{ total }} €</span>
+                </p>
+              </div>
+              <div class="p-col-3">
+                <button
+                  *ngIf="isFCManager || isOperator"
+                  mat-raised-button
+                  class="add_button"
+                  color="accent"
+                  (click)="openAddFinancementDialog('add')"
+                >
+                  {{ 'ADMISIONSTEPFINANCEMENT.Add financement' | translate }}
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="p-col-12 no-padding x-scroll">
+            <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+              <ng-container matColumnDef="type">
+                <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'ADMISIONSTEPFINANCEMENT.Type of organization' | translate }}">
+                  <h5>{{ 'ADMISIONSTEPFINANCEMENT.Type of organization' | translate }}</h5>
+                </th>
+                <td mat-cell *matCellDef="let element" [matTooltip]="renderTooltip(element)">
+                  <ng-container *ngIf="element?.organization_id">
+                    {{ element?.organization_id?.organization_type | translate }}
+                  </ng-container>
+                  <ng-container *ngIf="element?.company_branch_id">
+                    {{ 'Company' | translate }}
+                  </ng-container>
+                  <ng-container *ngIf="!element?.company_branch_id && !element?.organization_id">
+                    {{
+                      element?.organization_type && element?.organization_type === 'Company'
+                        ? ('Company' | translate)
+                        : (element?.organization_type | translate)
+                    }}
+                  </ng-container>
+                  <span *ngIf="!element?.organization_id && !element?.company_branch_id"> - {{ 'other' | translate }}</span>
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="organization">
+                <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'ADMISIONSTEPFINANCEMENT.Organization' | translate }}">
+                  <h5>{{ 'ADMISIONSTEPFINANCEMENT.Organization' | translate }}</h5>
+                </th>
+                <td mat-cell *matCellDef="let element" [matTooltip]="renderTooltipOrganizationName(element)">
+                  <ng-container *ngIf="element?.organization_id">
+                    {{ element?.organization_id?.name }}
+                  </ng-container>
+                  <ng-container *ngIf="element?.company_branch_id">
+                    {{ element?.company_branch_id?.company_name }}
+                  </ng-container>
+                  <ng-container *ngIf="!element?.company_branch_id && !element?.organization_id">
+                    {{ element?.organization_name }}
+                  </ng-container>
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="rate_hour">
+                <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'ADMISIONSTEPFINANCEMENT.Rate/Hour' | translate }}">
+                  <h5>{{ 'ADMISIONSTEPFINANCEMENT.Rate/Hour' | translate }}</h5>
+                </th>
+                <td mat-cell *matCellDef="let element" [matTooltip]="formatDecimal(element?.rate_per_hours)">
+                  {{ formatDecimal(element?.rate_per_hours) }}
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="hours">
+                <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'ADMISIONSTEPFINANCEMENT.Hours' | translate }}">
+                  <h5>{{ 'ADMISIONSTEPFINANCEMENT.Hours' | translate }}</h5>
+                </th>
+                <td mat-cell *matCellDef="let element" [matTooltip]="formatDecimal(element?.hours)">{{ formatDecimal(element?.hours) }}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="total">
+                <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'ADMISIONSTEPFINANCEMENT.Total' | translate }}">
+                  <h5>{{ 'ADMISIONSTEPFINANCEMENT.Total' | translate }}</h5>
+                </th>
+                <td mat-cell *matCellDef="let element" [matTooltip]="formatDecimal(element?.total)">{{ formatDecimal(element?.total) }}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="document">
+                <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'ADMISIONSTEPFINANCEMENT.Document' | translate }}">
+                  <h5>{{ 'ADMISIONSTEPFINANCEMENT.Document' | translate }}</h5>
+                </th>
+                <td mat-cell *matCellDef="let element">
+                  <button mat-icon-button (click)="downloadDoc(element?.document_pdf)">
+                    <mat-icon>description</mat-icon>
+                  </button>
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="status">
+                <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'ADMISIONSTEPFINANCEMENT.Status' | translate }}">
+                  <h5>{{ 'ADMISIONSTEPFINANCEMENT.Status' | translate }}</h5>
+                </th>
+                <td mat-cell *matCellDef="let element">
+                  <mat-icon
+                    [matTooltip]="'financement_status.' + element?.actual_status | translate"
+                    [ngClass]="{
+                      black: element?.actual_status === 'added_by_student',
+                      green: element?.actual_status === 'accepted',
+                      blue: element?.actual_status === 'submitted_for_validation',
+                      red: element?.actual_status === 'rejected',
+                      orange: element?.actual_status === 'in_progress_by_fc_in_charge'
+                    }"
+                    aria-hidden="true"
+                    class="mat-icon-status"
+                    >lens
+                  </mat-icon>
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="action" stickyEnd>
+                <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'ADMISIONSTEPFINANCEMENT.Action' | translate }}">
+                  <h5>{{ 'ADMISIONSTEPFINANCEMENT.Action' | translate }}</h5>
+                </th>
+                <td mat-cell *matCellDef="let element; let index = index">
+                  <button
+                    *ngIf="element?.actual_status !== 'accepted' && (isFCManager || isOperator)"
+                    mat-icon-button
+                    (click)="openEditFinancementDialog('edit', element, index)"
+                    matTooltip="{{ 'Modify financement' | translate }}"
+                  >
+                    <mat-icon>edit</mat-icon>
+                  </button>
+                  <!-- <button style="margin-left: 10px" mat-icon-button (click)="updateValidation(element)">
+                    <mat-icon [ngStyle]="{ color: element?.is_financement_validated ? 'green' : 'red' }">thumb_up</mat-icon>
+                  </button> -->
+                  <button
+                    *ngIf="isFCManager || isOperator"
+                    style="margin-left: 10px"
+                    (click)="deleteFinancement(element)"
+                    mat-icon-button
+                    matTooltip="{{ 'Delete' | translate }}"
+                  >
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                  <button
+                    *ngIf="isFCManager || isAdmission || isOperator"
+                    (click)="openAddNoteFinancementDialog(element)"
+                    style="margin-left: 10px"
+                    mat-icon-button
+                    matTooltip="{{ 'Note' | translate }}"
+                  >
+                    <i style="font-size: 16px; margin: 4px" class="fa fa-sticky-note"></i>
+                  </button>
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="loading">
+                <th mat-header-cell *matHeaderCellDef colspan="100%" style="text-align: center !important">
+                  <div class="center-spinner">
+                    <mat-spinner color="accent"></mat-spinner>
+                  </div>
+                </th>
+              </ng-container>
+
+              <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+              <tr mat-row *matHeaderRowDef="['loading']" [hidden]="!isLoading"></tr>
+              <tr mat-row *matRowDef="let row; columns: displayedColumns" [hidden]="isLoading"></tr>
+            </table>
+          </div>
+          <div [ngClass]="{ hide: noData | async }" class="w-full">
+            <mat-paginator
+              [ngClass]="{ 'hide-pagination-buttons': dataCount <= 10 }"
+              [length]="dataCount"
+              [hidePageSize]="true"
+              [pageSize]="[10]"
+              showFirstLastButtons
+            ></mat-paginator>
+          </div>
+          <!-- [ngClass]="{ hide: isLoading }" -->
+          <div *ngIf="noData | async" class="no-records">
+            {{ 'NOT RECORD FOUND' | translate }}
+          </div>
+        </div>
+      </mat-expansion-panel>
+    </mat-accordion>
+  </div>
+</div>

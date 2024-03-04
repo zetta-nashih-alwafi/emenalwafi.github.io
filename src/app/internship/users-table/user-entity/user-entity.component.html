@@ -1,0 +1,77 @@
+<ng-container class="main-user-entity">
+  <ng-container>
+    <div class="header-filter list-horizontal" fxLayout="row wrap" fxLayoutAlign="start start">
+      <div>
+        <ng-select class="mrgn-btn" [multiple]="false" placeholder="{{ 'School' | translate }}"></ng-select>
+      </div>
+      <div>
+        <ng-select class="mrgn-btn" [multiple]="false" placeholder="{{ 'Campus' | translate }}"> </ng-select>
+      </div>
+      <div>
+        <ng-select class="mrgn-btn" [multiple]="false" placeholder="{{ 'Level' | translate }}"> </ng-select>
+      </div>
+      <div class="search">
+        <mat-form-field>
+          <input type="text" placeholder="{{ 'Search a name' | translate }}" matInput [formControl]="searchByNameFilter" />
+        </mat-form-field>
+      </div>
+      <div>
+        <div fxLayout="row nowrap" fxLayoutAlign="end" class="search-list-item">
+          <button
+            mat-raised-button
+            color="accent"
+            matTooltip="{{ 'Add New User' | translate }}"
+            matTooltipPosition="above"
+            aria-hidden="true"
+            (click)="openAddNewUser()"
+          >
+            <mat-icon class="mat-icon-default">person_add_alt_1</mat-icon>
+            {{ 'Add New User' | translate }}
+          </button>
+
+          <button mat-raised-button color="primary" matTooltip="{{ 'Reset Filter' | translate }}">
+            <mat-icon svgIcon="loop" class="mat-icon-svgIcon"></mat-icon>
+            {{ 'RESET' | translate }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+
+  <ng-container>
+    <!-- <div class="p-grid" *ngIf="isWaitingForResponse" class="p-col-12" style="text-align: center !important; display: contents">
+      <div class="center-spinner spinner-wrapper">
+        <mat-spinner color="accent"></mat-spinner>
+      </div>
+    </div> -->
+    <div class="p-grid" style="padding-top: 10px" [style.height.px]="getAutomaticHeight()" [style.max-height.px]="getAutomaticHeight()">
+      <div class="p-col-fixed left-side" style="width: 341px">
+        <ms-user-card-list
+          (selectedUserChange)="updatedSelectedUser($event)"
+          [userList]="userList"
+          [selectedUserId]="currSelectedId"
+          [isWaitingForResponse]="isWaitingForResponse"
+        ></ms-user-card-list>
+        <div class="p-grid display-block" style="margin-top: 14px !important">
+          <div class="p-col-12 pad-x-none">
+            <mat-paginator
+              [ngClass]="{ 'hide-pagination-buttons': dataCount <= 6 }"
+              [length]="dataCount"
+              [hidePageSize]="true"
+              [pageSize]="[10]"
+              showFirstLastButtons
+            ></mat-paginator>
+          </div>
+        </div>
+      </div>
+      <div class="p-col right-side">
+        <ms-user-detail
+          [userList]="userList"
+          [selectedUserId]="currSelectedId"
+          [tab]="tab"
+          [isWaitingForResponse]="isUserSelectedLoading"
+        ></ms-user-detail>
+      </div>
+    </div>
+  </ng-container>
+</ng-container>

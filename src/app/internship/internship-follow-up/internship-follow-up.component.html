@@ -1,0 +1,1123 @@
+<div class="p-grid" style="margin-bottom: 10px">
+  <!-- <div class="p-col-fixed no-padding" style="width: 290px; float: left; padding-right: 15px !important">
+    <ng-select
+      class="mrgn-btn"
+      bindLabel="name"
+      bindValue="name"
+      [multiple]="false"
+      placeholder="{{ 'School Season' | translate }}"
+    >
+    </ng-select>
+  </div>
+  <div class="p-col-fixed no-padding" style="width: 180px; float: left; padding-right: 15px !important">
+    <ng-select
+      class="mrgn-btn"
+      bindLabel="short_name"
+      bindValue="_id"
+      [multiple]="false"
+      placeholder="{{ 'School' | translate }}"
+    >
+    </ng-select>
+  </div>
+  <div class="p-col-fixed no-padding" style="width: 180px; float: left; padding-right: 15px !important">
+    <ng-select
+      class="mrgn-btn"
+      bindLabel="name"
+      bindValue="name"
+      [multiple]="false"
+      placeholder="{{ 'Campus' | translate }}"
+    >
+    </ng-select>
+  </div>
+  <div class="p-col-fixed no-padding" style="width: 290px; float: left; padding-right: 15px !important">
+    <ng-select
+      class="mrgn-btn"
+      bindLabel="name"
+      bindValue="name"
+      [multiple]="false"
+      placeholder="{{ 'Level' | translate }}"
+    >
+    </ng-select>
+  </div> -->
+  <!-- <div class="p-col-fixed no-padding" style="float: left; padding-right: 15px !important">
+    <mat-form-field appearance="legacy" class="super-filter">
+      <mat-label>{{ 'ADMISSION.TABLE_ADMISSION_CHANNEL.Scholar Season' | translate }}</mat-label>
+      <mat-select  multiple [formControl]="seasonFilter">
+        <mat-option
+          *ngFor="let season of seasonFilterList"
+          [value]="season?.value"
+        >
+          {{ season?.key }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+  <div class="p-col-fixed no-padding" style="float: left; padding-right: 15px !important">
+    <mat-form-field appearance="legacy" class="super-filter">
+      <mat-label>{{ 'ADMISSION.TABLE_ADMISSION_CHANNEL.School' | translate }}</mat-label>
+      <mat-select multiple [formControl]="schoolsFilter">
+        <mat-option
+          *ngFor="let schools of schoolsFilterList"
+          [value]="schools?.value"
+        >
+          {{ schools?.key }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+  <div class="p-col-fixed no-padding" style="float: left; padding-right: 15px !important">
+    <mat-form-field appearance="legacy" class="super-filter">
+      <mat-label>{{ 'ADMISSION.TABLE_ADMISSION_CHANNEL.Campus' | translate }}</mat-label>
+      <mat-select multiple [formControl]="multipleCampusFilter">
+        <mat-option
+          *ngFor="let campus of multipleCampusFilterList"
+          [value]="campus?.value"
+        >
+          {{ campus?.key }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+  <div class="p-col-fixed no-padding" style="float: left; padding-right: 15px !important">
+    <mat-form-field appearance="legacy" class="super-filter">
+      <mat-label>{{ 'ADMISSION.TABLE_ADMISSION_CHANNEL.Level' | translate }}</mat-label>
+      <mat-select multiple [formControl]="levelsFilter">
+        <mat-option
+          *ngFor="let level of levelsFilterList"
+          [value]="level?.value"
+        >
+          {{ level?.key }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div> -->
+  <div class="p-col-fixed no-padding" style="width: 180px; float: left; padding-right: 15px !important">
+    <mat-form-field appearance="legacy">
+      <mat-label>{{ 'CARDDETAIL.Scholar Season' | translate }}</mat-label>
+      <mat-select (selectionChange)="selectScholar()" [formControl]="scholarFilter">
+        <mat-option *ngFor="let scholar of scholars" [value]="scholar.scholar_season">{{ scholar.scholar_season }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <!-- <ng-select
+      class="mrgn-btn"
+      [items]="scholars"
+      bindLabel="scholar_season"
+      bindValue="scholar_season"
+      [multiple]="false"
+      placeholder="{{ 'Scholar Season' | translate }}"
+      [formControl]="scholarFilter"
+      (change)="selectScholar()"
+    >
+    </ng-select> -->
+  </div>
+  <div class="p-col-fixed no-padding" style="width: 180px; float: left; padding-right: 15px !important">
+    <mat-form-field appearance="legacy">
+      <mat-label>{{ 'ADMISSION.TABLE_ADMISSION_CHANNEL.School' | translate }}</mat-label>
+      <mat-select (selectionChange)="getDataCampus()" [formControl]="schoolsFilter" multiple>
+        <mat-option *ngFor="let sch of school" [value]="sch.short_name">{{ sch.short_name }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <!-- <ng-select
+      class="mrgn-btn"
+      [items]="school"
+      bindLabel="short_name"
+      bindValue="short_name"
+      [multiple]="true"
+      placeholder="{{ 'School' | translate }}"
+      [formControl]="schoolsFilter"
+      (change)="getDataCampus()"
+    >
+    </ng-select> -->
+  </div>
+  <div class="p-col-fixed no-padding" style="width: 180px; float: left; padding-right: 15px !important">
+    <mat-form-field appearance="legacy">
+      <mat-label>{{ 'ADMISSION.TABLE_ADMISSION_CHANNEL.Campus' | translate }}</mat-label>
+      <mat-select (selectionChange)="getDataLevel()" [formControl]="campusFilter" multiple>
+        <mat-option *ngFor="let campus of campusList" [value]="campus.name">{{ campus.name }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <!-- <ng-select
+      class="mrgn-btn"
+      [items]="campusList"
+      bindLabel="name"
+      bindValue="name"
+      [multiple]="true"
+      placeholder="{{ 'Campus' | translate }}"
+      [formControl]="campusFilter"
+      (change)="getDataLevel()"
+    >
+    </ng-select> -->
+  </div>
+  <!-- <div class="p-col-fixed no-padding" style="width: 290px; float: left; padding-right: 15px !important">
+    <ng-select
+      class="mrgn-btn"
+      [items]="levels"
+      bindLabel="name"
+      bindValue="name"
+      [multiple]="true"
+      placeholder="{{ 'Level' | translate }}"
+      [formControl]="levelsFilter"
+      (change)="getDataByLevel()"
+    >
+    </ng-select>
+  </div> -->
+  <div class="p-col-fixed no-padding" style="width: 290px; float: left; padding-right: 15px !important">
+    <mat-form-field appearance="legacy">
+      <mat-label>{{ 'ADMISSION.TABLE_ADMISSION_CHANNEL.Level' | translate }}</mat-label>
+      <mat-select (selectionChange)="getDataByLevel()" [formControl]="levelsFilter" multiple>
+        <mat-option *ngFor="let level of levels" [value]="level.name">{{ level.name }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <!-- <ng-select
+      class="mrgn-btn"
+      [multiple]="true"
+      placeholder="{{ 'Level' | translate }}"
+      [formControl]="levelsFilter"
+      [appendTo]="'body'"
+      (change)="getDataByLevel()"
+    >
+      <ng-option *ngFor="let item of levels" [value]="item?.name" [disabled]="item?.disabled">{{ item.name | translate }}</ng-option>
+    </ng-select> -->
+  </div>
+</div>
+
+<div class="horizontal header-button header-action">
+  <div class="text-right" style="display: inline-block; float: right">
+    <button
+      matTooltip="{{ 'Send agreement form' | translate }} "
+      style="padding: 0px 7px !important"
+      mat-raised-button
+      color="accent"
+      [disabled]="isLoading"
+      (click)="sendAgreement()"
+    >
+      <mat-icon>article</mat-icon>
+      {{ 'Send agreement form' | translate }}
+    </button>
+    <button
+      matTooltip="{{ 'Change Company relation member' | translate }} "
+      style="padding: 0px 7px !important"
+      mat-raised-button
+      color="accent"
+      [disabled]="isLoading"
+      (click)="addCrmDialog(null, 'multiple')"
+    >
+      <mat-icon class="mat-icon-svgIcon">
+        <svg style="width: 17px; height: 24px" viewBox="0 0 24 24">
+          <path
+            fill="currentColor"
+            d="M16 17V19H2V17S2 13 9 13 16 17 16 17M12.5 7.5A3.5 3.5 0 1 0 9 11A3.5 3.5 0 0 0 12.5 7.5M15.94 13A5.32 5.32 0 0 1 18 17V19H22V17S22 13.37 15.94 13M15 4A3.39 3.39 0 0 0 13.07 4.59A5 5 0 0 1 13.07 10.41A3.39 3.39 0 0 0 15 11A3.5 3.5 0 0 0 15 4Z"
+          />
+        </svg>
+      </mat-icon>
+      {{ 'Change Company relation member' | translate }}
+    </button>
+    <button
+      matTooltip="{{ 'Export' | translate }} "
+      style="padding: 0px 7px !important"
+      mat-raised-button
+      color="accent"
+      [disabled]="isLoading"
+      (click)="exportName = 'Export'; disabledExport ? cancelExportSwal() : exportConfirmSwal.show()"
+    >
+      <mat-icon svgIcon="file-excel" class="mat-icon-svgIcon"></mat-icon>
+      {{ 'Export' | translate }}
+    </button>
+    <button
+      style="padding: 0px 7px !important"
+      color="primary"
+      mat-raised-button
+      matTooltip="{{ 'Reset Filter' | translate }}"
+      (click)="resetFilter()"
+    >
+      <mat-icon svgIcon="loop" class="mat-icon-svgIcon"></mat-icon>
+      {{ 'Reset' | translate }}
+    </button>
+  </div>
+</div>
+
+<div class="horizontal mat-elevation-z8 follow-up-table">
+  <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8" (matSortChange)="sortData($event)">
+    <ng-container matColumnDef="selectFilter" class="mat-column-select">
+      <th mat-header-cell *matHeaderCellDef class="text-center"></th>
+    </ng-container>
+    <ng-container matColumnDef="familyNameFilter">
+      <th mat-header-cell *matHeaderCellDef class="text-center">
+        <mat-form-field>
+          <input matInput class="form-field" placeholder="{{ 'search' | translate }}" [formControl]="familyNameFilter" />
+        </mat-form-field>
+      </th>
+    </ng-container>
+    <ng-container matColumnDef="nameFilter">
+      <th mat-header-cell *matHeaderCellDef class="text-center">
+        <mat-form-field>
+          <input matInput class="form-field" placeholder="{{ 'search' | translate }}" [formControl]="nameFilter" />
+        </mat-form-field>
+      </th>
+    </ng-container>
+    <ng-container matColumnDef="schoolFilter">
+      <th mat-header-cell *matHeaderCellDef class="text-center">
+        <mat-form-field>
+          <input
+            matInput
+            class="form-field"
+            [matAutocomplete]="schoolFilterAuto"
+            [formControl]="schoolFilter"
+            placeholder="{{ 'search' | translate }}"
+          />
+          <mat-autocomplete #schoolFilterAuto="matAutocomplete" [displayWith]="displaySchool.bind(this)">
+            <mat-option value="" (click)="setSchoolFilter('All')">
+              {{ 'AllS' | translate }}
+            </mat-option>
+            <mat-option *ngFor="let school of filteredSchool | async" [value]="school?._id" (click)="setSchoolFilter(school?.short_name)">
+              {{ school?.short_name }}
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
+      </th>
+    </ng-container>
+    <ng-container matColumnDef="campusFilter">
+      <th mat-header-cell *matHeaderCellDef class="text-center">
+        <mat-form-field>
+          <input
+            matInput
+            class="form-field"
+            [matAutocomplete]="campusFilterAuto"
+            [formControl]="campusFilter"
+            placeholder="{{ 'search' | translate }}"
+          />
+          <mat-autocomplete #campusFilterAuto="matAutocomplete">
+            <mat-option value="" (click)="setCampusFilter('All')">
+              {{ 'AllS' | translate }}
+            </mat-option>
+            <mat-option *ngFor="let campus of filteredCampus | async" [value]="campus?.name" (click)="setCampusFilter(campus?.name)">
+              {{ campus?.name }}
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
+      </th>
+    </ng-container>
+    <ng-container matColumnDef="levelFilter">
+      <th mat-header-cell *matHeaderCellDef class="text-center">
+        <mat-form-field>
+          <input
+            matInput
+            class="form-field"
+            [matAutocomplete]="levelFilterAuto"
+            [formControl]="levelFilter"
+            placeholder="{{ 'INTERN_FOLLOW_UP.Level' | translate }}"
+          />
+          <mat-autocomplete #levelFilterAuto="matAutocomplete">
+            <mat-option value="" (click)="setLevelFilter('')">
+              {{ 'AllS' | translate }}
+            </mat-option>
+            <mat-option *ngFor="let level of filteredLevel | async" [value]="level?.value" (click)="setLevelFilter(level?.value)">
+              {{ level?.key }}
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
+      </th>
+    </ng-container>
+    <ng-container matColumnDef="specialityFilter">
+      <th mat-header-cell *matHeaderCellDef class="text-center">
+        <mat-form-field>
+          <input
+            matInput
+            class="form-field"
+            [matAutocomplete]="specialityFilterAuto"
+            [formControl]="specialityFilter"
+            placeholder="{{ 'search' | translate }}"
+          />
+          <mat-autocomplete #specialityFilterAuto="matAutocomplete">
+            <mat-option value="" (click)="setSpecialityFilter('All')">
+              {{ 'AllS' | translate }}
+            </mat-option>
+            <mat-option
+              *ngFor="let speciality of filteredSpeciality | async"
+              [value]="speciality?.name"
+              (click)="setSpecialityFilter(speciality?.name)"
+            >
+              {{ speciality?.name }}
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
+      </th>
+    </ng-container>
+    <ng-container matColumnDef="sectorFilter">
+      <th mat-header-cell *matHeaderCellDef class="text-center">
+        <mat-form-field>
+          <input
+            matInput
+            class="form-field"
+            [matAutocomplete]="sectorFilterAuto"
+            [formControl]="sectorFilter"
+            placeholder="{{ 'search' | translate }}"
+          />
+          <mat-autocomplete #sectorFilterAuto="matAutocomplete">
+            <mat-option value="" (click)="setSectorFilter('All')">
+              {{ 'AllS' | translate }}
+            </mat-option>
+            <mat-option *ngFor="let sector of filteredSector | async" [value]="sector?.name" (click)="setSectorFilter(sector?.name)">
+              {{ sector?.name }}
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
+      </th>
+    </ng-container>
+    <!-- <ng-container matColumnDef="periodeFilter">
+      <th mat-header-cell *matHeaderCellDef class="text-center">
+        <mat-form-field>
+          <mat-label>{{ 'INTERN_FOLLOW_UP.Periode' | translate }}</mat-label>
+          <mat-select [formControl]="periodeFilter">
+            <mat-option *ngFor="let periode of periodeFilterList" [value]="periode?.value">
+              {{ periode?.key }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </th>
+    </ng-container> -->
+    <!-- <ng-container matColumnDef="legalDurationFilter">
+      <th mat-header-cell *matHeaderCellDef class="text-center"></th>
+    </ng-container> -->
+    <ng-container matColumnDef="companyRelationMemberFilter">
+      <th mat-header-cell *matHeaderCellDef class="text-center">
+        <mat-form-field>
+          <input matInput class="form-field" placeholder="{{ 'search' | translate }}" [formControl]="companyRelationMemberFilter" />
+        </mat-form-field>
+      </th>
+    </ng-container>
+    <!-- <ng-container matColumnDef="studentStatusFilter">
+      <th mat-header-cell *matHeaderCellDef class="text-center">
+        <mat-form-field>
+          <input matInput class="form-field" placeholder="{{ 'search' | translate }}" [formControl]="studentStatusFilter" />
+        </mat-form-field>
+      </th>
+    </ng-container> -->
+    <ng-container matColumnDef="internshipStatusFilter">
+      <th mat-header-cell *matHeaderCellDef class="text-center">
+        <mat-form-field>
+          <input
+            matInput
+            class="form-field"
+            [matAutocomplete]="internshipStatusFilterAuto"
+            [formControl]="internshipStatusFilter"
+            placeholder="{{ 'INTERN_FOLLOW_UP.Internship Status' | translate }}"
+          />
+          <mat-autocomplete #internshipStatusFilterAuto="matAutocomplete">
+            <mat-option value="" (click)="setInternStatusFilter('')">
+              {{ 'AllS' | translate }}
+            </mat-option>
+            <mat-option
+              *ngFor="let item of filteredInternStatus | async"
+              [value]="item?.key"
+              matTooltip="{{ item?.key }}"
+              (click)="setInternStatusFilter(item?.value)"
+            >
+              {{ item?.key }}
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
+      </th>
+    </ng-container>
+    <ng-container matColumnDef="agreementStatusFilter">
+      <th mat-header-cell *matHeaderCellDef class="text-center">
+        <mat-form-field>
+          <input
+            matInput
+            class="form-field"
+            [matAutocomplete]="agreementFilterAuto"
+            [formControl]="agreementFilter"
+            placeholder="{{ 'INTERN_FOLLOW_UP.Agreement Status' | translate }}"
+          />
+          <mat-autocomplete #agreementFilterAuto="matAutocomplete">
+            <mat-option value="" (click)="setAgreementFilter('')">
+              {{ 'AllS' | translate }}
+            </mat-option>
+            <mat-option
+              *ngFor="let item of filteredAgreement | async"
+              [value]="item?.key"
+              matTooltip="{{ item?.key }}"
+              (click)="setAgreementFilter(item?.value)"
+            >
+              {{ item?.key }}
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
+      </th>
+    </ng-container>
+    <ng-container matColumnDef="crmFilter">
+      <th mat-header-cell *matHeaderCellDef class="text-center">
+        <mat-form-field>
+          <input
+            matInput
+            class="form-field"
+            [matAutocomplete]="crmFilterAuto"
+            [formControl]="crmFilter"
+            placeholder="{{ 'INTERN_FOLLOW_UP.CRM' | translate }}"
+          />
+          <mat-autocomplete #crmFilterAuto="matAutocomplete">
+            <mat-option value="" (click)="setCrmFilter('')">
+              {{ 'AllS' | translate }}
+            </mat-option>
+            <mat-option
+              *ngFor="let item of filteredCrm | async"
+              [value]="item?.key"
+              matTooltip="{{ item?.key }}"
+              (click)="setCrmFilter(item?.value)"
+            >
+              {{ item?.key }}
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
+      </th>
+    </ng-container>
+    <ng-container matColumnDef="mentorFilter">
+      <th mat-header-cell *matHeaderCellDef class="text-center">
+        <mat-form-field>
+          <input
+            matInput
+            class="form-field"
+            [matAutocomplete]="companyHrFilterAuto"
+            [formControl]="companyHrFilter"
+            placeholder="{{ 'INTERN_FOLLOW_UP.Mentor' | translate }}"
+          />
+          <mat-autocomplete #companyHrFilterAuto="matAutocomplete">
+            <mat-option value="" (click)="setMentorFilter('')">
+              {{ 'AllS' | translate }}
+            </mat-option>
+            <mat-option
+              *ngFor="let item of filteredMentor | async"
+              [value]="item?.key"
+              matTooltip="{{ item?.key }}"
+              (click)="setMentorFilter(item?.value)"
+            >
+              {{ item?.key }}
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
+      </th>
+    </ng-container>
+    <ng-container matColumnDef="companyManagerFilter">
+      <th mat-header-cell *matHeaderCellDef class="text-center">
+        <mat-form-field>
+          <input
+            matInput
+            class="form-field"
+            [matAutocomplete]="managerFilterAuto"
+            [formControl]="companyManagerFilter"
+            placeholder="{{ 'INTERN_FOLLOW_UP.Company Manager' | translate }}"
+          />
+          <mat-autocomplete #managerFilterAuto="matAutocomplete">
+            <mat-option value="" (click)="setManagerFilter('')">
+              {{ 'AllS' | translate }}
+            </mat-option>
+            <mat-option
+              *ngFor="let item of filteredManager | async"
+              [value]="item?.key"
+              matTooltip="{{ item?.key }}"
+              (click)="setManagerFilter(item?.value)"
+            >
+              {{ item?.key }}
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
+      </th>
+    </ng-container>
+    <ng-container matColumnDef="studentFilter">
+      <th mat-header-cell *matHeaderCellDef class="text-center">
+        <mat-form-field>
+          <input
+            matInput
+            class="form-field"
+            [matAutocomplete]="studentFilterAuto"
+            [formControl]="studentFilter"
+            placeholder="{{ 'INTERN_FOLLOW_UP.Student' | translate }}"
+          />
+          <mat-autocomplete #studentFilterAuto="matAutocomplete">
+            <mat-option value="" (click)="setStudentFilter('')">
+              {{ 'AllS' | translate }}
+            </mat-option>
+            <mat-option
+              *ngFor="let item of filteredStudent | async"
+              [value]="item?.key"
+              matTooltip="{{ item?.key }}"
+              (click)="setStudentFilter(item?.value)"
+            >
+              {{ item?.key }}
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
+      </th>
+    </ng-container>
+    <ng-container matColumnDef="companyFilter">
+      <th mat-header-cell *matHeaderCellDef class="text-center">
+        <mat-form-field>
+          <input matInput class="form-field" placeholder="{{ 'search' | translate }}" [formControl]="companyFilter" />
+        </mat-form-field>
+      </th>
+    </ng-container>
+    <ng-container matColumnDef="effectiveDurationFilter">
+      <th mat-header-cell *matHeaderCellDef class="text-center"></th>
+    </ng-container>
+    <ng-container matColumnDef="totalDurationAgreementFilter">
+      <th mat-header-cell *matHeaderCellDef class="text-center"></th>
+    </ng-container>
+    <ng-container matColumnDef="startDateFilter">
+      <th mat-header-cell *matHeaderCellDef class="text-center">
+        <mat-form-field>
+          <input
+            matInput
+            class="form-field"
+            [formControl]="startDateFilter"
+            [matDatepicker]="pickerStart"
+            placeholder="{{ 'SELECTDATE' | translate }}"
+            readonly
+            (click)="pickerStart.open()"
+          />
+          <mat-datepicker-toggle matSuffix [for]="pickerStart"></mat-datepicker-toggle>
+          <mat-datepicker #pickerStart></mat-datepicker>
+        </mat-form-field>
+      </th>
+    </ng-container>
+    <ng-container matColumnDef="endDateFilter">
+      <th mat-header-cell *matHeaderCellDef class="text-center">
+        <mat-form-field>
+          <input
+            matInput
+            class="form-field"
+            [formControl]="endDateFilter"
+            [matDatepicker]="pickerEnd"
+            placeholder="{{ 'SELECTDATE' | translate }}"
+            readonly
+            (click)="pickerEnd.open()"
+          />
+          <mat-datepicker-toggle matSuffix [for]="pickerEnd"></mat-datepicker-toggle>
+          <mat-datepicker #pickerEnd></mat-datepicker>
+        </mat-form-field>
+      </th>
+    </ng-container>
+    <!-- <ng-container matColumnDef="internshipReportFilter">
+      <th mat-header-cell *matHeaderCellDef class="text-center"></th>
+    </ng-container> -->
+    <!-- <ng-container matColumnDef="evalProFilter">
+      <th mat-header-cell *matHeaderCellDef class="text-center"></th>
+    </ng-container> -->
+    <!-- <ng-container matColumnDef="internshipValidatedFilter">
+      <th mat-header-cell *matHeaderCellDef class="text-center"></th>
+    </ng-container> -->
+    <ng-container matColumnDef="actionFilter">
+      <th mat-header-cell *matHeaderCellDef class="text-center"></th>
+    </ng-container>
+    <ng-container matColumnDef="select" class="mat-column-select">
+      <th mat-header-cell *matHeaderCellDef class="text-center">
+        <mat-checkbox
+          (change)="$event ? masterToggle() : null"
+          (change)="showOptions('all', '')"
+          [checked]="(selection.hasValue() && isAllSelected()) || isCheckedAll"
+          [indeterminate]="selection.hasValue() && !isAllSelected()"
+          [aria-label]="checkboxLabel()"
+        >
+        </mat-checkbox>
+      </th>
+      <td mat-cell *matCellDef="let row" class="text-center">
+        <mat-checkbox
+          (click)="$event.stopPropagation()"
+          (change)="$event ? selection.toggle(row._id) : null"
+          [checked]="selection.isSelected(row._id)"
+          (change)="showOptions('one', row)"
+          [aria-label]="checkboxLabel(row)"
+        >
+        </mat-checkbox>
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="familyName">
+      <th mat-header-cell *matHeaderCellDef>
+        <h5 mat-sort-header="family_name">{{ 'Last Name' | translate }}</h5>
+      </th>
+      <td
+        mat-cell
+        *matCellDef="let element"
+        matTooltip="{{
+          element?.student_id?.civility && element?.student_id?.civility === 'neutral' ? '' : (element?.student_id?.civility | translate)
+        }} {{ element?.student_id?.last_name | uppercase }}"
+        style="text-align: left !important; padding-left: 10px !important"
+      >
+        {{
+          element?.student_id?.civility && element?.student_id?.civility === 'neutral' ? '' : (element?.student_id?.civility | translate)
+        }}
+        {{ element?.student_id?.last_name | uppercase }}
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="name">
+      <th mat-header-cell *matHeaderCellDef>
+        <h5>{{ 'INTERN_FOLLOW_UP.Name' | translate }}</h5>
+      </th>
+      <td
+        mat-cell
+        *matCellDef="let element"
+        matTooltip="{{ element?.name?.lastName }}"
+        style="text-align: left !important; padding-left: 10px !important"
+      >
+        {{ element?.student_id?.first_name }}
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="school">
+      <th mat-header-cell *matHeaderCellDef>
+        <h5>{{ 'INTERN_FOLLOW_UP.School' | translate }}</h5>
+      </th>
+      <td mat-cell *matCellDef="let element" matTooltip="{{ element?.student_id?.candidate_school }}">
+        {{ element?.student_id?.candidate_school }}
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="campus">
+      <th mat-header-cell *matHeaderCellDef>
+        <h5>{{ 'INTERN_FOLLOW_UP.Campus' | translate }}</h5>
+      </th>
+      <td mat-cell *matCellDef="let element" matTooltip="{{ element?.student_id?.candidate_campus }}">
+        {{ element?.student_id?.candidate_campus }}
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="level">
+      <th mat-header-cell *matHeaderCellDef>
+        <h5 style="padding-top: 5px !important">{{ 'INTERN_FOLLOW_UP.Level' | translate }}</h5>
+      </th>
+      <td mat-cell *matCellDef="let element" matTooltip="{{ element?.student_id?.candidate_level }}">
+        {{ element?.student_id?.candidate_level }}
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="speciality">
+      <th mat-header-cell *matHeaderCellDef style="padding-top: 10px !important">
+        <h5>{{ 'INTERN_FOLLOW_UP.Speciality' | translate }}</h5>
+      </th>
+      <td mat-cell *matCellDef="let element" matTooltip="{{ element?.student_id?.specialization?.name }}">
+        {{ element?.student_id?.specialization?.name }}
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="sector">
+      <th mat-header-cell *matHeaderCellDef style="padding-top: 10px !important">
+        <h5>{{ 'INTERN_FOLLOW_UP.Sector' | translate }}</h5>
+      </th>
+      <td mat-cell *matCellDef="let element">
+        <span *ngFor="let type of element?.student_id?.specialization?.sectors" class="tags">
+          {{ type?.name }}
+        </span>
+      </td>
+    </ng-container>
+    <!-- <ng-container matColumnDef="periode">
+      <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'INTERN_FOLLOW_UP.Periode' | translate }}" matTooltipPosition="above">
+        <h5><mat-icon svgIcon="calendar-blank" class="mat-icon-svgIcon"></mat-icon></h5>
+      </th>
+      <td mat-cell *matCellDef="let element" matTooltip="{{ element?.periode }}">
+        {{ element?.periode }}
+      </td>
+    </ng-container> -->
+    <!-- <ng-container matColumnDef="legalDuration">
+      <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'INTERN_FOLLOW_UP.Legal Duration' | translate }}" matTooltipPosition="above">
+        <h5><mat-icon svgIcon="calendar-weekend" class="mat-icon-svgIcon"></mat-icon></h5>
+      </th>
+      <td mat-cell *matCellDef="let element" matTooltip="{{ element?.legalDuration }}">
+        {{ element?.legalDuration }}
+      </td>
+    </ng-container> -->
+    <ng-container matColumnDef="companyRelationMember">
+      <th mat-header-cell *matHeaderCellDef>
+        <h5>{{ 'INTERN_FOLLOW_UP.Company Relation Member' | translate }}</h5>
+      </th>
+      <td
+        mat-cell
+        *matCellDef="let element"
+        matTooltip="
+        {{
+          element?.company_relation_member_id?.civility && element?.company_relation_member_id?.civility === 'neutral'
+            ? ''
+            : (element?.company_relation_member_id?.civility | translate)
+        }} {{ element?.company_relation_member_id?.last_name | uppercase }}
+        {{ element?.company_relation_member_id?.first_name }}"
+      >
+        {{
+          element?.company_relation_member_id?.civility && element?.company_relation_member_id?.civility === 'neutral'
+            ? ''
+            : (element?.company_relation_member_id?.civility | translate)
+        }}
+        {{ element?.company_relation_member_id?.last_name | uppercase }}
+        {{ element?.company_relation_member_id?.first_name }}
+      </td>
+    </ng-container>
+    <!-- <ng-container matColumnDef="studentStatus">
+      <th mat-header-cell *matHeaderCellDef>
+        <h5>{{ 'INTERN_FOLLOW_UP.Student Status' | translate }}</h5>
+      </th>
+      <td mat-cell *matCellDef="let element" matTooltip="{{ 'student_status.' + element?.student_status | translate }}">
+        {{ 'student_status.' + element?.student_status | translate }}
+      </td>
+    </ng-container> -->
+    <ng-container matColumnDef="internshipStatus">
+      <th mat-header-cell *matHeaderCellDef>
+        <h5 style="padding-top: 5px !important">{{ 'INTERN_FOLLOW_UP.Internship Status' | translate }}</h5>
+      </th>
+      <td mat-cell *matCellDef="let element">
+        <span
+          *ngIf="element?.internship_date?.date_from && element?.internship_date?.date_to"
+          [matTooltip]="'internship_status.' + element?.internship_status | translate"
+        >
+          {{ 'internship_status.' + element?.internship_status | translate }}
+        </span>
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="agreementStatus">
+      <th mat-header-cell *matHeaderCellDef>
+        <h5 style="padding-top: 5px !important">{{ 'INTERN_FOLLOW_UP.Agreement Status' | translate }}</h5>
+      </th>
+      <td mat-cell *matCellDef="let element">
+        <ng-container *ngIf="!element?.agreement_status || element?.agreement_status === 'agreement_published'; else agreementStatus">
+          <mat-icon [matTooltip]="'no_agreement' | translate" class="mat-icon-status red" aria-hidden="true">lens </mat-icon>
+        </ng-container>
+        <ng-template #agreementStatus>
+          <mat-icon
+            *ngIf="element?.agreement_status"
+            [matTooltip]="element?.agreement_status | translate"
+            [ngClass]="{
+              red: element?.agreement_status === 'no_agreement',
+              orange: element?.agreement_status === 'waiting_for_signature',
+              green: element?.agreement_status === 'agreement_signed'
+            }"
+            class="mat-icon-status"
+            aria-hidden="true"
+            >lens
+          </mat-icon>
+        </ng-template>
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="crm">
+      <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'INTERN_FOLLOW_UP.CRM' | translate }}" matTooltipPosition="above">
+        <h5 style="padding-top: 5px !important"><mat-icon svgIcon="account-hard-hat" class="mat-icon-svgIcon"></mat-icon></h5>
+      </th>
+      <td mat-cell *matCellDef="let element">
+        <mat-icon
+          *ngIf="element?.company_relation_member_sign_status"
+          [matTooltip]="'company_relation_member_sign_status.' + element?.company_relation_member_sign_status | translate"
+          [ngClass]="{
+            red: element?.company_relation_member_sign_status === 'not_validate_information',
+            orange: element?.company_relation_member_sign_status === 'validate_information',
+            green: element?.company_relation_member_sign_status === 'signed'
+          }"
+          class="mat-icon-status"
+          aria-hidden="true"
+          >lens
+        </mat-icon>
+        <mat-icon
+          *ngIf="!element?.company_relation_member_sign_status"
+          [matTooltip]="'company_relation_member_sign_status.not_validate_information' | translate"
+          class="mat-icon-status red"
+          aria-hidden="true"
+          >lens
+        </mat-icon>
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="mentor">
+      <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'INTERN_FOLLOW_UP.Mentor' | translate }}" matTooltipPosition="above">
+        <h5 style="padding-top: 5px !important"><mat-icon svgIcon="office-building" class="mat-icon-svgIcon"></mat-icon></h5>
+      </th>
+      <td mat-cell *matCellDef="let element">
+        <mat-icon
+          *ngIf="element?.mentor_sign_status"
+          [matTooltip]="'mentor_sign_status.' + element?.mentor_sign_status | translate"
+          [ngClass]="{
+            red: element?.mentor_sign_status === 'not_validate_information',
+            orange: element?.mentor_sign_status === 'validate_information',
+            green: element?.mentor_sign_status === 'signed'
+          }"
+          class="mat-icon-status"
+          aria-hidden="true"
+          >lens
+        </mat-icon>
+        <mat-icon
+          *ngIf="!element?.mentor_sign_status"
+          [matTooltip]="'mentor_sign_status.not_validate_information' | translate"
+          class="mat-icon-status red"
+          aria-hidden="true"
+          >lens
+        </mat-icon>
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="companyManager">
+      <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'INTERN_FOLLOW_UP.Company Manager' | translate }}" matTooltipPosition="above">
+        <h5 style="padding-top: 5px !important"><mat-icon svgIcon="office-building" class="mat-icon-svgIcon"></mat-icon></h5>
+      </th>
+      <td mat-cell *matCellDef="let element">
+        <!-- Todo Update element if there is already field for company manager -->
+        <!-- For now it used mentor -->
+        <mat-icon
+          *ngIf="element?.company_manager_sign_status"
+          [matTooltip]="'company_manager_sign_status.' + element?.company_manager_sign_status | translate"
+          [ngClass]="{
+            red: element?.company_manager_sign_status === 'not_validate_information',
+            orange: element?.company_manager_sign_status === 'validate_information',
+            green: element?.company_manager_sign_status === 'signed'
+          }"
+          class="mat-icon-status"
+          aria-hidden="true"
+          >lens
+        </mat-icon>
+        <mat-icon
+          *ngIf="!element?.company_manager_sign_status"
+          [matTooltip]="'company_manager_sign_status.not_validate_information' | translate"
+          class="mat-icon-status red"
+          aria-hidden="true"
+          >lens
+        </mat-icon>
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="student">
+      <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'INTERN_FOLLOW_UP.Student' | translate }}" matTooltipPosition="above">
+        <h5 style="padding-top: 5px !important"><mat-icon svgIcon="school" class="mat-icon-svgIcon"></mat-icon></h5>
+      </th>
+      <td mat-cell *matCellDef="let element">
+        <mat-icon
+          *ngIf="element?.student_sign_status"
+          [matTooltip]="'student_sign_status.' + element?.student_sign_status | translate"
+          [ngClass]="{
+            red: element?.student_sign_status === 'not_validate_information',
+            orange: element?.student_sign_status === 'validate_information',
+            green: element?.student_sign_status === 'signed'
+          }"
+          class="mat-icon-status"
+          aria-hidden="true"
+          >lens
+        </mat-icon>
+        <mat-icon
+          *ngIf="!element?.student_sign_status"
+          [matTooltip]="'student_sign_status.not_validate_information' | translate"
+          class="mat-icon-status red"
+          aria-hidden="true"
+          >lens
+        </mat-icon>
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="company">
+      <th mat-header-cell *matHeaderCellDef>
+        <h5>{{ 'INTERN_FOLLOW_UP.Company' | translate }}</h5>
+      </th>
+      <td mat-cell *matCellDef="let element" [matTooltip]="element?.company_branch_id?.company_name">
+        {{ element?.company_branch_id?.company_name }}
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="effectiveDuration">
+      <th mat-header-cell *matHeaderCellDef>
+        <h5>{{ 'INTERN_FOLLOW_UP.Effective Duration' | translate }}</h5>
+      </th>
+      <td mat-cell *matCellDef="let element" matTooltip="{{ element?.effectiveWeek }}">
+        {{ element?.effectiveWeek }}
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="startDate">
+      <th mat-header-cell *matHeaderCellDef>
+        <h5>{{ 'INTERN_FOLLOW_UP.Start date' | translate }}</h5>
+      </th>
+      <td mat-cell *matCellDef="let element" matTooltip="{{ element?.internship_date?.date_from }}">
+        {{ element?.internship_date?.date_from }}
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="endDate">
+      <th mat-header-cell *matHeaderCellDef>
+        <h5>{{ 'INTERN_FOLLOW_UP.End date' | translate }}</h5>
+      </th>
+      <td mat-cell *matCellDef="let element" matTooltip="{{ element?.internship_date?.date_to }}">
+        {{ element?.internship_date?.date_to }}
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="totalDurationAgreement">
+      <th mat-header-cell *matHeaderCellDef>
+        <h5>{{ 'INTERN_FOLLOW_UP.Total Duration Agreement' | translate }}</h5>
+      </th>
+      <td mat-cell *matCellDef="let element" matTooltip="{{ element?.internship_date?.duration_in_months }}">
+        {{ element?.internship_date?.duration_in_months }}
+      </td>
+    </ng-container>
+    <!-- <ng-container matColumnDef="internshipReport">
+      <th mat-header-cell *matHeaderCellDef>
+        <h5>{{ 'INTERN_FOLLOW_UP.Internship Report' | translate }}</h5>
+      </th>
+      <td mat-cell *matCellDef="let element">
+        <ng-container *ngIf="element?.internship_report === 'Not uploaded'; else uploaded">
+          <mat-icon
+            [matTooltip]="'internship_report.' + element?.internship_report | translate"
+            class="mat-icon-status red"
+            aria-hidden="true"
+            >lens
+          </mat-icon>
+        </ng-container>
+        <ng-template #uploaded>
+          <mat-icon
+            [matTooltip]="'internship_report.' + element?.internship_report | translate"
+            class="mat-icon-status green"
+            aria-hidden="true"
+            svgIcon="file-document-outline"
+          >
+          </mat-icon>
+        </ng-template>
+      </td>
+    </ng-container> -->
+    <!-- <ng-container matColumnDef="evalPro">
+      <th mat-header-cell *matHeaderCellDef>
+        <h5>{{ 'INTERN_FOLLOW_UP.Eval Pro' | translate }}</h5>
+      </th>
+      <td mat-cell *matCellDef="let element">
+        <ng-container *ngIf="element?.eval_pro === 'Not completed'; else completed">
+          <mat-icon [matTooltip]="element?.eval_pro | translate" class="mat-icon-status red" aria-hidden="true">lens </mat-icon>
+        </ng-container>
+        <ng-template #completed>
+          <mat-icon
+            [matTooltip]="element?.eval_pro | translate"
+            class="mat-icon-status green"
+            aria-hidden="true"
+            svgIcon="file-document-outline"
+          >
+          </mat-icon>
+        </ng-template>
+      </td>
+    </ng-container> -->
+    <!-- <ng-container matColumnDef="internshipValidated">
+      <th mat-header-cell *matHeaderCellDef>
+        <h5>{{ 'INTERN_FOLLOW_UP.Internship Validated' | translate }}</h5>
+      </th>
+      <td mat-cell *matCellDef="let element">
+        <mat-icon
+          [matTooltip]="element?.internship_validated | translate"
+          [ngClass]="{
+            green: element?.internship_validated === 'Validated',
+            red: element?.internship_validated === 'Not validated'
+          }"
+          class="mat-icon-status"
+          aria-hidden="true"
+          >lens
+        </mat-icon>
+      </td>
+    </ng-container> -->
+    <ng-container matColumnDef="action">
+      <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'Action' | translate }}" matTooltipPosition="above">
+        <h5>{{ 'Action' | translate }}</h5>
+      </th>
+      <td mat-cell *matCellDef="let element" class="action-buttons">
+        <button (click)="sendMail(element)" mat-icon-button class="margin-right-button" matTooltip="{{ 'Email' | translate }}">
+          <mat-icon>send</mat-icon>
+        </button>
+        <!-- <button (click)="openWhatsapp(element)" mat-icon-button class="margin-right-button" matTooltip="{{ 'Contact by WA' | translate }}">
+          <mat-icon svgIcon="whatsapp"></mat-icon>
+        </button> -->
+        <button
+          mat-icon-button
+          *ngIf="element?.agreement_status !== 'agreement_signed' && element?.company_relation_member_id?._id"
+          class="margin-right-button"
+          matTooltip="{{ 'Edit an agreement' | translate }}"
+          (click)="goToInternshipAgreement(element?._id)"
+        >
+          <mat-icon>edit</mat-icon>
+        </button>
+        <button
+          (click)="viewProfileInfo(element)"
+          mat-icon-button
+          class="margin-right-button"
+          matTooltip="{{ 'See student card' | translate }}"
+        >
+          <mat-icon svgIcon="eye"></mat-icon>
+        </button>
+        <button
+          mat-icon-button
+          class="margin-right-button"
+          (click)="viewPDF(element?.pdf_file_name)"
+          *ngIf="element?.pdf_file_name && element?.agreement_status === 'agreement_signed'"
+          matTooltip="{{ 'View agreement PDF' | translate }}"
+        >
+          <mat-icon svgIcon="file-document-outline"></mat-icon>
+        </button>
+        <button
+          mat-icon-button
+          class="margin-right-button"
+          (click)="amendmentAggrement(element?._id)"
+          *ngIf="element?.agreement_status === 'agreement_signed'"
+          matTooltip="{{ 'Add an amendment' | translate }}"
+        >
+          <mat-icon>
+            <svg style="width: 24px; height: 24px" viewBox="0 0 24 24">
+              <path
+                fill="currentColor"
+                d="M17,14H19V17H22V19H19V22H17V19H14V17H17V14M12,17V15H7V17H12M17,11H7V13H14.69C13.07,14.07 12,15.91 12,18C12,19.09 12.29,20.12 12.8,21H5C3.89,21 3,20.1 3,19V5C3,3.89 3.89,3 5,3H19A2,2 0 0,1 21,5V12.8C20.12,12.29 19.09,12 18,12L17,12.08V11M17,9V7H7V9H17Z"
+              />
+            </svg>
+          </mat-icon>
+        </button>
+        <button
+          mat-icon-button
+          class="margin-right-button"
+          matTooltip="{{ 'Change Company relation member' | translate }}"
+          (click)="addCrmDialog(element, 'individual')"
+        >
+          <mat-icon>group</mat-icon>
+        </button>
+        <!-- <button mat-icon-button class="margin-right-button" matTooltip="{{ 'Change due date' | translate }}" (click)="changeDate(element)">
+          <mat-icon>
+            <svg style="width: 24px; height: 24px" viewBox="0 0 24 24">
+              <path
+                fill="currentColor"
+                d="M9,10H7V12H9V10M13,10H11V12H13V10M17,10H15V12H17V10M19,3H18V1H16V3H8V1H6V3H5C3.89,3 3,3.9 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5A2,2 0 0,0 19,3M19,19H5V8H19V19Z"
+              />
+            </svg>
+          </mat-icon>
+        </button> -->
+        <button
+          mat-icon-button
+          class="margin-right-button"
+          matTooltip="{{ 'Connect as the Student' | translate }}"
+          (click)="connectAsUser(element?.student_id)"
+        >
+          <mat-icon svgIcon="incognito"></mat-icon>
+        </button>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="loading">
+      <th mat-header-cell *matHeaderCellDef [attr.colspan]="displayedColumns.length" class="text-center">
+        <div class="center-spinner">
+          <mat-spinner color="accent"></mat-spinner>
+        </div>
+      </th>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-header-row *matHeaderRowDef="filterColumns"></tr>
+    <tr mat-header-row *matHeaderRowDef="['loading']" [hidden]="!isLoading"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns" [hidden]="isLoading"></tr>
+  </table>
+</div>
+<div class="horizontal" style="margin-bottom: 40px">
+  <div [ngClass]="{ hide: noData | async }">
+    <mat-paginator
+      [ngClass]="{ 'hide-pagination-buttons': dataCount <= 10 }"
+      [length]="dataCount"
+      [hidePageSize]="true"
+      [pageSize]="[10]"
+      showFirstLastButtons
+    ></mat-paginator>
+  </div>
+  <div *ngIf="noData | async" class="no-records" [ngClass]="{ hide: isLoading }">
+    {{ 'NOT RECORD FOUND' | translate }}
+  </div>
+</div>
+
+<swal #exportConfirmSwal title="{{ 'Export Title' | translate }}" [showConfirmButton]="false">
+  <div *swalPartial class="">
+    <div class="">{{ 'Export Text1' | translate }}</div>
+    <div class="">{{ 'Export Text2' | translate }}</div>
+    <div class="">{{ 'Export Text3' | translate }}</div>
+    <div class="">{{ 'Export Text4' | translate }}</div>
+    <div class="">
+      <mat-form-field color="accent" class="full-wid">
+        <input matInput [(ngModel)]="exportName" placeholder="{{ 'ExportName' | translate }}" />
+      </mat-form-field>
+    </div>
+    <button mat-raised-button color="primary" (click)="onDataExport()">
+      {{ 'OK' | translate }}
+    </button>
+  </div>
+</swal>

@@ -1,0 +1,728 @@
+<ms-filter-breadcrumb
+  [filterBreadcrumbData]="filterBreadcrumbData"
+  (removeFilterTrigger)="removeFilterBreadcrumb($event)"
+></ms-filter-breadcrumb>
+<div class="top-space">
+  <div class="horizontal header-button header-action">
+    <div class="text-right" style="display: inline-block; float: right">
+      <button
+        mat-raised-button
+        color="primary"
+        *ngIf="permission?.masterTableTransactionActionExportPermission()"
+        matTooltip="{{ 'Export' | translate }}"
+        (click)="controllerButton('export')"
+        [disabled]="isWaitingForResponse"
+      >
+        <mat-icon svgIcon="file-excel" class="mat-icon-svgIcon"></mat-icon>
+        {{ 'Export' | translate }}
+      </button>
+      <button
+        mat-raised-button
+        (click)="resetFilter()"
+        color="primary"
+        [disabled]="isWaitingForResponse"
+        matTooltip="{{ 'Reset Filter' | translate }}"
+      >
+        <mat-icon svgIcon="loop" class="mat-icon-svgIcon"></mat-icon>
+        {{ 'RESET' | translate }}
+      </button>
+    </div>
+    <div class="p-grid filter-date">
+      <div class="p-col-3 width-datepick">
+        <mat-form-field class="form-field-above">
+          <input
+            matInput
+            (click)="fromDatePick.open()"
+            readonly
+            class="form-field"
+            [matDatepicker]="fromDatePick"
+            [formControl]="fromDateFilter"
+            placeholder="{{ 'From' | translate }}"
+            [max]="toDateFilter.value"
+            data-cy="table-date-from"
+          />
+          <mat-datepicker-toggle matSuffix [for]="fromDatePick"></mat-datepicker-toggle>
+          <mat-datepicker #fromDatePick></mat-datepicker>
+        </mat-form-field>
+      </div>
+      <div class="p-col-3 width-datepick">
+        <mat-form-field class="form-field-above">
+          <input
+            matInput
+            (click)="toDatePick.open()"
+            readonly
+            class="form-field"
+            [matDatepicker]="toDatePick"
+            [formControl]="toDateFilter"
+            placeholder="{{ 'To' | translate }}"
+            [min]="fromDateFilter.value"
+            data-cy="table-date-to"
+          />
+          <mat-datepicker-toggle matSuffix [for]="toDatePick"></mat-datepicker-toggle>
+          <mat-datepicker #toDatePick></mat-datepicker>
+        </mat-form-field>
+      </div>
+    </div>
+  </div>
+  <div class="horizontal mat-elevation-z8 finance-table">
+    <table mat-table matSort (matSortChange)="sortData($event)" [dataSource]="dataSource" class="mat-elevation-z8">
+      <!-- ROW RESET END -->
+      <!---ROW FILTER START-->
+      <ng-container matColumnDef="selectFilter" sticky>
+        <th mat-header-cell *matHeaderCellDef></th>
+      </ng-container>
+      <ng-container matColumnDef="dateFilter" sticky>
+        <th mat-header-cell *matHeaderCellDef>
+          <mat-form-field>
+            <input
+              matInput
+              (click)="transactionDatePick.open()"
+              [formControl]="dateFilter"
+              readonly
+              class="form-field"
+              [matDatepicker]="transactionDatePick"
+            />
+            <mat-datepicker-toggle matSuffix [for]="transactionDatePick"></mat-datepicker-toggle>
+            <mat-datepicker #transactionDatePick></mat-datepicker>
+          </mat-form-field>
+        </th>
+      </ng-container>
+      <ng-container matColumnDef="timeFilter" sticky>
+        <th mat-header-cell *matHeaderCellDef>
+          <mat-form-field>
+            <input matInput class="form-field" [formControl]="timeFilter" [ngxTimepicker]="filterStartTime" readonly [format]="24" />
+          </mat-form-field>
+          <ngx-material-timepicker #filterStartTime></ngx-material-timepicker>
+        </th>
+      </ng-container>
+      <ng-container matColumnDef="numberFilter" sticky>
+        <th mat-header-cell *matHeaderCellDef>
+          <mat-form-field>
+            <input matInput class="form-field" [formControl]="studentNumberFilter" placeholder="{{ 'search' | translate }}" />
+          </mat-form-field>
+        </th>
+      </ng-container>
+      <ng-container matColumnDef="studentFilter" sticky>
+        <th mat-header-cell *matHeaderCellDef>
+          <mat-form-field class="width-filter" floatLabel="never">
+            <input matInput class="form-field width-filter" [formControl]="studentFilter" placeholder="{{ 'search' | translate }}" />
+          </mat-form-field>
+        </th>
+      </ng-container>
+      <ng-container matColumnDef="programFilter">
+        <th mat-header-cell *matHeaderCellDef>
+          <ng-select
+            class="program-dropdown custom-ngselect-transaction"
+            [appendTo]="'body'"
+            placeholder="{{ 'Filter' | translate }}"
+            [formControl]="programFilter"
+            [clearable]="false"
+            notFoundText="{{ 'NOT RECORD FOUND' | translate }}"
+          >
+            <ng-option value="All">
+              {{ 'All' | translate }}
+            </ng-option>
+            <ng-option *ngFor="let item of listOfProgram" [value]="item?._id">
+              {{ item?.program }}
+            </ng-option>
+          </ng-select>
+        </th>
+      </ng-container>
+
+      <ng-container matColumnDef="typeOfFormationFilter">
+        <th mat-header-cell *matHeaderCellDef>
+          <ng-select
+            [items]="listTypeOfInformation"
+            class="custom-dropdownpanel-master-transaction"
+            bindValue="value"
+            bindLabel="label"
+            [appendTo]="'body'"
+            [multiple]="true"
+            notFoundText="{{ 'NOT RECORD FOUND' | translate }}"
+            placeholder="{{ 'search' | translate }}"
+            [formControl]="typeOfFormationFilter"
+            [clearable]="false"
+            [closeOnSelect]="false"
+            (close)="setTypeOfFormationFilter()"
+          >
+            <ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index">
+              <input id="item-{{ index }}" type="checkbox" [ngModel]="item$.selected" /> {{ item?.label }}
+            </ng-template>
+            <ng-template ng-header-tmp *ngIf="listTypeOfInformation?.length">
+              <mat-checkbox
+                class="all-input"
+                style="cursor: pointer"
+                [checked]="isAllDropdownSelectedTable('typeOfFormation')"
+                [indeterminate]="isSomeDropdownSelectedTable('typeOfFormation')"
+                (change)="selectAllDataTable($event, 'typeOfFormation')"
+              >
+                {{ 'AllM' | translate }}
+              </mat-checkbox>
+            </ng-template>
+          </ng-select>
+        </th>
+      </ng-container>
+
+      <ng-container matColumnDef="legalEntityFilter">
+        <th mat-header-cell *matHeaderCellDef>          
+          <ng-select
+            [items]="listOfLegalEntity"
+            bindValue="legal_entity_name"
+            bindLabel="legal_entity_name"
+            class="custom-dropdownpanel-master-transaction"
+            [appendTo]="'body'"
+            [multiple]="true"
+            notFoundText="{{ 'NOT RECORD FOUND' | translate }}"
+            placeholder="{{ 'search' | translate }}"
+            [formControl]="legalEntityFilter"
+            [clearable]="false"
+            [closeOnSelect]="false"
+            (close)="setLegalEntityFilter()"
+          >
+            <ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index">
+              <input id="item-{{ index }}" type="checkbox" [ngModel]="item$.selected" /> {{ item?.legal_entity_name | translate }}
+            </ng-template>
+            <ng-template ng-header-tmp *ngIf="listOfLegalEntity?.length">
+              <mat-checkbox
+                class="all-input"
+                style="cursor: pointer"
+                [checked]="isAllDropdownSelectedTable('legalEntity')"
+                [indeterminate]="isSomeDropdownSelectedTable('legalEntity')"
+                (change)="selectAllDataTable($event, 'legalEntity')"
+              >
+                {{ 'AllM' | translate }}
+              </mat-checkbox>
+            </ng-template>
+          </ng-select>
+        </th>
+      </ng-container>
+      <ng-container matColumnDef="payerFilter">
+        <th mat-header-cell *matHeaderCellDef>
+          <mat-form-field class="width-filter" floatLabel="never">
+            <input matInput class="form-field width-filter" [formControl]="payerFilter" placeholder="{{ 'search' | translate }}" />
+          </mat-form-field>
+        </th>
+      </ng-container>
+      <ng-container matColumnDef="sourceFilter">
+        <th mat-header-cell *matHeaderCellDef>
+          <ng-select
+            class="program-dropdown custom-ngselect-transaction"
+            [appendTo]="'body'"
+            placeholder="{{ 'Filter' | translate }}"
+            [formControl]="sourceFilter"
+            [clearable]="false"
+            notFoundText="{{ 'NOT RECORD FOUND' | translate }}"
+          >
+            <ng-option value="All">
+              {{ 'All' | translate }}
+            </ng-option>
+            <ng-option *ngFor="let item of listOfSource" [value]="item?.value">
+              {{ 'master_transaction.' + item?.label | translate }}
+            </ng-option>
+          </ng-select>
+        </th>
+      </ng-container>
+      <ng-container matColumnDef="operationNameFilter">
+        <th mat-header-cell *matHeaderCellDef>
+          <ng-select
+            class="program-dropdown custom-ngselect-transaction"
+            [appendTo]="'body'"
+            placeholder="{{ 'Filter' | translate }}"
+            [formControl]="operationNameFilter"
+            [clearable]="false"
+            notFoundText="{{ 'NOT RECORD FOUND' | translate }}"
+          >
+            <ng-option value="All">
+              {{ 'All' | translate }}
+            </ng-option>
+            <ng-option *ngFor="let item of listOfOperationName" [value]="item">
+              {{ displayOperationName('filter',item) }}
+            </ng-option>
+          </ng-select>
+        </th>
+      </ng-container>
+      <ng-container matColumnDef="natureFilter">
+        <th mat-header-cell *matHeaderCellDef>
+          <ng-select
+            class="program-dropdown custom-ngselect-transaction"
+            [appendTo]="'body'"
+            placeholder="{{ 'Filter' | translate }}"
+            [formControl]="natureFilter"
+            [clearable]="false"
+            notFoundText="{{ 'NOT RECORD FOUND' | translate }}"
+          >
+            <ng-option value="All">
+              {{ 'All' | translate }}
+            </ng-option>
+            <ng-option *ngFor="let item of listOfNature" [value]="item?.value">
+              {{ 'master_transaction.' + item?.label | translate }}
+            </ng-option>
+          </ng-select>
+        </th>
+      </ng-container>
+      <ng-container matColumnDef="fluxFilter">
+        <th mat-header-cell *matHeaderCellDef>
+          <ng-select
+            class="program-dropdown custom-ngselect-transaction"
+            [appendTo]="'body'"
+            placeholder="{{ 'Filter' | translate }}"
+            [formControl]="fluxFilter"
+            [clearable]="false"
+            notFoundText="{{ 'NOT RECORD FOUND' | translate }}"
+          >
+            <ng-option value="All">
+              {{ 'All' | translate }}
+            </ng-option>
+            <ng-option *ngFor="let item of listOfFlux" [value]="item?.value">
+              {{ 'master_transaction.' + item?.label | translate }}
+            </ng-option>
+          </ng-select>
+        </th>
+      </ng-container>
+      <ng-container matColumnDef="statusFilter">
+        <th mat-header-cell *matHeaderCellDef>
+          <ng-select
+            class="program-dropdown custom-ngselect-transaction"
+            [appendTo]="'body'"
+            placeholder="{{ 'Filter' | translate }}"
+            [formControl]="statusFilter"
+            [clearable]="false"
+            notFoundText="{{ 'NOT RECORD FOUND' | translate }}"
+          >
+            <ng-option value="All">
+              {{ 'All' | translate }}
+            </ng-option>
+            <ng-option *ngFor="let item of listOfStatus" [value]="item?.value">
+              {{ 'master_transaction.' + item?.label | translate }}
+            </ng-option>
+          </ng-select>
+        </th>
+      </ng-container>
+      <ng-container matColumnDef="debitFilter">
+        <th mat-header-cell *matHeaderCellDef></th>
+      </ng-container>
+      <ng-container matColumnDef="creditFilter">
+        <th mat-header-cell *matHeaderCellDef></th>
+      </ng-container>
+      <ng-container matColumnDef="actorFilter">
+        <th mat-header-cell *matHeaderCellDef>
+          <mat-form-field class="width-filter" floatLabel="never">
+            <input matInput class="form-field width-filter" [formControl]="actorFilter" placeholder="{{ 'search' | translate }}" />
+          </mat-form-field>
+        </th>
+      </ng-container>
+      <ng-container matColumnDef="actionFilter" stickyEnd>
+        <th mat-header-cell *matHeaderCellDef></th>
+      </ng-container>
+      <!--ROW FILTER END-->
+      <!-- ROW HEADER AND CONTENT START -->
+      <ng-container matColumnDef="select" class="mat-column-select" sticky>
+        <th mat-header-cell *matHeaderCellDef class="text-center">
+          <mat-checkbox
+            (change)="$event ? masterToggle() : null"
+            (change)="showOptions('all', '')"
+            [checked]="(selection.hasValue() && isAllSelected()) || isCheckedAll"
+            [indeterminate]="selection.hasValue() && !isAllSelected()"
+            [aria-label]="checkboxLabel()"
+          >
+          </mat-checkbox>
+        </th>
+        <td mat-cell *matCellDef="let row" class="text-center">
+          <mat-checkbox
+            (click)="$event.stopPropagation()"
+            (change)="$event ? selection.toggle(row._id) : null"
+            [checked]="selection.isSelected(row._id) || (isCheckedAll && !dataUnselect?.includes(row?._id))"
+            (change)="showOptions('one', row)"
+            [aria-label]="checkboxLabel(row)"
+          >
+          </mat-checkbox>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="date" sticky>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header="date" matTooltip="{{ 'master_transaction.Date' | translate }}">
+          <h5>{{ 'Date' | translate }}</h5>
+        </th>
+        <td class="text-left" mat-cell *matCellDef="let element" matTooltip="{{ parseDateToLocal(element?.date_action) }}">
+          {{ parseDateToLocal(element?.date_action) }}
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="time" sticky>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header="time" matTooltip="{{ 'master_transaction.Time' | translate }}">
+          <h5>{{ 'Time' | translate }}</h5>
+        </th>
+        <td class="text-left" mat-cell *matCellDef="let element" matTooltip="{{ parseTimeToLocal(element?.date_action) }}">
+          {{ parseTimeToLocal(element?.date_action) }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="number" sticky>
+        <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'master_transaction.Student Number' | translate }}" matTooltipPosition="above">
+          <h5>
+            {{ 'master_transaction.Student Number' | translate }}
+          </h5>
+        </th>
+        <td mat-cell *matCellDef="let element" matTooltip="{{ element?.candidate_id?.candidate_unique_number }}">
+          {{ element?.candidate_id?.candidate_unique_number }}
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="studentName" sticky>
+        <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'master_transaction.Student Name' | translate }}">
+          <h5>{{ 'master_transaction.Student Name' | translate }}</h5>
+        </th>
+        <td
+          class="text-left"
+          mat-cell
+          *matCellDef="let element"
+          matTooltip="{{ element?.candidate_id?.last_name | uppercase }} {{ element?.candidate_id?.first_name }} {{
+            element?.candidate_id?.civility && element?.candidate_id?.civility === 'neutral'
+              ? ''
+              : (element?.candidate_id?.civility | translate)
+          }}"
+        >
+          <ng-container *ngIf="element?.candidate_id">
+            {{ element?.candidate_id?.last_name | uppercase }} {{ element?.candidate_id?.first_name }}
+            {{
+              element?.candidate_id?.civility && element?.candidate_id?.civility === 'neutral'
+                ? ''
+                : (element?.candidate_id?.civility | translate)
+            }}
+          </ng-container>
+          <ng-container *ngIf="!element?.candidate_id"> - </ng-container>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="program">
+        <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'master_transaction.Program' | translate }}">
+          <h5>{{ 'master_transaction.Program' | translate }}</h5>
+        </th>
+        <td
+          class="text-left"
+          mat-cell
+          *matCellDef="let element"
+          matTooltip="{{ element?.program_id?.scholar_season_id.scholar_season }} {{ element?.program_id?.program }}"
+        >
+          {{ element?.program_id?.scholar_season_id.scholar_season }} {{ element?.program_id?.program }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="typeOfFormation">
+        <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'READMISSION.Type of formation' | translate }}">
+          <h5 mat-sort-header="student_type">
+            <img class="img-responsive engagement-level-icon" [src]="shieldAccountIcon" />
+          </h5>
+        </th>
+        <td 
+          class="text-left" 
+          mat-cell *matCellDef="let element" 
+          matTooltip="{{ element?.candidate_id?.type_of_formation_id?.type_of_formation ? (('type_formation.' + element?.candidate_id?.type_of_formation_id?.type_of_formation) | translate) : '' }}"
+        >
+          <span *ngIf="element?.candidate_id?.type_of_formation_id?.type_of_formation">{{ ('type_formation.' + element?.candidate_id?.type_of_formation_id?.type_of_formation) | translate }}</span>
+          <span *ngIf="!element?.candidate_id?.type_of_formation_id?.type_of_formation">-</span>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="legalEntityName">
+        <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'master_transaction.Legal Entity' | translate }}">
+          <h5>{{ 'Legal Entity' | translate }}</h5>
+        </th>
+        <td class="text-left" mat-cell *matCellDef="let element" matTooltip="{{ element?.legal_entity_id?.legal_entity_name }}">
+          {{ element?.legal_entity_id?.legal_entity_name }}
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="payer">
+        <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'master_transaction.Payer' | translate }}">
+          <h5>{{ 'master_transaction.Payer' | translate }}</h5>
+        </th>
+        <td class="text-left" mat-cell *matCellDef="let element">
+          <ng-container>
+            <ng-container
+              *ngIf="
+                element?.operation_name === 'scholarship_fee' ||
+                element?.operation_name === 'additional_cost' ||
+                element?.operation_name === 'modality_fee' ||
+                element?.operation_name === 'cash_transfer' ||
+                element?.operation_name === 'avoir_scholarship_fee' ||
+                element?.operation_name === 'avoir_additional_cost' ||
+                element?.operation_name === 'avoir_modality_fee' ||
+                element?.transaction_type === 'billing_manual' ||
+                element?.flux === 'billing'
+              "
+            >
+              <div style="text-align: center">-</div>
+            </ng-container>
+            <ng-container
+              *ngIf="
+                (element?.flux !== 'billing' &&
+                  element?.transaction_type !== 'billing_manual' &&
+                  element?.operation_name !== 'scholarship_fee' &&
+                  element?.operation_name !== 'additional_cost' &&
+                  element?.operation_name !== 'modality_fee' &&
+                  element?.operation_name !== 'avoir_scholarship_fee' &&
+                  element?.operation_name !== 'avoir_additional_cost' &&
+                  element?.operation_name !== 'avoir_modality_fee' &&
+                  element?.operation_name !== 'cash_transfer') ||
+                (element?.nature?.toLowerCase() === 'avoir' && element?.is_manual_action && element?.operation_name === 'avoir_of_term')
+              "
+            >
+              <span
+                *ngIf="!element?.billing_id?.is_financial_support && !element?.finance_organization_id"
+                style="padding-left: 5px"
+                matTooltip="{{ element?.candidate_id?.first_name + ' ' + (element?.candidate_id?.last_name | uppercase) }}"
+              >
+                {{ element?.candidate_id?.first_name + ' ' + (element?.candidate_id?.last_name | uppercase) }}
+              </span>
+              <span
+                *ngIf="element?.billing_id?.is_financial_support && !element?.finance_organization_id"
+                style="padding-left: 5px"
+                matTooltip="{{
+                  element?.billing_id?.financial_support_info?.name +
+                    ' ' +
+                    (element?.billing_id?.financial_support_info?.family_name | uppercase)
+                }}"
+              >
+                {{
+                  element?.billing_id?.financial_support_info?.name +
+                    ' ' +
+                    (element?.billing_id?.financial_support_info?.family_name | uppercase)
+                }}
+              </span>
+              <span
+                *ngIf="
+                  (element?.billing_id?.is_financial_support || !element?.billing_id?.is_financial_support) &&
+                  element?.finance_organization_id?.company_branch_id
+                "
+                style="padding-left: 5px"
+                matTooltip="{{ element?.finance_organization_id?.company_branch_id?.company_name }}"
+              >
+                {{ element?.finance_organization_id?.company_branch_id?.company_name }}
+              </span>
+              <span
+                *ngIf="element?.finance_organization_id?.organization_id"
+                style="padding-left: 5px"
+                [matTooltip]="element?.finance_organization_id?.organization_id?.name"
+              >
+                {{ element?.finance_organization_id?.organization_id?.name }}
+              </span>
+            </ng-container>
+          </ng-container>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="source">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header="transaction_type" matTooltip="{{ 'master_transaction.Source' | translate }}">
+          <h5>{{ 'master_transaction.Source' | translate }}</h5>
+        </th>
+        <td class="text-left" mat-cell *matCellDef="let element">
+          <span
+            *ngIf="isAvoirOrDiscountOperationName(element?.operation_name, transaction_type)"
+            matTooltip="{{ 'master_transaction.avoir' | translate }}"
+          >
+            {{ 'master_transaction.avoir' | translate }}
+          </span>
+          <span
+            *ngIf="!isAvoirOrDiscountOperationName(element?.operation_name, transaction_type)"
+            matTooltip="{{ displayTransactionType(element?.transaction_type) }}"
+          >
+            {{ displayTransactionType(element?.transaction_type) }}
+          </span>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="operationName">
+        <th
+          mat-header-cell
+          *matHeaderCellDef
+          mat-sort-header="operation_name"
+          matTooltip="{{ 'master_transaction.Operation Name' | translate }}"
+        >
+          <h5>{{ 'master_transaction.Operation Name' | translate }}</h5>
+        </th>
+        <td class="text-left" mat-cell *matCellDef="let element">
+          <span
+            *ngIf="element?.nature !== 'cancel' && element?.operation_name === 'payment_of_term'"
+            matTooltip="{{ 'OPERATION_NAME.' + element?.operation_name | translate }}"
+          >
+            {{ 'OPERATION_NAME.' + element?.operation_name | translate }}
+          </span>
+          <span
+            *ngIf="
+              (element?.operation_name === 'chargeback_of_term' ||
+                element?.operation_name === 'billing_of_term' ||
+                element?.operation_name === 'avoir_of_term') &&
+              element?.nature !== 'cancel' &&
+              element?.operation_name !== 'payment_of_term'
+            "
+            matTooltip="{{ 'OPERATION_NAME.' + element?.operation_name | translate }} {{ parseTermIndexToNumber(element?.term_index) }}"
+          >
+            {{ 'OPERATION_NAME.' + element?.operation_name | translate }} {{ parseTermIndexToNumber(element?.term_index) }}
+          </span>
+          <span
+            *ngIf="element?.operation_name !== 'chargeback_of_term' && element?.nature === 'cancel'"
+            matTooltip="{{ 'OPERATION_NAME.Cancel payment of term' | translate }} {{ parseTermIndexToNumber(element?.term_index) }}"
+          >
+            {{ 'OPERATION_NAME.Cancel payment of term' | translate }} {{ parseTermIndexToNumber(element?.term_index) }}
+          </span>
+          <span
+            *ngIf="
+              element?.operation_name !== 'payment_of_term' &&
+              element?.operation_name !== 'chargeback_of_term' &&
+              element?.operation_name !== 'billing_of_term' &&
+              element?.operation_name !== 'avoir_of_term'
+            "
+            [matTooltip]="
+              displayOperationName(
+                'non-filter',
+                element?.operation_name,
+                element?.candidate_id?.type_of_formation_id?.type_of_information,
+                element?.term_index
+              )
+            "
+          >
+          {{ displayOperationName('non-filter', element?.operation_name, element?.candidate_id?.type_of_formation_id?.type_of_information, element?.term_index) }}
+          </span>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="nature">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header="nature" matTooltip="{{ 'master_transaction.Nature' | translate }}">
+          <h5>{{ 'master_transaction.Nature' | translate }}</h5>
+        </th>
+        <td class="text-left" mat-cell *matCellDef="let element" matTooltip="{{ 'nature_type.' + element?.nature | translate }}">
+          {{ 'nature_type.' + element?.nature | translate }}
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="flux">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header="flux" matTooltip="{{ 'master_transaction.Flux' | translate }}">
+          <h5>{{ 'master_transaction.Flux' | translate }}</h5>
+        </th>
+        <td class="text-left" mat-cell *matCellDef="let element" matTooltip="{{ element?.flux | translate }}">
+          {{ element?.flux | translate }}
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header="latest_status" matTooltip="{{ 'Status' | translate }}">
+          <h5>{{ 'Status' | translate }}</h5>
+        </th>
+        <td
+          class="td-center"
+          mat-cell
+          *matCellDef="let element"
+          matTooltip="{{ element?.transaction_id?.latest_status | lowercase | translate }}"
+        >
+          <span
+            *ngIf="
+              element?.transaction_id?.latest_status.toLowerCase() === 'authorised' ||
+              element?.transaction_id?.latest_status.toLowerCase() === 'settled'
+            "
+            style="margin-left: 5px"
+            class="tags-green"
+            >{{ element?.transaction_id?.latest_status | lowercase | translate }}</span
+          >
+          <span *ngIf="element?.transaction_id?.latest_status.toLowerCase() === 'refused'" style="margin-left: 5px" class="tags-red">{{
+            element?.transaction_id?.latest_status | lowercase | translate
+          }}</span>
+          <span *ngIf="element?.transaction_id?.latest_status.toLowerCase() === 'chargeback'" style="margin-left: 5px" class="tags-red">{{
+            element?.transaction_id?.latest_status | lowercase | translate
+          }}</span>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="debit">
+        <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'master_transaction.Debit' | translate }}">
+          <h5>{{ 'master_transaction.Debit' | translate }}</h5>
+        </th>
+        <td class="text-left" mat-cell *matCellDef="let element" matTooltip="{{ formatCurrency(element?.debit) }}">
+          {{ formatCurrency(element?.debit) }}
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="credit">
+        <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'master_transaction.Credit' | translate }}">
+          <h5>{{ 'master_transaction.Credit' | translate }}</h5>
+        </th>
+        <td class="text-left" mat-cell *matCellDef="let element" matTooltip="{{ formatCurrency(element?.credit) }}">
+          {{ formatCurrency(element?.credit) }}
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="actor">
+        <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'master_transaction.Actor' | translate }}">
+          <h5>{{ 'master_transaction.Actor' | translate }}</h5>
+        </th>
+        <td
+          class="text-left"
+          mat-cell
+          *matCellDef="let element"
+          matTooltip="{{ element?.user_id?.last_name | uppercase }} {{ element?.user_id?.first_name }} {{
+            element?.user_id?.civility && element?.user_id?.civility === 'neutral' ? '' : (element?.user_id?.civility | translate)
+          }}"
+        >
+          <ng-container *ngIf="element?.user_id">
+            {{ element?.user_id?.last_name | uppercase }} {{ element?.user_id?.first_name }}
+            {{ element?.user_id?.civility && element?.user_id?.civility === 'neutral' ? '' : (element?.user_id?.civility | translate) }}
+          </ng-container>
+          <ng-container *ngIf="!element?.user_id"> - </ng-container>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="action" stickyEnd="">
+        <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'Action' | translate }}">
+          <h5>{{ 'Action' | translate }}</h5>
+        </th>
+        <td mat-cell *matCellDef="let element">
+          <button
+            mat-icon-button
+            class="margin-right-button"
+            *ngIf="permission?.masterTableTransactionActionViewStudentCardPermission()"
+            (click)="viewCandidateInfo(element?.candidate_id?._id, 'Student', 'Finance')"
+            matTooltip="{{ 'View Student Card' | translate }}"
+            matTooltipPosition="above"
+          >
+            <mat-icon svgIcon="eye"></mat-icon>
+          </button>
+          <button
+            mat-icon-button
+            class="margin-right-button"
+            *ngIf="permission?.masterTableTransactionActionViewTransactionPermission() && isDisplayButtonEuro(element)"
+            (click)="onOpenTransaction(element)"
+            matTooltip="{{ 'View tansaction' | translate }}"
+            matTooltipPosition="above"
+          >
+            <mat-icon>euro</mat-icon>
+          </button>
+
+          <button
+            mat-icon-button
+            class="margin-right-button"
+            *ngIf="permission?.masterTableTransactionActionViewDetailPermission() && isDisplayButtonNote(element)"
+            (click)="openDetailTransactionMasterDialog(element)"
+            matTooltip="{{ 'Note' | translate }}"
+            matTooltipPosition="above"
+          >
+            <mat-icon svgIcon="note-outline"></mat-icon>
+          </button>
+        </td>
+      </ng-container>
+      <!-- ROW HEADER AND CONTENT END -->
+      <ng-container matColumnDef="loading">
+        <th mat-header-cell *matHeaderCellDef colspan="100%" class="text-center">
+          <div class="center-spinner">
+            <mat-spinner color="accent"></mat-spinner>
+          </div>
+        </th>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-header-row *matHeaderRowDef="filterColumns"></tr>
+      <tr mat-header-row *matHeaderRowDef="['loading']" [hidden]="!isWaitingForResponse"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns" [hidden]="isWaitingForResponse"></tr>
+    </table>
+  </div>
+  <div *ngIf="noData | async" class="no-records" data-cy="no-data">
+    {{ 'No record for Transaction Report' | translate }}
+  </div>
+  <div [ngClass]="{ hide: noData | async }">
+    <mat-paginator
+      [ngClass]="{ 'hide-pagination-buttons': dataCount <= 10 }"
+      [length]="dataCount"
+      [hidePageSize]="true"
+      [pageSize]="[10]"
+      showFirstLastButtons
+    ></mat-paginator>
+  </div>
+</div>
+<div *ngIf="isLoading" class="inner-loading-indicator">
+  <mat-spinner color="accent" [diameter]="100" data-cy="page-spinner"></mat-spinner>
+</div>

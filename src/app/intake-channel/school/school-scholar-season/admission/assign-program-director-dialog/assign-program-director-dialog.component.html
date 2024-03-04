@@ -1,0 +1,80 @@
+<form [formGroup]="assignProgramDirectorForm">
+  <div class="dialog-border">
+    <div class="dialogTitleWrapper" cdkDrag cdkDragRootElement=".cdk-overlay-pane" cdkDragHandle>
+      <div class="p-grid">
+        <div class="p-col-10 no-padding">
+          <h3 class="dialogTitle">{{'INTAKE_CHANNEL.Assign program director' | translate}}</h3>
+        </div>
+        <div class="w-65 no-padding">
+          <button mat-icon-button class="close-icon float-right" (click)="closeDialog()" tabindex="-1">
+            <mat-icon>close</mat-icon>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div mat-dialog-content class="mat-dialog-content dialog-body" style="overflow: hidden !important">
+    <p>{{'INTAKE_CHANNEL.Please select a program director to assign to the selected program' | translate }}</p>
+    <div class="p-grid">
+      <div class="p-col-12">
+        <!-- Program director -->
+        <ng-select
+          class="mrgn-btn"
+          [appendTo]="'body'"
+          [multiple]="false"
+          [hideSelected]="true"
+          placeholder="{{ 'INTAKE_CHANNEL.Program Director' | translate }}*"
+          clearAllText="Clear"
+          notFoundText="{{ 'NOT RECORD FOUND' | translate }}"
+          formControlName="programDirector"
+          [searchable]="!isWaitingForResponse"
+        >
+          <ng-option *ngFor="let item of collectAllUsers" [value]="item?._id" (click)="selectProgramDirector(item?._id)">
+            {{
+              (item?.last_name | uppercase) +
+                ' ' +
+                item?.first_name +
+                ' ' +
+                (item?.civility && item?.civility === 'neutral' ? '' : (item?.civility | translate))
+            }}
+          </ng-option>
+        </ng-select>
+        <mat-error *ngIf="assignProgramDirectorForm.get('programDirector').hasError('required') && assignProgramDirectorForm.get('programDirector').touched">
+          {{ 'This field is required' | translate }}
+        </mat-error>
+        <!-- <mat-form-field appearance="legacy">
+          <mat-label>{{'INTAKE_CHANNEL.Program Director' | translate}}</mat-label>
+          <mat-select formControlName="programDirector" >
+            <ng-container *ngIf="collectAllUsers.length > 0">
+              <mat-option *ngFor="let item of collectAllUsers" [value]="item?._id" (click)="selectProgramDirector(item?._id)">
+                {{
+                  (item?.last_name | uppercase) +
+                    ' ' +
+                    item?.first_name +
+                    ' ' +
+                    (item?.civility && item?.civility === 'neutral' ? '' : (item?.civility | translate))
+                }}
+              </mat-option>
+            </ng-container>
+            <ng-container *ngIf="collectAllUsers.length <= 0">
+              <mat-option *ngIf="collectAllUsers.length <= 0" disabled>{{ 'NOT RECORD FOUND' | translate }}</mat-option>
+            </ng-container>
+          </mat-select>
+          <mat-error *ngIf="assignProgramDirectorForm.get('programDirector').hasError('required') && assignProgramDirectorForm.get('programDirector').touched">
+            {{ 'This field is required' | translate }}
+          </mat-error>
+        </mat-form-field> -->
+      </div>
+    </div>
+    </div>
+  <div mat-dialog-actions class="justify-content-end mr-10">
+    <button mat-button mat-raised-button color="warn" type="button" (click)="closeDialog()">{{ 'CANCEL' | translate }}</button>
+    <button mat-button mat-raised-button color="primary" class="mr-0" type="submit" (click)="submit()">
+      {{ 'Validate' | translate }}
+    </button>
+  </div>
+</form>
+
+<div *ngIf="isWaitingForResponse" class="loading-indicator">
+  <mat-progress-spinner mode="indeterminate" color="accent"></mat-progress-spinner>
+</div>

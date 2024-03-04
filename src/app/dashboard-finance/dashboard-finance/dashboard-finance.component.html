@@ -1,0 +1,244 @@
+<div class="p-grid" *ngIf="isWaitingForResponse" class="p-col-12" style="text-align: center !important; display: contents">
+  <div class="center-spinner spinner-wrapper">
+    <mat-spinner color="accent"></mat-spinner>
+  </div>
+</div>
+<div *ngIf="!isWaitingForResponse">
+  <div class="language-dropdown-wrap">
+    <!-- <div class="btn-mentor">
+      <mat-form-field floatLabel="never">
+        <mat-label>{{ 'CARDDETAIL.Scholar Season' | translate }}</mat-label>
+        <mat-select [formControl]="scholarSelected">
+          <mat-option (click)="getCashInGeneralDashboardData()" class="form-field" [value]="" >{{ 'AllS' | translate }}</mat-option>
+          <mat-option (click)="getCashInGeneralDashboardData()" class="form-field" [value]="sch?.scholar_season" *ngFor="let sch of scholars">
+            {{ sch?.scholar_season }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div> -->
+    <div class="p-col-12 no-padding" style="padding-right: 15px !important; padding-top: 6px !important; padding-left: 15px !important">
+      {{ 'Scholar Season' | translate }}: 20-21
+    </div>
+    <!-- <div class="btn-mentor">
+      <mat-form-field floatLabel="never" style="width: 88%">
+        <input
+          matInput
+          class="form-field"
+          [formControl]="devMember"
+          [matAutocomplete]="mentor"
+          placeholder="{{ 'CARDDETAIL.Scholar Season' | translate }}"
+          (keyup)="filterMember()"
+        />
+        <mat-autocomplete #mentor="matAutocomplete">
+          <mat-option value="" (click)="mentorSelected('')" *ngIf="!isMemberAdmission">{{ 'AllS' | translate }}</mat-option>
+          <mat-option *ngFor="let mentor of scholars" (click)="mentorSelected(mentor?.scholar_season)" [value]="mentor?.scholar_season">
+            <div style="display: contents">
+              {{ mentor?.scholar_season ? mentor?.scholar_season : '' }}
+            </div>
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div> -->
+  </div>
+
+  <div class="p-grid no-margin" style="margin-bottom: 35px !important">
+    <div
+      class="p-col-12 no-padding"
+      style="margin-left: 15px"
+      *ngIf="!isMemberAdmission || (isMemberAdmission && schoolData && schoolData.length > 1)"
+    >
+      <mat-accordion class="example-headers-align" multi>
+        <mat-expansion-panel hideToggle="true" (click)="openAllExpansion()" [expanded]="!firstExpansionClosed">
+          <mat-expansion-panel-header style="height: auto !important">
+            <div>
+              <div class="card-container" style="width: 190px; text-align: center">
+                <mat-card class="card-segment" style="padding: 7px 12px 7px 0px; background: #ffffff">
+                  <div class="p-grid no-margin">
+                    <div class="p-col-fixed no-padding icon-grid first-card">
+                      <label>{{ 'ALL' | translate }}</label>
+                    </div>
+                  </div>
+                </mat-card>
+              </div>
+              <div class="card-container">
+                <mat-card class="card-segment" style="padding: 7px 12px 7px 0px; background: #ffffff; color: #7d7d7d">
+                  <div class="p-grid no-margin segment-title" style="padding-top: 8px; font-size: 11px">
+                    <div>{{ 'Billing' | translate }}</div>
+                  </div>
+                  <div class="p-grid no-margin" style="width: 100%">
+                    <div class="segment-score">{{ formatCurrency(allData?.billing) }}</div>
+                  </div>
+                </mat-card>
+              </div>
+            </div>
+            <div>
+              <div class="card-container">
+                <mat-card class="card-segment" style="padding: 7px 12px 7px 0px; background: #16d46d">
+                  <div class="p-grid no-margin segment-title" style="padding-top: 8px; font-size: 11px">
+                    <div>{{ 'Already Paid' | translate }}</div>
+                  </div>
+                  <div class="p-grid no-margin" style="width: 100%">
+                    <div class="segment-score">{{ formatCurrency(allData?.already_paid) }}</div>
+                  </div>
+                </mat-card>
+              </div>
+              <div class="card-container">
+                <mat-card class="card-segment" style="padding: 7px 12px 7px 0px; background: #f7b149">
+                  <div class="p-grid no-margin segment-title" style="padding-top: 8px; font-size: 11px">
+                    <div>{{ 'Payment Due' | translate }}</div>
+                  </div>
+                  <div class="p-grid no-margin" style="width: 100%">
+                    <div class="segment-score">{{ formatCurrency(allData?.payment_due) }}</div>
+                  </div>
+                </mat-card>
+              </div>
+              <div class="card-container">
+                <mat-card class="card-segment" style="padding: 7px 12px 7px 0px; background: #e64f4f">
+                  <div class="p-grid no-margin segment-title" style="padding-top: 3px; font-size: 11px">
+                    <div>{{ 'Total Terms Overdue' | translate }}</div>
+                  </div>
+                  <div class="p-grid no-margin" style="width: 100%">
+                    <div class="segment-score">{{ formatCurrency(allData?.over_due) }}</div>
+                  </div>
+                </mat-card>
+              </div>
+              <div class="card-container">
+                <mat-card class="card-segment" style="padding: 7px 12px 7px 0px; background: #a736f2">
+                  <div class="p-grid no-margin segment-title" style="padding-top: 6px">
+                    <div>{{ 'Total Terms Overdue NO SCHEDULE' | translate }}</div>
+                  </div>
+                  <div class="p-grid no-margin" style="width: 100%">
+                    <div class="segment-score">{{ formatCurrency(allData?.over_due_not_scheduled) }}</div>
+                  </div>
+                </mat-card>
+              </div>
+              <div class="card-container">
+                <mat-card class="card-segment" style="padding: 7px 12px 7px 0px; background: #b7b7b7">
+                  <div class="p-grid no-margin segment-title" style="padding-top: 8px; font-size: 11px">
+                    <div>{{ 'Terms to come' | translate }}</div>
+                  </div>
+                  <div class="p-grid no-margin" style="width: 100%">
+                    <div class="segment-score">{{ formatCurrency(allData?.terms_to_come) }}</div>
+                  </div>
+                </mat-card>
+              </div>
+            </div>
+          </mat-expansion-panel-header>
+          <!-- <div>
+            <ms-dashboard-general
+              [dataMemberSelected]="dataMemberSelected"
+              [schoolData]="schoolData"
+              [dataMapping]="dataGeneral"
+              [shortName]="short_name"
+            ></ms-dashboard-general>
+          </div> -->
+        </mat-expansion-panel>
+      </mat-accordion>
+    </div>
+    <div class="p-col-12 no-padding" style="margin-left: 15px" *ngFor="let chart of dataPerSchool; let nex = index">
+      <mat-accordion class="example-headers-align" multi>
+        <mat-expansion-panel (click)="openExpansion(nex)" [expanded]="openSubExpansion && indexExpansion === nex" hideToggle="true">
+          <mat-expansion-panel-header style="height: auto !important">
+            <div>
+              <div class="card-container" style="width: 190px; text-align: center">
+                <mat-card class="card-segment" style="padding: 7px 12px 7px 0px; background: #ffffff">
+                  <div class="p-grid no-margin">
+                    <div class="p-col-fixed no-padding icon-grid first-card">
+                      <label>{{ chart?.school_name }}</label>
+                    </div>
+                  </div>
+                </mat-card>
+              </div>
+              <div class="card-container">
+                <mat-card class="card-segment" style="padding: 7px 12px 7px 0px; background: #ffffff; color: #7d7d7d">
+                  <div class="p-grid no-margin segment-title" style="padding-top: 8px; font-size: 11px">
+                    <div>{{ 'Billing' | translate }}</div>
+                  </div>
+                  <div class="p-grid no-margin" style="width: 100%">
+                    <div class="segment-score">{{ formatCurrency(chart?.billing) }}</div>
+                  </div>
+                </mat-card>
+              </div>
+            </div>
+            <div>
+              <div class="card-container">
+                <mat-card class="card-segment" style="padding: 7px 12px 7px 0px; background: #16d46d">
+                  <div class="p-grid no-margin segment-title" style="padding-top: 8px; font-size: 11px">
+                    <div>{{ 'Already Paid' | translate }}</div>
+                  </div>
+                  <div class="p-grid no-margin" style="width: 100%">
+                    <div class="segment-score">{{ formatCurrency(chart?.already_paid) }}</div>
+                  </div>
+                </mat-card>
+              </div>
+              <div class="card-container">
+                <mat-card class="card-segment" style="padding: 7px 12px 7px 0px; background: #f7b149">
+                  <div class="p-grid no-margin segment-title" style="padding-top: 8px; font-size: 11px">
+                    <div>{{ 'Payment Due' | translate }}</div>
+                  </div>
+                  <div class="p-grid no-margin" style="width: 100%">
+                    <div class="segment-score">{{ formatCurrency(chart?.payment_due) }}</div>
+                  </div>
+                </mat-card>
+              </div>
+              <div class="card-container">
+                <mat-card class="card-segment" style="padding: 7px 12px 7px 0px; background: #e64f4f">
+                  <div class="p-grid no-margin segment-title" style="padding-top: 3px; font-size: 11px">
+                    <div>{{ 'Total Terms Overdue' | translate }}</div>
+                  </div>
+                  <div class="p-grid no-margin" style="width: 100%">
+                    <div class="segment-score">{{ formatCurrency(chart?.over_due) }}</div>
+                  </div>
+                </mat-card>
+              </div>
+              <div class="card-container">
+                <mat-card class="card-segment" style="padding: 7px 12px 7px 0px; background: #a736f2">
+                  <div class="p-grid no-margin segment-title" style="padding-top: 6px">
+                    <div>{{ 'Total Terms Overdue NO SCHEDULE' | translate }}</div>
+                  </div>
+                  <div class="p-grid no-margin" style="width: 100%">
+                    <div class="segment-score">{{ formatCurrency(chart?.over_due_not_scheduled) }}</div>
+                  </div>
+                </mat-card>
+              </div>
+              <div class="card-container">
+                <mat-card class="card-segment" style="padding: 7px 12px 7px 0px; background: #b7b7b7">
+                  <div class="p-grid no-margin segment-title" style="padding-top: 8px; font-size: 11px">
+                    <div>{{ 'Terms to come' | translate }}</div>
+                  </div>
+                  <div class="p-grid no-margin" style="width: 100%">
+                    <div class="segment-score">{{ formatCurrency(chart?.terms_to_come) }}</div>
+                  </div>
+                </mat-card>
+              </div>
+            </div>
+          </mat-expansion-panel-header>
+          <!-- <mat-divider></mat-divider> -->
+          <div *ngIf="isMemberAdmission && schoolData && schoolData.length === 1">
+            <ms-dashboard-general
+              [dataMemberSelected]="dataMemberSelected"
+              [schoolData]="schoolData"
+              [dataMapping]="dataGeneral"
+              [shortName]="short_name"
+            ></ms-dashboard-general>
+          </div>
+          <ng-container *ngIf="openSubExpansion && indexExpansion === nex">
+            <div class="p-col-12 no-padding" *ngFor="let chart of schoolData[nex]?.campuses; let nexx = index">
+              <ms-dashboard-detail
+                [schoolData]="schoolData[nex]"
+                [short_name]="short_name"
+                [campusName]="chart?.name"
+                [scholarSelected]="scholarSelected.value"
+              >
+              </ms-dashboard-detail>
+            </div>
+          </ng-container>
+        </mat-expansion-panel>
+      </mat-accordion>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="!isWaitingForResponse" class="p-grid poweredBy">
+  <label>ZettaChart powered by </label> <img [src]="amcharts" class="amcharts" alt="amcharts" />
+</div>

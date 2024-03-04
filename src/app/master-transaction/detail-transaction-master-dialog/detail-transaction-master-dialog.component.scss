@@ -1,0 +1,51 @@
+@import '~assets/scss/theme/admtc.variables';
+@import '~assets/scss/theme/admtc';
+
+.dialogTitle {
+  display: inline-block;
+}
+
+.dialogTitleWrapper {
+  color: black;
+}
+
+.dialog-border {
+  border-bottom: 1px solid black;
+  margin-bottom: 15px;
+}
+
+.dialog-title {
+  padding: 0px;
+  margin-right: 25px;
+}
+
+.w-30 {
+  padding-top: 4px !important;
+  margin-right: 7px !important;
+}
+
+.magenta {
+  color: magenta;
+}
+.orange {
+  color: #f49f36;
+}
+.blue {
+  color: #36ebf4 !important;
+}
+.red {
+  color: #ff4040;
+}
+.green {
+  color: #adff2f;
+}
+.purple {
+  color: #ff46f9;
+}
+
+.second-list {
+  display: block;
+  margin-top: 10px;
+  margin-left: 8px;
+  max-width: fit-content;
+}

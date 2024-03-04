@@ -1,0 +1,105 @@
+<div class="container">
+  <div class="p-grid" [formGroup]="templateForm">
+    <div class="p-col-7">
+      <div class="subject-field">
+        <ng-container *ngIf="lang === 'EN'">
+          <div [style.color]="!subjectDataEN && lang === 'EN' ? 'red' : 'white'">{{ 'Subject' | translate }}*</div>
+          <textarea
+            formControlName="subject_en"
+            style="width: 100%"
+            class="color-black"
+            rows="5"
+            [readonly]="templateData?.is_publish && !templateData.is_default_template"
+          ></textarea>
+        </ng-container>
+        <ng-container *ngIf="lang === 'FR'">
+          <div [style.color]="!subjectDataFR && lang === 'FR' ? 'red' : 'white'">{{ 'Subject' | translate }}*</div>
+          <textarea
+            formControlName="subject_fr"
+            style="width: 100%"
+            class="color-black"
+            rows="5"
+            [readonly]="templateData?.is_publish && !templateData.is_default_template"
+          ></textarea>
+        </ng-container>
+      </div>
+      <div class="body-field">
+        <div [style.color]="!bodyData ? 'red' : 'white'">{{ 'Body' | translate }}*</div>
+        <div class="document-editor">
+          <div class="document-editor__toolbar editor-toolbar_{{ Id }}"></div>
+          <div class="document-editor__editable-container">
+            <div class="document-editor__editable editor_{{ Id }}">
+              <p></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="p-col-5">
+      <div class="top-space">
+        <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+          <ng-container matColumnDef="key">
+            <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'Key' | translate }}">
+              <h5>{{ 'Key' | translate }}</h5>
+            </th>
+            <td mat-cell *matCellDef="let element" [matTooltip]="element?.key">
+              {{ element?.key }}
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="description">
+            <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'Description' | translate }}">
+              <h5>{{ 'Description' | translate }}</h5>
+            </th>
+            <td mat-cell *matCellDef="let element" [matTooltip]="element?.description">
+              {{ element?.description }}
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="action">
+            <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'Action' | translate }}">
+              <h5>{{ 'Action' | translate }}</h5>
+            </th>
+            <td mat-cell *matCellDef="let element">
+              <button
+                (click)="onCopyToClipBoard(element)"
+                mat-icon-button
+                class="margin-right-button"
+                matTooltip="{{ 'Copy' | translate }}"
+                matTooltipPosition="above"
+              >
+                <mat-icon>content_copy</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+          <!-- ROW HEADER AND CONTENT END -->
+          <ng-container matColumnDef="loading">
+            <th mat-header-cell *matHeaderCellDef colspan="100%" class="text-center">
+              <div class="center-spinner">
+                <mat-spinner color="accent"></mat-spinner>
+              </div>
+            </th>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-header-row *matHeaderRowDef="['loading']" [hidden]="!isWaitingForResponse"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns" [hidden]="isWaitingForResponse"></tr>
+        </table>
+        <div *ngIf="noData | async" class="no-records">
+          {{ 'ADMISSION.TABLE_SCHOLAR_PERIOD.Scholar period has no record' | translate }}
+        </div>
+        <div [ngClass]="{ hide: noData | async }">
+          <mat-paginator
+            [ngClass]="{ 'hide-pagination-buttons': dataCount <= 10 }"
+            [hidePageSize]="true"
+            [pageSize]="[10]"
+            showFirstLastButtons
+          ></mat-paginator>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="isWaitingForResponse" class="loading-indicator">
+  <mat-progress-spinner mode="indeterminate" color="accent"></mat-progress-spinner>
+</div>

@@ -1,0 +1,107 @@
+<ng-container class="main-candidate-file">
+  <ng-container>
+    <div class="header-filter list-horizontal" fxLayout="row wrap" fxLayoutAlign="start start">
+      <div class="p-col-fixed no-padding" style="width: 180px; float: left; padding-right: 15px !important">
+        <mat-form-field appearance="legacy" style="width: 165px">
+          <mat-label>{{ 'CARDDETAIL.Scholar Season' | translate }}</mat-label>
+          <mat-select (selectionChange)="scholarSelect()" [formControl]="scholarFilter" panelClass="filterPanel custom-matselect-dropdown">
+            <mat-option *ngFor="let scholar of scholars" [value]="scholar._id">{{ scholar.scholar_season }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div class="p-col-fixed no-padding" style="width: 180px; float: left; padding-right: 15px !important">
+        <mat-form-field appearance="legacy" style="width: 165px">
+          <mat-label>{{ 'ADMISSION.TABLE_ADMISSION_CHANNEL.School' | translate }}</mat-label>
+          <mat-select
+            (selectionChange)="getDataCampus()"
+            [formControl]="schoolFilter"
+            multiple
+            panelClass="filterPanel custom-matselect-dropdown"
+          >
+            <mat-option *ngFor="let sch of school" [value]="sch._id">{{ sch.short_name }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div class="p-col-fixed no-padding" style="width: 180px; float: left; padding-right: 15px !important">
+        <mat-form-field appearance="legacy" style="width: 165px">
+          <mat-label>{{ 'ADMISSION.TABLE_ADMISSION_CHANNEL.Campus' | translate }}</mat-label>
+          <mat-select
+            (selectionChange)="getDataLevel()"
+            [formControl]="campusFilter"
+            multiple
+            panelClass="filterPanel custom-matselect-dropdown"
+          >
+            <mat-option *ngFor="let campus of campusList" [value]="campus?._id">{{ campus.name }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div class="p-col-fixed no-padding" style="width: 180px; float: left; padding-right: 15px !important">
+        <mat-form-field appearance="legacy" style="width: 165px">
+          <mat-label>{{ 'ADMISSION.TABLE_ADMISSION_CHANNEL.Level' | translate }}</mat-label>
+          <mat-select
+            (selectionChange)="getDataByLevel()"
+            [formControl]="levelFilter"
+            multiple
+            panelClass="filterPanel custom-matselect-dropdown"
+          >
+            <mat-option *ngFor="let level of levels" [value]="level?._id">{{ level.name }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <mat-form-field style="width: 165px">
+        <input type="text" matInput [placeholder]="'Student Name' | translate" [formControl]="candidateFilter" />
+      </mat-form-field>
+
+      <button
+        mat-raised-button
+        color="primary"
+        (click)="resetCandidateFile()"
+        style="margin-top: 10px; margin-left: 10px"
+        matTooltip="{{ 'Reset Filter' | translate }} "
+      >
+        <mat-icon class="mat-icon-svgIcon" svgIcon="loop">loop</mat-icon>
+        {{ 'Reset' | translate }}
+      </button>
+    </div>
+  </ng-container>
+  <button mat-raised-button color="primary" class="user-list-toggle" (click)="toggleCardList = !toggleCardList">
+    {{ (toggleCardList ? 'Expand' : 'Hide') | translate }}
+  </button>
+  <ng-container>
+    <div class="p-grid" style="padding-top: 10px" [style.height.px]="getAutomaticHeight()" [style.max-height.px]="getAutomaticHeight()">
+      <div class="p-col-4 left-side" [ngClass]="{ 'toggle-card-list': toggleCardList }">
+        <ms-candidate-card-list
+          (selectedCandidateChange)="updatedSelectedCandidate($event)"
+          [candidatesList]="candidatesList"
+          [selectedCandidateId]="currSelectedCandidateId"
+          [isWaitingForResponse]="isWaitingForResponse"
+        ></ms-candidate-card-list>
+        <div class="p-grid display-block" [ngClass]="{ 'hide-paginator': toggleCardList }" style="margin-top: 14px !important">
+          <div class="p-col-12 pad-x-none">
+            <mat-paginator
+              [ngClass]="{ 'hide-pagination-buttons': dataCount <= 6 }"
+              [length]="dataCount"
+              [hidePageSize]="true"
+              [pageSize]="[10]"
+              showFirstLastButtons
+            ></mat-paginator>
+          </div>
+        </div>
+      </div>
+      <div class="p-col right-side" [style.height.px]="getAutomaticHeight()" [style.max-height.px]="getAutomaticHeight()" style="width: 40%">
+        <ms-candidate-card-details
+          [tab]="tab"
+          [subTab]="subTab"
+          [candidateId]="currSelectedCandidateId"
+          [candidateUniqueNumber]="candidateUniqueNumber"
+          (reload)="reload($event)"
+          (loading)="loadingCommentTab($event)"
+          *ngIf="currSelectedCandidateId"
+        ></ms-candidate-card-details>
+      </div>
+    </div>
+  </ng-container>
+</ng-container>
+<div *ngIf="isWaitingForResponse" class="loading-indicator">
+  <mat-progress-spinner mode="indeterminate" color="accent"></mat-progress-spinner>
+</div>

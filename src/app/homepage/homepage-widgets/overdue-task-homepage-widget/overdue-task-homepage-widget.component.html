@@ -1,0 +1,145 @@
+<div *ngIf="tasks.length">
+  <ul *ngFor="let task of tasks; let i = index" class="task-list p-grid" (click)="onOpenTask(task)">
+    <li class="p-col-12">
+      <mat-divider *ngIf="i >= 1" style="padding-bottom: 20px"></mat-divider>
+      <div class="task-container">
+        <div class="left-container">
+          <span
+            *ngIf="task?.type === 'validate_student_admission_process' && task?.description === 'Step validation required'"
+            matTooltip="
+            {{ task?.candidate_id?.last_name | uppercase }} {{ task?.candidate_id?.first_name }} - {{
+              'Step validation required' | translate
+            }} - {{ task?.admission_process_step_name }}"
+            matTooltipPosition="above"
+          >
+            {{ task?.candidate_id?.last_name | uppercase }} {{ task?.candidate_id?.first_name }} -
+            {{ 'Step validation required' | translate }} -
+            {{ task?.admission_process_step_name }}
+          </span>
+          <span
+            *ngIf="
+              (task?.type === 'validate_form_process' &&
+                task?.description === 'Validate Student Admission Process' &&
+                task?.form_process_id?.form_builder_id?.template_type === 'student_admission') ||
+              (task?.type === 'validate_form_process' && task?.form_process_id?.form_builder_id?.template_type === 'student_admission') ||
+              (task?.type === 'validate_form_process' && task?.form_process_id?.form_builder_id?.template_type === 'admission_document')
+            "
+            matTooltip="
+            {{ task?.candidate_id?.last_name | uppercase }} {{ task?.candidate_id?.first_name }} {{
+              task?.candidate_id?.civility ? ' - ' : ''
+            }} {{ 'PENDING_TASK_TYPE.Validate Student Admission Process' | translate }}"
+          >
+            {{ task?.candidate_id?.last_name | uppercase }} {{ task?.candidate_id?.first_name }}
+            {{ task?.candidate_id?.civility ? ' - ' : '' }}
+            {{ 'PENDING_TASK_TYPE.Validate Student Admission Process' | translate }}
+          </span>
+          <span
+            *ngIf="task?.type === 'validate_form_process' && task?.form_process_id?.form_builder_id?.template_type === 'teacher_contract'"
+            matTooltip="{{ task?.form_process_id?.last_name | uppercase }} {{ task?.form_process_id?.first_name }} {{
+              task?.form_process_id?.civility ? ' - ' : ''
+            }} {{ 'Validate Contract Process Step' | translate }}"
+          >
+            {{ task?.form_process_id?.last_name | uppercase }} {{ task?.form_process_id?.first_name }}
+            {{ task?.form_process_id?.civility ? ' - ' : '' }}
+            {{ 'Validate Contract Process Step' | translate }}
+          </span>
+          <span
+            *ngIf="task?.type === 'validate_form_process' && task?.form_process_id?.form_builder_id?.template_type === 'fc_contract'"
+            matTooltip="{{ task?.candidate_id?.last_name | uppercase }} {{ task?.candidate_id?.first_name }} {{
+              task?.candidate_id?.civility ? ' - ' : ''
+            }} {{ 'Validate FC Contract' | translate }}"
+          >
+            {{ task?.candidate_id?.last_name | uppercase }} {{ task?.candidate_id?.first_name }}
+            {{ task?.candidate_id?.civility ? ' - ' : '' }} {{ 'Validate FC Contract' | translate }}
+          </span>
+          <span
+            *ngIf="task?.type === 'validate_form_process' && task?.form_process_id?.form_builder_id?.template_type === 'one_time_form'"
+            matTooltip="{{ task?.candidate_id?.last_name | uppercase }} {{ task?.candidate_id?.first_name }} {{
+              task?.candidate_id?.civility ? ' - ' : ''
+            }} {{ 'Validate One Time Form' | translate }}"
+          >
+            {{ task?.candidate_id?.last_name | uppercase }} {{ task?.candidate_id?.first_name }}
+            {{ task?.candidate_id?.civility ? ' - ' : '' }} {{ 'Validate One Time Form' | translate }}
+          </span>
+          <span
+            *ngIf="task?.description === 'Validate Financement'"
+            matTooltip="
+            {{ task?.candidate_id?.last_name | uppercase }}
+            {{ task?.candidate_id?.first_name }} - {{ task?.description | translate }}"
+            matTooltipPosition="above"
+          >
+            {{ task?.candidate_id?.last_name | uppercase }}
+            {{ task?.candidate_id?.first_name }} - {{ task?.description | translate }}
+          </span>
+          <span
+            *ngIf="task?.type === 'validate_contract_process'"
+            matTooltip="
+            {{ task?.contract_process?.civility === 'neutral' ? '' : (task?.contract_process?.civility | translate) }}
+            {{ task?.contract_process?.first_name }} {{ task?.contract_process?.last_name }}: {{
+              'Validate Contract Process Step' | translate
+            }}"
+            matTooltipPosition="above"
+          >
+            {{ task?.contract_process?.civility === 'neutral' ? '' : (task?.contract_process?.civility | translate) }}
+            {{ task?.contract_process?.first_name }} {{ task?.contract_process?.last_name }}:
+            {{ 'Validate Contract Process Step' | translate }}
+          </span>
+          <span
+            *ngIf="task?.type === 'fc_contract_process'"
+            matTooltip="
+            {{ task?.candidate_id?.last_name | uppercase }} {{ task?.candidate_id?.first_name }} {{ 'Signing the contract' | translate }}"
+            matTooltipPosition="above"
+          >
+            {{ task?.candidate_id?.last_name | uppercase }} {{ task?.candidate_id?.first_name }}
+            {{ 'Signing the contract' | translate }}
+          </span>
+          <span
+            *ngIf="
+              task?.type === 'complete_form_process' &&
+              task?.form_process_id?.form_builder_id?.template_type === 'fc_contract' &&
+              task?.description === 'Complete contract/convention form'
+            "
+            matTooltip="
+            {{ task?.candidate_id?.last_name | uppercase }} {{ task?.candidate_id?.first_name }} - {{
+              'Complete contract/convention form' | translate
+            }}"
+            matTooltipPosition="above"
+          >
+            {{ task?.candidate_id?.last_name | uppercase }} {{ task?.candidate_id?.first_name }} -
+            {{ 'Complete contract/convention form' | translate }}
+          </span>
+          <span
+            *ngIf="
+              task?.type !== 'validate_form_process' &&
+              task?.type !== 'validate_contract_process' &&
+              task?.description !== 'Validate Financement' &&
+              task?.type !== 'validate_student_admission_process'
+            "
+            matTooltip="{{ task?.description | translate }}"
+            matTooltipPosition="above"
+          >
+            {{ task?.description }}
+          </span>
+        </div>
+        <div *ngIf="!task?.description && task?.test?.evaluation_id?.evaluation">
+          <span class="task-name" matTooltip="{{ task?.test?.evaluation_id?.evaluation | translate }}">
+            {{ task?.test?.evaluation_id?.evaluation | translate }}
+          </span>
+        </div>
+        <div class="right-container text-right" style="font-size: 15px">
+          <span class="task-due-date" *ngIf="task?.due_date?.date && getLocalDate(task?.due_date) !== 'Due today'">
+            {{ getLocalDate(task?.due_date) | date: 'dd' }} {{ getLocalDate(task?.due_date) | date: 'MMMM' | translate }}
+          </span>
+          <span class="school">{{ task?.school?.short_name }}</span>
+        </div>
+      </div>
+    </li>
+  </ul>
+</div>
+
+<div *ngIf="!tasks?.length" class="tw-flex tw-flex-col tw-items-center tw-justify-center tw-h-full tw-opacity-75">
+  <mat-icon class="!tw-text-[48px] !tw-h-[48px] !tw-w-[48px] !tw-max-w-[48px] !tw-max-h-[48px]">error_outline</mat-icon>
+  <h4 class="tw-mt-4">
+    {{ 'ERP_072.NO_OVERDUE_TASK' | translate }}
+  </h4>
+</div>

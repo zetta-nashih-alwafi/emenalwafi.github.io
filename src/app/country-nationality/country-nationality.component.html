@@ -1,0 +1,450 @@
+<ms-filter-breadcrumb
+  [filterBreadcrumbData]="filterBreadcrumbData"
+  (removeFilterTrigger)="removeFilterBreadcrumb($event)"
+></ms-filter-breadcrumb>
+<div>
+  <div class="p-grid" class="above-table">
+    <div class="p-col-12 text-right" style="padding-bottom: 0 !important">
+      <div class="button-dummy">
+        <button
+          class="btn-dummy"
+          [disabled]="isWaitingForResponse || isFirstLoad || isLoading"
+          mat-raised-button
+          color="accent"
+          matTooltip="{{ 'Configure Column' | translate }}"
+          matTooltipPosition="above"
+          (click)="openColumnDropdown()"
+          *ngIf="!columnCtrl?.value?.length"
+          style="z-index: 1"
+        >
+          <svg width="24" height="24" viewBox="0 0 24 24" role="presentation">
+            <g fill="currentColor">
+              <path
+                d="M4 18h16.008C20 18 20 6 20 6H3.992C4 6 4 18 4 18zM2 5.994C2 4.893 2.898 4 3.99 4h16.02C21.108 4 22 4.895 22 5.994v12.012A1.997 1.997 0 0120.01 20H3.99A1.994 1.994 0 012 18.006V5.994z"
+              ></path>
+              <path d="M8 6v12h2V6zm6 0v12h2V6z"></path>
+            </g>
+          </svg>
+
+          <mat-icon>keyboard_arrow_down</mat-icon>
+        </button>
+      </div>
+      <mat-form-field appearance="legacy" class="custom-form-field mat-select-button"  [ngClass]="{'height-issue':columnCtrl?.value?.length}">
+        <mat-select [formControl]="columnCtrl" multiple disableOptionCentering #templateColumn (openedChange)="handleClose($event)">
+          <mat-select-trigger>
+            <button
+              [disabled]="isWaitingForResponse || isFirstLoad || isLoading"
+              mat-raised-button
+              color="accent"
+              matTooltip="{{ 'Configure Column' | translate }}"
+              matTooltipPosition="above"
+            >
+              <svg width="24" height="24" viewBox="0 0 24 24" role="presentation">
+                <g fill="currentColor">
+                  <path
+                    d="M4 18h16.008C20 18 20 6 20 6H3.992C4 6 4 18 4 18zM2 5.994C2 4.893 2.898 4 3.99 4h16.02C21.108 4 22 4.895 22 5.994v12.012A1.997 1.997 0 0120.01 20H3.99A1.994 1.994 0 012 18.006V5.994z"
+                  ></path>
+                  <path d="M8 6v12h2V6zm6 0v12h2V6z"></path>
+                </g>
+              </svg>
+
+              <mat-icon>keyboard_arrow_down</mat-icon>
+            </button>
+          </mat-select-trigger>
+          <div class="container-dropdown">
+            <mat-option [disabled]="isWaitingForResponse || isFirstLoad" *ngFor="let col of defaultDisplayedColumns" [value]="col">{{
+              col.name | translate
+            }}</mat-option>
+          </div>
+          <mat-divider></mat-divider>
+          <div class="p-grid">
+            <div class="p-col-8">
+              <span
+                [ngStyle]="{ cursor: isWaitingForResponse || isFirstLoad ? 'auto' : 'pointer' }"
+                (click)="!isWaitingForResponse ? defaultTemplateColumn() : ''"
+                class="restore-to-default"
+              >
+                {{ 'Restore to default' | translate }}
+              </span>
+            </div>
+            <div class="p-col-4 text-right">
+              <small>{{ columnCtrl?.value?.length }} / {{ defaultDisplayedColumns?.length }}</small>
+            </div>
+          </div>
+        </mat-select>
+      </mat-form-field>
+      <button
+        [disabled]="isWaitingForResponse || isFirstLoad || !displayedColumns?.length || isLoading"
+        mat-raised-button
+        color="accent"
+        matTooltip="{{ 'Import' | translate }}"
+        [matMenuTriggerFor]="action"
+      >
+        <mat-icon svgIcon="file-excel" class="mat-icon-svgIcon"></mat-icon>
+        {{ 'Import' | translate }}
+        <mat-icon>expand_more</mat-icon>
+      </button>
+      <mat-menu #action="matMenu">
+        <button
+          (click)="templateForImport()"
+          mat-menu-item
+          matTooltip="{{ 'CONTRACT_MANAGEMENT.Template for Import' | translate }}"
+          class="border-button"
+        >
+          {{ 'CONTRACT_MANAGEMENT.Template for Import' | translate }}
+        </button>
+        <button
+          (click)="csvTypeSelectionUpload()"
+          mat-menu-item
+          matTooltip="{{ 'COUNTRY_NATIONALITY.Import country and nationality' | translate }}"
+        >
+          {{ 'COUNTRY_NATIONALITY.Import country and nationality' | translate }}
+        </button>
+      </mat-menu>
+      <button
+        (click)="resetFilter()"
+        [disabled]="isWaitingForResponse || isFirstLoad || !displayedColumns?.length || isLoading"
+        mat-raised-button
+        color="primary"
+        matTooltip="{{ 'Reset Filter' | translate }}"
+      >
+        <mat-icon svgIcon="loop" class="mat-icon-svgIcon"></mat-icon>
+        {{ 'RESET' | translate }}
+      </button>
+    </div>
+  </div>
+  <div class="custom-message" [ngClass]="displayedColumns?.length ? 'hide' : ''">
+    <div class="p-grid pad-top-30">
+      <div class="p-col-12 text-center">
+        <mat-icon class="custom-icon-setting" svgIcon="setting-column"> setting-column </mat-icon>
+        <div>
+          <h3>{{ 'Configure your columns' | translate }}</h3>
+          <div>{{ 'You havent configured any columns yet. Add fields as columns to see table information.' | translate }}</div>
+          <div class="margin-top-10">
+            <button
+              (click)="openColumnDropdown()"
+              mat-raised-button
+              color="primary"
+              matTooltip="{{ 'Configure Column' | translate }}"
+              matTooltipPosition="above"
+              [disabled]="isWaitingForResponse || isFirstLoad"
+            >
+              {{ 'Configure Column' | translate }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <table
+    mat-table
+    matSort
+    (matSortChange)="sortData($event)"
+    [dataSource]="dataSource"
+    class="mat-elevation-z8"
+    cdkDropList
+    (cdkDropListDropped)="drop($event)"
+    cdkDropListOrientation="horizontal"
+    [ngClass]="!displayedColumns?.length || isLoading ? 'hide':''"
+  >
+    <!-- ROW FILTER START -->
+    <ng-container *ngFor="let filter of filterColumns; let i = index" [matColumnDef]="filter">
+      <th mat-header-cell *matHeaderCellDef>
+        <ng-container [ngSwitch]="filter">
+          <ng-container *ngSwitchCase="'countryFilter'">
+            <ng-select
+              class="custom-dropdownpanel"
+              [appendTo]="'body'"
+              [multiple]="true"
+              [items]="listOfCountry"
+              bindValue="value"
+              bindLabel="label"
+              notFoundText="{{ 'NOT RECORD FOUND' | translate }}"
+              placeholder="{{ 'search' | translate }}"
+              [clearable]="false"
+              [closeOnSelect]="false"
+              (close)="selectedCountry()"
+              [formControl]="countryFilter"
+            >
+              <ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index">
+                <input id="item-{{ index }}" type="checkbox" [ngModel]="item$.selected" />
+                {{ item?.label }}
+              </ng-template>
+              <ng-template ng-header-tmp *ngIf="listOfCountry?.length">
+                <mat-checkbox
+                  class="all-input"
+                  style="cursor: pointer"
+                  [checked]="isAllDropdownSelected('country')"
+                  [indeterminate]="isSomeDropdownSelected('country')"
+                  (change)="selectAllData($event, 'country')"
+                >
+                  {{ 'All' | translate }}
+                </mat-checkbox>
+              </ng-template>
+            </ng-select>
+          </ng-container>
+
+          <ng-container *ngSwitchCase="'nationalityFilter'">
+            <ng-select
+              class="custom-dropdownpanel"
+              [appendTo]="'body'"
+              [multiple]="true"
+              notFoundText="{{ 'NOT RECORD FOUND' | translate }}"
+              placeholder="{{ 'search' | translate }}"
+              [clearable]="false"
+              [closeOnSelect]="false"
+              (close)="selectedNationality()"
+              [formControl]="nationalityFilter"
+              [items]="listOfNationality"
+              bindValue="value"
+              bindLabel="label"
+            >
+              <ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index">
+                <input id="item-{{ index }}" type="checkbox" [ngModel]="item$.selected" />
+                {{ item?.label }}
+              </ng-template>
+              <ng-template ng-header-tmp *ngIf="listOfNationality?.length">
+                <mat-checkbox
+                  class="all-input"
+                  style="cursor: pointer"
+                  [checked]="isAllDropdownSelected('nationality')"
+                  [indeterminate]="isSomeDropdownSelected('nationality')"
+                  (change)="selectAllData($event, 'nationality')"
+                >
+                  {{ 'All' | translate }}
+                </mat-checkbox>
+              </ng-template>
+            </ng-select>
+          </ng-container>
+
+          <ng-container *ngSwitchCase="'visaPermitFilter'">
+            <ng-select
+              class="custom-dropdownpanel"
+              [appendTo]="'body'"
+              [items]="listOfVisaPermitStatus"
+              bindValue="value"
+              bindLabel="key"
+              [multiple]="true"
+              notFoundText="{{ 'NOT RECORD FOUND' | translate }}"
+              placeholder="{{ 'search' | translate }}"
+              [clearable]="false"
+              [closeOnSelect]="false"
+              (close)="selectedVisa()"
+              [formControl]="visaFilter"
+            >
+              <ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index">
+                <input id="item-{{ index }}" type="checkbox" [ngModel]="item$.selected" />
+                {{ item?.key }}
+              </ng-template>
+              <ng-template ng-header-tmp *ngIf="listOfVisaPermitStatus?.length">
+                <mat-checkbox
+                  class="all-input"
+                  style="cursor: pointer"
+                  [checked]="isAllDropdownSelected('require_visa_permits')"
+                  [indeterminate]="isSomeDropdownSelected('require_visa_permits')"
+                  (change)="selectAllData($event, 'require_visa_permits')"
+                >
+                  {{ 'All' | translate }}
+                </mat-checkbox>
+              </ng-template>
+            </ng-select>
+          </ng-container>
+          <ng-container *ngSwitchDefault> </ng-container>
+        </ng-container>
+      </th>
+    </ng-container>
+
+    <!-- ROW FILTER END -->
+
+    <!-- ROW HEADER AND CONTENT START -->
+    <ng-container *ngFor="let column of displayedColumns; let i = index" [matColumnDef]="column">
+      <ng-container [ngSwitch]="column">
+        <ng-container *ngSwitchCase="'country'">
+          <th
+            mat-header-cell
+            *matHeaderCellDef
+            matTooltip="{{ 'COUNTRY_NATIONALITY.COUNTRY' | translate }}"
+            mat-sort-header="country"
+            cdkDrag
+            cdkDragBoundary=".example-boundary"
+            class="column-dragging"
+          >
+            <mat-icon cdkDragHandle svgIcon="drag_indicator" class="mat-icon-svgIcon icon-drag">
+              <div *cdkDragPreview class="preview">
+                <span style="word-break: break-word" class="preview-drag">
+                  <svg width="15px" fill="currentColor" viewBox="0 0 24 24">
+                    <path
+                      d="M10 9h4V6h3l-5-5-5 5h3v3zm-1 1H6V7l-5 5 5 5v-3h3v-4zm14 2l-5-5v3h-3v4h3v3l5-5zm-9 3h-4v3H7l5 5 5-5h-3v-3z"
+                    ></path>
+                    <path d="M0 0h24v24H0z" fill="none"></path>
+                  </svg>
+                  {{ 'COUNTRY_NATIONALITY.COUNTRY' | translate }}
+                </span>
+              </div>
+            </mat-icon>
+            <h5 class="label-header">{{ 'COUNTRY_NATIONALITY.COUNTRY' | translate }}</h5>
+          </th>
+          <td mat-cell *matCellDef="let element" matTooltip="{{ element?.label_country | titlecase}}">
+            {{ element?.label_country | titlecase }}
+          </td>
+        </ng-container>
+
+        <ng-container *ngSwitchCase="'nationality'">
+          <th
+            mat-header-cell
+            *matHeaderCellDef
+            matTooltip="{{ 'COUNTRY_NATIONALITY.NATIONALITY' | translate }}"
+            mat-sort-header="nationality"
+            cdkDrag
+            cdkDragBoundary=".example-boundary"
+            class="column-dragging"
+          >
+            <mat-icon cdkDragHandle svgIcon="drag_indicator" class="mat-icon-svgIcon icon-drag">
+              <div *cdkDragPreview class="preview">
+                <span style="word-break: break-word" class="preview-drag">
+                  <svg width="15px" fill="currentColor" viewBox="0 0 24 24">
+                    <path
+                      d="M10 9h4V6h3l-5-5-5 5h3v3zm-1 1H6V7l-5 5 5 5v-3h3v-4zm14 2l-5-5v3h-3v4h3v3l5-5zm-9 3h-4v3H7l5 5 5-5h-3v-3z"
+                    ></path>
+                    <path d="M0 0h24v24H0z" fill="none"></path>
+                  </svg>
+                  {{ 'COUNTRY_NATIONALITY.NATIONALITY' | translate }}
+                </span>
+              </div>
+            </mat-icon>
+            <h5 class="label-header">{{ 'COUNTRY_NATIONALITY.NATIONALITY' | translate }}</h5>
+          </th>
+          <td mat-cell *matCellDef="let element" matTooltip="{{ element?.label_nationality | titlecase}}">
+            {{ element?.label_nationality | titlecase}}
+          </td>
+        </ng-container>
+
+        <ng-container *ngSwitchCase="'visaPermit'">
+          <th
+            mat-header-cell
+            *matHeaderCellDef
+            matTooltip="{{ 'COUNTRY_NATIONALITY.VISA_PERMIT' | translate }}"
+            mat-sort-header="require_visa_permit"
+            cdkDrag
+            cdkDragBoundary=".example-boundary"
+            class="column-dragging"
+          >
+            <mat-icon cdkDragHandle svgIcon="drag_indicator" class="mat-icon-svgIcon icon-drag">
+              <div *cdkDragPreview class="preview">
+                <span style="word-break: break-word" class="preview-drag">
+                  <svg width="15px" fill="currentColor" viewBox="0 0 24 24">
+                    <path
+                      d="M10 9h4V6h3l-5-5-5 5h3v3zm-1 1H6V7l-5 5 5 5v-3h3v-4zm14 2l-5-5v3h-3v4h3v3l5-5zm-9 3h-4v3H7l5 5 5-5h-3v-3z"
+                    ></path>
+                    <path d="M0 0h24v24H0z" fill="none"></path>
+                  </svg>
+                  {{ 'COUNTRY_NATIONALITY.VISA_PERMIT' | translate }}
+                </span>
+              </div>
+            </mat-icon>
+            <h5 class="label-header">{{ 'COUNTRY_NATIONALITY.VISA_PERMIT' | translate }}</h5>
+          </th>
+          <td
+            mat-cell
+            *matCellDef="let element"
+            matTooltip="{{
+              element?.require_visa_permit
+                ? ('ERP_009_TEACHER_CONTRACT.Required' | translate)
+                : ('ERP_009_TEACHER_CONTRACT.Not Required' | translate)
+            }}"
+          >
+            <mat-icon *ngIf="element?.require_visa_permit" class="green">check</mat-icon>
+            <mat-icon *ngIf="!element?.require_visa_permit" class="red">clear</mat-icon>
+          </td>
+        </ng-container>
+
+        <ng-container *ngSwitchCase="'action'">
+          <th
+            mat-header-cell
+            class="column-dragging"
+            cdkDrag
+            cdkDragBoundary=".example-boundary"
+            *matHeaderCellDef
+            matTooltip="{{ 'Action' | translate }}"
+            matTooltipPosition="above"
+          >
+            <div class="p-grid p-align-center p-justify-center custom-drag" style="position: relative">
+              <mat-icon cdkDragHandle svgIcon="drag_indicator" class="mat-icon-svgIcon icon-drag-checkbox custom-drag-icon">
+                <div *cdkDragPreview class="preview">
+                  <span style="word-break: break-word" class="preview-drag">
+                    <svg width="15px" fill="currentColor" viewBox="0 0 24 24">
+                      <path
+                        d="M10 9h4V6h3l-5-5-5 5h3v3zm-1 1H6V7l-5 5 5 5v-3h3v-4zm14 2l-5-5v3h-3v4h3v3l5-5zm-9 3h-4v3H7l5 5 5-5h-3v-3z"
+                      ></path>
+                      <path d="M0 0h24v24H0z" fill="none"></path>
+                    </svg>
+                    {{ 'Action' | translate }}
+                  </span>
+                </div>
+              </mat-icon>
+            </div>
+            <h5 class="label-header">{{ 'Action' | translate }}</h5>
+          </th>
+          <td mat-cell *matCellDef="let element" class="text-center">
+            <span>
+              <mat-icon
+                svgIcon="close-octagon"
+                class="octagon-button red"
+                matTooltip="{{ 'ERP_009_TEACHER_CONTRACT.Not Required' | translate }}"
+                matTooltipPosition="above"
+                *ngIf="element?.require_visa_permit"
+                (click)="requiredOrNotRequiredVisaPermit(element, 'not_required')"
+              ></mat-icon>
+            </span>
+            <span>
+              <mat-icon
+                svgIcon="check-octagon"
+                class="octagon-button green"
+                matTooltip="{{ 'ERP_009_TEACHER_CONTRACT.Required' | translate }}"
+                matTooltipPosition="above"
+                *ngIf="!element?.require_visa_permit"
+                (click)="requiredOrNotRequiredVisaPermit(element, 'required')"
+              ></mat-icon>
+            </span>
+          </td>
+        </ng-container>
+
+        <ng-container *ngSwitchDefault>
+          <th mat-header-cell *matHeaderCellDef></th>
+          <td mat-cell *matCellDef="let element"></td>
+        </ng-container>
+      </ng-container>
+    </ng-container>
+
+    <!-- ROW HEADER AND CONTENT END -->
+
+    <ng-container matColumnDef="loading">
+      <th mat-header-cell *matHeaderCellDef colspan="100%" class="text-center">
+        <div class="center-spinner">
+          <mat-spinner color="accent"></mat-spinner>
+        </div>
+      </th>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns" class="example-boundary"></tr>
+    <tr mat-header-row *matHeaderRowDef="filterColumns"></tr>
+
+    <tr mat-header-row *matHeaderRowDef="['loading']" [hidden]="!isWaitingForResponse"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns" [hidden]="isWaitingForResponse"></tr>
+  </table>
+  <div *ngIf="!isWaitingForResponse" [ngClass]="{'hide':!displayedColumns?.length}">
+    <div *ngIf="noData | async" class="no-records">{{ 'NOT RECORD FOUND' | translate }}</div>
+  </div>
+  <div [ngClass]="!displayedColumns?.length ? 'hide' : !dataSource.data.length ? 'hide' : ''">
+    <mat-paginator
+      [ngClass]="{ 'hide-pagination-buttons': dataCount <= 10 }"
+      [length]="dataCount"
+      [hidePageSize]="true"
+      [pageSize]="[10]"
+      showFirstLastButtons
+    ></mat-paginator>
+  </div>
+</div>
+<div *ngIf="isFirstLoad || isLoading" class="loading-indicator">
+  <mat-spinner color="accent" [diameter]="100"></mat-spinner>
+</div>

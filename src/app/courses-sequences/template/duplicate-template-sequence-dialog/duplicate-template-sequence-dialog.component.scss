@@ -1,0 +1,193 @@
+@import '~assets/scss/theme/admtc.variables';
+@import '~assets/scss/theme/admtc';
+
+.mrgn-btn {
+  margin-bottom: 15px;
+}
+
+.icon-style {
+  vertical-align: middle;
+  margin-right: 1rem;
+  cursor: pointer;
+}
+
+.imgContainer:hover .overlay {
+  opacity: 1;
+}
+
+.imgContainer {
+  width: 172px;
+  height: 200px;
+  line-height: 200px;
+  text-align: center;
+  overflow: hidden;
+  position: relative;
+  background-color: transparent;
+}
+.text {
+  width: 165px;
+  color: white;
+  font-size: 20px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -webkit-transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+  text-align: center;
+  margin-left: 0;
+}
+
+.no-image {
+  height: 200px;
+  background-color: #6f6f6f;
+  line-height: 200px;
+  color: white;
+  text-align: center;
+  cursor: pointer;
+  width: 173px;
+}
+.overlay {
+  position: absolute;
+  height: 200px;
+  width: 173px;
+  bottom: 0px;
+  opacity: 0;
+  transition: 0.5s ease;
+  background-color: #2f2f2f !important;
+  cursor: pointer;
+}
+
+.logo-img-wrapper {
+  height: 200px;
+  background-color: #6f6f6f;
+  margin: auto;
+  text-align: center;
+  overflow: hidden;
+  position: relative;
+  margin-left: 0px;
+  width: 173px;
+}
+.text-logo-section {
+  width: 200px;
+  display: flex;
+  justify-content: center;
+}
+
+.buttonContainer {
+  width: 172px;
+  text-align: center;
+}
+.center-image {
+  max-height: 100%;
+  max-width: 100%;
+  width: auto;
+  height: auto;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  margin: auto;
+  padding: 3px;
+}
+.image-text {
+  font-size: larger;
+  font-weight: bold;
+  padding-top: 1rem;
+}
+.logo-spinner-wrapper {
+  height: 200px;
+  width: 173px;
+  background-color: #6f6f6f;
+  margin: auto;
+  display: flex;
+  align-items: center;
+}
+.dialogTitle {
+  display: inline-block;
+}
+
+.dialogTitleWrapper {
+  color: black;
+}
+
+.header-dialog {
+  margin-top: 15px;
+  padding: 0 5px 0 15px;
+}
+.specialization-pill {
+  width: auto;
+  display: inline-block;
+  position: relative;
+  margin-right: 5px;
+  padding: 5px;
+  background: #4141cd;
+  color: white;
+  border-radius: 4px;
+  text-align: center;
+  margin-top: 5px;
+}
+.level-pill {
+  width: auto;
+  display: inline-block;
+  position: relative;
+  margin-right: 5px;
+  padding: 5px;
+  background: #ffd740;
+  color: black;
+  border-radius: 4px;
+  text-align: center;
+  margin-top: 5px;
+}
+.icon-mat-change {
+  font-size: 14px;
+  display: inline-block;
+  position: relative;
+  top: 2px;
+}
+.dialog-border {
+  border-bottom: 1px solid black;
+  margin-bottom: 15px;
+}
+:host::ng-deep.mat-radio-outer-circle {
+  border-color: rgba(0, 0, 0, 0.54) !important;
+}
+:host::ng-deep.mat-form-field-underline {
+  background-color: rgba(0, 0, 0, 0.12) !important;
+}
+.acad-title {
+  padding: 0px;
+  margin-right: 25px;
+}
+.w-30 {
+  padding-top: 4px !important;
+  margin-right: 7px !important;
+}
+.w-65 {
+  float: right;
+  position: relative;
+  right: -70px;
+}
+.no-padding-left {
+  padding-left: 0px !important;
+}
+.label-align {
+  align-self: center;
+}
+.border-white {
+  border: 1px solid rgb(116, 116, 116);
+}
+.flex-hidden-mr-1 {
+  flex-wrap: nowrap;
+  overflow: hidden;
+  margin-right: 1rem !important;
+}
+
+:host::ng-deep.ng-select .ng-select-container {
+  height: 36px;
+  border-left: 0px !important;
+  border-right: 0px !important;
+  border-top: 0px !important;
+  border-radius: 0px !important;
+}

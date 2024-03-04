@@ -1,0 +1,37 @@
+.float-label {
+    font-size: 0.62rem;
+}
+
+:host::ng-deep .mat-form-field.ng-invalid.mat-input-invalid.ng-touched{
+    .mat-form-field-underline {
+        background-color: #ff5722;
+    }
+
+    .mat-input-element {
+        color: #ff5722 !important;
+    }
+    .mat-form-field-label {
+      color: #ff5722 !important;
+        .mat-form-field-required-marker {
+          color: #ff5722 !important;
+        }
+    }
+    .mat-form-field-ripple {
+      color: #ff5722 !important;
+    }
+}
+
+:host ::ng-deep .ng-select .ng-dirty .ng-invalid .ng-touched {
+  .ng-select-container {
+    border-bottom-color: red !important;
+  }
+}
+
+.manual-error {
+  position: relative;
+  bottom: 12px;
+  font-size: 75%;
+}
+  
+
+

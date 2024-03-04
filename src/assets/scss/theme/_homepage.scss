@@ -1,0 +1,61 @@
+@use 'sass:map';
+
+// Default theme
+:root {
+  --app-theme-color-primary: 54 54 54;
+  --app-theme-color-secondary: 66 66 66;
+  --app-theme-color-tertiary: 255 255 255;
+}
+
+@mixin create-homepage-theme($theme) {
+  $primary: map.get($theme, 'primary');
+  $secondary: map.get($theme, 'secondary');
+  $tertiary: map.get($theme, 'tertiary');
+
+  .homepage-themed-primary-background {
+    background-color: rgb($primary);
+  }
+
+  .homepage-themed-secondary-background {
+    background-color: rgb($secondary);
+  }
+
+  .homepage-themed-tertiary-color {
+    color: rgb($tertiary);
+  }
+
+  .mat-card,
+  .mat-drawer {
+    background-color: rgb($secondary);
+    color: rgb($tertiary);
+  }
+
+  &.mat-drawer-container,
+  .mat-drawer-content {
+    background-color: rgb($primary);
+    color: rgb($tertiary);
+  }
+
+  .mat-toolbar,
+  .mat-toolbar .mat-button,
+  .mat-toolbar .mat-icon-button,
+  .mat-select-value,
+  .mat-select-arrow,
+  .mat-form-field.mat-focused .mat-form-field-label,
+  .mat-form-field-appearance-outline.mat-focused .mat-form-field-outline {
+    color: rgb($tertiary);
+  }
+
+  .mat-form-field-appearance-outline .mat-form-field-outline {
+    color: rgba($tertiary, 0.3);
+  }
+}
+
+.app-dark .app-themed,
+.app-themed {
+  @include create-homepage-theme((
+    primary: var(--app-theme-color-primary),
+    secondary: var(--app-theme-color-secondary),
+    tertiary: var(--app-theme-color-tertiary),
+  ))
+}

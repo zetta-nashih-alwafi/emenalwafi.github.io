@@ -1,0 +1,10 @@
+.action-panel {
+    margin-bottom: 20px;
+    margin-right : 15px;
+}
+:host::ng-deep.mat-radio-outer-circle {
+  border-color: rgba(0, 0, 0, 0.54) !important;
+}
+:host::ng-deep.mat-form-field-underline {
+  background-color: rgba(0, 0, 0, 0.12) !important;
+}

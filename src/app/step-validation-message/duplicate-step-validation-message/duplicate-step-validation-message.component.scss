@@ -1,0 +1,269 @@
+@import '~assets/scss/theme/admtc.variables';
+@import '~assets/scss/theme/admtc';
+
+
+:host::ng-deep.mat-radio-outer-circle {
+  border-color: #3f3f3f;
+}
+:host::ng-deep.mat-form-field-underline {
+  background-color: rgba(0, 0, 0, 0.12) !important;
+}
+
+.mrgn-btn {
+  margin-bottom: 15px;
+}
+
+.icon-style {
+  vertical-align: middle;
+  margin-right: 1rem;
+  cursor: pointer;
+}
+
+.dialogTitle {
+  display: inline-block;
+}
+
+.dialogTitleWrapper {
+  color: black;
+}
+
+.header-dialog {
+  margin-top: 15px;
+  padding: 0 5px 0 15px;
+}
+
+.dialog-border {
+  border-bottom: 1px solid black;
+  margin-bottom: 15px;
+}
+:host::ng-deep.carousel{
+  .slider-bg-img {
+    background-repeat: no-repeat;
+    background-size: auto 100%;
+    height: inherit !important;
+  }
+  iframe {
+    width: 100%;
+    height: inherit;
+  }
+  div.no-content {
+    text-align: center;
+    font-size: 2em;
+    border: dashed 3px;
+    padding: 2em;
+  }
+}
+
+.no-content {
+  border: 5px dashed dimgrey;
+  text-align: center;
+  align-items: baseline;
+  vertical-align: middle;
+  max-height: 265px;
+  font-weight: 700;
+  font-size: 30px;
+  color: gray;
+}
+.no-content-text {
+  padding: 0px;
+  margin: 268px auto;
+  text-align: center;
+  align-items: baseline;
+  vertical-align: middle;
+}
+
+.button-grey {
+  background-color: #607D8B;
+  color: white;
+}
+.align-bullhorn {
+  vertical-align: text-top !important;
+}
+.disable {
+  color: #ffd740 !important;
+
+}
+.preview {
+  float: left;
+  height: 570px;
+  padding-left: 45px !important;
+}
+:host::ng-deep.selected-identification{
+   .idenfication{
+     color:rgba(0, 0, 0, 0.54);
+   }
+   .sub-identification {
+     color: #607D8B
+   }
+}
+:host ::ng-deep {
+  .mat-dialog-content{
+    max-height: 430px !important;
+    height: auto;
+  }
+}
+:host::ng-deep.mat-dialog-content {
+  overflow-x: hidden !important;
+}
+:host::ng-deep.p-grid {
+    margin-bottom: 10px !important;
+    &.identification-item {
+      align-items: baseline;    
+      margin: 0px !important;
+    }
+}
+:host::ng-deep.mat-radio-outer-circle {
+  border-color: rgba(0, 0, 0, 0.54) !important;
+}
+:host::ng-deep.mat-form-field-underline {
+  background-color: rgba(0, 0, 0, 0.12) !important;
+}
+:host::ng-deep.mat-form-field-underline {
+  background-color: rgba(0, 0, 0, 0.12) !important;
+}
+.card-image {
+  width: calc(100% + 32px);
+  margin: 0 -16px 16px -16px;
+}
+.card-image:first-child {
+  border-top-left-radius: inherit;
+  border-top-right-radius: inherit;
+}
+
+.acad-title {
+  padding: 0px;
+  margin-right: 25px;
+}
+.w-30 {
+  padding-top: 4px !important;
+  margin-right: 7px !important;
+}
+.w-65 {
+  float: right;
+  position: relative;
+  right: -20px;
+}
+.mrgn-r-15 {
+  margin-right: 15px;
+}
+.imgContainer {
+  position: relative;
+  height: 10rem;
+  width: auto;
+  cursor: pointer;
+  overflow: hidden;
+}
+.imgContainer:hover .overlay {
+  opacity: 1;
+}
+
+.no-image {
+  width: 150px;
+  height: 150px;
+  background-color: #6f6f6f;
+  line-height: 150px;
+  margin: auto;
+  color: white;
+  text-align: center;
+}
+
+.img-container {
+  width: auto;
+  height: 200px;
+  line-height: 200px;
+  text-align: center;
+  overflow: hidden;
+  position: relative;
+  background-color: transparent;
+}
+
+.text {
+  color: white;
+  font-size: 20px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -webkit-transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+  text-align: center;
+  margin: auto;
+  width: 180px;
+}
+.contaOver {
+  position: absolute;
+  left: 12px;
+  top: 138px;
+  width: 25%;
+  margin-left: 0px;
+}
+.overlay {  
+  position: absolute;  
+  display: flex;
+  top: 0;
+  bottom: 0;
+  left: 0px;
+  right: 0;
+  margin-top: 0px;
+  height: 150px;
+  width: 150px;
+  opacity: 0;
+  -webkit-transition: 0.5s ease;
+  transition: 0.5s ease;
+  background-color: #2f2f2f;
+  margin: auto;
+  cursor: pointer;
+}
+.mrgn-top {
+  margin-top: 10px !important;
+}
+:host::ng-deep .mat-dialog-container {
+  padding: 10px;
+}
+.mat-dialog-container {
+  padding: 10px;
+}
+:host::ng-deep.congratulations-container {
+  height: auto;
+  max-height: max-content;
+  width: 100%;
+  background: #3F3F3F;
+  border-radius: 1%;
+  padding: 15px;
+    .title1, .title2{
+      height: auto;
+      width: 100%;
+      text-align: center;
+      padding: 2%;
+      line-height: normal;
+    }
+
+    .media-container {
+      position: relative;
+      align-self: center;
+      padding: 1% 2%;
+      iframe {
+        width: 100% !important;
+        height: auto !important;
+      }
+      div.no-content {
+        text-align: center;
+        font-size: 2em;
+        border: dashed 3px;
+        padding: 2em;
+      }
+    }
+   
+    .grey {
+        background-color: #607D8B;
+        color: white;
+    }
+    .actions {
+      .mat-dialog-actions{
+        display: block !important;
+        padding-top: 14px !important;
+        -webkit-box-pack: end !important;
+        justify-content: space-between !important;
+      }
+    }
+}

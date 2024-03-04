@@ -1,0 +1,93 @@
+<section>
+  <div class="p-grid">
+    <div class="p-col-7 parameter-section" [formGroup]="documentParameterForm">
+      <div class="p-grid justify-content-between">
+        <div class="p-col-2">
+          <button (click)="leave()" matTooltip="{{ 'LEAVE' | translate }}" mat-raised-button color="warn" style="padding-left: 10px">
+            <mat-icon class="mat-icon-default">keyboard_arrow_left</mat-icon>
+            {{ 'LEAVE' | translate }}
+          </button>
+        </div>
+        <div class="p-col-8">
+          <mat-slide-toggle
+            color="accent"
+            [disabled]="!isEdit || !isFormUnchanged()"
+            formControlName="is_published"
+            (change)="publishDocumentTemplate($event)"
+          >
+            <span [ngClass]="{ 'text-slider-color': documentParameterForm.controls['is_published'].value }">
+              {{ (documentParameterForm.controls['is_published'].value ? 'Published' : 'Unpublished') | translate }}
+            </span>
+          </mat-slide-toggle>
+          <button
+            matTooltip="{{ 'Save' | translate }}"
+            mat-raised-button
+            color="accent"
+            [disabled]="!documentParameterForm.valid || isFormUnchanged() || templateData?.is_published || !saveOn"
+            (click)="onSave()"
+          >
+            <mat-icon class="mat-icon-default">save</mat-icon>
+            {{ 'Save' | translate }}
+          </button>
+        </div>
+      </div>
+      <div class="p-grid form-section">
+        <div class="yellow-border card-row">
+          <div class="p-grid">
+            <div class="p-col-12 pad-btm">
+              <mat-form-field class="full-width">
+                <input
+                  type="text"
+                  formControlName="document_builder_name"
+                  matInput
+                  required
+                  placeholder="{{ 'Document Template Name' | translate }}"
+                />
+              </mat-form-field>
+            </div>
+          </div>
+
+          <div class="p-grid">
+            <div class="p-col-12 pad-y">
+              <!-- <ng-select
+                  required
+                  placeholder="{{ 'Document Template Type' | translate }}*"
+                  formControlName="document_type"
+                  appendTo="body"
+                >
+                  <ng-option *ngFor="let template of docTypeListFiltered | async" [value]="template.key">{{ template.value | translate }}</ng-option>
+                </ng-select> -->
+
+              <mat-form-field>
+                <input
+                  matInput
+                  required
+                  class="form-field"
+                  [formControl]="docTypeFilterCtrl"
+                  [matAutocomplete]="docTypeAuto"
+                  placeholder="{{ 'Document Template Type' | translate }}"
+                />
+                <mat-autocomplete #docTypeAuto="matAutocomplete" [displayWith]="displayFn.bind(this)" [panelWidth]="'fit'">
+                  <mat-option
+                    *ngFor="let template of docTypeListFiltered | async"
+                    [value]="template?.key"
+                    (click)="typeSelected(template?.key)"
+                  >
+                    {{ template?.value | translate }}
+                  </mat-option>
+                </mat-autocomplete>
+              </mat-form-field>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="p-col-5 table-section">
+      <div class="top-space"></div>
+    </div>
+  </div>
+</section>
+
+<div *ngIf="isTopWaitingForResponse" class="loading-indicator">
+  <mat-progress-spinner mode="indeterminate" color="accent"></mat-progress-spinner>
+</div>

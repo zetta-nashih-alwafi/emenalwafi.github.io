@@ -1,0 +1,80 @@
+
+<div class="p-grid" *ngIf="isWaitingForResponse && schoolData?.campuses[schoolData?.campuses.length - 1]?.name === campusName" class="p-col-12" style="text-align: center !important; display: contents">
+  <div class="center-spinner spinner-wrapper">
+    <mat-spinner color="accent"></mat-spinner>
+  </div>
+</div>
+
+<mat-accordion *ngIf="!isWaitingForResponse" class="example-headers-align" multi>
+  <mat-expansion-panel hideToggle="true" class="fade-in">
+    <mat-expansion-panel-header style="height: auto !important">
+      <div>
+        <div class="card-container" style="width: 185px !important">
+          <mat-card class="card-segment" style="padding: 8px 15px;background: #ffffff;margin-top: 8px;min-height: 33px;height: 56px;border-radius: 0px !important;">
+            <div class="p-grid no-margin">
+              <div class="p-col-fixed no-padding icon-grid first-card">
+                <label>{{ campusName }}</label>
+              </div>
+            </div>
+          </mat-card>
+        </div>
+      </div>
+      <div *ngFor="let header of detailHeader; let ind = index">
+        <div class="card-container">
+          <mat-card class="card-segment month-campus card-sub current-month">
+            <div class="p-grid no-margin segment-title">
+              <div
+              style="width: 100%;display: block;height: 30px;line-height: 14px;"
+              >
+                {{ header | translate }}
+              </div>
+              <div *ngIf="ind === 0" style="width: 100%;display: block;text-align: end;padding-right: 50px;margin-bottom: 8px;">{{ formatCurrency(amountPerMonth?.billing) }}</div>
+              <div *ngIf="ind === 1" style="width: 100%;display: block;text-align: end;padding-right: 50px;margin-bottom: 8px;">{{ formatCurrency(amountPerMonth?.already_paid) }}</div>
+              <div *ngIf="ind === 2" style="width: 100%;display: block;text-align: end;padding-right: 50px;margin-bottom: 8px;">{{ formatCurrency(amountPerMonth?.payment_due) }}</div>
+              <div *ngIf="ind === 3" style="width: 100%;display: block;text-align: end;padding-right: 50px;margin-bottom: 8px;">{{ formatCurrency(amountPerMonth?.over_due) }}</div>
+              <div *ngIf="ind === 4" style="width: 100%;display: block;text-align: end;padding-right: 50px;margin-bottom: 8px;">{{ formatCurrency(amountPerMonth?.over_due_not_scheduled) }}</div>
+              <div *ngIf="ind === 5" style="width: 100%;display: block;text-align: end;padding-right: 50px;margin-bottom: 8px;">{{ formatCurrency(amountPerMonth?.terms_to_come) }}</div>
+            </div>
+          </mat-card>
+        </div>
+      </div>
+    </mat-expansion-panel-header>
+    <div></div>
+
+    <div class="detail-school" style="font-family: 'firaSans' !important;">
+      <div class="table-school" (scroll)="dashboardScroll($event)">
+        <div class="detail-table">
+          <div class="list-body" *ngIf="!isWaitingForResponse">
+            <!-- row -->
+            <div class="list-level" *ngFor="let level of dataDetail; let nex = index">
+              <div class="label-array" style="height: 20px !important; padding: 0px 5px !important">
+                <div class="label-level">{{ getNameLevel(level?.level) }}</div>
+              </div>
+              <div>
+                <div class="array-data">
+                  <div>{{ formatCurrency(level?.billing) }}</div>
+                </div>
+                <div class="array-data">
+                  <div>{{ formatCurrency(level?.already_paid) }}</div>
+                </div>
+                <div class="array-data">
+                  <div>{{ formatCurrency(level?.payment_due) }}</div>
+                </div>
+                <div class="array-data">
+                  <div>{{ formatCurrency(level?.over_due) }}</div>
+                </div>
+                <div class="array-data">
+                  <div>{{ formatCurrency(level?.over_due_not_scheduled) }}</div>
+                </div>
+                <div class="array-data">
+                  <div>{{ formatCurrency(level?.terms_to_come) }}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </mat-expansion-panel>
+</mat-accordion>
+

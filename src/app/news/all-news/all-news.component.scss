@@ -1,0 +1,85 @@
+@import "~assets/scss/theme/admtc.variables";
+@import "~assets/scss/theme/admtc";
+
+.card-list-news {
+    padding: 5px;
+    background-color: rgba(111, 111, 111, 0.384);
+    // width: 10.5rem;
+    width: fit-content;
+    border-radius: 5px;
+    margin-bottom: 16px;
+    padding: 0.2rem 0.8rem;
+    text-align: center;
+}
+
+.content-wrapper, .header {
+    padding-left: 0.6rem;
+}
+
+.active {
+    color: $dark-yellow !important;
+    background-color: #fdd83542;
+}
+
+.news-list {
+    width: 205px !important;
+}
+
+.news-detail {
+    height: 90vh;
+    overflow: auto;
+    padding: 0 1rem 0 1rem;
+}
+
+.paginator-container {
+    max-width: 19rem;
+    padding: unset !important;
+}
+
+.hide-pagination-buttons {      
+    .hide-pagination-buttons {
+        display: none !important;
+    }
+    .mat-paginator-navigation-first {
+      display: none !important;
+    }
+    .mat-paginator-navigation-previous {
+      display: none !important;
+    }
+    .mat-paginator-navigation-next {
+      display: none !important;
+    }
+    .mat-paginator-navigation-last {
+      display: none !important;
+    }
+  }
+
+.paginator {
+    border-radius: 5px !important;
+    min-width: 20rem;
+    background-color: inherit !important;
+    display: unset !important;
+}
+
+:host ::ng-deep.mat-paginator-icon {
+    width: 22px !important;
+}
+
+:host ::ng-deep.mat-paginator-container {
+    min-height: unset !important;
+    justify-content: center !important;
+    display: unset !important;
+    margin-left: 5px;
+}
+
+:host ::ng-deep.mat-paginator-range-label {
+    margin: 0 !important;
+}
+
+:host ::ng-deep.mat-icon-button {
+    width: 22px !important;
+}
+
+.hide {
+    display: none !important;
+}

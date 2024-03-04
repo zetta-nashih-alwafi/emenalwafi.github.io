@@ -1,0 +1,153 @@
+<div class="gene-registerV2" style="padding-top: 3.8rem !important; background-image: none !important">
+  <div fxLayout="row" fxLayoutAlign="center start">
+    <div fxLayout="column" fxFlex="100" fxFlex.xs="97" fxFlex.sm="80" fxFlex.md="95" fxFlex.lg="97" fxFlex.xl="80">
+      <div
+        fxLayout="row wrap"
+        fxLayoutAlign="center stretch"
+        class="height-full pad-t-xl pad-b-xl form-wrap-row set-resp-space"
+        fxLayoutGap.gt-md="15px"
+      >
+        <div fxLayout="column" fxFlex="100">
+          <mat-card
+            class="gene-registerV2-wrap"
+            [style.min-height.px]="getAutomaticHeight()"
+            style="border: 1px solid #eeeeee; padding: 20px 0px"
+          >
+            <ms-language-drop-down class="flag"></ms-language-drop-down>
+            <mat-horizontal-stepper
+              *ngIf="!isWaitingForResponse"
+              [linear]="!formDetail.isPreview"
+              (selectionChange)="onStepChange($event)"
+              #stepperForm
+              [selectedIndex]="selectedIndex"
+            >
+              <ng-template matStepperIcon="done">
+                <mat-icon>done</mat-icon>
+              </ng-template>
+
+              <ng-template matStepperIcon="edit">
+                <mat-icon>done</mat-icon>
+              </ng-template>
+
+              <ng-template matStepperIcon="edit">
+                <mat-icon>done</mat-icon>
+              </ng-template>
+
+              <ng-template matStepperIcon="number" let-index="index" let-active="active">
+                <mat-icon *ngIf="active">edit</mat-icon>
+                <ng-container *ngIf="!active">{{ index + 1 }}</ng-container>
+              </ng-template>
+
+              <ng-container *ngIf="formData?.steps">
+                <mat-step
+                  [completed]="step?.step_status === 'accept' ? true : false"
+                  [editable]="
+                    step?.step_status === 'ask_for_revision' ||
+                    step?.step_status === 'need_validation' ||
+                    step?.step_status === 'accept' ||
+                    formDetail?.isPreview ||
+                    formDetail?.contract_status === 'ask_for_revision'
+                      ? true
+                      : false
+                  "
+                  *ngFor="let step of formData?.steps; let stepIndex = index"
+                  disableRipple="true"
+                  [label]="step?.step_title"
+                >
+                  <ng-container *ngIf="step?.step_type === 'question_and_field' && (userData || formDetail.isPreview)">
+                    <ms-pre-contract-form-step-normal-question
+                      [currentStepIndex]="stepIndex"
+                      [stepData]="step"
+                      [isReceiver]="isReceiver"
+                      [userData]="userData"
+                      (triggerRefresh)="fetchContractForm($event, true)"
+                      [formDetail]="formDetail"
+                      [formData]="formData"
+                      [stepsLength]="stepsLength"
+                    ></ms-pre-contract-form-step-normal-question>
+                  </ng-container>
+                  <ng-container *ngIf="step?.step_type === 'document_expected' && (userData || formDetail.isPreview)">
+                    <ms-pre-contract-form-step-document-expected
+                      [currentStepIndex]="stepIndex"
+                      [stepData]="step"
+                      [isReceiver]="isReceiver"
+                      [userData]="userData"
+                      [formDetail]="formDetail"
+                      [formData]="formData"
+                      (triggerRefresh)="fetchContractForm($event, true)"
+                      [stepsLength]="stepsLength"
+                    ></ms-pre-contract-form-step-document-expected>
+                  </ng-container>
+                  <ng-container *ngIf="step?.step_type === 'condition_acceptance'">
+                    <ms-pre-contract-form-step-condition-acceptance
+                      [formDetail]="formDetail"
+                      [currentStepIndex]="stepIndex"
+                      [isReceiver]="isReceiver"
+                      [stepData]="step"
+                      [userData]="userData"
+                      (triggerRefresh)="fetchContractForm($event, true)"
+                    ></ms-pre-contract-form-step-condition-acceptance>
+                  </ng-container>
+
+                  <!-- Summary ERP_042 -->
+                  <ng-container
+                    *ngIf="
+                      ((step?.step_type === 'step_summary' && (userData || !formDetail?.isPreview)) ||
+                        (step?.step_type === 'step_summary' && formDetail?.isPreview)) &&
+                      formDetail?.formType === 'fc_contract'
+                    "
+                  >
+                    <ms-pre-contract-form-steps-summary
+                      [formData]="formData"
+                      [formDetail]="formDetail"
+                      [currentStepIndex]="stepIndex"
+                      [isReceiver]="isReceiver"
+                      [stepData]="step"
+                      [userDatas]="userData"
+                      (triggerRefresh)="fetchContractForm($event, true)"
+                      [stepsLength]="stepsLength"
+                    ></ms-pre-contract-form-steps-summary>
+                  </ng-container>
+                </mat-step>
+              </ng-container>
+
+              <ng-container *ngIf="formDetail?.formType === 'teacher_contract'">
+                <mat-step [completed]="allStepsCompleted" label="{{ 'ERP_009_TEACHER_CONTRACT.Summary' | translate }}">
+                  <ng-container *ngIf="selectedIndex === formData?.steps?.length">
+                    <ms-pre-contract-form-step-summary
+                      [formDetail]="formDetail"
+                      [isReceiver]="isReceiver"
+                      (triggerRefresh)="fetchContractForm($event, true)"
+                      [userDataInput]="userData"
+                    ></ms-pre-contract-form-step-summary>
+                  </ng-container>
+                </mat-step>
+              </ng-container>
+
+              <mat-step [completed]="isAlreadySign" label="{{ 'ERP_009_TEACHER_CONTRACT.Contract' | translate }}">
+                <ng-container *ngIf="selectedIndex === formData?.steps?.length + 1 && formDetail?.formType === 'teacher_contract'">
+                  <ms-pre-contract-form-step-signing-process
+                    [formDetail]="formDetail"
+                    [formData]="formData"
+                    [userData]="userData"
+                    [isReceiver]="isReceiver"
+                    (triggerRefresh)="fetchContractForm($event, true)"
+                  ></ms-pre-contract-form-step-signing-process>
+                </ng-container>
+                <ng-container *ngIf="selectedIndex === formData?.steps?.length && formDetail?.formType === 'fc_contract'">
+                  <ms-pre-contract-form-step-signing-process
+                    [formDetail]="formDetail"
+                    [formData]="formData"
+                    [userData]="userData"
+                    [isReceiver]="isReceiver"
+                    (triggerRefresh)="fetchContractForm($event, true)"
+                  ></ms-pre-contract-form-step-signing-process>
+                </ng-container>
+              </mat-step>
+            </mat-horizontal-stepper>
+          </mat-card>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

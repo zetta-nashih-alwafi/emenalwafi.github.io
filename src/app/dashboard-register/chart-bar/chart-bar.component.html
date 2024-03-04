@@ -1,0 +1,11 @@
+<div class="p-grid no-margin" style="margin-top: 20px !important">
+  <h3 style="margin: 0px; z-index: 9">{{ 'Objectives and total registered' | translate }} {{ listFilter }}</h3>
+  <hr />
+</div>
+<div [ngStyle]="{ display: dataMapping && dataMapping?.length ? '' : 'none' }">
+  <div id="chartdiv"></div>
+</div>
+<div *ngIf="dataMapping && !dataMapping?.length" class="no-data">
+  <span style="color: grey; font-size: 1.6rem; cursor: default">{{ 'NOT RECORD FOUND' | translate }}</span>
+</div>
+<div *ngIf="dataMapping && dataMapping?.length" class="block-hide"></div>

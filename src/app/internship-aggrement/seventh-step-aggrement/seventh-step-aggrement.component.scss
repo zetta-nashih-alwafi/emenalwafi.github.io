@@ -1,0 +1,64 @@
+.btn-submit {
+  text-align: end;
+  margin-top: 0px;
+  margin-bottom: 20px;
+  position: absolute;
+  right: 25px;
+  bottom: -15px;
+}
+.brd-top {    
+  margin-top: 20px;
+  margin-bottom: 45px;
+  padding-top: 10px;
+  border-top: 2px solid #cccccc;
+}
+.pill-skill {
+  vertical-align: middle;
+  text-align: center;
+  display: inline-flex;
+  width: 10%;
+}
+.text-question {
+  width: 90%;
+  display: inline-block;
+}
+@media screen and (max-width: 500px) {
+  .btn-submit {
+    width: 100% !important;
+    text-align: center;
+    margin-top: 15px;
+    margin-bottom: 0px !important;
+    position: relative !important;
+    right: 0px;
+    bottom: 0px !important;
+    margin-right: 0px !important;
+    padding-left: 0px !important;
+    padding-right: 0px !important;
+    margin-left: 0px;
+  }
+  .submit-action {
+    width: 100% !important;
+    margin-top: 10px !important;
+  }
+}
+.hd-legend {
+  padding-bottom: 5px;
+  border-bottom: 1px solid #c7c7c7;
+  margin-bottom: 15px !important;
+  font-size: 18px;
+}
+.form-control {
+  border: 1px solid #a4a4a4 !important;
+}
+.ck.ck-editor__editable_inline {
+  overflow: auto;
+  padding: 0 var(--ck-spacing-standard);
+  border: 1px solid #bdbdbd !important;
+  min-height: 120px !important;
+}
+:host::ng-deep.ck.ck-editor__editable_inline {
+  overflow: auto;
+  padding: 0 var(--ck-spacing-standard);
+  border: 1px solid #bdbdbd !important;
+  min-height: 120px !important;
+}

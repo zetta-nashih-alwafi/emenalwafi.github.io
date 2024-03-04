@@ -1,0 +1,250 @@
+<div [ngClass]="{ hide: showForm }" class="top-space">
+  <ms-filter-breadcrumb [filterBreadcrumbData]="filterBreadcrumbData" (removeFilterTrigger)="removeFilterBreadcrumb($event)"></ms-filter-breadcrumb>
+  <table mat-table matSort [dataSource]="dataSource" (matSortChange)="sortData($event)" class="mat-elevation-z8">
+    <!-- ROW RESET START -->
+    <ng-container matColumnDef="reset">
+      <th mat-header-cell *matHeaderCellDef colspan="9" class="action-header-column text-right">
+        <div class="p-grid">
+          <div class="p-col-12 text-right">
+            <!-- Start Action Button Above table -->
+            <button
+              matTooltip="{{ 'Action' | translate }} "
+              style="padding: 0 7px !important"
+              mat-raised-button
+              color="accent"
+              [disabled]="isWaitingForResponse"
+              [matMenuTriggerFor]="action"
+            >
+              {{ 'Action' | translate }}
+              <mat-icon>expand_more</mat-icon>
+            </button>
+            <mat-menu #action="matMenu">
+              <button mat-menu-item matTooltip="{{ 'Add Registration Profile' | translate }}" (click)="addProfileRateDialog()" *ngIf="permission.addRegistrationProfile()">
+                {{ 'Add Registration Profile' | translate }}
+              </button>
+            </mat-menu>
+            <!--End Action Button Above table -->
+
+            <button
+              mat-raised-button
+              color="primary"
+              matTooltip="{{ 'Export' | translate }}"
+              (click)="getDataAllForCheckboxExport(0)"
+              [disabled]="isWaitingForResponse"
+              *ngIf="permission.exportRegistrationProfile()"
+            >
+              <mat-icon svgIcon="file-excel" class="mat-icon-svgIcon"></mat-icon>
+              {{ 'Export' | translate }}
+            </button>
+            <button
+              mat-raised-button
+              [disabled]="isWaitingForResponse"
+              color="primary"
+              (click)="resetTable()"
+              matTooltip="{{ 'Reset Filter' | translate }}"
+              *ngIf="permission.resetRegistrationProfile()"
+            >
+              <mat-icon svgIcon="loop" class="mat-icon-svgIcon"></mat-icon>
+              {{ 'RESET' | translate }}
+            </button>
+          </div>
+        </div>
+      </th>
+    </ng-container>
+    <!-- ROW RESET END -->
+    <!---ROW FILTER START-->
+    <ng-container matColumnDef="selectFilter" class="mat-column-select">
+      <th mat-header-cell *matHeaderCellDef class="text-center"></th>
+    </ng-container>
+    <ng-container matColumnDef="registrationProfileFilter">
+      <th mat-header-cell *matHeaderCellDef>
+        <mat-form-field>
+          <input matInput class="form-field" [formControl]="registrationProfileFilter" placeholder="{{ 'search' | translate }}" />
+        </mat-form-field>
+      </th>
+    </ng-container>
+    <ng-container matColumnDef="descriptionFilter">
+      <th mat-header-cell *matHeaderCellDef></th>
+    </ng-container>
+    <ng-container matColumnDef="discountFilter">
+      <th mat-header-cell *matHeaderCellDef></th>
+    </ng-container>
+    <ng-container matColumnDef="downPaymentFilter">
+      <th mat-header-cell *matHeaderCellDef></th>
+    </ng-container>
+    <ng-container matColumnDef="paymentModeFilter">
+      <th mat-header-cell *matHeaderCellDef></th>
+    </ng-container>
+    <ng-container matColumnDef="additionalCostsFilter">
+      <th mat-header-cell *matHeaderCellDef></th>
+    </ng-container>
+    <ng-container matColumnDef="programsFilter">
+      <th mat-header-cell *matHeaderCellDef></th>
+    </ng-container>
+    <ng-container matColumnDef="actionFilter">
+      <th mat-header-cell *matHeaderCellDef></th>
+    </ng-container>
+    <!--ROW FILTER END-->
+    <!-- ROW HEADER AND CONTENT START -->
+    <ng-container matColumnDef="select" class="mat-column-select">
+      <th mat-header-cell *matHeaderCellDef class="text-center">
+        <mat-checkbox
+          (change)="$event ? masterToggle() : null"
+          (change)="showOptions('all', '')"
+          [checked]="(selection.hasValue() && isAllSelected()) || isCheckedAll"
+          [indeterminate]="selection.hasValue() && (dataUnselectUser?.length > 0 || !isAllSelected())"
+          [aria-label]="checkboxLabel()"
+        >
+        </mat-checkbox>
+      </th>
+      <td mat-cell *matCellDef="let row" class="text-center">
+        <mat-checkbox
+          (click)="$event.stopPropagation()"
+          (change)="$event ? selection.toggle(row._id) : null"
+          [checked]="selection.isSelected(row._id) || (isCheckedAll && !dataUnselectUser.includes(row?._id))"
+          (change)="showOptions('one', row)"
+          [aria-label]="checkboxLabel(row)"
+        >
+        </mat-checkbox>
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="registrationProfile">
+      <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'Registration Profile' | translate }}">
+        <h5 mat-sort-header="name">{{ 'Registration Profile' | translate }}</h5>
+      </th>
+      <td mat-cell *matCellDef="let element" [matTooltip]="element?.name">
+        {{ element?.name }}
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="description">
+      <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'Description' | translate }}">
+        <h5 mat-sort-header="description">{{ 'Description' | translate }}</h5>
+      </th>
+      <td mat-cell *matCellDef="let element" [matTooltip]="element?.description">
+        {{ element?.description }}
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="discount">
+      <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'Discount' | translate }}">
+        <h5>{{ 'Discount' | translate }}</h5>
+      </th>
+      <td mat-cell *matCellDef="let element" [matTooltip]="element?.discount_on_full_rate + '%'">{{ element?.discount_on_full_rate }} %</td>
+    </ng-container>
+    <ng-container matColumnDef="downPayment">
+      <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'Down Payment' | translate }}">
+        <h5>{{ 'Down Payment' | translate }}</h5>
+      </th>
+      <td mat-cell *matCellDef="let element" [matTooltip]="element?.is_down_payment | translate">
+        {{ element?.is_down_payment | translate }}
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="paymentMode">
+      <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'Payment Mode' | translate }}">
+        <h5>{{ 'Payment Mode' | translate }}</h5>
+      </th>
+      <td mat-cell *matCellDef="let element" [matTooltip]="renderTooltipEntity(element?.payment_modes)">
+        <ng-container *ngFor="let el of element?.payment_modes">
+          <span class="tags">{{ el.name }}</span>
+        </ng-container>
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="additionalCosts">
+      <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'Additional Costs' | translate }}">
+        <h5>{{ 'Additional Costs' | translate }}</h5>
+      </th>
+      <td mat-cell *matCellDef="let element" [matTooltip]="renderTooltipEntityAdditional(element?.additional_cost_ids)">
+        <ng-container *ngFor="let el of element?.additional_cost_ids">
+          <span class="tags">{{ el.additional_cost }}</span>
+        </ng-container>
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="programs">
+      <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'Programs' | translate }}">
+        <h5>{{ 'Programs' | translate }}</h5>
+      </th>
+      <td mat-cell *matCellDef="let element" [matTooltip]="renderTooltipEntityProgram(element?.programs)">
+        <ng-container *ngFor="let el of element?.programs">
+          <span class="tags">{{ el?.program }}</span>
+        </ng-container>
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="action">
+      <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'Action' | translate }}">
+        <h5>{{ 'Action' | translate }}</h5>
+      </th>
+      <td mat-cell *matCellDef="let element">
+        <button
+          (click)="onOpenRegistrationProfileDialog(element)"
+          mat-icon-button
+          class="margin-right-button"
+          matTooltip="{{ 'Edit' | translate }}"
+          matTooltipPosition="above"
+          *ngIf="permission.editRegistrationProfile()"
+          [disabled]="(dataSelected && dataSelected.length > 0) || isCheckedAll"
+        >
+          <mat-icon>edit</mat-icon>
+        </button>
+        <button
+          mat-icon-button
+          (click)="deleteProfileRate(element)"
+          class="margin-right-button"
+          matTooltip="{{ 'Delete' | translate }}"
+          matTooltipPosition="above"
+          *ngIf="permission.deleteRegistrationProfile()"
+          [disabled]="(dataSelected && dataSelected.length > 0) || isCheckedAll"
+        >
+          <mat-icon>delete</mat-icon>
+        </button>
+      </td>
+    </ng-container>
+    <!-- ROW HEADER AND CONTENT END -->
+    <ng-container matColumnDef="loading">
+      <th mat-header-cell *matHeaderCellDef colspan="9" class="text-center">
+        <div class="center-spinner">
+          <mat-spinner color="accent"></mat-spinner>
+        </div>
+      </th>
+    </ng-container>
+    <tr mat-header-row *matHeaderRowDef="['reset']"></tr>
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-header-row *matHeaderRowDef="filterColumns"></tr>
+    <tr mat-header-row *matHeaderRowDef="['loading']" [hidden]="!isWaitingForResponse"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns" [hidden]="isWaitingForResponse"></tr>
+  </table>
+  <div *ngIf="noData | async" class="no-records">
+    {{ 'No record of Registration Profile' | translate }}
+  </div>
+  <div [ngClass]="{ hide: noData | async }">
+    <mat-paginator
+      [ngClass]="{ 'hide-pagination-buttons': intakeChannelCount <= 10 }"
+      [length]="registrationProfileCount"
+      [hidePageSize]="true"
+      [pageSize]="[10]"
+      showFirstLastButtons
+    ></mat-paginator>
+  </div>
+</div>
+
+<div *ngIf="showForm" class="top-space">
+  <ms-registration-profile-form [scholarSeasonId]="scholarId" [data]="editData" (close)="closeForm($event)"></ms-registration-profile-form>
+</div>
+<div *ngIf="isLoading" class="inner-loading-indicator">
+  <mat-spinner color="accent" [diameter]="100"></mat-spinner>
+</div>
+
+<!-- <swal #exportSwal title="{{ 'Export Title' | translate }}" [showConfirmButton]="false">
+    <div *swalPartial class="">
+      <div class="">{{ 'Export Text1' | translate }}</div>
+      <div class="">{{ 'Export Text2' | translate }}</div>
+      <div class="">{{ 'Export Text3' | translate }}</div>
+      <div class="">{{ 'Export Text4' | translate }}</div>
+      <div class="">
+        <mat-form-field color="accent" class="full-wid">
+          <input matInput [(ngModel)]="exportName" placeholder="{{ 'ExportName' | translate }}" />
+        </mat-form-field>
+      </div>
+      <button mat-raised-button color="primary" (click)="onDataExport()">
+        {{ 'OK' | translate }}
+      </button>
+    </div>
+  </swal> -->

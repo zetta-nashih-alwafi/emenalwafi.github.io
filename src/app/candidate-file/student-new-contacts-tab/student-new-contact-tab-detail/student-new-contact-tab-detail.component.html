@@ -1,0 +1,250 @@
+<div class="p-grid" *ngIf="isWaitingForResponse" class="p-col-12" style="text-align: center !important; display: contents">
+  <div class="center-spinner spinner-wrapper">
+    <mat-spinner color="accent"></mat-spinner>
+  </div>
+</div>
+<div class="p-grid" *ngIf="!isWaitingForResponse">
+  <div class="p-col-12" style="padding-left: 0px; padding-right: 0px">
+    <div class="p-grid">
+      <div class="p-col-12" style="text-align: right">
+        <button mat-raised-button color="accent" (click)="onSave()">
+          <mat-icon class="mat-icon-default">save</mat-icon>
+          {{ 'CARDDETAIL.Save' | translate }}
+        </button>
+      </div>
+    </div>
+    <div class="p-grid">
+      <div class="p-col-12">
+        {{ 'User to contact in case of emergency' | translate }}
+      </div>
+    </div>
+    <mat-card [formGroup]="emergencyContact" style="margin-top: 0 !important">
+      <div class="p-grid">
+        <div class="p-col-4">
+          <mat-form-field>
+            <input matInput formControlName="family_name" type="text" placeholder="{{ 'CARDDETAIL.Last Name' | translate }}" />
+            <mat-error *ngIf="emergencyContact.get('family_name').hasError('required')">
+              {{ 'This field is required' | translate }}
+            </mat-error>
+          </mat-form-field>
+        </div>
+        <div class="p-col-4">
+          <mat-form-field>
+            <input matInput formControlName="name" type="text" placeholder="{{ 'CARDDETAIL.First Name' | translate }}" />
+            <mat-error *ngIf="emergencyContact.get('name').hasError('required')">
+              {{ 'This field is required' | translate }}
+            </mat-error>
+          </mat-form-field>
+        </div>
+        <div class="p-col-4">
+          <mat-form-field>
+            <input matInput formControlName="email" type="email" placeholder="{{ 'CARDDETAIL.Mail' | translate }}" />
+            <mat-error>
+              <p *ngIf="emergencyContact.get('email').hasError('required')">
+                {{ 'This field is required' | translate }}
+              </p>
+              <p
+                *ngIf="
+                  emergencyContact?.get('email')?.hasError('email') &&
+                  (emergencyContact?.get('email')?.touched || emergencyContact?.get('email')?.dirty)
+                "
+              >
+                {{ 'Invalid email format' | translate }}
+              </p>
+            </mat-error>
+          </mat-form-field>
+        </div>
+        <div class="p-col-4">
+          <div class="p-grid" style="position: relative">
+            <div class="phone-number p-col-12 no-padding-y p-grid" style="position: relative">
+              <mat-label class="label-for-phone">{{ 'CARDDETAIL.Phone' | translate }} 
+                <span 
+                  [ngClass]="
+                    (dialCodeControl.hasError('required') && (dialCodeControl.dirty || dialCodeControl.touched)) || 
+                    emergencyContact.get('tele_phone').hasError('pattern') && (emergencyContact.get('tele_phone').touched || emergencyContact.get('tele_phone').dirty) ? 
+                    'invalid-field-star' : 
+                    ''">*
+                </span>
+              </mat-label>
+              <div class="phone-number p-col-3">
+                <ng-select
+                  [formControl]="dialCodeControl"
+                  (change)="selectionDialCode($event)"
+                  [clearable]="false"
+                  bindLabel="name"
+                  [appendTo]="'body'"
+                  class="custom-dropdownpanel-dialcode"
+                >
+                  <ng-template ng-label-tmp let-item="item">
+                    <img class="flag-icon-trigger" [src]="flagsIconPath + item?.flagIcon + '.svg'"/>
+                    <span *ngIf="item" class="ml-4">+{{ item?.dialCode }}</span>
+                  </ng-template>
+                  <ng-option *ngFor="let country of countryCodeList" [value]="country">
+                    <ng-container *ngIf="country?.name">
+                      <img class="flag-icon" [src]="flagsIconPath + country?.flagIcon + '.svg'" /> {{ country?.name | translate }} +{{ country?.dialCode }}
+                    </ng-container>
+                  </ng-option>
+                </ng-select>
+              </div>
+              <div class="phone-number p-col-9">
+                <mat-form-field>
+                  <input matInput formControlName="tele_phone" type="text" />
+                  <mat-error
+                    *ngIf="
+                      emergencyContact.get('tele_phone').hasError('pattern') &&
+                      (emergencyContact.get('tele_phone').touched || emergencyContact.get('tele_phone').dirty)
+                    "
+                  >
+                    {{ 'Phone number is not valid' | translate }}
+                  </mat-error>
+                </mat-form-field>
+              </div>
+            </div>
+            <mat-error
+              class="invalid-field"
+              *ngIf="
+              (
+                (emergencyContact?.get('tele_phone')?.hasError('required') && (emergencyContact?.get('tele_phone')?.dirty || emergencyContact?.get('tele_phone')?.touched)) ||
+                (emergencyContact?.get('tele_phone')?.hasError('required') && (emergencyContact?.get('tele_phone')?.dirty || emergencyContact?.get('tele_phone')?.touched)) ||
+                (dialCodeControl.hasError('required') && (dialCodeControl.dirty || dialCodeControl.touched))
+              ) && 
+              !emergencyContact.get('tele_phone').hasError('pattern')
+            ">
+              {{ 'This field is required' | translate }}
+            </mat-error>
+          </div>
+        </div>
+        <div class="p-col-4">
+          <mat-form-field>
+            <mat-label>{{ 'CARDDETAIL.Relations' | translate }}</mat-label>
+            <mat-select formControlName="relation" panelClass="filterPanel custom-matselect-dropdown">
+              <mat-option *ngFor="let relation of relationList" [value]="relation">
+                {{ 'CARDDETAIL.RELATION.' + relation | translate }}</mat-option
+              >
+            </mat-select>
+            <mat-error *ngIf="emergencyContact.get('relation').hasError('required')">
+              {{ 'This field is required' | translate }}
+            </mat-error>
+          </mat-form-field>
+        </div>
+      </div>
+      <div class="p-grid">
+        <div class="p-col-4">
+          <mat-form-field>
+            <input matInput formControlName="address" type="text" placeholder="{{ 'CARDDETAIL.Address' | translate }}" />
+          </mat-form-field>
+        </div>
+        <div class="p-col-4">
+          <mat-form-field>
+            <input matInput formControlName="city" type="text" placeholder="{{ 'CARDDETAIL.City' | translate }}" />
+          </mat-form-field>
+        </div>
+        <div class="p-col-4">
+          <mat-form-field>
+            <input matInput formControlName="postal_code" type="text" placeholder="{{ 'CARDDETAIL.Zip Code' | translate }}" />
+          </mat-form-field>
+        </div>
+      </div>
+    </mat-card>
+    
+    <!--*************** display form isLegalRepresentative -->
+    <ng-container 
+      *ngIf="candidateData?.is_emancipated_minor === false && !showFinacment">
+      <div class="p-grid">
+        <div class="p-col-12" style="margin-top: 1rem;">
+          {{ 'Legal representative' | translate }}
+        </div>
+      </div>
+      <mat-card [formGroup]="legalRepresentative" style="margin-top: 0 !important">
+        <div class="p-grid">
+          <div class="p-col-4">
+            <mat-form-field>
+              <input matInput formControlName="last_name" type="text" placeholder="{{ 'CARDDETAIL.Last Name' | translate }}" />
+              <mat-error *ngIf="legalRepresentative.get('last_name').hasError('required')">
+                {{ 'This field is required' | translate }}
+              </mat-error>
+            </mat-form-field>
+          </div>
+          <div class="p-col-4">
+            <mat-form-field>
+              <input matInput formControlName="first_name" type="text" placeholder="{{ 'CARDDETAIL.First Name' | translate }}" />
+              <mat-error *ngIf="legalRepresentative.get('first_name').hasError('required')">
+                {{ 'This field is required' | translate }}
+              </mat-error>
+            </mat-form-field>
+          </div>
+          <div class="p-col-4">
+            <mat-form-field>
+              <input matInput formControlName="email" type="email" placeholder="{{ 'CARDDETAIL.Mail' | translate }}" />
+              <mat-error>
+                <p *ngIf="legalRepresentative.get('email').hasError('required')">
+                  {{ 'This field is required' | translate }}
+                </p>
+                <p
+                  *ngIf="
+                  legalRepresentative?.get('email')?.hasError('email') &&
+                    (legalRepresentative?.get('email')?.touched || legalRepresentative?.get('email')?.dirty)
+                  "
+                >
+                  {{ 'Invalid email format' | translate }}
+                </p>
+              </mat-error>
+            </mat-form-field>
+            <p
+                class="error-message"
+                *ngIf="emailSameStudent"
+              >
+              {{ 'This email has been used by the student' | translate }}
+            </p>
+          </div>
+          <div class="p-col-4">
+            <mat-form-field>
+              <input matInput formControlName="phone_number" type="text" placeholder="{{ 'CARDDETAIL.Phone' | translate }}" />
+              <mat-error *ngIf="legalRepresentative.get('phone_number').hasError('required')">
+                {{ 'This field is required' | translate }}
+              </mat-error>
+              <mat-error
+                *ngIf="
+                legalRepresentative.get('phone_number').hasError('pattern') &&
+                  (legalRepresentative.get('phone_number').touched || legalRepresentative.get('phone_number').dirty)
+                "
+              >
+                {{ 'Phone number is not valid' | translate }}
+              </mat-error>
+            </mat-form-field>
+          </div>
+          <div class="p-col-4">
+            <mat-form-field>
+              <mat-label>{{ 'CARDDETAIL.Relations' | translate }}</mat-label>
+              <mat-select formControlName="parental_link" panelClass="filterPanel custom-matselect-dropdown">
+                <mat-option *ngFor="let relation of relationList" [value]="relation">
+                  {{ 'CARDDETAIL.RELATION.' + relation | translate }}</mat-option
+                >
+              </mat-select>
+              <mat-error *ngIf="legalRepresentative.get('parental_link').hasError('required')">
+                {{ 'This field is required' | translate }}
+              </mat-error>
+            </mat-form-field>
+          </div>
+        </div>
+        <div class="p-grid">
+          <div class="p-col-4">
+            <mat-form-field>
+              <input matInput formControlName="address" type="text" placeholder="{{ 'CARDDETAIL.Address' | translate }}" />
+            </mat-form-field>
+          </div>
+          <div class="p-col-4">
+            <mat-form-field>
+              <input matInput formControlName="city" type="text" placeholder="{{ 'CARDDETAIL.City' | translate }}" />
+            </mat-form-field>
+          </div>
+          <div class="p-col-4">
+            <mat-form-field>
+              <input matInput formControlName="postal_code" type="text" placeholder="{{ 'CARDDETAIL.Zip Code' | translate }}" />
+            </mat-form-field>
+          </div>
+        </div>
+      </mat-card>
+    </ng-container>
+  </div>
+</div>

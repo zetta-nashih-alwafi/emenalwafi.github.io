@@ -1,0 +1,534 @@
+<div class="p-grid no-margin">
+  <div class="p-col-12 no-padding">
+    <div>
+      <mat-card class="card-campus">
+        <div class="border-yellow" style="margin-left: 0px;margin-right: 0px;">
+          <div class="p-grid no-margin">
+            <div class="p-col-12 no-padding" style="margin-bottom: 15px;">
+              <div class="p-col-fixed no-padding" style="float: left;width: 200px;">Campus</div>
+              <div class="p-col no-padding">
+                <ng-container *ngFor="let campus of listOfCampus">
+                  <div class="p-col-1 no-padding card-campuss">
+                    <span>{{ campus.name }}</span>
+                  </div>
+                </ng-container>
+              </div>
+            </div>
+          </div>
+          <div class="p-grid no-margin">
+            <div class="p-col-12 no-padding">
+              <div class="p-col-fixed no-padding" style="float: left;width: 200px;">
+                Sequences / Programmes
+              </div>
+              <div class="p-col no-padding">
+                <ng-container *ngFor="let program of listOfProgrammes">
+                  <div class="p-col-1 no-padding card-campuss">
+                    <span>{{ program.name }}</span>
+                  </div>
+                </ng-container>
+              </div>
+            </div>
+          </div>
+        </div>
+      </mat-card>
+    </div>
+  </div>
+</div>
+<div class="p-grid no-margin">
+  <div class="p-col-12 no-padding">
+    <div class="card-container">
+      <mat-card
+        class="card-segment"
+        style="padding: 7px 15px; background: #e86a37"
+      >
+        <div class="p-grid no-margin">
+          <div class="p-col-fixed no-padding icon-grid">
+            <div class="segment-icon">
+              <mat-icon style="font-size: 24px !important; margin-top: 0px !important;" class="mat-icon-default total-status"
+                >account_balance</mat-icon
+              >
+            </div>
+          </div>
+          <div class="p-col no-padding">
+            <div class="p-grid no-margin segment-title">
+              <div>Total</div>
+            </div>
+            <div class="p-grid no-margin">
+              <div class="segment-score">120</div>
+            </div>
+            <div class="p-grid no-margin segment-percent">
+              <mat-icon
+                class="mat-icon-default"
+                style="font-size: 13px; margin-right: 3px"
+                >trending_up
+              </mat-icon>
+              <div>12%</div>
+            </div>
+          </div>
+        </div>
+      </mat-card>
+    </div>
+    <div class="card-container">
+      <mat-card
+        class="card-segment"
+        style="padding: 7px 15px; background: #00b050"
+      >
+        <div class="p-grid no-margin">
+          <div class="p-col-fixed no-padding icon-grid">
+            <div class="segment-icon">
+              <mat-icon
+                svgIcon="handshakes"
+                class="icon-hansake mat-icon-svgIcon mat-icon-default hight-status"
+              ></mat-icon>
+            </div>
+          </div>
+          <div class="p-col no-padding">
+            <div class="p-grid no-margin segment-title">
+              <div>Hight</div>
+            </div>
+            <div class="p-grid no-margin">
+              <div class="segment-score">120</div>
+            </div>
+            <div class="p-grid no-margin segment-percent">
+              <mat-icon
+                class="mat-icon-default"
+                style="font-size: 13px; margin-right: 3px"
+                >trending_up
+              </mat-icon>
+              <div>12%</div>
+            </div>
+          </div>
+        </div>
+      </mat-card>
+    </div>
+    <div class="card-container">
+      <mat-card
+        class="card-segment"
+        style="padding: 7px 15px; background: #ff9900"
+      >
+        <div class="p-grid no-margin">
+          <div class="p-col-fixed no-padding icon-grid">
+            <div class="segment-icon">
+              <mat-icon
+                svgIcon="handshakes"
+                class="mat-icon-svgIcon mat-icon-default modert-status icon-hansake"
+              ></mat-icon>
+            </div>
+          </div>
+          <div class="p-col no-padding">
+            <div class="p-grid no-margin segment-title">
+              <div>Modert</div>
+            </div>
+            <div class="p-grid no-margin">
+              <div class="segment-score">120</div>
+            </div>
+            <div class="p-grid no-margin segment-percent">
+              <mat-icon
+                class="mat-icon-default"
+                style="font-size: 13px; margin-right: 3px"
+                >trending_up
+              </mat-icon>
+              <div>12%</div>
+            </div>
+          </div>
+        </div>
+      </mat-card>
+    </div>
+    <div class="card-container">
+      <mat-card
+        class="card-segment"
+        style="padding: 7px 15px; background: #cc0000"
+      >
+        <div class="p-grid no-margin">
+          <div class="p-col-fixed no-padding icon-grid">
+            <div class="segment-icon">
+              <mat-icon
+                svgIcon="handshakes"
+                class="mat-icon-svgIcon mat-icon-default low-status icon-hansake"
+              ></mat-icon>
+            </div>
+          </div>
+          <div class="p-col no-padding">
+            <div class="p-grid no-margin segment-title">
+              <div>Low</div>
+            </div>
+            <div class="p-grid no-margin">
+              <div class="segment-score">120</div>
+            </div>
+            <div class="p-grid no-margin segment-percent">
+              <mat-icon
+                class="mat-icon-default"
+                style="font-size: 13px; margin-right: 3px"
+                >trending_up
+              </mat-icon>
+              <div>12%</div>
+            </div>
+          </div>
+        </div>
+      </mat-card>
+    </div>
+    <div class="card-container">
+      <mat-card
+        class="card-segment"
+        style="padding: 7px 15px; background: #b7b7b7"
+      >
+        <div class="p-grid no-margin">
+          <div class="p-col-fixed no-padding icon-grid">
+            <div class="segment-icon">
+              <mat-icon
+                svgIcon="handshakes"
+                class="mat-icon-svgIcon mat-icon-default lost-status icon-hansake"
+              ></mat-icon>
+            </div>
+          </div>
+          <div class="p-col no-padding">
+            <div class="p-grid no-margin segment-title">
+              <div>Lost</div>
+            </div>
+            <div class="p-grid no-margin">
+              <div class="segment-score">120</div>
+            </div>
+            <div class="p-grid no-margin segment-percent">
+              <mat-icon
+                class="mat-icon-default"
+                style="font-size: 13px; margin-right: 3px"
+                >trending_up
+              </mat-icon>
+              <div>12%</div>
+            </div>
+          </div>
+        </div>
+      </mat-card>
+    </div>
+  </div>
+</div>
+<div class="p-grid no-margin">
+  <div class="p-col-fixed no-padding" style="width: 400px">
+    <div class="p-grid no-margin">
+      <div
+        class="p-col-fixed no-padding"
+        style="margin-top: 10px; padding-right: 7px; width: 400px"
+      >
+        <div class="p-col header-height background-black">
+          <div>
+            <mat-icon
+              class="mat-icon-default"
+              style="margin-right: 10px; float: left; margin-top: 3px !important;"
+              >school</mat-icon
+            ><span>{{ "My Candidates to call" | translate }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="p-grid no-margin">
+      <div
+        class="p-col-fixed no-padding table-section-height"
+        style="margin-bottom: 45px; width: 400px"
+      >
+        <table
+          mat-table
+          [dataSource]="dataSource"
+          class="mat-elevation-z8 candidateTable"
+        >
+          <!-- Name Column -->
+          <ng-container matColumnDef="name">
+            <th mat-header-cell *matHeaderCellDef></th>
+            <td mat-cell *matCellDef="let element">
+              <div
+                *ngIf="element.photo"
+                style="display: inline-block; margin-right: 5px"
+              >
+                <img
+                  alt="user list image"
+                  class="img-responsive img-circle"
+                  height="30"
+                  [src]="element.photo"
+                  width="30"
+                />
+              </div>
+              <div style="display: contents">
+                {{ element.civility ? element.civility : "" }}
+                {{ element.first_name ? element.first_name : "" }}
+                {{ element.last_name ? (element.last_name | uppercase) : "" }}
+              </div>
+            </td>
+          </ng-container>
+
+          <!-- Priority Column -->
+          <ng-container matColumnDef="priority">
+            <th mat-header-cell *matHeaderCellDef></th>
+            <td mat-cell *matCellDef="let element">
+              <mat-icon
+                [ngClass]="{
+                  'green-icon': element?.priority === 'hight',
+                  'orange-icon': element?.priority === 'modert',
+                  'red-icon': element?.priority === 'low',
+                  'grey-icon': element?.priority === 'lost'
+                }"
+                aria-hidden="true"
+                >lens
+              </mat-icon>
+            </td>
+          </ng-container>
+
+          <!-- Weight Column -->
+          <ng-container matColumnDef="weight">
+            <th mat-header-cell *matHeaderCellDef></th>
+            <td mat-cell *matCellDef="let element">{{ element.weight }}</td>
+          </ng-container>
+
+          <!-- Symbol Column -->
+          <ng-container matColumnDef="symbol">
+            <th mat-header-cell *matHeaderCellDef></th>
+            <td mat-cell *matCellDef="let element">
+              <mat-icon class="mat-icon-default font-action-x"
+                ><i class="fa fa-skype"></i
+              ></mat-icon>
+              <mat-icon class="mat-icon-default font-action-y"
+                >phone_forwarded</mat-icon
+              >
+              <mat-icon class="mat-icon-default font-action-x"
+                ><i class="fa fa-whatsapp"></i
+              ></mat-icon>
+              <mat-icon class="mat-icon-default font-action-z">send</mat-icon>
+            </td>
+          </ng-container>
+
+          <tr
+            mat-header-row
+            *matHeaderRowDef="displayedColumns"
+            style="display: none"
+          ></tr>
+          <tr
+            mat-row
+            *matRowDef="let row; columns: displayedColumns"
+            (click)="candidateSelected(row)"
+            class="cur-point"
+          ></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="p-col no-padding" *ngIf="selectCandidate">
+    <div class="p-grid no-margin">
+      <div class="card-detail p-col no-padding">
+        <mat-card class="card-segment detail-candidate">
+          <div class="p-col-fixed detail-photo">
+            <div
+              *ngIf="selectCandidate.photo"
+              style="display: inline-block; margin-right: 5px"
+            >
+              <img
+                alt="user list image"
+                class="img-responsive img-circle img-candidate"
+                height="30"
+                [src]="selectCandidate.photo"
+                width="30"
+              />
+            </div>
+          </div>
+          <div class="p-col">
+            <div class="p-grid no-margin">
+              <div class="p-col no-padding">
+                {{ selectCandidate.last_name ? (selectCandidate.last_name | uppercase) : "" }}
+                {{
+                  selectCandidate.first_name ? selectCandidate.first_name : ""
+                }}
+                {{ selectCandidate.civility ? selectCandidate.civility : "" }}
+              </div>
+              <div class="p-col-fixed no-padding">
+                <div class="status-candidate">
+                  <mat-icon
+                    [ngClass]="{
+                      'green-icon': selectCandidate?.priority === 'hight',
+                      'orange-icon': selectCandidate?.priority === 'modert',
+                      'red-icon': selectCandidate?.priority === 'low',
+                      'grey-icon': selectCandidate?.priority === 'lost'
+                    }"
+                    aria-hidden="true"
+                    style="font-size: 24px"
+                    >lens</mat-icon
+                  >
+                </div>
+                <label
+                  class="yellow-button btn-student label-status"
+                  style="width: 110px; float: left"
+                >
+                  {{ "20-21 EFAPAR 1" | translate }}
+                </label>
+                <div class="button-candidate">
+                  <button class="margin-right-button mat-icon-button">
+                    <mat-icon class="mat-icon-default btn-action-z"
+                      >send</mat-icon
+                    >
+                  </button>
+                  <button class="margin-right-button mat-icon-button">
+                    <mat-icon class="mat-icon-default btn-action-y"
+                      ><i class="fa fa-whatsapp i-action"></i>
+                    </mat-icon>
+                  </button>
+                  <button class="margin-right-button mat-icon-button">
+                    <mat-icon class="mat-icon-default btn-action-z"
+                      >phone_forwarded</mat-icon
+                    >
+                  </button>
+                  <button class="margin-right-button mat-icon-button">
+                    <mat-icon class="mat-icon-default btn-action-z"
+                      >edit</mat-icon
+                    >
+                  </button>
+                  <button class="margin-right-button mat-icon-button">
+                    <mat-icon class="mat-icon-default btn-action-z"
+                      >group</mat-icon
+                    >
+                  </button>
+                  <button class="margin-right-button mat-icon-button">
+                    <mat-icon class="mat-icon-default btn-action-z"
+                      >person</mat-icon
+                    >
+                  </button>
+                  <button class="margin-right-button mat-icon-button">
+                    <mat-icon class="mat-icon-default btn-action-z"
+                      >remove_red_eye</mat-icon
+                    >
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="p-grid no-margin">
+              <div class="p-col-3 no-padding">
+                <div class="icon-detail">
+                  <mat-icon class="mat-icon-default font-action-btn"
+                    >perm_contact_calendar</mat-icon
+                  >
+                </div>
+                <div class="candidate-birth">
+                  <div>21/12/1995 &</div>
+                  <div>Paris</div>
+                </div>
+              </div>
+              <div class="p-col-3 no-padding">
+                <div class="icon-detail">
+                  <mat-icon class="mat-icon-default font-action-btn"
+                    >pin_drop</mat-icon
+                  >
+                </div>
+                <div class="candidate-address">
+                  <div>Paris</div>
+                </div>
+              </div>
+              <div class="p-col-3 no-padding">
+                <div class="icon-detail">
+                  <mat-icon class="mat-icon-default font-action-btn"
+                    >school</mat-icon
+                  >
+                </div>
+                <div class="candidate-address">
+                  <div>BAC 1ere #####</div>
+                </div>
+              </div>
+              <div class="p-col-3 no-padding"></div>
+            </div>
+            <div class="p-grid no-margin">
+              <div class="p-col-3 no-padding">
+                <div class="icon-detail">
+                  <mat-icon class="mat-icon-default font-action-btn"
+                    >local_phone</mat-icon
+                  >
+                </div>
+                <div class="candidate-address">
+                  <div>06 22 56 85 34</div>
+                </div>
+              </div>
+              <div class="p-col-3 no-padding">
+                <div class="icon-detail">
+                  <mat-icon class="mat-icon-default font-action-btn"
+                    >mail</mat-icon
+                  >
+                </div>
+                <div class="candidate-address">
+                  <div>pierre452@yopmail.com</div>
+                </div>
+              </div>
+              <div class="p-col-3 no-padding">
+                <div
+                  *ngIf="selectCandidate.photo"
+                  style="
+                    display: inline-block;
+                    margin-right: 5px;
+                    margin-top: 2px;
+                  "
+                >
+                  <img
+                    alt="user list image"
+                    class="img-responsive img-circle"
+                    height="30"
+                    [src]="selectCandidate.photo"
+                    style="width: 20px"
+                    width="30"
+                  />
+                </div>
+                <div style="font-size: 10px; display: contents">
+                  {{ selectCandidate.civility ? selectCandidate.civility : "" }}
+                  {{
+                    selectCandidate.first_name ? selectCandidate.first_name : ""
+                  }}
+                  {{
+                    selectCandidate.last_name ? (selectCandidate.last_name | uppercase) : ""
+                  }}
+                </div>
+              </div>
+              <div class="p-col-3 no-padding">
+                <div
+                  *ngIf="selectCandidate.photo"
+                  style="
+                    display: inline-block;
+                    margin-right: 5px;
+                    margin-top: 2px;
+                  "
+                >
+                  <img
+                    alt="user list image"
+                    class="img-responsive img-circle"
+                    height="30"
+                    [src]="selectCandidate.photo"
+                    style="width: 20px"
+                    width="30"
+                  />
+                </div>
+                <div style="font-size: 10px; display: contents">
+                  {{ selectCandidate.civility ? selectCandidate.civility : "" }}
+                  {{
+                    selectCandidate.first_name ? selectCandidate.first_name : ""
+                  }}
+                  {{
+                    selectCandidate.last_name ? (selectCandidate.last_name | uppercase) : ""
+                  }}
+                </div>
+              </div>
+            </div>
+          </div>
+        </mat-card>
+      </div>
+    </div>
+    <div class="p-grid no-margin">
+      <div class="p-col no-padding">
+        <div class="card-activity">
+          <mat-card class="card-segment" style="border-radius: 2px"
+            >List of Actions happened about this student</mat-card
+          >
+        </div>
+      </div>
+      <div class="p-col-fixed no-padding">
+        <div class="card-chart">
+          <mat-card
+            class="card-segment"
+            style="border-radius: 2px; background: white"
+          >
+            <ms-histogram></ms-histogram>
+          </mat-card>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

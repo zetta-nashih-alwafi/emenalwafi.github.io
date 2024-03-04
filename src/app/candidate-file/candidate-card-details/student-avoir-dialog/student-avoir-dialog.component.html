@@ -1,0 +1,344 @@
+<div class="dialog-border" cdkDrag cdkDragRootElement=".cdk-overlay-pane" cdkDragHandle>
+  <div class="dialogTitleWrapper" cdkDrag cdkDragRootElement=".cdk-overlay-pane" cdkDragHandle>
+    <div class="p-grid">
+      <div class="w-30 no-padding">
+        <mat-icon style="vertical-align: middle" svgIcon="card-text-outline">card-text-outline</mat-icon>
+      </div>
+      <div class="p-col-10 acad-title">
+        <h3 class="dialogTitle" data-cy="label-add-avoir">
+          {{ 'Add avoir/discount' | translate }}
+        </h3>
+      </div>
+      <div class="w-65 no-padding">
+        <button data-cy="button-close-add-avoir-dialog" mat-icon-button class="close-icon float-right" mat-dialog-close tabindex="-1">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<form [formGroup]="identityForm">
+  <div class="fontColor">
+    <mat-dialog-content>
+      <div class="p-grid">
+        <div class="p-col-12 no-padding">
+          <div class="p-grid">
+            <div class="p-col-fixed center-label no-padding-left label-align" style="width: 160px">
+              <label>{{ 'Nature' | translate }}*</label>
+            </div>
+            <div class="p-col no-padding">
+              <mat-form-field floatLabel="never">
+                <!-- <input matInput formControlName="nature" type="text" placeholder="{{ 'Nature' | translate }}" /> -->
+                <mat-select
+                  formControlName="nature"
+                  placeholder="{{ 'Nature' | translate }}"
+                  [disableOptionCentering]="true"
+                  panelClass="filterPanel"
+                  data-cy="input-select-nature"
+                >
+                  <mat-option data-cy="input-select-option-nature" [value]="nature.value" *ngFor="let nature of natureList">
+                    {{ 'Finances.' + nature.key | translate }}
+                  </mat-option>
+                </mat-select>
+                <mat-error
+                  *ngIf="
+                    identityForm.get('nature').hasError('required') &&
+                    (identityForm.get('nature').dirty || identityForm.get('nature').touched)
+                  "
+                >
+                  {{ 'This field is required' | translate }}
+                </mat-error>
+              </mat-form-field>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="p-grid">
+        <div class="p-col-12 no-padding">
+          <div class="p-grid">
+            <div class="p-col-fixed center-label no-padding-left label-align" style="width: 160px">
+              <label>{{ 'From' | translate }}*</label>
+            </div>
+            <div class="p-col no-padding">
+              <mat-form-field floatLabel="never">
+                <input
+                  matInput
+                  formControlName="from"
+                  type="text"
+                  [readonly]="isLegalEntity"
+                  placeholder="{{ 'From' | translate }}"
+                  readonly
+                  style="color: gray"
+                  data-cy="input-from"
+                />
+                <mat-error
+                  *ngIf="
+                    identityForm.get('from').hasError('required') && (identityForm.get('from').dirty || identityForm.get('from').touched)
+                  "
+                >
+                  {{ 'This field is required' | translate }}
+                </mat-error>
+              </mat-form-field>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="p-grid">
+        <div class="p-col-12 no-padding">
+          <div class="p-grid">
+            <div class="p-col-fixed center-label no-padding-left label-align" style="width: 160px">
+              <label>{{ 'To' | translate }}*</label>
+            </div>
+            <div class="p-col no-padding">
+              <ng-container>
+                <mat-form-field floatLabel="never">
+                  <mat-select
+                    formControlName="who"
+                    placeholder="{{ 'To' | translate }}"
+                    [disableOptionCentering]="true"
+                    panelClass="filterPanel"
+                    data-cy="input-select-to-fc"
+                  >
+                    <mat-option
+                      *ngFor="let item of data?.dropdown"
+                      [value]="item._id"
+                      (click)="payerSelect(item)"
+                      data-cy="input-select-option-payer"
+                    >
+                      <span *ngIf="!item?.is_financial_support && !item?.company_branch_id && !item?.organization_id">
+                        {{
+                          (item?.candidate_id?.last_name | uppercase) +
+                            ' ' +
+                            item?.candidate_id?.first_name +
+                            ' ' +
+                            (item?.candidate_id?.civility && item?.candidate_id?.civility === 'neutral'
+                              ? ''
+                              : (item?.candidate_id?.civility | translate))
+                        }}
+                      </span>
+                      <span *ngIf="item?.is_financial_support && !item?.company_branch_id && !item?.organization_id">
+                        {{
+                          (item?.financial_support_info?.family_name | uppercase) +
+                            ' ' +
+                            item?.financial_support_info?.name +
+                            ' ' +
+                            (item?.financial_support_info?.civility && item?.financial_support_info?.civility === 'neutral'
+                              ? ''
+                              : (item?.financial_support_info?.civility | translate)) +
+                            (item?.financial_support_info?.relation
+                              ? ' (' + ('CARDDETAIL.RELATION.' + item?.financial_support_info?.relation | translate) + ')'
+                              : '')
+                        }}
+                      </span>
+                      <span *ngIf="(item?.is_financial_support || !item?.is_financial_support) && item?.company_branch_id">
+                        {{ item?.company_branch_id?.company_name }}
+                      </span>
+                      <span *ngIf="item?.organization_id">
+                        {{ item?.organization_id?.name }}
+                      </span>
+                    </mat-option>
+                  </mat-select>
+                  <mat-error
+                    *ngIf="
+                      identityForm.get('who').hasError('required') && (identityForm.get('who').dirty || identityForm.get('who').touched)
+                    "
+                  >
+                    {{ 'This field is required' | translate }}
+                  </mat-error>
+                </mat-form-field>
+              </ng-container>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="p-grid">
+        <div class="p-col-12 no-padding">
+          <div class="p-grid">
+            <div class="p-col-fixed center-label no-padding-left label-align" style="width: 160px">
+              <label>{{ 'Date' | translate }}*</label>
+            </div>
+            <div class="p-col no-padding">
+              <mat-form-field floatLabel="never">
+                <input
+                  matInput
+                  (click)="myDatepicker.open()"
+                  readonly
+                  placeholder="{{ 'Date' | translate }}"
+                  formControlName="date"
+                  [matDatepicker]="myDatepicker"
+                  data-cy="input-date"
+                />
+                <mat-datepicker-toggle matSuffix [for]="myDatepicker"></mat-datepicker-toggle>
+                <mat-datepicker #myDatepicker></mat-datepicker>
+                <mat-error
+                  *ngIf="
+                    identityForm.get('date').hasError('required') && (identityForm.get('date').dirty || identityForm.get('date').touched)
+                  "
+                >
+                  {{ 'This field is required' | translate }}
+                </mat-error>
+              </mat-form-field>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="p-grid">
+        <div class="p-col-12 no-padding">
+          <div class="p-grid">
+            <div class="p-col-fixed center-label no-padding-left label-align" style="width: 160px">
+              <label>{{ 'Operation name' | translate }}*</label>
+            </div>
+            <div class="p-col no-padding">
+              <mat-form-field floatLabel="never">
+                <mat-label>{{ 'Operation name' | translate }}</mat-label>
+                <mat-select
+                  data-cy="input-select-operation-name"
+                  formControlName="operation_name"
+                  [disableOptionCentering]="true"
+                  panelClass="filterPanel"
+                >
+                  <mat-option data-cy="input-select-option-operation-name" *ngFor="let item of operationNameList" [value]="item.value">{{
+                    'OPERATION_NAME.' + item.key | translate : { studentProgram: displayProgram(data?.dropdown[0]?.candidate_id) }
+                  }}</mat-option>
+                </mat-select>
+                <mat-error
+                  *ngIf="
+                    identityForm.get('operation_name').hasError('required') &&
+                    (identityForm.get('operation_name').dirty || identityForm.get('operation_name').touched)
+                  "
+                >
+                  {{ 'This field is required' | translate }}
+                </mat-error>
+              </mat-form-field>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- <div class="p-grid">
+          <div class="p-col-12 no-padding">
+            <div class="p-grid">
+              <div class="p-col-fixed center-label no-padding-left label-align" style="width: 120px">
+                <label>{{ 'Bank' | translate }}</label>
+              </div>
+              <div class="p-col no-padding">
+                <div class="p-grid baseline">
+                  <ng-select
+                    style="width: 100%"
+                    class="mrgn-btn"
+                    [items]="bank"
+                    [multiple]="false"
+                    placeholder="{{ 'Bank' | translate }}"
+                    formControlName="bank"
+                  >
+                  </ng-select>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div> -->
+
+      <div class="p-grid">
+        <div class="p-col-12 no-padding">
+          <div class="p-grid">
+            <div class="p-col-fixed center-label no-padding-left label-align" style="width: 160px">
+              <label>{{ 'Amount' | translate }}*</label>
+            </div>
+            <div class="p-col no-padding">
+              <mat-form-field floatLabel="never">
+                <input data-cy="input-amount" matInput (wheel)="onWheel($event)" formControlName="amount" type="number" placeholder="{{ 'Amount' | translate }}" />
+                <span matSuffix>€</span>
+                <mat-error *ngIf="identityForm.get('amount').hasError('min')">{{ 'min value 0' | translate }}</mat-error>
+                <mat-error
+                  *ngIf="
+                    identityForm.get('amount').hasError('required') &&
+                    (identityForm.get('amount').dirty || identityForm.get('amount').touched)
+                  "
+                >
+                  {{ 'This field is required' | translate }}
+                </mat-error>
+              </mat-form-field>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- <div class="p-grid">
+        <div class="p-col-12 no-padding">
+          <div class="p-grid">
+            <div class="p-col-fixed center-label no-padding-left label-align" style="width: 160px">
+              <label>{{ 'Currency' | translate }}</label>
+            </div>
+            <div class="p-col no-padding">
+              <mat-form-field floatLabel="never">
+                <mat-select formControlName="currency" [disableOptionCentering]="true" panelClass="filterPanel">
+                  <mat-option [value]="'EUR'">{{ 'EUR' | translate }} </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+          </div>
+        </div>
+      </div> -->
+
+      <div class="p-grid">
+        <div class="p-col-12 no-padding">
+          <div class="p-grid">
+            <div class="p-col-fixed center-label no-padding-left label-align" style="width: 160px">
+              <label>{{ 'Référence' | translate }}*</label>
+            </div>
+            <div class="p-col no-padding">
+              <mat-form-field floatLabel="never">
+                <textarea
+                  data-cy="input-reference"
+                  matInput
+                  msPreventInputTagCharacters
+                  placeholder="{{ 'Référence' | translate }}"
+                  formControlName="reference"
+                ></textarea>
+                <mat-error
+                  *ngIf="
+                    identityForm.get('reference').hasError('required') &&
+                    (identityForm.get('reference').dirty || identityForm.get('reference').touched)
+                  "
+                >
+                  {{ 'This field is required' | translate }}
+                </mat-error>
+              </mat-form-field>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="p-grid">
+        <div class="p-col-12 no-padding">
+          <div class="p-grid">
+            <div class="p-col-fixed center-label no-padding-left label-align" style="width: 160px">
+              <label>{{ 'Note' | translate }}</label>
+            </div>
+            <div class="p-col no-padding">
+              <mat-form-field floatLabel="never">
+                <textarea data-cy="input-note" msPreventInputTagCharacters matInput placeholder="{{ 'Note' | translate }}" formControlName="note"></textarea>
+              </mat-form-field>
+            </div>
+          </div>
+        </div>
+      </div>
+    </mat-dialog-content>
+    <mat-dialog-actions align="end">
+      <button data-cy="button-cancel-add-avoir-dialog" mat-raised-button type="button" color="warn" mat-dialog-close>
+        {{ 'CANCEL' | translate }}
+      </button>
+      <button data-cy="button-validate-add-avoir-dialog" mat-raised-button color="primary" (click)="submitVerification()">
+        {{ 'Validate' | translate }}
+      </button>
+    </mat-dialog-actions>
+  </div>
+</form>
+
+<div *ngIf="isWaitingForResponse" class="loading-indicator" data-cy="spinner-add-avoir-dialog">
+  <mat-progress-spinner mode="indeterminate" color="accent"></mat-progress-spinner>
+</div>

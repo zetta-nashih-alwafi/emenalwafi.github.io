@@ -1,0 +1,95 @@
+<div class="dialog-border">
+  <div class="dialogTitleWrapper">
+    <div class="p-grid">
+      <div class="w-30 no-padding">
+        <mat-icon style="vertical-align: middle">
+          <svg style="width:24px;height:24px" viewBox="0 0 24 24">
+            <path fill="currentColor" d="M9,10H7V12H9V10M13,10H11V12H13V10M17,10H15V12H17V10M19,3H18V1H16V3H8V1H6V3H5C3.89,3 3,3.9 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5A2,2 0 0,0 19,3M19,19H5V8H19V19Z" />
+          </svg>
+        </mat-icon>
+      </div>
+      <div class="p-col-10 acad-title">
+        <h3 class="dialogTitle">
+          {{ 'Change due date for' | translate }} 
+          
+          {{ data?.student_id?.civility && data?.student_id?.civility ==='neutral' ? '' : (data?.student_id?.civility | translate) }} 
+          {{ data?.student_id?.first_name }} {{ data?.student_id?.last_name | uppercase }} 
+        </h3>
+      </div>
+      <div class="w-65 no-padding">
+        <button mat-icon-button class="close-icon float-right" mat-dialog-close tabindex="-1">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div>
+  <div class="fontColor">
+    <mat-dialog-content>
+      <div class="p-grid pad-btm-sm">
+        <div class="p-col-12 no-padding">
+          <div class="p-grid">
+            <div class="p-col-12 no-padding">
+              {{ 'Actual Internship Report due date' | translate }} : {{ studentDate?.internDate }}
+            </div>
+            <div class="p-col-12 no-padding">
+              {{ 'Actual Mentor Evaluation due date' | translate }} : {{ studentDate?.mentorDate }}
+            </div>
+          </div>
+        </div>
+      </div>
+      <mat-divider></mat-divider>
+      
+      <div class="p-grid" style="padding-top: 1rem" [formGroup]="identityForm">
+        <div class="p-col-12 no-padding">
+          <div class="p-grid">
+            <div class="p-col-7 no-padding" style="width: 290px">
+              <p class="label-center">{{ 'Change Internship Report due date to' | translate }} :</p>
+            </div>
+            <div class="p-col-fixed no-padding" style="width: 103px" formGroupName="internship_report_due_date">
+              <mat-form-field color="accent">
+                <input
+                  required
+                  matInput
+                  [min]="today"
+                  [matDatepicker]="intern"
+                  formControlName="date"
+                  (click)="intern.open()"
+                  readonly
+                />
+                <mat-datepicker-toggle matSuffix [for]="intern" style="margin-right: 5px"></mat-datepicker-toggle>
+                <mat-datepicker #intern></mat-datepicker>
+              </mat-form-field>
+            </div>
+            <div class="p-col-7 no-padding" style="width: 293px">
+              <p class="label-center">{{ 'Change Mentor Evaluation due date to' | translate }} :</p>
+            </div>
+            <div class="p-col-fixed no-padding" style="width: 103px" formGroupName="mentor_evaluation_due_date">
+              <mat-form-field color="accent">
+                <input
+                  required
+                  matInput
+                  [min]="today"
+                  [matDatepicker]="mentor"
+                  formControlName="date"
+                  (click)="mentor.open()"
+                  readonly
+                />
+                <mat-datepicker-toggle matSuffix [for]="mentor" style="margin-right: 5px"></mat-datepicker-toggle>
+                <mat-datepicker #mentor></mat-datepicker>
+              </mat-form-field>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </mat-dialog-content>
+    <mat-dialog-actions align="right">
+      <button mat-raised-button type="button" color="warn" mat-dialog-close>{{ 'CANCEL' | translate }}</button>
+      <button mat-raised-button color="accent" (click)="updateDate()" [disabled]="identityForm?.invalid">{{ 'Submit' | translate }}</button>
+    </mat-dialog-actions>
+  </div>
+</div>
+

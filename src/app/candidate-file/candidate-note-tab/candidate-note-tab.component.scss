@@ -1,0 +1,147 @@
+:host::ng-deep * {
+    font-size: 14px;
+}
+:host::ng-deep.header {
+    h2, h5 {
+        display: flex;
+        align-items: center;
+        font-size: 14px;
+    }
+    h5 {
+        font-weight: 300;
+        font-size: 13px;
+    }
+}
+:host::ng-deep.mat-card {
+    color: black !important;
+    background: white !important;
+    h2, h5 {
+        .label {
+            color: black !important;
+        }
+    }
+}
+:host::ng-deep.ckeditor {
+    .ck-content {
+        min-height: 10rem !important;
+        background: white !important;
+        color: #000 !important;
+    }
+}
+:host::ng-deep.counter {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 10px;
+    button {
+        background: #FAFAFA;
+        margin-left: 10px !important;
+        font-weight: 700;
+        border: solid 1px rgb(240, 234, 234);
+        width: 40px;
+        height: 40px;
+        .mat-button-wrapper {
+            font-size: 18pt !important;
+        }
+        .mat-icon {
+            height: 20px;
+        }
+        img {
+            width: 100%;
+            padding: 4px;
+        }
+        &:nth-child(2) {
+            font-size: 16pt !important;
+        }
+        &:nth-child(4) {
+            background: unset;
+            border: unset;
+        }
+        &:nth-child(5) {
+            background: unset;
+            border: unset;
+        }
+    }
+}
+:host::ng-deep.microphone {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 10px;
+    button {
+        background: #FAFAFA;
+        margin-left: 10px !important;
+        font-weight: 700;
+        border: solid 1px rgb(240, 234, 234);
+        width: 40px;
+        height: 40px;
+        .mat-icon {
+            height: 20px;
+        }
+    }
+}
+:host::ng-deep.action {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    margin: 10px;
+    button {
+        border: solid black 1px;
+        .mat-icon {
+            margin-right: 15px;
+        }
+        .mat-button-wrapper {
+            display: flex;
+        }
+    }
+}
+:host::ng-deep.action-2 {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 10px;
+    button {
+        border: unset;
+        .mat-button-wrapper {
+            display: flex;
+        }
+        span {
+            color: black;
+        }
+         
+    }
+}
+.yellow {
+    color: #ffd740;
+  }
+  .orange {
+    color: #f49f36;
+  }
+  .blue {
+    color: #36ebf4;
+  }
+  .red {
+    color: #ff4040;
+  }
+  .green {
+    color: green;
+  }
+  .purple {
+    color: #ff46f9;
+  }
+  .black {
+    color: #000000;
+  }
+  .teal-background {
+     background: #009798;
+     span {
+        color: white;
+    }
+    .mat-icon {
+        color: white;
+    }
+  } 
+  .yellow-background {
+      background: #ffd740;
+      color: black;
+  }

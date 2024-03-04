@@ -1,0 +1,130 @@
+<mat-tab-group [(selectedIndex)]="selectedIndex" #candidateMatGroup>
+  <!-- First tab always shown -->
+
+  <mat-tab label="user_type" *ngIf="!isTeacherList">
+    <ng-template mat-tab-label>
+      <h4>{{ 'User Type' | translate }}</h4>
+    </ng-template>
+    <ng-template matTabContent>
+      <ms-user-details-usertype-tab [userId]="userId"></ms-user-details-usertype-tab>
+    </ng-template>
+  </mat-tab>
+
+  <mat-tab label="indentity">
+    <ng-template mat-tab-label>
+      <h4>{{ 'Identity' | translate }}</h4>
+    </ng-template>
+    <ng-template matTabContent>
+      <ms-user-details-identity-tab [userId]="userId" [countryCodeList]="countryCodeList"></ms-user-details-identity-tab>
+    </ng-template>
+  </mat-tab>
+
+  <mat-tab label="details" *ngIf="isTeacherList">
+    <ng-template mat-tab-label>
+      <h4>{{ 'Details' | translate }}</h4>
+    </ng-template>
+    <ng-template matTabContent>
+      <ms-user-details-teacher-details-parent [userId]="userId"></ms-user-details-teacher-details-parent>
+    </ng-template>
+  </mat-tab>
+
+  <mat-tab label="mailbox" *ngIf="isTeacherList">
+    <ng-template mat-tab-label>
+      <h4>{{ 'NAV.MAILBOX' | translate }}</h4>
+    </ng-template>
+    <ng-template matTabContent>
+      <mat-tab-group class="mailbox">
+        <mat-tab label="Inbox">
+          <ng-template mat-tab-label>
+            <div class="inbox-tab">
+              <i class="fa fa-inbox"></i>
+              <h4>{{ 'MailBox.INBOX' | translate }}</h4>
+            </div>
+          </ng-template>
+          <ng-template matTabContent>
+            <ms-mailbox [isTeacherCard]="true" [userId]="userId"></ms-mailbox>
+          </ng-template>
+        </mat-tab>
+        <mat-tab label="Cc">
+          <ng-template mat-tab-label>
+            <div class="cc-tab">
+              <i class="fa fa-inbox"></i>
+              <h4>{{ 'MailBox.CC' | translate }}</h4>
+            </div>
+          </ng-template>
+          <ng-template matTabContent>
+            <ms-cc [isTeacherCard]="true" [userId]="userId"></ms-cc>
+          </ng-template>
+        </mat-tab>
+        <mat-tab label="Sent">
+          <ng-template mat-tab-label>
+            <div class="sent-tab">
+              <i class="fa fa-paper-plane"></i>
+              <h4>{{ 'MailBox.SENT' | translate }}</h4>
+            </div>
+          </ng-template>
+          <ng-template matTabContent>
+            <ms-sent [isTeacherCard]="true" [userId]="userId"></ms-sent>
+          </ng-template>
+        </mat-tab>
+        <mat-tab label="Important">
+          <ng-template mat-tab-label>
+            <div class="important-tab">
+              <i class="fa fa-hand-paper-o"></i>
+              <h4>{{ 'MailBox.IMPORTANT' | translate }}</h4>
+            </div>
+          </ng-template>
+          <ng-template matTabContent>
+            <ms-important [isTeacherCard]="true" [userId]="userId"></ms-important>
+          </ng-template>
+        </mat-tab>
+        <mat-tab label="Draft">
+          <ng-template mat-tab-label>
+            <div class="draft-tab">
+              <i class="fa fa-archive"></i>
+              <h4>{{ 'MailBox.DRAFT' | translate }}</h4>
+            </div>
+          </ng-template>
+          <ng-template matTabContent>
+            <ms-draft [isTeacherCard]="true" [userId]="userId"></ms-draft>
+          </ng-template>
+        </mat-tab>
+        <mat-tab label="Trash">
+          <ng-template mat-tab-label>
+            <div class="trash-tab">
+              <i class="fa fa-trash"></i>
+              <h4>{{ 'MailBox.TRASH' | translate }}</h4>
+            </div>
+          </ng-template>
+          <ng-template matTabContent>
+            <ms-trash [isTeacherCard]="true" [userId]="userId"></ms-trash>
+          </ng-template>
+        </mat-tab>
+      </mat-tab-group>
+    </ng-template>
+  </mat-tab>
+  <mat-tab label="Documents" *ngIf="isTeacherList">
+    <ng-template mat-tab-label>
+      <h4>{{ 'DOCUMENT.DOCUMENTS' | translate }}</h4>
+    </ng-template>
+    <ng-template matTabContent>
+      <ms-teacher-document-tab [teacherId]="userId"></ms-teacher-document-tab>
+    </ng-template>
+  </mat-tab>
+  <mat-tab label="RequiredDocuments" *ngIf="isTeacherList">
+    <ng-template mat-tab-label>
+      <h4>{{ 'Required Documents' | translate }}</h4>
+    </ng-template>
+    <ng-template matTabContent>
+      <ms-user-details-required-documents-tab [userData]="selectedUserData" [userId]="userId"></ms-user-details-required-documents-tab>
+    </ng-template>
+  </mat-tab>
+  <mat-tab label="MyInterventions" *ngIf="isTeacherList">
+    <ng-template mat-tab-label>
+      <h4>{{ 'INTERVENTIONS_TAB.LABEL' | translate }}</h4>
+    </ng-template>
+    <ng-template matTabContent>
+      <ms-user-details-my-interventions-tab [teacherId]="userId"></ms-user-details-my-interventions-tab>
+    </ng-template>
+  </mat-tab>
+</mat-tab-group>

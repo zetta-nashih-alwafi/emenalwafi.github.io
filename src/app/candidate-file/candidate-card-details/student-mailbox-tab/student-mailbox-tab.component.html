@@ -1,0 +1,68 @@
+<mat-tab-group [(selectedIndex)]="selectedIndex" #mailboxTabGroup>
+  <mat-tab label="Inbox">
+    <ng-template mat-tab-label>
+      <div class="inbox-tab">
+        <i class="fa fa-inbox"></i>
+        <h4>{{ 'MailBox.INBOX' | translate }}</h4>
+      </div>
+    </ng-template>
+    <ng-template matTabContent>
+      <ms-student-mailbox-inbox-tab [candidateId]="userId" [student]="currentCandidate"></ms-student-mailbox-inbox-tab>
+    </ng-template>
+  </mat-tab>
+  <mat-tab label="Cc">
+    <ng-template mat-tab-label>
+      <div class="cc-tab">
+        <i class="fa fa-inbox"></i>
+        <h4>{{ 'MailBox.CC' | translate }}</h4>
+      </div>
+    </ng-template>
+    <ng-template matTabContent>
+      <ms-student-mailbox-cc-tab [candidateId]="userId"></ms-student-mailbox-cc-tab>
+    </ng-template>
+  </mat-tab>
+  <mat-tab label="Sent">
+    <ng-template mat-tab-label>
+      <div class="sent-tab">
+        <i class="fa fa-paper-plane"></i>
+        <h4>{{ 'MailBox.SENT' | translate }}</h4>
+      </div>
+    </ng-template>
+    <ng-template matTabContent>
+      <ms-student-mailbox-sent-tab [candidateId]="userId"></ms-student-mailbox-sent-tab>
+    </ng-template>
+  </mat-tab>
+  <mat-tab label="Important">
+    <ng-template mat-tab-label>
+      <div class="important-tab">
+        <i class="fa fa-hand-paper-o"></i>
+        <h4>{{ 'MailBox.IMPORTANT' | translate }}</h4>
+      </div>
+    </ng-template>
+    <ng-template matTabContent>
+      <ms-student-mailbox-important-tab [candidateId]="userId"></ms-student-mailbox-important-tab>
+    </ng-template>
+  </mat-tab>
+  <mat-tab label="Draft">
+    <ng-template mat-tab-label>
+      <div class="draft-tab">
+        <i class="fa fa-archive"></i>
+        <h4>{{ 'MailBox.DRAFT' | translate }}</h4>
+      </div>
+    </ng-template>
+    <ng-template matTabContent>
+      <ms-student-mailbox-draft-tab [candidateId]="userId"></ms-student-mailbox-draft-tab>
+    </ng-template>
+  </mat-tab>
+  <mat-tab label="Trash">
+    <ng-template mat-tab-label>
+      <div class="trash-tab">
+        <i class="fa fa-trash"></i>
+        <h4>{{ 'MailBox.TRASH' | translate }}</h4>
+      </div>
+    </ng-template>
+    <ng-template matTabContent>
+      <ms-student-mailbox-trash-tab [candidateId]="userId"></ms-student-mailbox-trash-tab>
+    </ng-template>
+  </mat-tab>
+</mat-tab-group>

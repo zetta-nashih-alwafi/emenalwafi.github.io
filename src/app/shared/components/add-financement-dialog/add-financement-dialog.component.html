@@ -1,0 +1,491 @@
+<div class="header-div" cdkDrag cdkDragRootElement=".cdk-overlay-pane" cdkDragHandle>
+  <mat-icon *ngIf="parentData?.comps?.icon"> {{ parentData?.comps?.icon }} </mat-icon>
+  <h2 class="header-text">{{ 'ADMISIONSTEPFINANCEMENT.' + parentData?.comps?.title | translate }}</h2>
+  <button mat-icon-button type="button" (click)="closeDialog()" class="header-icon">
+    <mat-icon>close</mat-icon>
+  </button>
+</div>
+<hr />
+
+<form [formGroup]="addFinancementForm">
+  <ng-container *ngIf="parentData?.isFCManager">
+    <mat-dialog-content>
+      <section>
+        <div class="p-grid no-padding">
+          <div class="p-col-12 head">
+            <div class="p-grid">
+              <div class="p-col-6" style="padding-left: 0px">
+                <mat-form-field>
+                  <mat-select
+                    color="accent"
+                    [placeholder]="'ADMISIONSTEPFINANCEMENT.Type of Organization' | translate"
+                    formControlName="organization_type"
+                  >
+                    <mat-option (click)="selectType(item)" *ngFor="let item of typeOfOrganization" [value]="item">
+                      {{ 'ADMISIONSTEPFINANCEMENT.' + item | translate }}
+                    </mat-option>
+                  </mat-select>
+                  <mat-error *ngIf="addFinancementForm.get('organization_type').hasError('required')">{{
+                    'This field is required' | translate
+                  }}</mat-error>
+                </mat-form-field>
+              </div>
+              <div style="padding-right: 0px">
+                <div *ngIf="selectOrganizationType !== 'Company'">
+                  <mat-form-field>
+                    <input
+                      matInput
+                      class="form-field"
+                      [matAutocomplete]="currentProgramAuto"
+                      [formControl]="organizationNameFilter"
+                      placeholder="{{ 'ADMISIONSTEPFINANCEMENT.Select Organization' | translate }}"
+                    />
+                    <mat-autocomplete #currentProgramAuto="matAutocomplete">
+                      <mat-option
+                        *ngIf="addFinancementForm.get('organization_type').value !== null"
+                        value="{{ 'other' | translate }}"
+                        (click)="setOrganizationName('other')"
+                        >{{ 'other' | translate }}</mat-option
+                      >
+                      <mat-option
+                        *ngFor="let record of organizationNameFiltered | async"
+                        [value]="record?.name"
+                        (click)="setOrganizationName(record?._id)"
+                      >
+                        {{ record?.name }}
+                      </mat-option>
+                    </mat-autocomplete>
+                    <mat-error>{{ 'This field is mandatory' | translate }}</mat-error>
+                  </mat-form-field>
+                </div>
+
+                <div class="p-grid company-style" *ngIf="selectOrganizationType === 'Company'">
+                  <div class="p-col-7 input-siret">
+                    <mat-form-field>
+                      <input
+                        matInput
+                        type="text"
+                        (wheel)="onWheel($event)"
+                        class="form-field"
+                        [formControl]="organizationSiretNumber"
+                        placeholder="{{ 'ADMISIONSTEPFINANCEMENT.Add Siret' | translate }}"
+                      />
+                    </mat-form-field>
+                  </div>
+                  <div class="p-col-5 verify-siret">
+                    <button (click)="onVerifySiret()" type="button" mat-raised-button color="accent">
+                      {{ 'ADMISIONSTEPFINANCEMENT.Verify Siret' | translate }}
+                    </button>
+                  </div>
+
+                </div>
+              </div>
+              <div class="p-col-6" style="padding-left: 0px">
+                <mat-form-field
+                  *ngIf="
+                    addFinancementForm.get('organization_name')?.value === 'Other' ||
+                    addFinancementForm.get('organization_name')?.value === 'Autre'
+                  "
+                >
+                  <input
+                    matInput
+                    [placeholder]="'ADMISIONSTEPFINANCEMENT.Organization Name*' | translate"
+                    formControlName="organization_name_other"
+                  />
+                  <mat-error *ngIf="addFinancementForm.get('organization_name_other').hasError('required')">{{
+                    'This field is required' | translate
+                  }}</mat-error>
+                </mat-form-field>
+              </div>
+            </div>
+
+            <div class="p-col-12 company-name" *ngIf="selectOrganizationType === 'Company' && isCompany">
+              <div class="p-grid">
+                {{ 'ADMISIONSTEPFINANCEMENT.Company name' | translate }}: {{ organizationName }}
+              </div>
+            </div>
+  
+            <div class="p-col-6 company-contact" *ngIf="selectOrganizationType === 'Company' && isCompany">
+              <ng-select
+                aria-required="true"
+                class="ng-select custom-ngselect-content"
+                clearAllText="Clear"
+                [appendTo]="'body'"
+                placeholder="{{ 'ADMISIONSTEPFINANCEMENT.Select contact' | translate }} *"
+                [formControl]="organizationSelectContact"
+                (change)="contactSelect($event)"
+              >
+                <ng-option value="add">{{ 'ADMISIONSTEPFINANCEMENT.Add new contact' | translate }}</ng-option>
+                <ng-option *ngFor="let contact of companyContacts" [value]="contact?._id">
+                  <div class="break-space">{{ contact?.civility }} {{ contact?.first_name }} {{ contact?.last_name | uppercase }} {{ contact?.position ? ' - ' + contact?.position : '' }}</div>
+                </ng-option>
+              </ng-select>
+            </div>
+          </div>
+
+          <div class="p-col-12 row" style="padding: 0px">
+            <div class="p-grid">
+              <div class="p-col-7" style="padding-left: 0px">
+                <div class="p-grid">
+                  <div class="p-col-2">
+                    <mat-checkbox (change)="toggleHours($event)" class="example-margin" [formControl]="rateCtrl"></mat-checkbox>
+                  </div>
+
+                  <div class="p-col-4">
+                    <p>{{ 'ADMISIONSTEPFINANCEMENT.Rate/Hour' | translate }}<span *ngIf="hoursMandatory">*</span></p>
+                  </div>
+
+                  <div class="p-col-4">
+                    <mat-form-field>
+                      <input
+                        matInput
+                        type="number"
+                        (wheel)="onWheel($event)"
+                        [readonly]="!hoursMandatory"
+                        formControlName="rate_per_hours"
+                        (keypress)="formatDecimalPerHour()"
+                      />
+                      <mat-error *ngIf="addFinancementForm.get('rate_per_hours').hasError('required')">{{
+                        'This field is required' | translate
+                      }}</mat-error>
+                    </mat-form-field>
+                  </div>
+
+                  <div class="p-col-2">
+                    <p>EUR</p>
+                  </div>
+                </div>
+              </div>
+              <div class="p-col-5" style="padding-right: 0px">
+                <div class="p-grid">
+                  <div class="p-col-4">
+                    <p>{{ 'ADMISIONSTEPFINANCEMENT.Hours' | translate }}<span *ngIf="hoursMandatory">*</span></p>
+                  </div>
+                  <div class="p-col-8">
+                    <mat-form-field>
+                      <input matInput type="number" (wheel)="onWheel($event)" [readonly]="!hoursMandatory" formControlName="hours" (keypress)="formatDecimalHour()" />
+                      <mat-error *ngIf="addFinancementForm.get('hours').hasError('required')">{{
+                        'This field is required' | translate
+                      }}</mat-error>
+                    </mat-form-field>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="p-col-12 row" style="padding: 0px">
+            <div class="p-grid">
+              <div class="p-col-7" style="padding-left: 0px">
+                <div class="p-grid">
+                  <div class="p-col-2">
+                    <mat-checkbox (change)="toggleTotal($event)" class="example-margin" [formControl]="totalCtrl"></mat-checkbox>
+                  </div>
+
+                  <div class="p-col-4">
+                    <p>{{ 'ADMISIONSTEPFINANCEMENT.Total Amount' | translate }}<span *ngIf="totalMandatory">*</span></p>
+                  </div>
+
+                  <div class="p-col-4">
+                    <mat-form-field>
+                      <input
+                        matInput
+                        type="number"
+                        (wheel)="onWheel($event)"
+                        [readonly]="!totalMandatory"
+                        formControlName="total"
+                        (keypress)="formatDecimalTotalAmount()"
+                      />
+                      <mat-error *ngIf="addFinancementForm.get('total').hasError('required')">{{
+                        'This field is required' | translate
+                      }}</mat-error>
+                    </mat-form-field>
+                  </div>
+
+                  <div class="p-col-2">
+                    <p>EUR</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="p-col-12 form-upload row">
+            <span
+              [ngClass]="{
+                error: addFinancementForm.get('document_pdf').touched === true && addFinancementForm.get('document_pdf').invalid
+              }"
+              >{{ 'ADMISIONSTEPFINANCEMENT.Upload Document PDF :' | translate }}</span
+            >
+            <ng-container>
+              <button (click)="openUploadWindow()" type="button" mat-raised-button color="accent">
+                {{ 'ADMISIONSTEPFINANCEMENT.Upload PDF' | translate }}
+              </button>
+              <input #fileUploadDoc type="file" accept=".pdf" class="hidden" (change)="chooseFile($event)" />
+            </ng-container>
+          </div>
+          <div class="p-col-12 document-info" *ngIf="documenPDFName">
+            <span class="document-name" style="margin-right: 1rem">{{ addFinancementForm.get('document_pdf').value }}</span>
+            <mat-icon (click)="removeFile()" style="color: red; cursor: pointer">close</mat-icon>
+          </div>
+        </div>
+
+        <div class="p-grid">
+          <div class="p-col-3">
+            <mat-label>{{ 'Actual status' | translate }}</mat-label>
+          </div>
+
+          <div class="p-col-4">
+            <mat-form-field appearance="legacy">
+              <mat-select formControlName="actual_status">
+                <mat-option *ngFor="let type of statusList" [value]="type">{{ 'financement_status.' + type | translate }}</mat-option>
+              </mat-select>
+              <mat-error *ngIf="addFinancementForm.get('actual_status').hasError('required')">{{
+                'This field is required' | translate
+              }}</mat-error>
+            </mat-form-field>
+          </div>
+        </div>
+
+        <div class="p-grid">
+          <div class="p-col-12">{{ 'ADMISIONSTEPFINANCEMENT.Additional informations' | translate }}:</div>
+          <div class="p-col-12" style="min-height: 81px; border: 2px solid yellow">
+            <mat-form-field class="example-full-width">
+              <textarea
+                [placeholder]="'ADMISIONSTEPFINANCEMENT.Additional informations' | translate"
+                formControlName="additional_information"
+                rows="2"
+                matInput
+              ></textarea>
+            </mat-form-field>
+          </div>
+        </div>
+      </section>
+    </mat-dialog-content>
+
+    <mat-dialog-actions align="end">
+      <button mat-raised-button color="warn" type="button" (click)="closeDialog()">
+        {{ 'Cancel' | translate }}
+      </button>
+      <button mat-raised-button color="primary" type="button" (click)="handleSubmit()">
+        {{ 'Validate' | translate }}
+      </button>
+    </mat-dialog-actions>
+  </ng-container>
+
+  <ng-container *ngIf="!parentData?.isFCManager">
+
+    <mat-dialog-content>
+      <section>
+        <div class="p-grid no-padding">
+          <div class="p-col-12 head">
+            <div class="p-grid">
+              <div class="p-col-6" style="padding-left: 0px; padding-top: 0">
+                <mat-form-field>
+                  <mat-select
+                    color="accent"
+                    [placeholder]="'ADMISIONSTEPFINANCEMENT.Type of Organization' | translate"
+                    formControlName="organization_type"
+                    panelClass="filterPanel custom-matselect-dropdown" 
+                    disableOptionCentering
+                  >
+                    <mat-option (click)="selectType(item)" *ngFor="let item of typeOfOrganization" [value]="item">
+                      {{ 'ADMISIONSTEPFINANCEMENT.' + item | translate }}
+                    </mat-option>
+                  </mat-select>
+                  <mat-error *ngIf="addFinancementForm.get('organization_type').hasError('required')">{{
+                    'This field is required' | translate
+                  }}</mat-error>
+                </mat-form-field>
+              </div>
+              <div class="p-col-6" style="padding-right: 0px; padding-top: 0">
+                <div *ngIf="selectOrganizationType !== 'Company'">
+                  <mat-form-field>
+                    <input
+                      matInput
+                      class="form-field"
+                      [matAutocomplete]="currentProgramAuto"
+                      [formControl]="organizationNameFilter"
+                      placeholder="{{ 'ADMISIONSTEPFINANCEMENT.Select Organization' | translate }}"
+                    />
+                    <mat-autocomplete #currentProgramAuto="matAutocomplete">
+                      <mat-option
+                        *ngIf="addFinancementForm.get('organization_type').value !== null"
+                        value="{{ 'other' | translate }}"
+                        (click)="setOrganizationName('other')"
+                        >{{ 'other' | translate }}</mat-option
+                      >
+                      <mat-option
+                        *ngFor="let record of organizationNameFiltered | async"
+                        [value]="record?.name"
+                        (click)="setOrganizationName(record?._id)"
+                      >
+                        {{ record?.name }}
+                      </mat-option>
+                    </mat-autocomplete>
+                    <mat-error>{{ 'This field is mandatory' | translate }}</mat-error>
+                  </mat-form-field>
+                </div>
+                <div class="p-grid" *ngIf="selectOrganizationType === 'Company'">
+                  <div class="p-col-7 input-siret">
+                    <mat-form-field>
+                      <input
+                      matInput
+                      (wheel)="onWheel($event)"
+                      type="text"
+                      class="form-field"
+                      [formControl]="organizationSiretNumber"
+                      placeholder="{{ 'ADMISIONSTEPFINANCEMENT.Add Siret' | translate }}"
+                      (paste)="onPasteSiretNumber($event)"
+                      />
+                      <mat-error>{{ 'This field is mandatory' | translate }}</mat-error>
+                    </mat-form-field>
+                  </div>
+                  <div class="p-col-5 verify-siret">
+                    <button [disabled]="!organizationSiretNumber.value" (click)="onVerifySiret()" type="button" mat-raised-button color="accent">
+                      {{ 'ADMISIONSTEPFINANCEMENT.Verify Siret' | translate }}
+                    </button>
+                  </div>               
+                </div>
+
+              </div>
+              <ng-container *ngIf="
+                addFinancementForm.get('organization_name').value === 'Other' ||
+                addFinancementForm.get('organization_name').value === 'Autre'
+              ">
+                <div class="p-col-6 row" style="padding-left: 0px; padding-top: 1.5rem">
+                  <mat-form-field>
+                    <input
+                      matInput
+                      [placeholder]="'ADMISIONSTEPFINANCEMENT.Organization Name*' | translate"
+                      formControlName="organization_name_other"
+                    />
+                  </mat-form-field>
+                </div>
+              </ng-container>
+            </div>
+          </div>
+
+          <ng-container *ngIf="isCompany">
+            <div class="p-col-12 row" style="padding-top: 0">
+              <div class="p-grid">
+                {{ 'ADMISIONSTEPFINANCEMENT.Company name' | translate }}: {{ organizationName }}
+              </div>
+            </div>
+  
+            <div class="p-col-6" style="padding-top: 1.5rem">
+              <mat-form-field>
+                <input
+                  matInput
+                  class="form-field"
+                  [matAutocomplete]="selectContact"
+                  [formControl]="organizationSelectContact"
+                  placeholder="{{ 'ADMISIONSTEPFINANCEMENT.Select contact' | translate }}"
+                />
+                <mat-autocomplete #selectContact="matAutocomplete" panelWidth="fit-content">
+                  <mat-option value="add" (click)="contactSelect('add')">{{ 'ADMISIONSTEPFINANCEMENT.Add new contact' | translate }}</mat-option>
+                  <mat-option
+                    *ngFor="let contact of organizationContactFiltered | async"
+                    [value]="
+                      (contact?.civility && contact?.civility === 'neutral' ? '' : (contact?.civility | translate)) +
+                      ' ' +
+                      contact?.first_name +
+                      ' ' +
+                      contact?.last_name +
+                      (contact?.position ? (' - ' + contact?.position) : '')
+                    "
+                    (click)="contactSelect(contact?._id)"
+                  >
+                    {{ contact?.civility && contact?.civility === 'neutral' ? '' : (contact?.civility | translate) }} {{ contact?.first_name }} {{ contact?.last_name | uppercase }} {{ contact?.position ? ' - ' + contact?.position : '' }}
+                  </mat-option>
+                </mat-autocomplete>
+                <mat-error>{{ 'This field is mandatory' | translate }}</mat-error>
+              </mat-form-field>
+            </div>
+          </ng-container>
+
+          <!-- <div class="p-col-12 row" style="padding: 0px">
+            <div class="p-grid">
+              <div class="p-col-7" style="padding-left: 0px">
+                <div class="p-grid">
+                  <div class="p-col-4">
+                    <p>{{ 'ADMISIONSTEPFINANCEMENT.Rate/Hour' | translate }}*</p>
+                  </div>
+
+                  <div class="p-col-6">
+                    <mat-form-field>
+                      <input matInput type="number" formControlName="rate_per_hours" (keypress)="formatDecimalPerHour()" />
+                    </mat-form-field>
+                  </div>
+
+                  <div class="p-col-2">
+                    <p>EUR</p>
+                  </div>
+                </div>
+              </div>
+              <div class="p-col-5" style="padding-right: 0px">
+                <div class="p-grid">
+                  <div class="p-col-4">
+                    <p>{{ 'ADMISIONSTEPFINANCEMENT.Hours' | translate }}*</p>
+                  </div>
+                  <div class="p-col-8">
+                    <mat-form-field>
+                      <input matInput type="number" formControlName="hours" (keypress)="formatDecimalHour()" />
+                    </mat-form-field>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div> -->
+
+          <div class="p-col-12 form-upload row">
+            <span
+              [ngClass]="{
+                error: addFinancementForm.get('document_pdf').touched === true && addFinancementForm.get('document_pdf').invalid
+              }"
+              >{{ 'ADMISIONSTEPFINANCEMENT.Upload Document PDF :' | translate }}</span
+            >
+            <ng-container>
+              <button (click)="openUploadWindow()" type="button" mat-button mat-raised-button color="accent">
+                {{ 'ADMISIONSTEPFINANCEMENT.Upload PDF' | translate }}
+              </button>
+              <input #fileUploadDoc type="file" accept=".pdf" class="hidden" (change)="chooseFile($event)" />
+            </ng-container>
+          </div>
+          <div class="p-col-12 document-info" *ngIf="documenPDFName">
+            <span class="document-name" style="margin-right: 1rem">{{ addFinancementForm.get('document_pdf').value }}</span>
+            <mat-icon (click)="removeFile()" style="color: red; cursor: pointer">close</mat-icon>
+          </div>
+        </div>
+
+        <div class="p-grid">
+          <div class="p-col-12">{{ 'ADMISIONSTEPFINANCEMENT.Additional informations' | translate }}:</div>
+          <div class="p-col-12" style="height: 81px">
+            <mat-form-field [floatLabel]="'never'" style="border: 2px solid yellow">
+              <textarea
+                formControlName="additional_information"
+                [placeholder]="'ADMISIONSTEPFINANCEMENT.Additional informations' | translate"
+                style="resize: none"
+                rows="2"
+                matInput
+              ></textarea>
+            </mat-form-field>
+          </div>
+        </div>
+      </section>
+    </mat-dialog-content>
+
+    <mat-dialog-actions align="end" style="padding-bottom: 0">
+      <button mat-raised-button color="warn" type="button" (click)="closeDialog()">
+        {{ 'Cancel' | translate }}
+      </button>
+      <button mat-raised-button color="primary" type="button" (click)="handleSubmit()">
+        {{ 'Validate' | translate }}
+      </button>
+    </mat-dialog-actions>
+  </ng-container>
+</form>
+
+<div *ngIf="isWaitingForResponse" class="inner-loading-indicator">
+  <mat-spinner color="accent" [diameter]="100"></mat-spinner>
+</div>

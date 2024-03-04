@@ -1,0 +1,164 @@
+<div class="top-space">
+  <table mat-table matSort [dataSource]="dataSource" (matSortChange)="sortData($event)" class="mat-elevation-z8">
+    <!-- ROW RESET START -->
+    <ng-container matColumnDef="reset">
+      <th mat-header-cell *matHeaderCellDef colspan="100%" class="action-header-column text-right">
+        <div class="p-grid">
+          <div class="p-col-12 text-right">
+            <button
+              matTooltip="{{ 'Action' | translate }} "
+              mat-raised-button
+              color="accent"
+              [disabled]="isWaitingForResponse"
+              [matMenuTriggerFor]="action"
+            >
+              {{ 'Action' | translate }}
+              <mat-icon>expand_more</mat-icon>
+            </button>
+            <mat-menu #action="matMenu" class="action-dropdown-button-above-table">
+              <button
+                *ngIf="permissionService?.addSectorPerm()"
+                matTooltip="{{ 'INTAKE_CHANNEL.Add sector' | translate }}"
+                (click)="onAddSector()"
+                mat-menu-item
+              >
+                <!-- <mat-icon class="mat-icon-svgIcon" svgIcon="plus">plus</mat-icon> -->
+                {{ 'INTAKE_CHANNEL.Add sector' | translate }}
+              </button>
+            </mat-menu>
+            <button
+              style="padding: 0px 7px !important"
+              [disabled]="isWaitingForResponse"
+              mat-raised-button
+              color="primary"
+              matTooltip="{{ 'Export' | translate }}"
+              (click)="getAllIdForCheckbox(0)"
+              *ngIf="isOperator"
+            >
+              <mat-icon svgIcon="file-excel" class="mat-icon-svgIcon"> </mat-icon>
+              {{ 'Export' | translate }}
+            </button>
+            <button
+              mat-raised-button
+              color="primary"
+              (click)="resetTable()"
+              [disabled]="isWaitingForResponse"
+              matTooltip="{{ 'RESET' | translate }}"
+              *ngIf="permissionService?.resetSectorPerm()"
+            >
+              <mat-icon svgIcon="loop" class="mat-icon-svgIcon"></mat-icon>
+              {{ 'RESET' | translate }}
+            </button>
+          </div>
+        </div>
+      </th>
+    </ng-container>
+    <!-- ROW RESET END -->
+    <!---ROW FILTER START-->
+    <!--ROW FILTER END-->
+    <!-- ROW HEADER AND CONTENT START -->
+    <ng-container matColumnDef="select">
+      <th mat-header-cell *matHeaderCellDef class="text-center">
+        <mat-checkbox
+          (change)="$event ? masterToggle() : null"
+          (change)="showOptions('all', '')"
+          [checked]="(selection.hasValue() && isAllSelected()) || isCheckedAll"
+          [indeterminate]="selection.hasValue() && (dataUnselect?.length > 0 || !isAllSelected())"
+          [aria-label]="checkboxLabel()"
+        >
+        </mat-checkbox>
+      </th>
+      <td mat-cell *matCellDef="let row" class="text-center">
+        <mat-checkbox
+          (click)="$event.stopPropagation()"
+          (change)="$event ? selection.toggle(row._id) : null"
+          [checked]="selection.isSelected(row._id) || (isCheckedAll && !dataUnselect?.includes(row?._id))"
+          (change)="showOptions('one', row)"
+          [aria-label]="checkboxLabel(row)"
+        >
+        </mat-checkbox>
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="name">
+      <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'INTAKE_CHANNEL.Name' | translate }}">
+        <h5>{{ 'INTAKE_CHANNEL.Name' | translate }}</h5>
+      </th>
+      <td mat-cell *matCellDef="let element" matTooltip="{{ element?.name }}">
+        {{ element?.name }}
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="sigle">
+      <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'INTAKE_CHANNEL.Sigle' | translate }}">
+        <h5>{{ 'INTAKE_CHANNEL.Sigle' | translate }}</h5>
+      </th>
+      <td mat-cell *matCellDef="let element" matTooltip="{{ element?.sigli }}">
+        {{ element?.sigli }}
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="description">
+      <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'INTAKE_CHANNEL.Description' | translate }}">
+        <h5>{{ 'INTAKE_CHANNEL.Description' | translate }}</h5>
+      </th>
+      <td mat-cell *matCellDef="let element" matTooltip="{{ element?.description }}">
+        {{ element?.description }}
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="action">
+      <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'Action' | translate }}">
+        <h5>{{ 'Action' | translate }}</h5>
+      </th>
+      <td mat-cell *matCellDef="let element">
+        <button
+          *ngIf="permissionService?.editSectorPerm()"
+          mat-icon-button
+          class="margin-right-button"
+          (click)="onEditSector(element)"
+          matTooltip="{{ 'INTAKE_CHANNEL.Edit' | translate }}"
+          matTooltipPosition="above"
+          [disabled]="dataSelected && dataSelected.length > 0"
+        >
+          <mat-icon>edit</mat-icon>
+        </button>
+        <button
+          *ngIf="permissionService?.deleteSectorPerm()"
+          mat-icon-button
+          class="margin-right-button"
+          (click)="onDeleteSector(element)"
+          matTooltip="{{ 'INTAKE_CHANNEL.Delete' | translate }}"
+          matTooltipPosition="above"
+          [disabled]="dataSelected && dataSelected.length > 0"
+        >
+          <mat-icon>delete</mat-icon>
+        </button>
+      </td>
+    </ng-container>
+    <!-- ROW HEADER AND CONTENT END -->
+    <ng-container matColumnDef="loading">
+      <th mat-header-cell *matHeaderCellDef colspan="100%" class="text-center">
+        <div class="center-spinner">
+          <mat-spinner color="accent"></mat-spinner>
+        </div>
+      </th>
+    </ng-container>
+    <tr mat-header-row *matHeaderRowDef="['reset']"></tr>
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-header-row *matHeaderRowDef="['loading']" [hidden]="!isWaitingForResponse"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns" [hidden]="isWaitingForResponse"></tr>
+  </table>
+  <div *ngIf="noData | async" class="no-records">
+    {{ 'NOT RECORD FOUND' | translate }}
+  </div>
+  <div [ngClass]="{ hide: noData | async }">
+    <mat-paginator
+      [ngClass]="{ 'hide-pagination-buttons': dataCount <= 10 }"
+      [length]="dataCount"
+      [hidePageSize]="true"
+      [pageSize]="[10]"
+      showFirstLastButtons
+    ></mat-paginator>
+  </div>
+</div>
+
+<div *ngIf="isLoading" class="loading-indicator">
+  <mat-progress-spinner mode="indeterminate" color="accent"></mat-progress-spinner>
+</div>

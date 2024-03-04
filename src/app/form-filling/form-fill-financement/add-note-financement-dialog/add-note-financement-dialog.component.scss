@@ -1,0 +1,30 @@
+.mat-dialog-actions {
+  padding: 1rem;
+  border-top: 0.1px solid rgba($color: #000000, $alpha: 0.1);
+}
+
+.message-wraper {
+  padding: 0.5rem;
+  border: 0.1px solid rgba($color: #36ebf4, $alpha: 1);
+  margin-bottom: 0.5rem;
+}
+
+p {
+  margin-bottom: 0px;
+}
+
+.btn-send-msg {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mesage-top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.message {
+  white-space: pre-wrap;
+}

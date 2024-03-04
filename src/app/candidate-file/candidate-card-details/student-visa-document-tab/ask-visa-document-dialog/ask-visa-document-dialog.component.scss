@@ -1,0 +1,20 @@
+:host::ng-deep.header-text {
+    margin-left: 8px;
+}
+
+.header-border {
+    padding: 16px;
+    color: black;
+}
+
+:host ::ng-deep{
+    .mat-dialog-content{    
+      margin: 0px !important;
+      padding: 0px !important;
+      min-height: 60px;
+    }
+
+    .mat-dialog-actions{    
+      min-height: unset;
+    }
+}

@@ -1,0 +1,182 @@
+<div class="tw-w-full">
+  <table mat-table [dataSource]="dataSource" matSort (matSortChange)="sortData($event)" class="mat-elevation-z8">
+    <ng-container matColumnDef="reset">
+      <th mat-header-cell *matHeaderCellDef colspan="100%" class="action-header-column text-right !tw-py-2 !tw-px-0">
+        <div class="tw-flex tw-items-center tw-justify-between tw-pl-1">
+          <span class="tw-w-auto tw-text-start tw-text-lg tw-font-semibold">{{ 'ERP_076.List of News' | translate }}</span>
+          <div class="tw-w-3/4 no-padding text-right">
+            <button
+              mat-raised-button
+              [disabled]="isWaitingForResponse"
+              color="accent"
+              matTooltip="{{ 'ERP_076.Add News' | translate }}"
+              (click)="addNews()"
+            >
+              <mat-icon class="mat-icon-default">add_circle</mat-icon>
+              {{ 'ERP_076.Add News' | translate }}
+            </button>
+            <button
+              matTooltip="{{ 'RESET' | translate }}"
+              mat-raised-button
+              color="primary"
+              [disabled]="isWaitingForResponse"
+              (click)="resetFilter()"
+            >
+              <mat-icon svgIcon="loop" class="mat-icon-svgIcon"></mat-icon>
+              {{ 'RESET' | translate }}
+            </button>
+          </div>
+        </div>
+      </th>
+    </ng-container>
+
+    <!-- filter section -->
+    <ng-container matColumnDef="newsTitleFilter">
+      <th mat-header-cell *matHeaderCellDef>
+        <mat-form-field>
+          <input
+            matInput
+            class="form-field"
+            placeholder="{{ 'search' | translate }}"
+            [formControl]="newsTitleFilter"
+          />
+        </mat-form-field>
+      </th>
+    </ng-container>
+
+    <ng-container matColumnDef="createdByFilter">
+      <th mat-header-cell *matHeaderCellDef>
+        <mat-form-field>
+          <input
+            matInput
+            class="form-field"
+            placeholder="{{ 'search' | translate }}"
+            [formControl]="createdByFilter"
+          />
+        </mat-form-field>
+      </th>
+    </ng-container>
+
+    <ng-container matColumnDef="statusFilter">
+      <th mat-header-cell *matHeaderCellDef>
+        <mat-form-field appearance="legacy">
+          <mat-select [formControl]="statusFilter" [disableOptionCentering]="true" panelClass="custom-matselect-dropdown news-table-status">
+            <mat-option [value]="'All'">{{ 'ERP_076.All' | translate }}</mat-option>
+            <mat-option [value]="status.is_published" *ngFor="let status of statusList">{{ status.statusKey | translate }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </th>
+    </ng-container>
+
+    <ng-container matColumnDef="actionFilter">
+      <th mat-header-cell *matHeaderCellDef></th>
+    </ng-container>
+
+    <!-- column header and value -->
+    <ng-container matColumnDef="newsTitle">
+      <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'ERP_076.News Title' | translate }}">
+        <h5 mat-sort-header="title">{{ 'ERP_076.News Title' | translate }}</h5>
+      </th>
+      <td
+        mat-cell
+        *matCellDef="let element; let i = index"
+        class="tw-cursor-pointer"
+        (click)="editNews(element, i)"
+        matTooltip="{{ element?.title }}"
+      >
+        {{ element?.title }}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="createdBy">
+      <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'ERP_076.Created by' | translate }}">
+        <h5 mat-sort-header="created_by">{{ 'ERP_076.Created by' | translate }}</h5>
+      </th>
+      <td
+        mat-cell
+        *matCellDef="let element; let i = index"
+        class="tw-cursor-pointer"
+        (click)="editNews(element, i)"
+        matTooltip="{{ element?.created_by?.last_name | uppercase }} {{ element?.created_by?.first_name }}"
+      >
+      {{ (element?.created_by?.last_name | uppercase) +
+          ' ' +
+        element?.created_by?.first_name
+      }}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="status">
+      <th mat-header-cell *matHeaderCellDef style="text-align: center" matTooltip="{{ 'Status' | translate }}">
+        <h5 mat-sort-header="is_published">{{ 'Status' | translate }}</h5>
+      </th>
+      <td mat-cell *matCellDef="let element; let i = index" (click)="editNews(element, i)" class="tw-cursor-pointer">
+        <mat-icon
+          [matTooltip]="(element.is_published ? 'FORM_BUILDER.Published' : 'FORM_BUILDER.Not Published') | translate"
+          [ngClass]="{
+            'tw-text-green-700': element?.is_published === true,
+            'tw-text-red-700': element?.is_published === false || element?.is_published == null
+          }"
+        >
+          lens
+        </mat-icon>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="action">
+      <th mat-header-cell *matHeaderCellDef matTooltip="{{ 'GROUPOFSCHOOL.Action' | translate }}">
+        <h5>{{ 'GROUPOFSCHOOL.Action' | translate }}</h5>
+      </th>
+      <td
+        mat-cell
+        *matCellDef="let element; let rowIndex"
+        class="tw-space-x-5"
+      >
+        <mat-slide-toggle
+          color="accent"
+          [checked]="element?.is_published"
+          [matTooltip]="(element?.is_published ? 'FORM_BUILDER.Published' : 'FORM_BUILDER.Not Published') | translate"
+          (change)="publishNews($event, element)"
+          *ngIf="element?._id"
+         >
+        </mat-slide-toggle>
+        <button
+          mat-icon-button
+          [matTooltip]="'Delete' | translate"
+          matTooltipPosition="above"
+          *ngIf="element?._id"
+          (click)="deleteNews(element)"
+        >
+          <mat-icon>delete</mat-icon>
+        </button>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="loading">
+      <th mat-header-cell *matHeaderCellDef colspan="100%" class="text-center">
+        <div class="center-spinner">
+          <mat-spinner color="accent"></mat-spinner>
+        </div>
+      </th>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="['reset']"></tr>
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-header-row *matHeaderRowDef="filterColumns"></tr>
+    <tr mat-header-row *matHeaderRowDef="['loading']" [hidden]="!isWaitingForResponse"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns" [hidden]="isWaitingForResponse"></tr>
+  </table>
+  <div *ngIf="noData | async" class="no-records">
+    {{ 'NOT RECORD FOUND' | translate }}
+  </div>
+  <div [ngClass]="{ hide: noData | async }">
+    <mat-paginator
+      class="paginator"
+      [ngClass]="{ 'hide-pagination-buttons': tableData <= 10 }"
+      [length]="dataCount"
+      [hidePageSize]="true"
+      [pageSize]="10"
+      showFirstLastButtons
+    ></mat-paginator>
+  </div>
+</div>
